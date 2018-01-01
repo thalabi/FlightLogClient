@@ -1,0 +1,9 @@
+<p>
+  flight-log-table works!
+</p>
+
+<h2>Flight Log List</h2>
+
+<div *ngFor="let flightLog of flightLogArray">
+    {{flightLog.flightDate}} {{flightLog.routeFrom}} {{flightLog.routeTo}} {{flightLog.remarks}}
+</div>
