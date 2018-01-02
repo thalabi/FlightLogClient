@@ -1,9 +1,50 @@
-<p>
-  flight-log-table works!
-</p>
+<h3>Flight Log</h3>
 
-<h2>Flight Log List</h2>
+<p-dataTable [value]="flightLogArray"
+    [lazy]="true" [rows]="10" [paginator]="true" [totalRecords]="page.totalElements" (onLazyLoad)="getTableRowsLazy($event)">
 
-<div *ngFor="let flightLog of flightLogArray">
-    {{flightLog.flightDate}} {{flightLog.routeFrom}} {{flightLog.routeTo}} {{flightLog.remarks}}
-</div>
+    <p-headerColumnGroup>
+        <p-row>
+            <p-column header="Date" rowspan="2"></p-column>
+            <p-column header="Aircraft" colspan="2"></p-column>
+            <p-column header="PIC" rowspan="2"></p-column>
+            <p-column header="Copilot" rowspan="2"></p-column>
+            <p-column header="Route" colspan="2"></p-column>
+            <p-column header="Remarks" rowspan="2"></p-column>
+            <p-column header="Day" colspan="2"></p-column>
+            <p-column header="Night" colspan="2"></p-column>
+        </p-row>
+        <p-row>
+            <p-column header="Reg"></p-column>
+            <p-column header="Mk Mdl"></p-column>
+            <p-column header="From"></p-column>
+            <p-column header="To"></p-column>
+            <p-column header="Dual"></p-column>
+            <p-column header="Solo"></p-column>
+            <p-column header="Dual"></p-column>
+            <p-column header="Solo"></p-column>
+        </p-row>
+    </p-headerColumnGroup>
+    <p-column field="flightDate"></p-column>
+    <p-column field="registration"></p-column>
+    <p-column field="makeModel"></p-column>
+    <p-column field="pic"></p-column>
+    <p-column field="coPilot"></p-column>
+    <p-column field="routeFrom"></p-column>
+    <p-column field="routeTo"></p-column>
+    <p-column field="remarks"></p-column>
+
+    <p-column field="dayDual"></p-column>
+    <p-column field="daySolo"></p-column>
+    <p-column field="nightDual"></p-column>
+    <p-column field="nightSolo"></p-column>
+</p-dataTable>
+
+<!-- <div>Total: {{totalElements}}</div> -->
+<div style="margin-top: 1em;">Total: {{page.totalElements}}</div>
+<!-- <a [attr.href]="links.prev ? '#' : null" (click)="onPrevPage()">Prev</a>
+<a [attr.href]="links.next ? '#' : null" (click)="onNextPage()">Next</a>
+<a [attr.href]="links.first ? '#' : null" (click)="onFirstPage()">First</a>
+<a [attr.href]="links.last ? '#' : null" (click)="onLastPage()">Last</a>
+
+<button pButton type="button" label="Click"></button> -->

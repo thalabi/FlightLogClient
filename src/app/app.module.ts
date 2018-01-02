@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
+import { SharedModule, DataTableModule, ButtonModule} from 'primeng/primeng';
 
 import { AppComponent } from './app.component';
 import { FlightLogTableComponent } from './flight-log-table/flight-log-table.component';
@@ -15,7 +16,9 @@ import { HttpClientModule } from '@angular/common/http';
   ],
   imports: [
     BrowserModule,
-    HttpClientModule
+    HttpClientModule,
+
+    SharedModule, DataTableModule, ButtonModule
   ],
   providers: [FlightLogServiceService],
   bootstrap: [AppComponent]

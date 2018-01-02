@@ -4,27 +4,35 @@ import { Observable } from 'rxjs/Observable';
 import { FlightLog } from './flight-log';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
+import { FlightLogResponse } from './flight-log-response';
 
 @Injectable()
 export class FlightLogServiceService {
+    SORT_COLUMN: string = 'flightDate';
+    PAGE_SIZE: number = 10;
+    URL: string = 'http://localhost:8080/flightLogs/?sort=' + this.SORT_COLUMN + '&size=' + this.PAGE_SIZE;
 
     constructor(private http: HttpClient) { }
 
-    getAll(): Observable<Array<any>> {
-        return this.http.get<Array<any>>('//localhost:8080/flightLogs')
-            .map((response: any) => {
-                return response._embedded.flightLogs;
-            })
+    getAll(url?: string): Observable<FlightLogResponse> {
+        if (! url) {
+            url = 'http://localhost:8080/flightLogs/?sort=flightDate';
+        }
+        return this.http.get<FlightLogResponse>(url);
+            // .map((response: any) => {
+            //     return response._embedded.flightLogs;
+            // })
             ;
             //.catch(this.handleError);
     }
 
-    getCategories(): Observable<FlightLog[]> {
-        return this.http.get<FlightLog[]>('//localhost:8080/flightLogs')
-            .map((result:any)=>{
-               console.log(result); //<--it's an object
-               //result={"_embedded": {"categories": [..]..}
-               return result._embedded.categories; //just return "categories"
-            });
+    getPage(page: number): Observable<FlightLogResponse> {
+        let url: string = this.URL + '&page=' + page;
+        return this.http.get<FlightLogResponse>(url);
+            // .map((response: any) => {
+            //     return response._embedded.flightLogs;
+            // })
+            ;
+            //.catch(this.handleError);
     }
 }
