@@ -1,0 +1,25 @@
+:host ::ng-deep .ui-menuitem .ui-menuitem-link {
+    color: #555555;
+    border: none;
+    background: none;
+}
+:host ::ng-deep .ui-menuitem .ui-menuitem-link:hover {
+    color: black;
+    font-weight: 500;
+    border: none;
+    background: none;
+}
+:host ::ng-deep .ui-menu.ui-widget {
+    border: none;
+    background: none;
+}
+/* Used by menu bar text to the left */
+:host ::ng-deep .ui-menubar-custom {
+    color: black;
+    float: left;
+    margin-top: .125em;
+    margin-left: 1em;
+    margin-right: 1em;
+    font-size: 1.2em;
+}
+

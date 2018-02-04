@@ -1,6 +1,6 @@
-import { FlightLog } from "./flight-log";
-import { HalResponseLinks } from "./hal-response-links";
-import { HalResponsePage } from "./hal-response-page";
+import { FlightLog } from "../domain/flight-log";
+import { HalResponseLinks } from "../hal/hal-response-links";
+import { HalResponsePage } from "../hal/hal-response-page";
 //import { FlightLogs } from "./flight-logs";
 
 export class FlightLogResponse {

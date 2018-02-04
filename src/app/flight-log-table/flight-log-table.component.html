@@ -1,6 +1,4 @@
-<h3>Flight Log</h3>
-
-<p-dataTable [value]="flightLogArray"
+<!-- <p-dataTable [value]="flightLogArray"
     [lazy]="true" [rows]="10" [paginator]="true" [totalRecords]="page.totalElements" (onLazyLoad)="getTableRowsLazy($event)">
 
     <p-headerColumnGroup>
@@ -38,13 +36,246 @@
     <p-column field="daySolo"></p-column>
     <p-column field="nightDual"></p-column>
     <p-column field="nightSolo"></p-column>
+</p-dataTable> -->
+
+<p-dataTable [value]="flightLogArray" [dataKey]="'_links.flightLog.href'"
+    [lazy]="true" [rows]="10" [paginator]="true" [totalRecords]="page.totalElements" [rowsPerPageOptions]="[5,10,20]" (onLazyLoad)="getTableRowsLazy($event)" responsive="true" selectionMode="single" [(selection)]="selectedFlightLog"
+    dataKey="_links.flightLog.href" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [responsive]="true">
+    <p-header>
+        <div style="text-align:right">
+            <p-multiSelect [options]="columnOptions" [(ngModel)]="cols" maxSelectedLabels="99"></p-multiSelect>
+        </div>
+    </p-header>
+    <p-column *ngFor="let col of cols" [field]="col.field" [header]="col.header" [filter]="true" [style]="col.style">
+        <ng-template pTemplate type="body" *ngIf="col.field !== 'flightDate'" let-col let-data="rowData">
+            <span>{{data[col.field]}}</span>
+        </ng-template>
+        <ng-template pTemplate type="body" *ngIf="col.field === 'flightDate'" let-col let-data="rowData">
+            <span>{{data[col.field] | date:'yyyy-MM-dd'}}</span>
+        </ng-template>
+    </p-column>
+    <p-footer>
+        <div class="ui-helper-clearfix" style="width:100%">
+            <button type="button" pButton icon="fa-plus" style="float:left" (click)="showDialog('Add')" label="Add"></button>
+            <button type="button" pButton icon="fa-edit" style="float:left" (click)="showDialog('Modify')" label="Modify" [disabled]="modifyAndDeleteButtonsDisable"></button>
+            <button type="button" pButton icon="fa-remove" style="float:left" (click)="showDialog('Delete')" label="Delete" [disabled]="modifyAndDeleteButtonsDisable"></button>
+            <div style="text-align:right; margin-top: 0.3em;;">
+                <span>Total: {{page.totalElements}}</span>
+            </div>
+        </div>
+    </p-footer>
 </p-dataTable>
 
+<!-- <p-dataTable [value]="flightLogArray"
+    [lazy]="true" (onLazyLoad)="getTableRowsLazy($event)"  [totalRecords]="page.totalElements" [rows]="20"
+     scrollHeight="300px" [virtualScroll]="true" [scrollable]="true" scrollable="true"
+     [responsive]="true" selectionMode="single" [(selection)]="selectedFlightLog"
+    dataKey="_links.flightLog.href" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [responsive]="true">
+    <p-header>
+        <div style="text-align:right">
+            <p-multiSelect [options]="columnOptions" [(ngModel)]="cols" maxSelectedLabels="99"></p-multiSelect>
+        </div>
+    </p-header>
+    <p-column *ngFor="let col of cols" [field]="col.field" [header]="col.header" [filter]="true" [style]="col.style">
+        <ng-template pTemplate type="body" *ngIf="col.field !== 'flightDate'" let-col let-data="rowData">
+            <span>{{data[col.field]}}</span>
+        </ng-template>
+        <ng-template pTemplate type="body" *ngIf="col.field === 'flightDate'" let-col let-data="rowData">
+            <span>{{data[col.field] | date:'yyyy-MM-dd'}}</span>
+        </ng-template>
+    </p-column>
+    <p-footer>
+        <div class="ui-helper-clearfix" style="width:100%">
+            <button type="button" pButton icon="fa-plus" style="float:left" (click)="showDialog('Add')" label="Add"></button>
+            <button type="button" pButton icon="fa-edit" style="float:left" (click)="showDialog('Modify')" label="Modify" [disabled]="modifyAndDeleteButtonsDisable"></button>
+            <button type="button" pButton icon="fa-remove" style="float:left" (click)="showDialog('Delete')" label="Delete" [disabled]="modifyAndDeleteButtonsDisable"></button>
+            <div style="text-align:right; margin-top: 0.3em;;">
+                <span>Total: {{page.totalElements}}</span>
+            </div>
+        </div>
+    </p-footer>
+</p-dataTable> -->
+
 <!-- <div>Total: {{totalElements}}</div> -->
-<div style="margin-top: 1em;">Total: {{page.totalElements}}</div>
+<!-- <div style="margin-top: 1em;">Records: {{page.totalElements}}</div> -->
 <!-- <a [attr.href]="links.prev ? '#' : null" (click)="onPrevPage()">Prev</a>
 <a [attr.href]="links.next ? '#' : null" (click)="onNextPage()">Next</a>
 <a [attr.href]="links.first ? '#' : null" (click)="onFirstPage()">First</a>
 <a [attr.href]="links.last ? '#' : null" (click)="onLastPage()">Last</a>
 
 <button pButton type="button" label="Click"></button> -->
+
+<p-dialog header="Flight Log - {{crudMode}}" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
+        <!-- TODO set the width on the p-dialog not on the div -->
+        <form (ngSubmit)="onSubmit()" #flightLogForm="ngForm">
+
+        <div class="ui-g" style="width: 50em;">
+            <!-- line 1 -->
+            <div class="ui-g-3">
+                <label for="flightDate">Flight date</label>
+            </div>
+            <div class="ui-g-9">
+                <p-calendar [(ngModel)]="selectedFlightLog.flightDate" name="flightDate" [monthNavigator]="true" [yearNavigator]="true"
+                    dateFormat="yy-mm-dd" [showIcon]="true" readonlyInput="readonlyInput" id="flightDate"
+                    [disabled]="crudMode == 'Delete'" appendTo="body">
+                </p-calendar>
+            </div>
+            <!-- line 2 -->
+            <div class="ui-g-3">
+                <label for="makeModel">Make and model</label>
+            </div>
+            <div class="ui-g-3">
+                <!-- <input pInputText id="makeModel" [(ngModel)]="selectedFlightLog.makeModel" [readonly]="crudMode == 'Delete'"
+                    style="text-transform: uppercase;"/> -->
+                <p-dropdown [options]="makeModelSelectItemArray" [(ngModel)]="selectedFlightLog.makeModel" name="makeModel" [autoWidth]="false" [placeholder]="' '" [disabled]="crudMode == 'Delete'" [style]="{'width': '12rem', 'min-height': '1.8rem'}"></p-dropdown>
+            </div>
+            <div class="ui-g-3">
+                <label for="registration">Registration</label>
+            </div>
+            <div class="ui-g-3">
+                <!-- <input pInputText id="registration" [(ngModel)]="selectedFlightLog.registration" [readonly]="crudMode == 'Delete'" 
+                style="text-transform: uppercase;"/> -->
+                <p-dropdown [options]="registrationSelectItemArray" [(ngModel)]="selectedFlightLog.registration" name="registration" [autoWidth]="false" [placeholder]="' '" [disabled]="crudMode == 'Delete'" [style]="{'width': '12rem', 'min-height': '1.8rem'}"></p-dropdown>
+            </div>
+            <!-- line 3 -->
+            <div class="ui-g-3">
+                <label for="pic">Pilot-in-command</label>
+            </div>
+            <div class="ui-g-3">
+                <input pInputText id="pic" [(ngModel)]="selectedFlightLog.pic" name="pic" [readonly]="crudMode == 'Delete'" />
+            </div>
+            <div class="ui-g-3">
+                <label for="coPilot">Co-pilot</label>
+            </div>
+            <div class="ui-g-3">
+                <input pInputText id="coPilot" [(ngModel)]="selectedFlightLog.coPilot" name="coPilot" [readonly]="crudMode == 'Delete'" />
+            </div>
+            <!-- line 4 -->
+            <div class="ui-g-3">
+                <label for="routeFrom">From</label>
+            </div>
+            <div class="ui-g-3">
+                <p-autoComplete [(ngModel)]="fromAirport" name="fromAirport" [suggestions]="filteredAirportArray" (completeMethod)="searchAirport($event)" [field]="'identifier'" size="17" [forceSelection]="true" [readonly]="crudMode == 'Delete'">
+                    <ng-template let-airport pTemplate="item">
+                        {{airport.identifier}} - {{airport.name}}
+                    </ng-template>
+                </p-autoComplete>
+            </div>
+            <div class="ui-g-3">
+                <label for="routeTo">To</label>
+            </div>
+            <div class="ui-g-3">
+                <p-autoComplete [(ngModel)]="toAirport" name="toAirport" [suggestions]="filteredAirportArray" (completeMethod)="searchAirport($event)" [field]="'identifier'" size="17" [forceSelection]="true" [readonly]="crudMode == 'Delete'">
+                    <ng-template let-airport pTemplate="item">
+                        {{airport.identifier}} - {{airport.name}}
+                    </ng-template>
+                </p-autoComplete>
+            </div>
+            <!-- line 5 -->
+            <div class="ui-g-3">
+                <label for="remarks">Remarks</label>
+            </div>
+            <div class="ui-g-9">
+                <textarea pInputTextarea [(ngModel)]="selectedFlightLog.remarks" name="remarks" [rows]="3" autoResize="autoResize" style="width: 100%;" [disabled]="crudMode == 'Delete'" id="remarks" name="remarks" #text="ngModel" class="form-control"></textarea>
+            </div>
+            <!-- line 6 -->
+            <div class="ui-g-3">
+                <label for="dayDual">Day dual</label>
+            </div>
+            <div class="ui-g-3">
+                <input type="text" id="dayDual" [(ngModel)]="selectedFlightLog.dayDual" name="dayDual" #dayDual="ngModel" [readonly]="crudMode == 'Delete'" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
+                <div [hidden]="dayDual.valid || dayDual.pristine" class="alert alert-danger">Invalid value</div>
+            </div>
+            <div class="ui-g-3">
+                <label for="daySolo">Day solo</label>
+            </div>
+            <div class="ui-g-3">
+                <input pInputText id="daySolo" [(ngModel)]="selectedFlightLog.daySolo" name="daySolo" #daySolo="ngModel" [readonly]="crudMode == 'Delete'" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
+                <div [hidden]="daySolo.valid || daySolo.pristine" class="alert alert-danger">Invalid value</div>            </div>
+
+            <!-- line 7 -->
+            <div class="ui-g-3">
+                <label for="nightDual">Night dual</label>
+            </div>
+            <div class="ui-g-3">
+                <input pInputText id="nightDual" [(ngModel)]="selectedFlightLog.nightDual" name="nightDual" #nightDual="ngModel" [readonly]="crudMode == 'Delete'" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
+                <div [hidden]="nightDual.valid || nightDual.pristine" class="alert alert-danger">Invalid value</div>            </div>
+            <div class="ui-g-3">
+                <label for="nightSolo">Night solo</label>
+            </div>
+            <div class="ui-g-3">
+                <input pInputText id="nightSolo" [(ngModel)]="selectedFlightLog.nightSolo" name="nightSolo" #nightSolo="ngModel" [readonly]="crudMode == 'Delete'" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
+                <div [hidden]="nightSolo.valid || nightSolo.pristine" class="alert alert-danger">Invalid value</div>
+            </div>
+
+            <!-- line 8 -->
+            <div class="ui-g-3">
+                <label for="instrumentImc">Inst IMC</label>
+            </div>
+            <div class="ui-g-3">
+                <input pInputText id="instrumentImc" [(ngModel)]="selectedFlightLog.instrumentImc" name="instrumentImc" #instrumentImc="ngModel" [readonly]="crudMode == 'Delete'" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
+                <div [hidden]="instrumentImc.valid || instrumentImc.pristine" class="alert alert-danger">Invalid value</div>            
+            </div>
+            <div class="ui-g-3">
+                <label for="instrumentFlightSim">Inst simulated</label>
+            </div>
+            <div class="ui-g-3">
+                <input pInputText id="instrumentFlightSim" [(ngModel)]="selectedFlightLog.instrumentFlightSim" name="instrumentFlightSim" #instrumentFlightSim="ngModel" [readonly]="crudMode == 'Delete'" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
+                <div [hidden]="instrumentFlightSim.valid || instrumentFlightSim.pristine" class="alert alert-danger">Invalid value</div>            
+            </div>
+            <!-- line 9 -->
+            <div class="ui-g-3">
+                <label for="instrumentSimulated">Inst flight sim</label>
+            </div>
+            <div class="ui-g-3">
+                <input pInputText id="instrumentSimulated" [(ngModel)]="selectedFlightLog.instrumentSimulated" name="instrumentSimulated" #instrumentSimulated="ngModel" [readonly]="crudMode == 'Delete'" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
+                <div [hidden]="instrumentSimulated.valid || instrumentSimulated.pristine" class="alert alert-danger">Invalid value</div>            
+            </div>
+            <div class="ui-g-3">
+                <label for="instrumentNoIfrAppr">Inst # IFR appr</label>
+            </div>
+            <div class="ui-g-3">
+                <input pInputText id="instrumentNoIfrAppr" [(ngModel)]="selectedFlightLog.instrumentNoIfrAppr" name="instrumentNoIfrAppr" #instrumentNoIfrAppr="ngModel" [readonly]="crudMode == 'Delete'" regexValidator="^\d*$"/>
+                <div [hidden]="instrumentNoIfrAppr.valid || instrumentNoIfrAppr.pristine" class="alert alert-danger">Invalid value</div>            
+            </div>
+            <!-- line 10 -->
+            <div class="ui-g-3">
+                <label for="xcountryDay">X-cty day</label>
+            </div>
+            <div class="ui-g-3">
+                <input pInputText id="xcountryDay" [(ngModel)]="selectedFlightLog.xcountryDay" name="xcountryDay" [readonly]="crudMode == 'Delete'" />
+            </div>
+            <div class="ui-g-3">
+                <label for="xcountryNight">X-cty night</label>
+            </div>
+            <div class="ui-g-3">
+                <input pInputText id="xcountryNight" [(ngModel)]="selectedFlightLog.xcountryNight" name="xcountryNight" [readonly]="crudMode == 'Delete'" />
+            </div>
+            <!-- line 11 -->
+            <div class="ui-g-3">
+                <label for="tosLdgsDay">T/Os & ldgs day</label>
+            </div>
+            <div class="ui-g-3">
+                <input pInputText id="tosLdgsDay" [(ngModel)]="selectedFlightLog.tosLdgsDay" name="tosLdgsDay" [readonly]="crudMode == 'Delete'" />
+            </div>
+            <div class="ui-g-3">
+                <label for="tosLdgsNight">T/Os & ldgs night</label>
+            </div>
+            <div class="ui-g-3">
+                <input pInputText id="tosLdgsNight" [(ngModel)]="selectedFlightLog.tosLdgsNight" name="tosLdgsNight" [readonly]="crudMode == 'Delete'" />
+                <div>{{flightLogForm.invalid}}</div>
+            </div>
+            <p-footer>
+                <div class="ui-g-6">
+                    <!-- TODO replace disabled logic with a function -->
+                    <button pButton type="submit" label="Submit"
+                    [disabled]="disableSubmitButton() && flightLogForm.invalid"></button>
+                </div>
+                <div class="ui-g-6">
+                    <button pButton type="reset" label="Cancel" (click)="onCancel()"></button>
+                </div>
+            </p-footer>
+
+        </div>
+        </form>
+    </p-dialog>
