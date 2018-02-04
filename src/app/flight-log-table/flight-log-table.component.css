@@ -1,0 +1,6 @@
+th {
+    font-weight: normal;
+}
+:host ::ng-deep .ui-table-caption, :host ::ng-deep .ui-table-summary {
+    font-weight: normal;
+}

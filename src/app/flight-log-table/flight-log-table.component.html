@@ -1,109 +1,41 @@
-<!-- <p-dataTable [value]="flightLogArray"
-    [lazy]="true" [rows]="10" [paginator]="true" [totalRecords]="page.totalElements" (onLazyLoad)="getTableRowsLazy($event)">
-
-    <p-headerColumnGroup>
-        <p-row>
-            <p-column header="Date" rowspan="2"></p-column>
-            <p-column header="Aircraft" colspan="2"></p-column>
-            <p-column header="PIC" rowspan="2"></p-column>
-            <p-column header="Copilot" rowspan="2"></p-column>
-            <p-column header="Route" colspan="2"></p-column>
-            <p-column header="Remarks" rowspan="2"></p-column>
-            <p-column header="Day" colspan="2"></p-column>
-            <p-column header="Night" colspan="2"></p-column>
-        </p-row>
-        <p-row>
-            <p-column header="Reg"></p-column>
-            <p-column header="Mk Mdl"></p-column>
-            <p-column header="From"></p-column>
-            <p-column header="To"></p-column>
-            <p-column header="Dual"></p-column>
-            <p-column header="Solo"></p-column>
-            <p-column header="Dual"></p-column>
-            <p-column header="Solo"></p-column>
-        </p-row>
-    </p-headerColumnGroup>
-    <p-column field="flightDate"></p-column>
-    <p-column field="registration"></p-column>
-    <p-column field="makeModel"></p-column>
-    <p-column field="pic"></p-column>
-    <p-column field="coPilot"></p-column>
-    <p-column field="routeFrom"></p-column>
-    <p-column field="routeTo"></p-column>
-    <p-column field="remarks"></p-column>
-
-    <p-column field="dayDual"></p-column>
-    <p-column field="daySolo"></p-column>
-    <p-column field="nightDual"></p-column>
-    <p-column field="nightSolo"></p-column>
-</p-dataTable> -->
-
-<p-dataTable [value]="flightLogArray" [dataKey]="'_links.flightLog.href'"
+<p-table [value]="flightLogArray" [dataKey]="'_links.flightLog.href'"
     [lazy]="true" [rows]="10" [paginator]="true" [totalRecords]="page.totalElements" [rowsPerPageOptions]="[5,10,20]" (onLazyLoad)="getTableRowsLazy($event)" responsive="true" selectionMode="single" [(selection)]="selectedFlightLog"
     dataKey="_links.flightLog.href" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [responsive]="true">
-    <p-header>
+
+    <ng-template pTemplate="caption">
         <div style="text-align:right">
             <p-multiSelect [options]="columnOptions" [(ngModel)]="cols" maxSelectedLabels="99"></p-multiSelect>
         </div>
-    </p-header>
-    <p-column *ngFor="let col of cols" [field]="col.field" [header]="col.header" [filter]="true" [style]="col.style">
-        <ng-template pTemplate type="body" *ngIf="col.field !== 'flightDate'" let-col let-data="rowData">
-            <span>{{data[col.field]}}</span>
-        </ng-template>
-        <ng-template pTemplate type="body" *ngIf="col.field === 'flightDate'" let-col let-data="rowData">
-            <span>{{data[col.field] | date:'yyyy-MM-dd'}}</span>
-        </ng-template>
-    </p-column>
-    <p-footer>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+        <tr>
+            <th *ngFor="let col of cols" [ngStyle]="col.style">
+                    {{col.header}}
+            </th>
+        </tr>
+    </ng-template>
+    
+    <ng-template pTemplate="body" let-rowData>
+        <tr [pSelectableRow]="rowData">
+            <td *ngFor="let col of cols">
+                    <span *ngIf="col.field === 'flightDate'">{{rowData[col.field] | date:'yyyy-MM-dd'}}</span>
+                    <span *ngIf="col.field !== 'flightDate'">{{rowData[col.field]}}</span>
+            </td>
+        </tr>
+    </ng-template>
+
+    <ng-template pTemplate="summary">
         <div class="ui-helper-clearfix" style="width:100%">
             <button type="button" pButton icon="fa-plus" style="float:left" (click)="showDialog('Add')" label="Add"></button>
             <button type="button" pButton icon="fa-edit" style="float:left" (click)="showDialog('Modify')" label="Modify" [disabled]="modifyAndDeleteButtonsDisable"></button>
             <button type="button" pButton icon="fa-remove" style="float:left" (click)="showDialog('Delete')" label="Delete" [disabled]="modifyAndDeleteButtonsDisable"></button>
-            <div style="text-align:right; margin-top: 0.3em;;">
+            <div style="text-align:right; margin-top: 0.3em;">
                 <span>Total: {{page.totalElements}}</span>
             </div>
         </div>
-    </p-footer>
-</p-dataTable>
-
-<!-- <p-dataTable [value]="flightLogArray"
-    [lazy]="true" (onLazyLoad)="getTableRowsLazy($event)"  [totalRecords]="page.totalElements" [rows]="20"
-     scrollHeight="300px" [virtualScroll]="true" [scrollable]="true" scrollable="true"
-     [responsive]="true" selectionMode="single" [(selection)]="selectedFlightLog"
-    dataKey="_links.flightLog.href" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [responsive]="true">
-    <p-header>
-        <div style="text-align:right">
-            <p-multiSelect [options]="columnOptions" [(ngModel)]="cols" maxSelectedLabels="99"></p-multiSelect>
-        </div>
-    </p-header>
-    <p-column *ngFor="let col of cols" [field]="col.field" [header]="col.header" [filter]="true" [style]="col.style">
-        <ng-template pTemplate type="body" *ngIf="col.field !== 'flightDate'" let-col let-data="rowData">
-            <span>{{data[col.field]}}</span>
-        </ng-template>
-        <ng-template pTemplate type="body" *ngIf="col.field === 'flightDate'" let-col let-data="rowData">
-            <span>{{data[col.field] | date:'yyyy-MM-dd'}}</span>
-        </ng-template>
-    </p-column>
-    <p-footer>
-        <div class="ui-helper-clearfix" style="width:100%">
-            <button type="button" pButton icon="fa-plus" style="float:left" (click)="showDialog('Add')" label="Add"></button>
-            <button type="button" pButton icon="fa-edit" style="float:left" (click)="showDialog('Modify')" label="Modify" [disabled]="modifyAndDeleteButtonsDisable"></button>
-            <button type="button" pButton icon="fa-remove" style="float:left" (click)="showDialog('Delete')" label="Delete" [disabled]="modifyAndDeleteButtonsDisable"></button>
-            <div style="text-align:right; margin-top: 0.3em;;">
-                <span>Total: {{page.totalElements}}</span>
-            </div>
-        </div>
-    </p-footer>
-</p-dataTable> -->
-
-<!-- <div>Total: {{totalElements}}</div> -->
-<!-- <div style="margin-top: 1em;">Records: {{page.totalElements}}</div> -->
-<!-- <a [attr.href]="links.prev ? '#' : null" (click)="onPrevPage()">Prev</a>
-<a [attr.href]="links.next ? '#' : null" (click)="onNextPage()">Next</a>
-<a [attr.href]="links.first ? '#' : null" (click)="onFirstPage()">First</a>
-<a [attr.href]="links.last ? '#' : null" (click)="onLastPage()">Last</a>
-
-<button pButton type="button" label="Click"></button> -->
+    </ng-template>
+</p-table>
 
 <p-dialog header="Flight Log - {{crudMode}}" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
         <!-- TODO set the width on the p-dialog not on the div -->

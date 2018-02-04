@@ -1,18 +1,23 @@
-<p-dataTable [value]="makeModelArray" [dataKey]="'_links.makeModel.href'" selectionMode="single" [(selection)]="selectedMakeModel" (onRowSelect)="onRowSelect($event)">
+<p-table [value]="makeModelArray" [dataKey]="'_links.makeModel.href'" selectionMode="single" [(selection)]="selectedMakeModel" (onRowSelect)="onRowSelect($event)">
     <ng-template pTemplate="header">
         <tr>
             <th>Make & Model</th>
         </tr>
     </ng-template>
-    <p-column field="name" header="Make & Model"></p-column>
-    <p-footer>
+    <ng-template pTemplate="body" let-rowData>
+        <tr [pSelectableRow]="rowData">
+            <td>{{ rowData.name }}</td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="summary">
         <div class="ui-helper-clearfix" style="width:100%">
             <button type="button" pButton icon="fa-plus" style="float:left" (click)="showDialog('Add')" label="Add"></button>
             <button type="button" pButton icon="fa-edit" style="float:left" (click)="showDialog('Update')" label="Modify" [disabled]="modifyAndDeleteButtonsDisable"></button>
             <button type="button" pButton icon="fa-remove" style="float:left" (click)="showDialog('Delete')" label="Delete" [disabled]="modifyAndDeleteButtonsDisable"></button>
         </div>
-    </p-footer>
-</p-dataTable>
+    </ng-template>
+    <!-- </p-footer> -->
+</p-table>
 
 <p-dialog header="Make & Model - {{crudMode}}" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
     <form [formGroup]="makeModelForm" (ngSubmit)="onSubmit()" novalidate>

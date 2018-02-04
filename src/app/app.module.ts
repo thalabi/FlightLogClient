@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations'
-import { SharedModule, DataTableModule, ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule} from 'primeng/primeng';
+import { SharedModule, ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule} from 'primeng/primeng';
 import {TableModule} from 'primeng/table';
 
 import { AppComponent } from './app.component';
@@ -29,7 +29,7 @@ import { MakeModelCrudComponent } from './make-model-crud/make-model-crud.compon
     ReactiveFormsModule,
     HttpClientModule,
 
-    BrowserAnimationsModule, SharedModule, DataTableModule, TableModule, ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, AppRoutingModule
+    BrowserAnimationsModule, SharedModule, TableModule, ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, AppRoutingModule
   ],
   providers: [FlightLogServiceService],
   bootstrap: [AppComponent]
