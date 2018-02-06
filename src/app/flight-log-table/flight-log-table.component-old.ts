@@ -10,9 +10,6 @@ import { Airport } from '../domain/airport';
 import { MakeModel } from '../domain/make-model';
 import { RegistrationResponse } from '../response/registration-response';
 import { Registration } from '../domain/registration';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { CrudEnum } from '../crud-enum';
-import { FlightLogHelper } from './flight-log-table-helper';
 
 @Component({
     selector: 'app-flight-log-table',
@@ -21,12 +18,9 @@ import { FlightLogHelper } from './flight-log-table-helper';
 })
 export class FlightLogTableComponent implements OnInit {
 
-    flightLogForm: FormGroup;
-
     flightLogResponse: FlightLogResponse;
     flightLogArray: Array<FlightLog>;
     selectedFlightLog: FlightLog;
-    crudFlightLog: FlightLog;
     page: HalResponsePage;
     links: HalResponseLinks;
 
@@ -35,7 +29,7 @@ export class FlightLogTableComponent implements OnInit {
     columnOptions: SelectItem[];
     
     modifyAndDeleteButtonsDisable: boolean = true;
-    crudMode: CrudEnum;
+    crudMode: string;
     displayDialog: boolean;
 
     makeModelSelectItemArray: Array<SelectItem>;
@@ -48,9 +42,7 @@ export class FlightLogTableComponent implements OnInit {
     // used to pass as argument to getTableRowsLazy() when refreshing page after add/update/delete
     savedLazyLoadEvent: LazyLoadEvent;
 
-    constructor(private formBuilder: FormBuilder, private flightLogService: FlightLogServiceService) {
-        this.flightLogForm = FlightLogHelper.createForm(formBuilder);
-    }
+    constructor(private flightLogService: FlightLogServiceService) { }
 
     ngOnInit() {
         this.page = new HalResponsePage();
@@ -92,6 +84,33 @@ export class FlightLogTableComponent implements OnInit {
         this.getMakeModels();
         this.getRegistrations();
     }
+
+    // onNextPage() {
+    //     this.getTableRows(this.flightLogResponse._links.next.href);
+    // }
+
+    // onPrevPage() {
+    //     this.getTableRows(this.flightLogResponse._links.prev.href);
+    // }
+
+    // onFirstPage() {
+    //     this.getTableRows(this.flightLogResponse._links.first.href);
+    // }
+
+    // onLastPage() {
+    //     this.getTableRows(this.flightLogResponse._links.last.href);
+    // }
+
+    // getTableRows(url?: string) {
+
+    //     this.flightLogService.getAll(url).subscribe(data => {
+    //         this.flightLogResponse = data;
+    //         this.flightLogArray = this.flightLogResponse._embedded.flightLogs;
+    //         this.page = this.flightLogResponse.page;
+    //         this.links = this.flightLogResponse._links;
+    //     });
+    // }
+
 
     private getMakeModels() {
         this.flightLogService.getAllMakeModel().subscribe({
@@ -147,22 +166,19 @@ export class FlightLogTableComponent implements OnInit {
             }});
     }
 
-    //selectedRowIndex: number;
-    //originalRow: FlightLog;
+    selectedRowIndex: number;
+    originalRow: FlightLog;
     onRowSelect(event) {
         console.log(event);
-
-        this.crudFlightLog = Object.assign({}, this.selectedFlightLog);
-
         this.modifyAndDeleteButtonsDisable = false;
         this.fromAirport = new Airport();
-        this.fromAirport.identifier = this.crudFlightLog.routeFrom;
+        this.fromAirport.identifier = this.selectedFlightLog.routeFrom;
         this.toAirport = new Airport();
-        this.toAirport.identifier = this.crudFlightLog.routeTo;
+        this.toAirport.identifier = this.selectedFlightLog.routeTo;
 
-        //this.originalRow = Object.assign({}, this.selectedFlightLog); //clone
-        //this.selectedRowIndex = this.flightLogArray.indexOf(this.selectedFlightLog);
-        //console.log('this.selectedRowIndex', this.selectedRowIndex);
+        this.originalRow = Object.assign({}, this.selectedFlightLog); //clone
+        this.selectedRowIndex = this.flightLogArray.indexOf(this.selectedFlightLog);
+        console.log('this.selectedRowIndex', this.selectedRowIndex);
     }
     onRowUnselect(event) {
         console.log(event);
@@ -175,41 +191,31 @@ export class FlightLogTableComponent implements OnInit {
         this.toAirport = new Airport();
     }
     showDialog(crudMode: string) {
-        this.crudMode = CrudEnum[crudMode];
+        this.crudMode = crudMode;
         console.log('crudMode', crudMode);
         console.log('this.crudMode', this.crudMode);
-
-        switch (this.crudMode) {
-            case CrudEnum.Add:
-                this.flightLogForm.reset();
-                this.flightLogForm.get('flightDate').enable();
-                break;
-            case CrudEnum.Update:
-// TODO continue here
-                FlightLogHelper.copyToForm(this.crudFlightLog, this.flightLogForm);        
-                this.flightLogForm.get('flightDate').enable();
-                break;
-            case CrudEnum.Delete:
-                // this.makeModelForm.setValue({name: this.crudMakeModel.name});
-                // this.makeModelForm.get('name').disable();
-                break;
-            default:
-                console.error('this.crudMode is invalid. this.crudMode: ' + this.crudMode);
+        if (crudMode == 'Add') {
+            this.selectedFlightLog = new FlightLog();
+            // this.selectedFlightLog.schoolYear = '';
+            // this.selectedFlightLog.startDate = undefined;
+            // this.selectedFlightLog.endDate = undefined;
+        } else {
+            console.log('this.selectedFlightLog', this.selectedFlightLog);
+            console.log('this.selectedFlightLog.flightDate', this.selectedFlightLog.flightDate);
         }
         this.displayDialog = true;
     }
 
     onSubmit() {
-        // this.selectedFlightLog.makeModel = this.selectedFlightLog.makeModel.toUpperCase();
-        // this.selectedFlightLog.registration = this.selectedFlightLog.registration.toUpperCase();
-        // console.log('this.selectedFlightLog', this.selectedFlightLog);
-        // this.selectedFlightLog.routeFrom = this.fromAirport ? this.fromAirport.identifier : '';
-        // this.selectedFlightLog.routeTo = this.toAirport ? this.toAirport.identifier : '';
-        FlightLogHelper.copyFromForm(this.flightLogForm, this.crudFlightLog);
+        this.selectedFlightLog.makeModel = this.selectedFlightLog.makeModel.toUpperCase();
+        this.selectedFlightLog.registration = this.selectedFlightLog.registration.toUpperCase();
+        console.log('this.selectedFlightLog', this.selectedFlightLog);
+        this.selectedFlightLog.routeFrom = this.fromAirport ? this.fromAirport.identifier : '';
+        this.selectedFlightLog.routeTo = this.toAirport ? this.toAirport.identifier : '';
         
         switch (this.crudMode) {
-            case CrudEnum.Add:
-                this.flightLogService.addFlightLog(this.crudFlightLog).subscribe({
+            case 'Add':
+                this.flightLogService.addFlightLog(this.selectedFlightLog).subscribe({
                     next: savedFlightLog => {
                         console.log('savedFlightLog', savedFlightLog);
                     },
@@ -222,8 +228,8 @@ export class FlightLogTableComponent implements OnInit {
                     }
                 });
                 break;
-            case CrudEnum.Update:
-                this.flightLogService.updateFlightLog(this.crudFlightLog).subscribe({
+            case 'Modify':
+                this.flightLogService.updateFlightLog(this.selectedFlightLog).subscribe({
                     next: savedFlightLog => {
                         console.log('updatedFlightLog', savedFlightLog);
                     },
@@ -236,10 +242,10 @@ export class FlightLogTableComponent implements OnInit {
                     }
                 });
                 break;
-            case CrudEnum.Delete:
-                this.flightLogService.deleteFlightLog(this.crudFlightLog).subscribe({
+            case 'Delete':
+                this.flightLogService.deleteFlightLog(this.selectedFlightLog).subscribe({
                     next: savedFlightLog => {
-                        console.log('deleted flightLog', this.crudFlightLog);
+                        console.log('deleted flightLog', this.selectedFlightLog);
                     },
                     error: error => {
                         console.error('flightLogService.saveFlightLog() returned error: ', error);
@@ -253,6 +259,7 @@ export class FlightLogTableComponent implements OnInit {
             default:
                 console.error('this.crudMode is invalid. this.crudMode: ' + this.crudMode);
         }
+        
     }
 
     private afterCrud() {
@@ -264,12 +271,12 @@ export class FlightLogTableComponent implements OnInit {
     onCancel() {
         this.resetDialoForm();
         this.displayDialog = false;
-        //console.log('this.originalRow', this.originalRow);
-        //console.log('this.selectedRowIndex', this.selectedRowIndex);
-        //console.log('this.flightLogArray[this.selectedRowIndex]', this.flightLogArray[this.selectedRowIndex]);
-        //console.log('this.originalRow', this.originalRow)
-        //this.flightLogArray[this.selectedRowIndex] = this.originalRow;
-        //console.log('this.flightLogArray[this.selectedRowIndex]', this.flightLogArray[this.selectedRowIndex]);
+        console.log('this.originalRow', this.originalRow);
+        console.log('this.selectedRowIndex', this.selectedRowIndex);
+        console.log('this.flightLogArray[this.selectedRowIndex]', this.flightLogArray[this.selectedRowIndex]);
+        console.log('this.originalRow', this.originalRow)
+        this.flightLogArray[this.selectedRowIndex] = this.originalRow;
+        console.log('this.flightLogArray[this.selectedRowIndex]', this.flightLogArray[this.selectedRowIndex]);
     }
 
     // results: string[];
@@ -288,6 +295,11 @@ export class FlightLogTableComponent implements OnInit {
             }});
     }
 
+    private disableSubmitButton(): boolean {
+        return (this.selectedFlightLog.flightDate == null ||
+            this.selectedFlightLog.makeModel == null || this.selectedFlightLog.registration == null) &&
+                           (this.crudMode == 'Add' || this.crudMode == 'Modify');
+    }
     private buildSearchString (event): string {
         let search: string = '';
         if (event.filters.flightDate) {

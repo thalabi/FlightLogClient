@@ -38,8 +38,8 @@ export class MakeModelCrudComponent implements OnInit {
         this.makeModelForm = this.formBuilder.group({
             name: [{value: ''}, Validators.required ]
         });
-    
     }
+    
     onRowSelect(event) {
         this.modifyAndDeleteButtonsDisable = false;
         this.crudMakeModel = Object.assign({}, this.selectedMakeModel);
@@ -49,11 +49,11 @@ export class MakeModelCrudComponent implements OnInit {
         this.displayDialog = true;
         this.crudMode = CrudEnum[crudMode];
         console.log('this.crudMode', this.crudMode);
-        if (this.crudMode == 'Add') {
-            this.makeModelForm.setValue({name: ''});
-        } else {
-            this.makeModelForm.setValue({name: this.crudMakeModel.name});
-        }
+        // if (this.crudMode == 'Add') {
+        //     this.makeModelForm.setValue({name: ''});
+        // } else {
+        //     this.makeModelForm.setValue({name: this.crudMakeModel.name});
+        // }
         switch (this.crudMode) {
             case CrudEnum.Add:
                 this.makeModelForm.setValue({name: ''});
@@ -146,7 +146,7 @@ export class MakeModelCrudComponent implements OnInit {
     }
     //
     private getMakeModels() {
-        this.flightLogService.getAllMakeModel2()
+        this.flightLogService.getAllMakeModel()
             .subscribe({
                 next: makeModelResponse => {
                     console.log('makeModelResponse', makeModelResponse);

@@ -13,7 +13,8 @@ import { MakeModel } from './domain/make-model';
 
 @Injectable()
 export class FlightLogServiceService {
-    SORT_COLUMN: string = 'flightDate';
+    readonly URL 
+    readonly SORT_COLUMN: string = 'flightDate';
     //PAGE_SIZE: number = 10;
     //URL: string = 'http://localhost:8080/flightLogs/?sort=' + this.SORT_COLUMN + '&size=' + this.PAGE_SIZE;
 
@@ -125,34 +126,12 @@ export class FlightLogServiceService {
               });;
     }
 
-    // TODO reuse the getAllMakeModel2() method
-    getAllMakeModel(): Observable<Array<string>> {
-        let url: string = 'http://localhost:8080/makeModels/search/findAllByOrderByName';
-        return this.http.get<MakeModelResponse>(url)
-            .map((response: any) => {
-                let makeModelResponse = response;
-                let makeModelArray = new Array<string>();
-                makeModelResponse._embedded.makeModels.forEach((makeModel) => {makeModelArray.push(makeModel.name)});
-                console.log('makeModelArray', makeModelArray);
-                return makeModelArray;
-            })
-            ;
-            //.catch(this.handleError);
-    }
-
-    // TODO rename to getAllMakeModel()
-    getAllMakeModel2(): Observable<MakeModelResponse> {
+    //
+    // make model
+    //
+    getAllMakeModel(): Observable<MakeModelResponse> {
         let url: string = 'http://localhost:8080/makeModels/search/findAllByOrderByName';
         return this.http.get<MakeModelResponse>(url);
-            // .map((response: any) => {
-            //     let makeModelResponse = response;
-            //     let makeModelArray = new Array<string>();
-            //     makeModelResponse._embedded.makeModels.forEach((makeModel) => {makeModelArray.push(makeModel.name)});
-            //     console.log('makeModelArray', makeModelArray);
-            //     return makeModelArray;
-            // })
-            // ;
-            //.catch(this.handleError);
     }
     
     addMakeModel(makeModel: MakeModel): Observable<MakeModelResponse> {
@@ -208,18 +187,12 @@ export class FlightLogServiceService {
               });;
     }
 
-    getAllRegistration(): Observable<Array<string>> {
+    //
+    // registration
+    //
+    getAllRegistration(): Observable<RegistrationResponse> {
         let url: string = 'http://localhost:8080/registrations/search/findAllByOrderByName';
-        return this.http.get<RegistrationResponse>(url)
-            .map((response: any) => {
-                let registrationResponse = response;
-                let registrationArray = new Array<string>();
-                registrationResponse._embedded.registrations.forEach((registration) => {registrationArray.push(registration.name)});
-                console.log('registrationArray', registrationArray);
-                return registrationArray;
-            })
-            ;
-            //.catch(this.handleError);
+        return this.http.get<RegistrationResponse>(url);
     }
     
     getAirportByIdentifierOrName(identifier: string, name: string): Observable<Array<Airport>> {

@@ -28,7 +28,7 @@
     <ng-template pTemplate="summary">
         <div class="ui-helper-clearfix" style="width:100%">
             <button type="button" pButton icon="fa-plus" style="float:left" (click)="showDialog('Add')" label="Add"></button>
-            <button type="button" pButton icon="fa-edit" style="float:left" (click)="showDialog('Update')" label="Modify" [disabled]="modifyAndDeleteButtonsDisable"></button>
+            <button type="button" pButton icon="fa-edit" style="float:left" (click)="showDialog('Modify')" label="Modify" [disabled]="modifyAndDeleteButtonsDisable"></button>
             <button type="button" pButton icon="fa-remove" style="float:left" (click)="showDialog('Delete')" label="Delete" [disabled]="modifyAndDeleteButtonsDisable"></button>
             <div style="text-align:right; margin-top: 0.3em;">
                 <span>Total: {{page.totalElements}}</span>
@@ -39,9 +39,7 @@
 
 <p-dialog header="Flight Log - {{crudMode}}" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
         <!-- TODO set the width on the p-dialog not on the div -->
-        <!-- <form (ngSubmit)="onSubmit()" #flightLogForm="ngForm"> -->
-        <form [formGroup]="flightLogForm" (ngSubmit)="onSubmit()" novalidate>
-            
+        <form (ngSubmit)="onSubmit()" #flightLogForm="ngForm">
 
         <div class="ui-g" style="width: 50em;">
             <!-- line 1 -->
@@ -49,9 +47,9 @@
                 <label for="flightDate">Flight date</label>
             </div>
             <div class="ui-g-9">
-                <p-calendar formControlName="flightDate" id="flightDate"[monthNavigator]="true" [yearNavigator]="true"
-                    [dateFormat]="'yy-mm-dd'" [showIcon]="true" readonlyInput="readonlyInput" 
-                    appendTo="body">
+                <p-calendar [(ngModel)]="selectedFlightLog.flightDate" name="flightDate" [monthNavigator]="true" [yearNavigator]="true"
+                    dateFormat="yy-mm-dd" [showIcon]="true" readonlyInput="readonlyInput" id="flightDate"
+                    [disabled]="crudMode == 'Delete'" appendTo="body">
                 </p-calendar>
             </div>
             <!-- line 2 -->
@@ -59,33 +57,37 @@
                 <label for="makeModel">Make and model</label>
             </div>
             <div class="ui-g-3">
-                <p-dropdown formControlName="makeModel" [options]="makeModelSelectItemArray" id="makeModel" [placeholder]="' '" [style]="{'width': '12rem', 'min-height': '1.8rem'}"></p-dropdown>
+                <!-- <input pInputText id="makeModel" [(ngModel)]="selectedFlightLog.makeModel" [readonly]="crudMode == 'Delete'"
+                    style="text-transform: uppercase;"/> -->
+                <p-dropdown [options]="makeModelSelectItemArray" [(ngModel)]="selectedFlightLog.makeModel" name="makeModel" [autoWidth]="false" [placeholder]="' '" [disabled]="crudMode == 'Delete'" [style]="{'width': '12rem', 'min-height': '1.8rem'}"></p-dropdown>
             </div>
             <div class="ui-g-3">
                 <label for="registration">Registration</label>
             </div>
             <div class="ui-g-3">
-                <p-dropdown formControlName="registration" [options]="registrationSelectItemArray" id="registration" [placeholder]="' '" [style]="{'width': '12rem', 'min-height': '1.8rem'}"></p-dropdown>
+                <!-- <input pInputText id="registration" [(ngModel)]="selectedFlightLog.registration" [readonly]="crudMode == 'Delete'" 
+                style="text-transform: uppercase;"/> -->
+                <p-dropdown [options]="registrationSelectItemArray" [(ngModel)]="selectedFlightLog.registration" name="registration" [autoWidth]="false" [placeholder]="' '" [disabled]="crudMode == 'Delete'" [style]="{'width': '12rem', 'min-height': '1.8rem'}"></p-dropdown>
             </div>
             <!-- line 3 -->
             <div class="ui-g-3">
                 <label for="pic">Pilot-in-command</label>
             </div>
             <div class="ui-g-3">
-                <input pInputText id="pic" formControlName="pic"/>
+                <input pInputText id="pic" [(ngModel)]="selectedFlightLog.pic" name="pic" [readonly]="crudMode == 'Delete'" />
             </div>
             <div class="ui-g-3">
                 <label for="coPilot">Co-pilot</label>
             </div>
             <div class="ui-g-3">
-                <input pInputText id="coPilot" formControlName="coPilot"/>
+                <input pInputText id="coPilot" [(ngModel)]="selectedFlightLog.coPilot" name="coPilot" [readonly]="crudMode == 'Delete'" />
             </div>
             <!-- line 4 -->
             <div class="ui-g-3">
                 <label for="routeFrom">From</label>
             </div>
             <div class="ui-g-3">
-                <p-autoComplete formControlName="fromAirport" id="fromAirport" [suggestions]="filteredAirportArray" (completeMethod)="searchAirport($event)" [field]="'identifier'" size="17" [forceSelection]="true" [readonly]="crudMode == 'Delete'">
+                <p-autoComplete [(ngModel)]="fromAirport" name="fromAirport" [suggestions]="filteredAirportArray" (completeMethod)="searchAirport($event)" [field]="'identifier'" size="17" [forceSelection]="true" [readonly]="crudMode == 'Delete'">
                     <ng-template let-airport pTemplate="item">
                         {{airport.identifier}} - {{airport.name}}
                     </ng-template>
@@ -95,7 +97,7 @@
                 <label for="routeTo">To</label>
             </div>
             <div class="ui-g-3">
-                <p-autoComplete formControlName="toAirport" id="toAirport" [suggestions]="filteredAirportArray" (completeMethod)="searchAirport($event)" [field]="'identifier'" size="17" [forceSelection]="true" [readonly]="crudMode == 'Delete'">
+                <p-autoComplete [(ngModel)]="toAirport" name="toAirport" [suggestions]="filteredAirportArray" (completeMethod)="searchAirport($event)" [field]="'identifier'" size="17" [forceSelection]="true" [readonly]="crudMode == 'Delete'">
                     <ng-template let-airport pTemplate="item">
                         {{airport.identifier}} - {{airport.name}}
                     </ng-template>
@@ -106,38 +108,36 @@
                 <label for="remarks">Remarks</label>
             </div>
             <div class="ui-g-9">
-                <textarea pInputTextarea formControlName="remarks" [rows]="3" autoResize="autoResize" style="width: 100%;" id="remarks" class="form-control"></textarea>
+                <textarea pInputTextarea [(ngModel)]="selectedFlightLog.remarks" name="remarks" [rows]="3" autoResize="autoResize" style="width: 100%;" [disabled]="crudMode == 'Delete'" id="remarks" name="remarks" #text="ngModel" class="form-control"></textarea>
             </div>
             <!-- line 6 -->
             <div class="ui-g-3">
                 <label for="dayDual">Day dual</label>
             </div>
             <div class="ui-g-3">
-                <input type="text" id="dayDual" formControlName="dayDual" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
-                <div [hidden]="flightLogForm.controls.dayDual.valid || flightLogForm.controls.dayDual.pristine" class="alert alert-danger">Invalid value</div>
+                <input type="text" id="dayDual" [(ngModel)]="selectedFlightLog.dayDual" name="dayDual" #dayDual="ngModel" [readonly]="crudMode == 'Delete'" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
+                <div [hidden]="dayDual.valid || dayDual.pristine" class="alert alert-danger">Invalid value</div>
             </div>
             <div class="ui-g-3">
                 <label for="daySolo">Day solo</label>
             </div>
             <div class="ui-g-3">
-                <input pInputText id="daySolo" formControlName="daySolo" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
-                <div [hidden]="flightLogForm.controls.daySolo.valid || flightLogForm.controls.daySolo.pristine" class="alert alert-danger">Invalid value</div>
-            </div>
+                <input pInputText id="daySolo" [(ngModel)]="selectedFlightLog.daySolo" name="daySolo" #daySolo="ngModel" [readonly]="crudMode == 'Delete'" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
+                <div [hidden]="daySolo.valid || daySolo.pristine" class="alert alert-danger">Invalid value</div>            </div>
 
             <!-- line 7 -->
             <div class="ui-g-3">
                 <label for="nightDual">Night dual</label>
             </div>
             <div class="ui-g-3">
-                <input pInputText id="nightDual" formControlName="nightDual" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
-                <div [hidden]="flightLogForm.controls.nightDual.valid || flightLogForm.controls.nightDual.pristine" class="alert alert-danger">Invalid value</div>
-            </div>
+                <input pInputText id="nightDual" [(ngModel)]="selectedFlightLog.nightDual" name="nightDual" #nightDual="ngModel" [readonly]="crudMode == 'Delete'" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
+                <div [hidden]="nightDual.valid || nightDual.pristine" class="alert alert-danger">Invalid value</div>            </div>
             <div class="ui-g-3">
                 <label for="nightSolo">Night solo</label>
             </div>
             <div class="ui-g-3">
-                <input pInputText id="nightSolo" formControlName="nightSolo" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
-                <div [hidden]="flightLogForm.controls.nightSolo.valid || flightLogForm.controls.nightSolo.pristine" class="alert alert-danger">Invalid value</div>
+                <input pInputText id="nightSolo" [(ngModel)]="selectedFlightLog.nightSolo" name="nightSolo" #nightSolo="ngModel" [readonly]="crudMode == 'Delete'" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
+                <div [hidden]="nightSolo.valid || nightSolo.pristine" class="alert alert-danger">Invalid value</div>
             </div>
 
             <!-- line 8 -->
@@ -145,63 +145,63 @@
                 <label for="instrumentImc">Inst IMC</label>
             </div>
             <div class="ui-g-3">
-                <input pInputText id="instrumentImc" formControlName="instrumentImc" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
-                <div [hidden]="flightLogForm.controls.instrumentImc.valid || flightLogForm.controls.instrumentImc.pristine" class="alert alert-danger">Invalid value</div>            
+                <input pInputText id="instrumentImc" [(ngModel)]="selectedFlightLog.instrumentImc" name="instrumentImc" #instrumentImc="ngModel" [readonly]="crudMode == 'Delete'" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
+                <div [hidden]="instrumentImc.valid || instrumentImc.pristine" class="alert alert-danger">Invalid value</div>            
             </div>
             <div class="ui-g-3">
                 <label for="instrumentFlightSim">Inst simulated</label>
             </div>
             <div class="ui-g-3">
-                <input pInputText id="instrumentFlightSim" formControlName="instrumentFlightSim" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
-                <div [hidden]="flightLogForm.controls.instrumentFlightSim.valid || flightLogForm.controls.instrumentFlightSim.pristine" class="alert alert-danger">Invalid value</div>            
+                <input pInputText id="instrumentFlightSim" [(ngModel)]="selectedFlightLog.instrumentFlightSim" name="instrumentFlightSim" #instrumentFlightSim="ngModel" [readonly]="crudMode == 'Delete'" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
+                <div [hidden]="instrumentFlightSim.valid || instrumentFlightSim.pristine" class="alert alert-danger">Invalid value</div>            
             </div>
             <!-- line 9 -->
             <div class="ui-g-3">
                 <label for="instrumentSimulated">Inst flight sim</label>
             </div>
             <div class="ui-g-3">
-                <input pInputText id="instrumentSimulated" formControlName="instrumentSimulated" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
-                <div [hidden]="flightLogForm.controls.instrumentSimulated.valid || flightLogForm.controls.instrumentSimulated.pristine" class="alert alert-danger">Invalid value</div>            
+                <input pInputText id="instrumentSimulated" [(ngModel)]="selectedFlightLog.instrumentSimulated" name="instrumentSimulated" #instrumentSimulated="ngModel" [readonly]="crudMode == 'Delete'" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
+                <div [hidden]="instrumentSimulated.valid || instrumentSimulated.pristine" class="alert alert-danger">Invalid value</div>            
             </div>
             <div class="ui-g-3">
                 <label for="instrumentNoIfrAppr">Inst # IFR appr</label>
             </div>
             <div class="ui-g-3">
-                <input pInputText id="instrumentNoIfrAppr" formControlName="instrumentNoIfrAppr" regexValidator="^\d*$"/>
-                <div [hidden]="flightLogForm.controls.instrumentNoIfrAppr.valid || flightLogForm.controls.instrumentNoIfrAppr.pristine" class="alert alert-danger">Invalid value</div>            
+                <input pInputText id="instrumentNoIfrAppr" [(ngModel)]="selectedFlightLog.instrumentNoIfrAppr" name="instrumentNoIfrAppr" #instrumentNoIfrAppr="ngModel" [readonly]="crudMode == 'Delete'" regexValidator="^\d*$"/>
+                <div [hidden]="instrumentNoIfrAppr.valid || instrumentNoIfrAppr.pristine" class="alert alert-danger">Invalid value</div>            
             </div>
             <!-- line 10 -->
             <div class="ui-g-3">
                 <label for="xcountryDay">X-cty day</label>
             </div>
             <div class="ui-g-3">
-                <input pInputText id="xcountryDay" formControlName="xcountryDay" />
+                <input pInputText id="xcountryDay" [(ngModel)]="selectedFlightLog.xcountryDay" name="xcountryDay" [readonly]="crudMode == 'Delete'" />
             </div>
             <div class="ui-g-3">
                 <label for="xcountryNight">X-cty night</label>
             </div>
             <div class="ui-g-3">
-                <input pInputText id="xcountryNight" formControlName="xcountryNight" />
+                <input pInputText id="xcountryNight" [(ngModel)]="selectedFlightLog.xcountryNight" name="xcountryNight" [readonly]="crudMode == 'Delete'" />
             </div>
             <!-- line 11 -->
             <div class="ui-g-3">
                 <label for="tosLdgsDay">T/Os & ldgs day</label>
             </div>
             <div class="ui-g-3">
-                <input pInputText id="tosLdgsDay" formControlName="selectedFlightLog.tosLdgsDay" />
+                <input pInputText id="tosLdgsDay" [(ngModel)]="selectedFlightLog.tosLdgsDay" name="tosLdgsDay" [readonly]="crudMode == 'Delete'" />
             </div>
             <div class="ui-g-3">
                 <label for="tosLdgsNight">T/Os & ldgs night</label>
             </div>
             <div class="ui-g-3">
-                <input pInputText id="tosLdgsNight" formControlName="selectedFlightLog.tosLdgsNight" />
+                <input pInputText id="tosLdgsNight" [(ngModel)]="selectedFlightLog.tosLdgsNight" name="tosLdgsNight" [readonly]="crudMode == 'Delete'" />
+                <div>{{flightLogForm.invalid}}</div>
             </div>
-            <div>{{flightLogForm.status}}</div>
             <p-footer>
                 <div class="ui-g-6">
                     <!-- TODO replace disabled logic with a function -->
                     <button pButton type="submit" label="Submit"
-                    [disabled]="flightLogForm.invalid"></button>
+                    [disabled]="disableSubmitButton() && flightLogForm.invalid"></button>
                 </div>
                 <div class="ui-g-6">
                     <button pButton type="reset" label="Cancel" (click)="onCancel()"></button>
