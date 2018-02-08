@@ -2,6 +2,8 @@ import { FlightLog } from "../domain/flight-log";
 import { FormGroup, Validators, FormBuilder } from "@angular/forms";
 import { Airport } from "../domain/airport";
 
+const controlNames: Array<string> = ['flightDate', 'makeModel', 'registration', 'pic', 'coPilot', 'fromAirport', 'toAirport', 'remarks', 'dayDual', 'daySolo', 'nightDual', 'nightSolo', 'instrumentSimulated', 'instrumentFlightSim', 'xcountryDay', 'xcountryNight', 'instrumentImc', 'instrumentNoIfrAppr', 'tosLdgsDay', 'tosLdgsNight'];
+
 export const FlightLogHelper = {
     createForm(formBuilder: FormBuilder): FormGroup {
         return formBuilder.group({
@@ -80,7 +82,17 @@ export const FlightLogHelper = {
         flightLog.instrumentNoIfrAppr = flightLogForm.get('instrumentNoIfrAppr').value;
         flightLog.tosLdgsDay = flightLogForm.get('tosLdgsDay').value;
         flightLog.tosLdgsNight = flightLogForm.get('tosLdgsNight').value;
-        
+        console.log('flightLog: ', flightLog);
+    },
+    enableForm(flightLogForm: FormGroup) {
+        for (let controlName of controlNames) {
+            flightLogForm.get(controlName).enable();
+        }
+    },
+    disableForm(flightLogForm: FormGroup) {
+        for (let controlName of controlNames) {
+            flightLogForm.get(controlName).disable();
+        }
     }
     
 }

@@ -20,7 +20,10 @@ export class RegexValidatorDirective implements Validator {
     regexValidatorF(nameRe: RegExp): ValidatorFn {
         return (control: AbstractControl): {[key: string]: any} => {
             console.log('control.value', control.value);
-
+            // if input is null, then consider it valid
+            if (control.value == null) {
+                return null;
+            }
             // test
             // let re: RegExp = new RegExp('^\\d*(\\.\\d{0,1}){0,1}$');
             // let r: boolean = re.test('12.12');

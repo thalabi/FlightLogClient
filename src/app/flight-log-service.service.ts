@@ -10,6 +10,7 @@ import { Airport } from './domain/airport';
 import { AirportResponse } from './response/airport-response';
 import { RegistrationResponse } from './response/registration-response';
 import { MakeModel } from './domain/make-model';
+import { PilotResponse } from './response/pilot-response';
 
 @Injectable()
 export class FlightLogServiceService {
@@ -193,6 +194,13 @@ export class FlightLogServiceService {
     getAllRegistration(): Observable<RegistrationResponse> {
         let url: string = 'http://localhost:8080/registrations/search/findAllByOrderByName';
         return this.http.get<RegistrationResponse>(url);
+    }
+    //
+    // pilot
+    //
+    getAllPilot(): Observable<PilotResponse> {
+        let url: string = 'http://localhost:8080/pilots/search/findAllByOrderByName';
+        return this.http.get<PilotResponse>(url);
     }
     
     getAirportByIdentifierOrName(identifier: string, name: string): Observable<Array<Airport>> {

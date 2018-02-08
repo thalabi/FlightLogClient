@@ -1,6 +1,6 @@
 <p-table [value]="flightLogArray" [dataKey]="'_links.flightLog.href'"
     [lazy]="true" [rows]="10" [paginator]="true" [totalRecords]="page.totalElements" [rowsPerPageOptions]="[5,10,20]" (onLazyLoad)="getTableRowsLazy($event)" responsive="true" selectionMode="single" [(selection)]="selectedFlightLog"
-    dataKey="_links.flightLog.href" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [responsive]="true">
+    dataKey="_links.flightLog.href" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [responsive]="true" #dt>
 
     <ng-template pTemplate="caption">
         <div style="text-align:right">
@@ -12,6 +12,12 @@
         <tr>
             <th *ngFor="let col of cols" [ngStyle]="col.style">
                     {{col.header}}
+            </th>
+        </tr>
+        <tr>
+            <th *ngFor="let col of cols" [ngSwitch]="col.field">
+                <input *ngSwitchCase="'flightDate'" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [ngStyle]="col.style">
+                <input *ngSwitchDefault pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [ngStyle]="col.style">
             </th>
         </tr>
     </ng-template>
@@ -72,13 +78,14 @@
                 <label for="pic">Pilot-in-command</label>
             </div>
             <div class="ui-g-3">
-                <input pInputText id="pic" formControlName="pic"/>
+                <p-dropdown formControlName="pic" [options]="pilotSelectItemArray" id="pic" [placeholder]="' '" [style]="{'width': '12rem', 'min-height': '1.8rem'}"></p-dropdown>
             </div>
             <div class="ui-g-3">
                 <label for="coPilot">Co-pilot</label>
             </div>
             <div class="ui-g-3">
-                <input pInputText id="coPilot" formControlName="coPilot"/>
+                <!-- <input pInputText id="coPilot" formControlName="coPilot"/> -->
+                <p-dropdown formControlName="coPilot" [options]="pilotSelectItemArray" id="coPilot" [placeholder]="' '" [style]="{'width': '12rem', 'min-height': '1.8rem'}"></p-dropdown>
             </div>
             <!-- line 4 -->
             <div class="ui-g-3">
@@ -188,13 +195,13 @@
                 <label for="tosLdgsDay">T/Os & ldgs day</label>
             </div>
             <div class="ui-g-3">
-                <input pInputText id="tosLdgsDay" formControlName="selectedFlightLog.tosLdgsDay" />
+                <input pInputText id="tosLdgsDay" formControlName="tosLdgsDay" />
             </div>
             <div class="ui-g-3">
                 <label for="tosLdgsNight">T/Os & ldgs night</label>
             </div>
             <div class="ui-g-3">
-                <input pInputText id="tosLdgsNight" formControlName="selectedFlightLog.tosLdgsNight" />
+                <input pInputText id="tosLdgsNight" formControlName="tosLdgsNight" />
             </div>
             <div>{{flightLogForm.status}}</div>
             <p-footer>

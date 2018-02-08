@@ -13,6 +13,8 @@ import { Registration } from '../domain/registration';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CrudEnum } from '../crud-enum';
 import { FlightLogHelper } from './flight-log-table-helper';
+import { PilotResponse } from '../response/pilot-response';
+import { Pilot } from '../domain/pilot';
 
 @Component({
     selector: 'app-flight-log-table',
@@ -36,10 +38,11 @@ export class FlightLogTableComponent implements OnInit {
     
     modifyAndDeleteButtonsDisable: boolean = true;
     crudMode: CrudEnum;
-    displayDialog: boolean;
+    displayDialog: boolean = false;
 
     makeModelSelectItemArray: Array<SelectItem>;
     registrationSelectItemArray: Array<SelectItem>;
+    pilotSelectItemArray: Array<SelectItem>;
 
     filteredAirportArray: Array<Airport>;
     fromAirport: Airport;
@@ -49,6 +52,7 @@ export class FlightLogTableComponent implements OnInit {
     savedLazyLoadEvent: LazyLoadEvent;
 
     constructor(private formBuilder: FormBuilder, private flightLogService: FlightLogServiceService) {
+        console.log('this.displayDialog', this.displayDialog);
         this.flightLogForm = FlightLogHelper.createForm(formBuilder);
     }
 
@@ -91,6 +95,7 @@ export class FlightLogTableComponent implements OnInit {
 
         this.getMakeModels();
         this.getRegistrations();
+        this.getPilots();
     }
 
     private getMakeModels() {
@@ -113,6 +118,18 @@ export class FlightLogTableComponent implements OnInit {
             this.registrationSelectItemArray = new Array<SelectItem>();
             registrationResponse._embedded.registrations.forEach((registration: Registration) => {
                 this.registrationSelectItemArray.push({ label: registration.name, value: registration.name });
+            });
+        });
+    }
+    
+    private getPilots() {
+        this.flightLogService.getAllPilot().subscribe(data => {
+            console.log('data', data);
+            let pilotResponse: PilotResponse = data;
+            console.log('pilotResponse', pilotResponse);
+            this.pilotSelectItemArray = new Array<SelectItem>();
+            pilotResponse._embedded.pilots.forEach((pilot: Pilot) => {
+                this.pilotSelectItemArray.push({ label: pilot.name, value: pilot.name });
             });
         });
     }
@@ -159,20 +176,11 @@ export class FlightLogTableComponent implements OnInit {
         this.fromAirport.identifier = this.crudFlightLog.routeFrom;
         this.toAirport = new Airport();
         this.toAirport.identifier = this.crudFlightLog.routeTo;
-
-        //this.originalRow = Object.assign({}, this.selectedFlightLog); //clone
-        //this.selectedRowIndex = this.flightLogArray.indexOf(this.selectedFlightLog);
-        //console.log('this.selectedRowIndex', this.selectedRowIndex);
     }
     onRowUnselect(event) {
         console.log(event);
         this.modifyAndDeleteButtonsDisable = true;
         this.selectedFlightLog = new FlightLog(); // This a hack. If don't init selectedFlightLog, dialog will produce exception
-    }
-    private resetDialoForm() {
-        this.selectedFlightLog = new FlightLog();
-        this.fromAirport = new Airport();
-        this.toAirport = new Airport();
     }
     showDialog(crudMode: string) {
         this.crudMode = CrudEnum[crudMode];
@@ -182,16 +190,26 @@ export class FlightLogTableComponent implements OnInit {
         switch (this.crudMode) {
             case CrudEnum.Add:
                 this.flightLogForm.reset();
-                this.flightLogForm.get('flightDate').enable();
+                this.flightLogForm.get('flightDate').setValue(new Date());
+                this.flightLogForm.get('makeModel').setValue('PA28-181');
+                this.flightLogForm.get('registration').setValue('GQGD');
+                this.flightLogForm.get('pic').setValue('Tarif Halabi');
+                let cyooAirport: Airport = new Airport();
+                cyooAirport.identifier = 'CYOO';
+                this.flightLogForm.get('fromAirport').setValue(cyooAirport);
+                this.flightLogForm.get('toAirport').setValue(cyooAirport);
+                this.flightLogForm.get('pic').setValue('Tarif Halabi');
+                this.flightLogForm.get('remarks').setValue('VFR - ');
+                FlightLogHelper.enableForm(this.flightLogForm);
+                this.crudFlightLog = new FlightLog();
                 break;
             case CrudEnum.Update:
-// TODO continue here
-                FlightLogHelper.copyToForm(this.crudFlightLog, this.flightLogForm);        
-                this.flightLogForm.get('flightDate').enable();
+                FlightLogHelper.copyToForm(this.crudFlightLog, this.flightLogForm);
+                FlightLogHelper.enableForm(this.flightLogForm);
                 break;
             case CrudEnum.Delete:
-                // this.makeModelForm.setValue({name: this.crudMakeModel.name});
-                // this.makeModelForm.get('name').disable();
+                FlightLogHelper.copyToForm(this.crudFlightLog, this.flightLogForm);
+                FlightLogHelper.disableForm(this.flightLogForm);
                 break;
             default:
                 console.error('this.crudMode is invalid. this.crudMode: ' + this.crudMode);
@@ -200,13 +218,8 @@ export class FlightLogTableComponent implements OnInit {
     }
 
     onSubmit() {
-        // this.selectedFlightLog.makeModel = this.selectedFlightLog.makeModel.toUpperCase();
-        // this.selectedFlightLog.registration = this.selectedFlightLog.registration.toUpperCase();
-        // console.log('this.selectedFlightLog', this.selectedFlightLog);
-        // this.selectedFlightLog.routeFrom = this.fromAirport ? this.fromAirport.identifier : '';
-        // this.selectedFlightLog.routeTo = this.toAirport ? this.toAirport.identifier : '';
         FlightLogHelper.copyFromForm(this.flightLogForm, this.crudFlightLog);
-        
+        console.log('this.crudFlightLog: ', this.crudFlightLog);
         switch (this.crudMode) {
             case CrudEnum.Add:
                 this.flightLogService.addFlightLog(this.crudFlightLog).subscribe({
@@ -258,28 +271,19 @@ export class FlightLogTableComponent implements OnInit {
     private afterCrud() {
         this.displayDialog = false;
         this.modifyAndDeleteButtonsDisable = true;
-        this.getTableRowsLazy(this.savedLazyLoadEvent);
         this.resetDialoForm();
+        this.getTableRowsLazy(this.savedLazyLoadEvent);
+    }
+    private resetDialoForm() {
+        this.flightLogForm.reset();
+        this.selectedFlightLog = new FlightLog();
+        this.fromAirport = new Airport();
+        this.toAirport = new Airport();
     }
     onCancel() {
         this.resetDialoForm();
         this.displayDialog = false;
-        //console.log('this.originalRow', this.originalRow);
-        //console.log('this.selectedRowIndex', this.selectedRowIndex);
-        //console.log('this.flightLogArray[this.selectedRowIndex]', this.flightLogArray[this.selectedRowIndex]);
-        //console.log('this.originalRow', this.originalRow)
-        //this.flightLogArray[this.selectedRowIndex] = this.originalRow;
-        //console.log('this.flightLogArray[this.selectedRowIndex]', this.flightLogArray[this.selectedRowIndex]);
     }
-
-    // results: string[];
-
-    // search(event) {
-    //     // this.mylookupservice.getResults(event.query).then(data => {
-    //     //     this.results = data;
-    //     // });
-    //     this.results = ['C-152', 'C-172', 'C-172RG', 'PA28-180', 'PA28-181'];
-    // }
 
     searchAirport(event) {
         this.flightLogService.getAirportByIdentifierOrName(event.query, event.query).subscribe({
