@@ -55,9 +55,9 @@
                 <label for="flightDate">Flight date</label>
             </div>
             <div class="ui-g-9">
-                <p-calendar formControlName="flightDate" id="flightDate"[monthNavigator]="true" [yearNavigator]="true"
-                    [dateFormat]="'yy-mm-dd'" [showIcon]="true" readonlyInput="readonlyInput" 
-                    appendTo="body">
+                <p-calendar formControlName="flightDate" id="flightDate" [monthNavigator]="true" [yearNavigator]="true"
+                    [dateFormat]="'yy-mm-dd'" [showIcon]="true" [readonlyInput]="true" [showOnFocus]="false"
+                    [appendTo]="body">
                 </p-calendar>
             </div>
             <!-- line 2 -->
@@ -84,7 +84,6 @@
                 <label for="coPilot">Co-pilot</label>
             </div>
             <div class="ui-g-3">
-                <!-- <input pInputText id="coPilot" formControlName="coPilot"/> -->
                 <p-dropdown formControlName="coPilot" [options]="pilotSelectItemArray" id="coPilot" [placeholder]="' '" [style]="{'width': '12rem', 'min-height': '1.8rem'}"></p-dropdown>
             </div>
             <!-- line 4 -->

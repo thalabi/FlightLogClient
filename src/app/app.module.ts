@@ -14,6 +14,7 @@ import { RegexValidatorDirective } from './regex-validator.directive';
 import { MenuComponent } from './menu/menu.component';
 import { AppRoutingModule } from './/app-routing.module';
 import { MakeModelCrudComponent } from './make-model-crud/make-model-crud.component';
+import { CalTestComponent } from './cal-test/cal-test.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { MakeModelCrudComponent } from './make-model-crud/make-model-crud.compon
     FlightLogTableComponent,
     RegexValidatorDirective,
     MenuComponent,
-    MakeModelCrudComponent
+    MakeModelCrudComponent,
+    CalTestComponent
   ],
   imports: [
     BrowserModule,

@@ -90,8 +90,8 @@ export class FlightLogTableComponent implements OnInit {
             this.columnOptions.push({label: this.colsPart2[i].header, value: this.colsPart2[i]});
         }
         //this.getTableRows();
-        this.selectedFlightLog = new FlightLog();
-        this.selectedFlightLog.flightDate = new Date();
+        //this.selectedFlightLog = new FlightLog();
+        //this.selectedFlightLog.flightDate = new Date();
 
         this.getMakeModels();
         this.getRegistrations();
@@ -164,8 +164,6 @@ export class FlightLogTableComponent implements OnInit {
             }});
     }
 
-    //selectedRowIndex: number;
-    //originalRow: FlightLog;
     onRowSelect(event) {
         console.log(event);
 
