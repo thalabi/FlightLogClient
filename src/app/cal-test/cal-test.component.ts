@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, VERSION } from '@angular/core';
 
 @Component({
     selector: 'app-cal-test',
@@ -9,11 +9,13 @@ export class CalTestComponent implements OnInit {
 
     displayDialog: boolean;
     date1: Date;
+    version: any;
     
 constructor() { }
 
     ngOnInit() {
         this.date1= new Date();
+        this.version = VERSION.full;
     }
 
     showDialog() {
