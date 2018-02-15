@@ -34,7 +34,7 @@ export class FlightLogServiceService {
     }
 
     getPageOld(first: number, size: number, search: string): Observable<FlightLogResponse> {
-        let url: string = 'http://localhost:8080/flightLogController/findAllBySpec2/?page=' + first/size + '&size=' + size + '&search=' + search;
+        let url: string = 'http://localhost:8080/flightLogController/findAll/?page=' + first/size + '&size=' + size + '&search=' + search;
         console.log('url', url);
         //let url: string = this.URL + '&page=' + first/size;
         return this.http.get<FlightLogResponse>(url);
@@ -49,10 +49,14 @@ export class FlightLogServiceService {
     }
     getPage(first: number, size: number, search: string): Observable<FlightLogResponse> {
         console.log('first, size, search', first, size, search)
-        // let url: string = 'http://localhost:8080/flightLogController/findAllBySpec2/?page=' + first/size + '&size=' + size + '&search=' + search;
-        let url: string = 'http://localhost:8080/flightLogController/findAllBySpec2/';
+        // let url: string = 'http://localhost:8080/flightLogController/findAll/?page=' + first/size + '&size=' + size + '&search=' + search;
+        let url: string = 'http://localhost:8080/flightLogController/findAll/';
         if ((first || first == 0) && size) {
-            url += '?page=' + first/size + '&size=' + size;
+            if (first == 999999) { // 999999 is indictaor of last page
+                url += '?page=' + first + '&size=' + size;
+            } else {
+                url += '?page=' + first/size + '&size=' + size;
+            }
         } else {
             url += '?page=0&size=9999';
         }

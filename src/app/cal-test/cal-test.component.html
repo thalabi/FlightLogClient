@@ -2,8 +2,14 @@
 
 <button type="button" pButton (click)="showDialog()" label="Button"></button>
 
-<p-dialog [(visible)]="displayDialog">
+<p-dialog [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
 
-    <p-calendar [(ngModel)]="date1"></p-calendar>
+    <div class="ui-g" style="width: 50em; height: 50em;">
+
+    <p-calendar [(ngModel)]="date1" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2050"
+    [dateFormat]="'yy-mm-dd'" [showIcon]="true" [readonlyInput]="true" [showOnFocus]="false"
+    [appendTo]="body"></p-calendar>
+
+    </div>
 
 </p-dialog>    

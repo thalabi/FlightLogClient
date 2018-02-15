@@ -15,6 +15,7 @@ import { CrudEnum } from '../crud-enum';
 import { FlightLogHelper } from './flight-log-table-helper';
 import { PilotResponse } from '../response/pilot-response';
 import { Pilot } from '../domain/pilot';
+import { forEach } from '@angular/router/src/utils/collection';
 
 @Component({
     selector: 'app-flight-log-table',
@@ -22,6 +23,8 @@ import { Pilot } from '../domain/pilot';
     styleUrls: ['./flight-log-table.component.css']
 })
 export class FlightLogTableComponent implements OnInit {
+
+    readonly fieldNames: Array<string> = ['flightDate', 'makeModel', 'registration', 'pic', 'coPilot', 'routeFrom', 'routeTo', 'remarks', 'dayDual', 'daySolo', 'nightDual', 'nightSolo', 'instrumentSimulated', 'instrumentFlightSim', 'xcountryDay', 'xcountryNight', 'instrumentImc', 'instrumentNoIfrAppr', 'tosLdgsDay', 'tosLdgsNight'];
 
     flightLogForm: FormGroup;
 
@@ -191,12 +194,11 @@ export class FlightLogTableComponent implements OnInit {
                 this.flightLogForm.get('flightDate').setValue(new Date());
                 this.flightLogForm.get('makeModel').setValue('PA28-181');
                 this.flightLogForm.get('registration').setValue('GQGD');
-                this.flightLogForm.get('pic').setValue('Tarif Halabi');
+                this.flightLogForm.get('pic').setValue('Self');
                 let cyooAirport: Airport = new Airport();
                 cyooAirport.identifier = 'CYOO';
                 this.flightLogForm.get('fromAirport').setValue(cyooAirport);
                 this.flightLogForm.get('toAirport').setValue(cyooAirport);
-                this.flightLogForm.get('pic').setValue('Tarif Halabi');
                 this.flightLogForm.get('remarks').setValue('VFR - ');
                 FlightLogHelper.enableForm(this.flightLogForm);
                 this.crudFlightLog = new FlightLog();
@@ -292,26 +294,15 @@ export class FlightLogTableComponent implements OnInit {
 
     private buildSearchString (event): string {
         let search: string = '';
-        if (event.filters.flightDate) {
-            search = search + 'flightDate:' + event.filters.flightDate.value + ',';
-        }
-        if (event.filters.registration) {
-            search = search + 'registration:' + event.filters.registration.value + ',';
-        }
-        if (event.filters.makeModel) {
-            search = search + 'makeModel:' + event.filters.makeModel.value + ',';
-        }
-        if (event.filters.pic) {
-            search = search + 'pic:' + event.filters.pic.value + ',';
-        }
-        if (event.filters.coPilot) {
-            search = search + 'coPilot:' + event.filters.coPilot.value + ',';
-        }
-        if (event.filters.routeFrom) {
-            search = search + 'routeFrom:' + event.filters.routeFrom.value + ',';
-        }
-        if (event.filters.routeTo) {
-            search = search + 'routeTo:' + event.filters.routeTo.value + ',';
+        for (let field of this.fieldNames) {
+            if (event.filters[field]) {
+                // if filter does not start with = < or > then prefix with =
+                if (event.filters[field].value[0] == '=' || event.filters[field].value[0] == '<' || event.filters[field].value[0] == '>') {
+                    search = search + field + event.filters[field].value + ',';
+                } else {
+                    search = search + field + encodeURIComponent('=') + event.filters[field].value + ',';
+                }
+            }
         }
         search = search.slice(0, -1);
         console.log('search', search);

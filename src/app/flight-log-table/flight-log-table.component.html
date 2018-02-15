@@ -1,6 +1,6 @@
 <p-table [value]="flightLogArray" [dataKey]="'_links.flightLog.href'"
     [lazy]="true" [rows]="10" [paginator]="true" [totalRecords]="page.totalElements" [rowsPerPageOptions]="[5,10,20]" (onLazyLoad)="getTableRowsLazy($event)" responsive="true" selectionMode="single" [(selection)]="selectedFlightLog"
-    dataKey="_links.flightLog.href" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [responsive]="true" #dt>
+    dataKey="_links.flightLog.href" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [responsive]="true" [first]="999999" #dt>
 
     <ng-template pTemplate="caption">
         <div style="text-align:right">
@@ -55,7 +55,7 @@
                 <label for="flightDate">Flight date</label>
             </div>
             <div class="ui-g-9">
-                <p-calendar formControlName="flightDate" id="flightDate" [monthNavigator]="true" [yearNavigator]="true"
+                <p-calendar formControlName="flightDate" id="flightDate" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2050"
                     [dateFormat]="'yy-mm-dd'" [showIcon]="true" [readonlyInput]="true" [showOnFocus]="false"
                     [appendTo]="body">
                 </p-calendar>
