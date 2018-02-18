@@ -4,9 +4,9 @@
             <th>Make & Model</th>
         </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-rowData>
-        <tr [pSelectableRow]="rowData">
-            <td>{{ rowData.name }}</td>
+    <ng-template pTemplate="body" let-makeModel>
+        <tr [pSelectableRow]="makeModel">
+            <td>{{ makeModel.name }}</td>
         </tr>
     </ng-template>
     <ng-template pTemplate="summary">

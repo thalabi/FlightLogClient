@@ -26,7 +26,8 @@
         <tr [pSelectableRow]="rowData">
             <td *ngFor="let col of cols">
                     <span *ngIf="col.field === 'flightDate'">{{rowData[col.field] | date:'yyyy-MM-dd'}}</span>
-                    <span *ngIf="col.field !== 'flightDate'">{{rowData[col.field]}}</span>
+                    <span *ngIf="col.field === 'remarks'"><app-abbreviate [text]="rowData[col.field]" [maxLength]="20"></app-abbreviate></span>
+                    <span *ngIf="col.field !== 'flightDate' && col.field !== 'remarks'">{{rowData[col.field]}}</span>
             </td>
         </tr>
     </ng-template>
@@ -202,7 +203,7 @@
             <div class="ui-g-3">
                 <input pInputText id="tosLdgsNight" formControlName="tosLdgsNight" />
             </div>
-            <div>{{flightLogForm.status}}</div>
+            <!-- <div>{{flightLogForm.status}}</div> -->
             <p-footer>
                 <div class="ui-g-6">
                     <!-- TODO replace disabled logic with a function -->

@@ -69,7 +69,8 @@ export class FlightLogTableComponent implements OnInit {
             {field: 'coPilot', header: 'Co Pilot', style: {'width': '8em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis'}},
             {field: 'routeFrom', header: 'From', style: {'width': '4em'}},
             {field: 'routeTo', header: 'To', style: {'width': '4em'}},
-            {field: 'remarks', header: 'Remarks', style: {'width': '30em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis'}},
+            // {field: 'remarks', header: 'Remarks', style: {'width': '30em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis'}},
+            {field: 'remarks', header: 'Remarks', style: {'width': '10em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis'}},
             {field: 'dayDual', header: 'D D', style: {'width': '3em'}},
             {field: 'daySolo', header: 'D S', style: {'width': '3em'}},
             {field: 'nightDual', header: 'N D', style: {'width': '3em'}},
@@ -292,19 +293,6 @@ export class FlightLogTableComponent implements OnInit {
             }});
     }
 
-    // private validateForm(): boolean {
-    //     let totalTime: number = this.flightLogForm.get('dayDual').value + this.flightLogForm.get('daySolo').value
-    //                                 + this.flightLogForm.get('nightDual').value + this.flightLogForm.get('nightSolo').value;
-    //     return ! /* not */ (totalTime == 0);
-    // }
-    // private passwordConfirming(c: AbstractControl): {invalid: boolean} {
-    //     console.log('passwordConfirming running');
-    //     if (c.get('dayDual').value == 0) {
-    //         console.log('passwordConfirming invalid');
-    //         return {invalid: true};
-    //     }
-    // }
-    
     private buildSearchString (event): string {
         let search: string = '';
         for (let field of this.fieldNames) {
