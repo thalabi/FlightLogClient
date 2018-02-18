@@ -10,7 +10,7 @@ import { Airport } from '../domain/airport';
 import { MakeModel } from '../domain/make-model';
 import { RegistrationResponse } from '../response/registration-response';
 import { Registration } from '../domain/registration';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { CrudEnum } from '../crud-enum';
 import { FlightLogHelper } from './flight-log-table-helper';
 import { PilotResponse } from '../response/pilot-response';
@@ -292,6 +292,19 @@ export class FlightLogTableComponent implements OnInit {
             }});
     }
 
+    // private validateForm(): boolean {
+    //     let totalTime: number = this.flightLogForm.get('dayDual').value + this.flightLogForm.get('daySolo').value
+    //                                 + this.flightLogForm.get('nightDual').value + this.flightLogForm.get('nightSolo').value;
+    //     return ! /* not */ (totalTime == 0);
+    // }
+    // private passwordConfirming(c: AbstractControl): {invalid: boolean} {
+    //     console.log('passwordConfirming running');
+    //     if (c.get('dayDual').value == 0) {
+    //         console.log('passwordConfirming invalid');
+    //         return {invalid: true};
+    //     }
+    // }
+    
     private buildSearchString (event): string {
         let search: string = '';
         for (let field of this.fieldNames) {

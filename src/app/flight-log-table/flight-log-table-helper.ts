@@ -1,8 +1,21 @@
 import { FlightLog } from "../domain/flight-log";
-import { FormGroup, Validators, FormBuilder } from "@angular/forms";
+import { FormGroup, Validators, FormBuilder, AbstractControl } from "@angular/forms";
 import { Airport } from "../domain/airport";
 
 const controlNames: Array<string> = ['flightDate', 'makeModel', 'registration', 'pic', 'coPilot', 'fromAirport', 'toAirport', 'remarks', 'dayDual', 'daySolo', 'nightDual', 'nightSolo', 'instrumentSimulated', 'instrumentFlightSim', 'xcountryDay', 'xcountryNight', 'instrumentImc', 'instrumentNoIfrAppr', 'tosLdgsDay', 'tosLdgsNight'];
+
+function fieldNullOrZero(control: AbstractControl, controlName: string): boolean {
+    return ! /* not */ control.get(controlName).value || control.get(controlName).value == 0;
+}
+function validateForm(control: AbstractControl): {invalid: boolean} {
+    console.log('validateForm running');
+    if (fieldNullOrZero(control, 'dayDual') && fieldNullOrZero(control, 'daySolo') &&
+        fieldNullOrZero(control, 'nightDual') && fieldNullOrZero(control, 'nightSolo')) {
+        console.log('validateForm invalid');
+        return {invalid: true};
+    }
+    return null;
+}
 
 export const FlightLogHelper = {
     createForm(formBuilder: FormBuilder): FormGroup {
@@ -29,7 +42,7 @@ export const FlightLogHelper = {
             instrumentNoIfrAppr: [''],
             tosLdgsDay: [''],
             tosLdgsNight: ['']
-        });
+        }, {validator: validateForm});
     },
     copyToForm(flightLog: FlightLog, flightLogForm: FormGroup) {
         flightLogForm.patchValue({flightDate: flightLog.flightDate});
