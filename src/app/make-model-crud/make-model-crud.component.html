@@ -1,4 +1,4 @@
-<p-table [value]="makeModelArray" [dataKey]="'_links.makeModel.href'" selectionMode="single" [(selection)]="selectedMakeModel" (onRowSelect)="onRowSelect($event)">
+<p-table [value]="makeModelArray" [dataKey]="'_links.makeModel.href'" selectionMode="single" [(selection)]="selectedMakeModel" (onRowSelect)="onRowSelect($event)" [scrollable]="true" scrollHeight="25rem">
     <ng-template pTemplate="header">
         <tr>
             <th>Make & Model</th>
