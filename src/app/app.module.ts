@@ -16,6 +16,7 @@ import { AppRoutingModule } from './/app-routing.module';
 import { MakeModelCrudComponent } from './make-model-crud/make-model-crud.component';
 import { AbbreviateComponent } from './abbreviate/abbreviate.component';
 import { PilotCrudComponent } from './pilot-crud/pilot-crud.component';
+import { RegistrationCrudComponent } from './registration-crud/registration-crud.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { PilotCrudComponent } from './pilot-crud/pilot-crud.component';
     MenuComponent,
     MakeModelCrudComponent,
     AbbreviateComponent,
-    PilotCrudComponent
+    PilotCrudComponent,
+    RegistrationCrudComponent
   ],
   imports: [
     BrowserModule,

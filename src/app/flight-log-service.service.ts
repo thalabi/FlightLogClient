@@ -12,6 +12,7 @@ import { RegistrationResponse } from './response/registration-response';
 import { MakeModel } from './domain/make-model';
 import { PilotResponse } from './response/pilot-response';
 import { Pilot } from './domain/pilot';
+import { Registration } from './domain/registration';
 
 @Injectable()
 export class FlightLogServiceService {
@@ -199,6 +200,59 @@ export class FlightLogServiceService {
         let url: string = 'http://localhost:8080/registrations/search/findAllByOrderByName';
         return this.http.get<RegistrationResponse>(url);
     }
+
+    addRegistration(registration: Registration): Observable<RegistrationResponse> {
+        let url: string = 'http://localhost:8080/registrations';
+        console.log('registration: ', registration);
+        registration.created = new Date();
+        registration.modified = new Date();
+        console.log('registration: ', registration);
+        return this.http.post<Registration>(url, registration)
+            .map((response: any) => {
+                let registrationResponse = response;
+                console.log('registrationResponse', registrationResponse);
+                return registrationResponse;
+            })
+            .catch((httpErrorResponse: HttpErrorResponse) => {
+                this.handleError(httpErrorResponse);
+                return null;
+              });;
+    }
+
+    updateRegistration(registration: Registration): Observable<RegistrationResponse> {
+        console.log('registration: ', registration);
+        registration.modified = new Date();
+        console.log('registration: ', registration);
+        
+        let url: string = registration._links.registration.href;
+        console.log('url: ', url);
+        return this.http.put<Registration>(url, registration)
+            .map((response: any) => {
+                let registrationResponse = response;
+                console.log('registrationResponse', registrationResponse);
+                return registrationResponse;
+            })
+            .catch((httpErrorResponse: HttpErrorResponse) => {
+                this.handleError(httpErrorResponse);
+                return null;
+              });;
+    }
+
+    deleteRegistration(registration: Registration): Observable<RegistrationResponse> {
+        let url: string = registration._links.registration.href;
+        console.log('url: ', url);
+        return this.http.delete<void>(url)
+            .map((response: any) => {
+                let registrationResponse = response;
+                console.log('registrationResponse', registrationResponse);
+                return registrationResponse;
+            })
+            .catch((httpErrorResponse: HttpErrorResponse) => {
+                this.handleError(httpErrorResponse);
+                return null;
+              });;
+    }
+
     //
     // pilot
     //
