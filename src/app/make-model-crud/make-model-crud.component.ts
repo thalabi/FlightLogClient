@@ -49,11 +49,6 @@ export class MakeModelCrudComponent implements OnInit {
         this.displayDialog = true;
         this.crudMode = CrudEnum[crudMode];
         console.log('this.crudMode', this.crudMode);
-        // if (this.crudMode == 'Add') {
-        //     this.makeModelForm.setValue({name: ''});
-        // } else {
-        //     this.makeModelForm.setValue({name: this.crudMakeModel.name});
-        // }
         switch (this.crudMode) {
             case CrudEnum.Add:
                 this.makeModelForm.setValue({name: ''});
@@ -153,10 +148,6 @@ export class MakeModelCrudComponent implements OnInit {
                     this.makeModelResponse = makeModelResponse;
                     console.log('this.makeModelResponse', this.makeModelResponse);
                     this.makeModelArray = this.makeModelResponse._embedded.makeModels;
-                    // this.flightLogArray.forEach(flightLog => {
-                    //     flightLog.airportFrom = new Airport();
-                    //     flightLog.airportFrom.identifier = flightLog.routeFrom;
-                    // })
                     console.log('this.makeModelArray', this.makeModelArray);
             }});
 }

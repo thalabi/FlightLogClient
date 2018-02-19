@@ -5,5 +5,5 @@ export class Pilot {
     created: Date;
     modified: Date;
     
-    _links: {registration: {href: string}};
+    _links: {pilot: {href: string}};
 }

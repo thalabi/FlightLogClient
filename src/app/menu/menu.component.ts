@@ -26,8 +26,7 @@ export class MenuComponent implements OnInit {
                 { label: 'Aircraft', 
                 // routerLink: '/schoolYearStudents', routerLinkActiveOptions: { exact: true } 
                 },
-                { label: 'Airports', 
-                // routerLink: '/schoolYearCrud', routerLinkActiveOptions: { exact: true } 
+                { label: 'Pilot/Passenger', routerLink: 'pilotCrud', routerLinkActiveOptions: { exact: true } 
                 },
             ]
         },

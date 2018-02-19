@@ -15,6 +15,7 @@ import { MenuComponent } from './menu/menu.component';
 import { AppRoutingModule } from './/app-routing.module';
 import { MakeModelCrudComponent } from './make-model-crud/make-model-crud.component';
 import { AbbreviateComponent } from './abbreviate/abbreviate.component';
+import { PilotCrudComponent } from './pilot-crud/pilot-crud.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { AbbreviateComponent } from './abbreviate/abbreviate.component';
     RegexValidatorDirective,
     MenuComponent,
     MakeModelCrudComponent,
-    AbbreviateComponent
+    AbbreviateComponent,
+    PilotCrudComponent
   ],
   imports: [
     BrowserModule,

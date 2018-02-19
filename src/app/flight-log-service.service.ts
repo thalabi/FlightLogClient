@@ -11,6 +11,7 @@ import { AirportResponse } from './response/airport-response';
 import { RegistrationResponse } from './response/registration-response';
 import { MakeModel } from './domain/make-model';
 import { PilotResponse } from './response/pilot-response';
+import { Pilot } from './domain/pilot';
 
 @Injectable()
 export class FlightLogServiceService {
@@ -177,7 +178,6 @@ export class FlightLogServiceService {
     }
 
     deleteMakeModel(makeModel: MakeModel): Observable<MakeModelResponse> {
-        
         let url: string = makeModel._links.makeModel.href;
         console.log('url: ', url);
         return this.http.delete<void>(url)
@@ -206,7 +206,59 @@ export class FlightLogServiceService {
         let url: string = 'http://localhost:8080/pilots/search/findAllByOrderByName';
         return this.http.get<PilotResponse>(url);
     }
+
+    addPilot(pilot: Pilot): Observable<PilotResponse> {
+        let url: string = 'http://localhost:8080/pilots';
+        console.log('pilot: ', pilot);
+        pilot.created = new Date();
+        pilot.modified = new Date();
+        console.log('pilot: ', pilot);
+        return this.http.post<Pilot>(url, pilot)
+            .map((response: any) => {
+                let pilotResponse = response;
+                console.log('pilotResponse', pilotResponse);
+                return pilotResponse;
+            })
+            .catch((httpErrorResponse: HttpErrorResponse) => {
+                this.handleError(httpErrorResponse);
+                return null;
+              });;
+    }
     
+    updatePilot(pilot: Pilot): Observable<PilotResponse> {
+        console.log('pilot: ', pilot);
+        pilot.modified = new Date();
+        console.log('pilot: ', pilot);
+        
+        let url: string = pilot._links.pilot.href;
+        console.log('url: ', url);
+        return this.http.put<Pilot>(url, pilot)
+            .map((response: any) => {
+                let pilotResponse = response;
+                console.log('pilotResponse', pilotResponse);
+                return pilotResponse;
+            })
+            .catch((httpErrorResponse: HttpErrorResponse) => {
+                this.handleError(httpErrorResponse);
+                return null;
+              });;
+    }
+
+    deletePilot(pilot: Pilot): Observable<PilotResponse> {
+        let url: string = pilot._links.pilot.href;
+        console.log('url: ', url);
+        return this.http.delete<void>(url)
+            .map((response: any) => {
+                let pilotResponse = response;
+                console.log('pilotResponse', pilotResponse);
+                return pilotResponse;
+            })
+            .catch((httpErrorResponse: HttpErrorResponse) => {
+                this.handleError(httpErrorResponse);
+                return null;
+              });;
+    }
+
     getAirportByIdentifierOrName(identifier: string, name: string): Observable<Array<Airport>> {
         let url: string = 'http://localhost:8080/airports/search/findByIdentifierContainingIgnoreCaseOrNameContainingIgnoreCase?identifier=' + identifier + '&name=' + name;
         return this.http.get<AirportResponse>(url)
