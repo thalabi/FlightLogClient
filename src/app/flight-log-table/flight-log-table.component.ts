@@ -71,20 +71,25 @@ export class FlightLogTableComponent implements OnInit {
             {field: 'routeTo', header: 'To', style: {'width': '4em'}},
             // {field: 'remarks', header: 'Remarks', style: {'width': '30em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis'}},
             {field: 'remarks', header: 'Remarks', style: {'width': '10em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis'}},
-            {field: 'dayDual', header: 'D D', style: {'width': '3em'}},
-            {field: 'daySolo', header: 'D S', style: {'width': '3em'}},
-            {field: 'nightDual', header: 'N D', style: {'width': '3em'}},
-            {field: 'nightSolo', header: 'N S', style: {'width': '3em'}},
+            {field: 'dayDual', header: 'D D', tooltipText: 'Day Dual', style: {'width': '3em'}},
+            {field: 'daySolo', header: 'D S', tooltipText: 'Day Solo', style: {'width': '3em'}},
+            {field: 'nightDual', header: 'N D', tooltipText: 'Night Dual', style: {'width': '3em'}},
+            {field: 'nightSolo', header: 'N S', tooltipText: 'Night Solo', style: {'width': '3em'}},
+
+            {field: 'xcountryDay', header: 'X D', tooltipText: 'Cross Country Day', style: {'width': '3em'}},
+            {field: 'xcountryNight', header: 'X N', tooltipText: 'Cross Country Night', style: {'width': '3em'}},
+            {field: 'tosLdgsDay', header: 'L D', tooltipText: 'Total Landings Day', style: {'width': '3em'}},
+            {field: 'tosLdgsNight', header: 'L N', tooltipText: 'Total Landings Night', style: {'width': '3em'}},            
         ];
         this.colsPart2 = [
             {field: 'instrumentSimulated', header: 'Inst Sim', style: {'width': '3em'}},
             {field: 'instrumentFlightSim', header: 'Inst Flt Sim', style: {'width': '3em'}},
-            {field: 'xcountryDay', header: 'X D', style: {'width': '3em'}},
-            {field: 'xcountryNight', header: 'X N', style: {'width': '3em'}},
+            // {field: 'xcountryDay', header: 'X D', style: {'width': '3em'}},
+            // {field: 'xcountryNight', header: 'X N', style: {'width': '3em'}},
             {field: 'instrumentImc', header: 'Inst IMC', style: {'width': '3em'}},
             {field: 'instrumentNoIfrAppr', header: '# IFR Apr', style: {'width': '3em'}},
-            {field: 'tosLdgsDay', header: 'L D', style: {'width': '3em'}},
-            {field: 'tosLdgsNight', header: 'L N', style: {'width': '3em'}},            
+            // {field: 'tosLdgsDay', header: 'L D', style: {'width': '3em'}},
+            // {field: 'tosLdgsNight', header: 'L N', style: {'width': '3em'}},            
         ];
         this.columnOptions = [];
         for(let i = 0; i < this.cols.length; i++) {

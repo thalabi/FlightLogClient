@@ -14,7 +14,6 @@ import { RegexValidatorDirective } from './regex-validator.directive';
 import { MenuComponent } from './menu/menu.component';
 import { AppRoutingModule } from './/app-routing.module';
 import { MakeModelCrudComponent } from './make-model-crud/make-model-crud.component';
-import { CalTestComponent } from './cal-test/cal-test.component';
 import { AbbreviateComponent } from './abbreviate/abbreviate.component';
 
 @NgModule({
@@ -24,7 +23,6 @@ import { AbbreviateComponent } from './abbreviate/abbreviate.component';
     RegexValidatorDirective,
     MenuComponent,
     MakeModelCrudComponent,
-    CalTestComponent,
     AbbreviateComponent
   ],
   imports: [

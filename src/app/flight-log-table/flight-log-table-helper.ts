@@ -8,10 +8,8 @@ function fieldNullOrZero(control: AbstractControl, controlName: string): boolean
     return ! /* not */ control.get(controlName).value || control.get(controlName).value == 0;
 }
 function validateForm(control: AbstractControl): {invalid: boolean} {
-    console.log('validateForm running');
     if (fieldNullOrZero(control, 'dayDual') && fieldNullOrZero(control, 'daySolo') &&
         fieldNullOrZero(control, 'nightDual') && fieldNullOrZero(control, 'nightSolo')) {
-        console.log('validateForm invalid');
         return {invalid: true};
     }
     return null;
