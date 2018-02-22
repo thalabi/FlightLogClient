@@ -1,4 +1,4 @@
-<p-table [value]="pilotArray" [dataKey]="'_links.pilot.href'" selectionMode="single" [(selection)]="selectedPilot" (onRowSelect)="onRowSelect($event)" [scrollable]="true" scrollHeight="25rem">
+<p-table [value]="pilotArray" [dataKey]="'_links.pilot.href'" selectionMode="single" [(selection)]="selectedPilot" (onRowSelect)="onRowSelect($event)" [scrollable]="true" scrollHeight="25rem" sortField="name">
     <ng-template pTemplate="header">
         <tr>
             <th>Pilot / Passenger</th>

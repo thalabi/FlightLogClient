@@ -17,6 +17,7 @@ import { MakeModelCrudComponent } from './make-model-crud/make-model-crud.compon
 import { AbbreviateComponent } from './abbreviate/abbreviate.component';
 import { PilotCrudComponent } from './pilot-crud/pilot-crud.component';
 import { RegistrationCrudComponent } from './registration-crud/registration-crud.component';
+import { TestArraySortComponent } from './test-array-sort/test-array-sort.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { RegistrationCrudComponent } from './registration-crud/registration-crud
     MakeModelCrudComponent,
     AbbreviateComponent,
     PilotCrudComponent,
-    RegistrationCrudComponent
+    RegistrationCrudComponent,
+    TestArraySortComponent
   ],
   imports: [
     BrowserModule,

@@ -4,6 +4,7 @@ import { FlightLogTableComponent } from './flight-log-table/flight-log-table.com
 import { MakeModelCrudComponent } from './make-model-crud/make-model-crud.component';
 import { PilotCrudComponent } from './pilot-crud/pilot-crud.component';
 import { RegistrationCrudComponent } from './registration-crud/registration-crud.component';
+import { TestArraySortComponent } from './test-array-sort/test-array-sort.component';
 
 const routes: Routes = [
     { path: '', redirectTo: '/flightLogTable', pathMatch: 'full' },
@@ -11,6 +12,7 @@ const routes: Routes = [
     { path: 'makeModelCrud', component: MakeModelCrudComponent },
     { path: 'registrationCrud', component: RegistrationCrudComponent },
     { path: 'pilotCrud', component: PilotCrudComponent },
+    { path: 'testArraySort', component: TestArraySortComponent },
     ];
 
 @NgModule({

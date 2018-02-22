@@ -150,6 +150,6 @@ export class MakeModelCrudComponent implements OnInit {
                     this.makeModelArray = this.makeModelResponse._embedded.makeModels;
                     console.log('this.makeModelArray', this.makeModelArray);
             }});
-}
+    }
     
 }

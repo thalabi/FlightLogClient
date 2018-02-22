@@ -6,11 +6,11 @@ import { CrudEnum } from '../crud-enum';
 import { FlightLogServiceService } from '../flight-log-service.service';
 
 @Component({
-    selector: 'app-registration-crud',
-    templateUrl: './registration-crud.component.html',
-    styleUrls: ['./registration-crud.component.css']
+    selector: 'app-test-array-sort',
+    templateUrl: './test-array-sort.component.html',
+    styleUrls: ['./test-array-sort.component.css']
 })
-export class RegistrationCrudComponent implements OnInit {
+export class TestArraySortComponent implements OnInit {
 
     registrationArray: Array<Registration>;
     selectedRegistration: Registration;
