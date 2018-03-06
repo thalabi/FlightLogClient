@@ -13,11 +13,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { RegexValidatorDirective } from './regex-validator.directive';
 import { MenuComponent } from './menu/menu.component';
 import { AppRoutingModule } from './/app-routing.module';
-import { MakeModelCrudComponent } from './make-model-crud/make-model-crud.component';
 import { AbbreviateComponent } from './abbreviate/abbreviate.component';
 import { PilotCrudComponent } from './pilot-crud/pilot-crud.component';
-import { RegistrationCrudComponent } from './registration-crud/registration-crud.component';
-import { TestArraySortComponent } from './test-array-sort/test-array-sort.component';
+import { TestArraySortComponent } from './single-column-entity-crud/single-column-entity-crud.component';
 
 @NgModule({
   declarations: [
@@ -25,10 +23,8 @@ import { TestArraySortComponent } from './test-array-sort/test-array-sort.compon
     FlightLogTableComponent,
     RegexValidatorDirective,
     MenuComponent,
-    MakeModelCrudComponent,
     AbbreviateComponent,
     PilotCrudComponent,
-    RegistrationCrudComponent,
     TestArraySortComponent
   ],
   imports: [

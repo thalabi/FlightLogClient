@@ -5,10 +5,8 @@ import { FlightLogResponse } from '../response/flight-log-response';
 import { HalResponsePage } from '../hal/hal-response-page';
 import { HalResponseLinks } from '../hal/hal-response-links';
 import { LazyLoadEvent, SelectItem } from 'primeng/primeng';
-import { MakeModelResponse } from '../response/make-model-response';
 import { Airport } from '../domain/airport';
 import { MakeModel } from '../domain/make-model';
-import { RegistrationResponse } from '../response/registration-response';
 import { Registration } from '../domain/registration';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { CrudEnum } from '../crud-enum';
@@ -16,6 +14,7 @@ import { FlightLogHelper } from './flight-log-table-helper';
 import { PilotResponse } from '../response/pilot-response';
 import { Pilot } from '../domain/pilot';
 import { forEach } from '@angular/router/src/utils/collection';
+import { ISingleColumnEntityResponse } from '../response/i-single-column-entity-response';
 
 @Component({
     selector: 'app-flight-log-table',
@@ -108,11 +107,11 @@ export class FlightLogTableComponent implements OnInit {
     }
 
     private getMakeModels() {
-        this.flightLogService.getAllMakeModel().subscribe({
+        this.flightLogService.getAllSingleColumnEntity('makeModel').subscribe({
             next: data => {
-                let makeModelResponse: MakeModelResponse = data;
+                let makeModelResponse: ISingleColumnEntityResponse = data;
                 this.makeModelSelectItemArray = new Array<SelectItem>();
-                makeModelResponse._embedded.makeModels.forEach((makeModel: MakeModel) => {
+                makeModelResponse._embedded['makeModels'].forEach((makeModel: MakeModel) => {
                     this.makeModelSelectItemArray.push({ label: makeModel.name, value: makeModel.name });
                 });
             }
@@ -120,12 +119,12 @@ export class FlightLogTableComponent implements OnInit {
     }
 
     private getRegistrations() {
-        this.flightLogService.getAllRegistration().subscribe(data => {
+        this.flightLogService.getAllSingleColumnEntity('registration').subscribe(data => {
             console.log('data', data);
-            let registrationResponse: RegistrationResponse = data;
+            let registrationResponse: ISingleColumnEntityResponse = data;
             console.log('registrationResponse', registrationResponse);
             this.registrationSelectItemArray = new Array<SelectItem>();
-            registrationResponse._embedded.registrations.forEach((registration: Registration) => {
+            registrationResponse._embedded['registrations'].forEach((registration: Registration) => {
                 this.registrationSelectItemArray.push({ label: registration.name, value: registration.name });
             });
         });

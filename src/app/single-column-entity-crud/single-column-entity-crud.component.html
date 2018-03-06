@@ -1,12 +1,12 @@
-<p-table [value]="makeModelArray" [dataKey]="'_links.makeModel.href'" selectionMode="single" [(selection)]="selectedMakeModel" (onRowSelect)="onRowSelect($event)" [scrollable]="true" scrollHeight="25rem">
+<p-table [value]="rowArray" [dataKey]="'_links.self.href'" selectionMode="single" [(selection)]="selectedRow" (onRowSelect)="onRowSelect($event)" [scrollable]="true" scrollHeight="25rem" sortField="name">
     <ng-template pTemplate="header">
         <tr>
-            <th>Make & Model</th>
+            <th>{{tableNameCapitalized}}</th>
         </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-makeModel>
-        <tr [pSelectableRow]="makeModel">
-            <td>{{ makeModel.name }}</td>
+    <ng-template pTemplate="body" let-row>
+        <tr [pSelectableRow]="row">
+            <td>{{ row.name }}</td>
         </tr>
     </ng-template>
     <ng-template pTemplate="summary">
@@ -19,20 +19,20 @@
     <!-- </p-footer> -->
 </p-table>
 
-<p-dialog header="Make & Model - {{crudMode}}" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
-    <form [formGroup]="makeModelForm" (ngSubmit)="onSubmit()" novalidate>
+<p-dialog header="{{tableNameCapitalized}} - {{crudMode}}" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
+    <form [formGroup]="crudForm" (ngSubmit)="onSubmit()" novalidate>
         <div class="ui-g">
             <div class="ui-g-6">
-                <label for="makeModel">Make & model</label>
+                <label for="registration">{{tableNameCapitalized}}</label>
             </div>
             <div class="ui-g-6">
-                <input pInputText id="makeModel" formControlName="name"/>
+                <input pInputText id="registration" formControlName="name"/>
             </div>
             <p-footer>
                 <div class="ui-g-6">
                     <!-- TODO replace disabled logic with a function -->
                     <button pButton type="submit" label="Submit"
-                    [disabled]="makeModelForm.invalid"></button>
+                    [disabled]="crudForm.invalid"></button>
                 </div>
                 <div class="ui-g-6">
                     <button pButton type="reset" label="Cancel" (click)="onCancel()"></button>

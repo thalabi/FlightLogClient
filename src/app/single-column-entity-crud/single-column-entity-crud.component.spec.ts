@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TestArraySortComponent } from './test-array-sort.component';
+import { TestArraySortComponent } from './single-column-entity-crud.component';
 
 describe('TestArraySortComponent', () => {
   let component: TestArraySortComponent;

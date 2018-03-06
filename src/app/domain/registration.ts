@@ -1,9 +1,12 @@
-export class Registration {
+import { ISingleColumnEntity } from "./i-single-column-entity";
+
+export class Registration implements ISingleColumnEntity {
     id: number;
+
     name: string;
 
     created: Date;
     modified: Date;
     
-    _links: {registration: {href: string}};
+    _links: {self: {href: string}};
 }

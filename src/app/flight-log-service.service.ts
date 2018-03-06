@@ -5,14 +5,12 @@ import { FlightLog } from './domain/flight-log';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 import { FlightLogResponse } from './response/flight-log-response';
-import { MakeModelResponse } from './response/make-model-response';
+import { ISingleColumnEntityResponse } from './response/i-single-column-entity-response';
 import { Airport } from './domain/airport';
 import { AirportResponse } from './response/airport-response';
-import { RegistrationResponse } from './response/registration-response';
-import { MakeModel } from './domain/make-model';
 import { PilotResponse } from './response/pilot-response';
 import { Pilot } from './domain/pilot';
-import { Registration } from './domain/registration';
+import { ISingleColumnEntity } from './domain/i-single-column-entity';
 
 @Injectable()
 export class FlightLogServiceService {
@@ -133,129 +131,6 @@ export class FlightLogServiceService {
               });;
     }
 
-    //
-    // make model
-    //
-    getAllMakeModel(): Observable<MakeModelResponse> {
-        let url: string = 'http://localhost:8080/makeModels/search/findAllByOrderByName';
-        return this.http.get<MakeModelResponse>(url);
-    }
-    
-    addMakeModel(makeModel: MakeModel): Observable<MakeModelResponse> {
-        let url: string = 'http://localhost:8080/makeModels';
-        console.log('makeModel: ', makeModel);
-        makeModel.created = new Date();
-        makeModel.modified = new Date();
-        console.log('makeModel: ', makeModel);
-        return this.http.post<MakeModel>(url, makeModel)
-            .map((response: any) => {
-                let makeModelResponse = response;
-                console.log('makeModelResponse', makeModelResponse);
-                return makeModelResponse;
-            })
-            .catch((httpErrorResponse: HttpErrorResponse) => {
-                this.handleError(httpErrorResponse);
-                return null;
-              });;
-    }
-
-    updateMakeModel(makeModel: MakeModel): Observable<MakeModelResponse> {
-        console.log('makeModel: ', makeModel);
-        makeModel.modified = new Date();
-        console.log('makeModel: ', makeModel);
-        
-        let url: string = makeModel._links.makeModel.href;
-        console.log('url: ', url);
-        return this.http.put<MakeModel>(url, makeModel)
-            .map((response: any) => {
-                let makeModelResponse = response;
-                console.log('makeModelResponse', makeModelResponse);
-                return makeModelResponse;
-            })
-            .catch((httpErrorResponse: HttpErrorResponse) => {
-                this.handleError(httpErrorResponse);
-                return null;
-              });;
-    }
-
-    deleteMakeModel(makeModel: MakeModel): Observable<MakeModelResponse> {
-        let url: string = makeModel._links.makeModel.href;
-        console.log('url: ', url);
-        return this.http.delete<void>(url)
-            .map((response: any) => {
-                let makeModelResponse = response;
-                console.log('makeModelResponse', makeModelResponse);
-                return makeModelResponse;
-            })
-            .catch((httpErrorResponse: HttpErrorResponse) => {
-                this.handleError(httpErrorResponse);
-                return null;
-              });;
-    }
-
-    //
-    // registration
-    //
-    getAllRegistration(): Observable<RegistrationResponse> {
-        let url: string = 'http://localhost:8080/registrations/search/findAllByOrderByName';
-        return this.http.get<RegistrationResponse>(url);
-    }
-
-    addRegistration(registration: Registration): Observable<RegistrationResponse> {
-        let url: string = 'http://localhost:8080/registrations';
-        console.log('registration: ', registration);
-        registration.created = new Date();
-        registration.modified = new Date();
-        console.log('registration: ', registration);
-        return this.http.post<Registration>(url, registration)
-            .map((response: any) => {
-                let registrationResponse = response;
-                console.log('registrationResponse', registrationResponse);
-                return registrationResponse;
-            })
-            .catch((httpErrorResponse: HttpErrorResponse) => {
-                this.handleError(httpErrorResponse);
-                return null;
-              });;
-    }
-
-    updateRegistration(registration: Registration): Observable<RegistrationResponse> {
-        console.log('registration: ', registration);
-        registration.modified = new Date();
-        console.log('registration: ', registration);
-        
-        let url: string = registration._links.registration.href;
-        console.log('url: ', url);
-        return this.http.put<Registration>(url, registration)
-            .map((response: any) => {
-                let registrationResponse = response;
-                console.log('registrationResponse', registrationResponse);
-                return registrationResponse;
-            })
-            .catch((httpErrorResponse: HttpErrorResponse) => {
-                this.handleError(httpErrorResponse);
-                return null;
-              });;
-    }
-
-    deleteRegistration(registration: Registration): Observable<RegistrationResponse> {
-        let url: string = registration._links.registration.href;
-        console.log('url: ', url);
-        return this.http.delete<void>(url)
-            .map((response: any) => {
-                let registrationResponse = response;
-                console.log('registrationResponse', registrationResponse);
-                return registrationResponse;
-            })
-            .catch((httpErrorResponse: HttpErrorResponse) => {
-                this.handleError(httpErrorResponse);
-                return null;
-              });;
-    }
-
-    //
-    // pilot
-    //
     getAllPilot(): Observable<PilotResponse> {
         let url: string = 'http://localhost:8080/pilots/search/findAllByOrderByName';
         return this.http.get<PilotResponse>(url);
@@ -323,6 +198,65 @@ export class FlightLogServiceService {
             })
             ;
             //.catch(this.handleError);
+    }
+
+    //
+    // single entity end points
+    //
+    getAllSingleColumnEntity(tableName: string): Observable<ISingleColumnEntityResponse> {
+        let url: string = 'http://localhost:8080/' + tableName + 's/search/findAllByOrderByName';
+        return this.http.get<ISingleColumnEntityResponse>(url);
+    }
+
+    addSingleColumnEntity(tableName: string, row: ISingleColumnEntity): Observable<ISingleColumnEntityResponse> {
+        let url: string = 'http://localhost:8080/' + tableName + 's';
+        console.log('row: ', row);
+        row.created = new Date();
+        row.modified = new Date();
+        console.log('row: ', row);
+        return this.http.post<ISingleColumnEntity>(url, row)
+            .map((singleColumnEntityResponse: any) => {
+                console.log('singleColumnEntityResponse', singleColumnEntityResponse);
+                return singleColumnEntityResponse;
+            })
+            .catch((httpErrorResponse: HttpErrorResponse) => {
+                this.handleError(httpErrorResponse);
+                return null;
+              });;
+    }
+
+    updateSingleColumnEntity(row: ISingleColumnEntity): Observable<ISingleColumnEntityResponse> {
+        console.log('row: ', row);
+        row.modified = new Date();
+        console.log('row: ', row);
+        
+        let url: string = row._links.self.href;
+        console.log('url: ', url);
+        return this.http.put<ISingleColumnEntity>(url, row)
+            .map((response: any) => {
+                let singleColumnEntityResponse = response;
+                console.log('singleColumnEntityResponse', singleColumnEntityResponse);
+                return singleColumnEntityResponse;
+            })
+            .catch((httpErrorResponse: HttpErrorResponse) => {
+                this.handleError(httpErrorResponse);
+                return null;
+              });;
+    }
+
+    deleteSingleColumnEntity(row: ISingleColumnEntity): Observable<ISingleColumnEntityResponse> {
+        let url: string = row._links.self.href;
+        console.log('url: ', url);
+        return this.http.delete<void>(url)
+            .map((response: any) => {
+                let singleColumnEntityResponse = response;
+                console.log('singleColumnEntityResponse', singleColumnEntityResponse);
+                return singleColumnEntityResponse;
+            })
+            .catch((httpErrorResponse: HttpErrorResponse) => {
+                this.handleError(httpErrorResponse);
+                return null;
+              });;
     }
     // TODO needs rewrite
     private handleError(httpErrorResponse: HttpErrorResponse) {
