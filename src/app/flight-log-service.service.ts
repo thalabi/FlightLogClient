@@ -204,7 +204,9 @@ export class FlightLogServiceService {
     // single entity end points
     //
     getAllSingleColumnEntity(tableName: string): Observable<ISingleColumnEntityResponse> {
-        let url: string = 'http://localhost:8080/' + tableName + 's/search/findAllByOrderByName';
+        // TODO use the capitalize method in single-column-crud and make it a global method
+        let url: string = 'http://localhost:8080/' + tableName + 's/search/findAllByOrderBy' + tableName.charAt(0).toUpperCase() + tableName.substr(1);
+        console.log(url);
         return this.http.get<ISingleColumnEntityResponse>(url);
     }
 

@@ -3,7 +3,7 @@ import { ISingleColumnEntity } from "./i-single-column-entity";
 export class MakeModel implements ISingleColumnEntity {
     id: number;
     
-    name: string;
+    makeModel: string;
 
     created: Date;
     modified: Date;

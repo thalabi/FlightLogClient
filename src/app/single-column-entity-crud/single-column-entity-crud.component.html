@@ -1,4 +1,4 @@
-<p-table [value]="rowArray" [dataKey]="'_links.self.href'" selectionMode="single" [(selection)]="selectedRow" (onRowSelect)="onRowSelect($event)" [scrollable]="true" scrollHeight="25rem" sortField="name">
+<p-table [value]="rowArray" [dataKey]="'_links.self.href'" selectionMode="single" [(selection)]="selectedRow" (onRowSelect)="onRowSelect($event)" [scrollable]="true" scrollHeight="25rem" [sortField]="column1">
     <ng-template pTemplate="header">
         <tr>
             <th>{{tableNameCapitalized}}</th>
@@ -6,7 +6,7 @@
     </ng-template>
     <ng-template pTemplate="body" let-row>
         <tr [pSelectableRow]="row">
-            <td>{{ row.name }}</td>
+            <td>{{ row[column1] }}</td>
         </tr>
     </ng-template>
     <ng-template pTemplate="summary">
@@ -26,7 +26,7 @@
                 <label for="registration">{{tableNameCapitalized}}</label>
             </div>
             <div class="ui-g-6">
-                <input pInputText id="registration" formControlName="name"/>
+                <input pInputText id="registration" formControlName="column1"/>
             </div>
             <p-footer>
                 <div class="ui-g-6">

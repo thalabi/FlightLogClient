@@ -112,7 +112,7 @@ export class FlightLogTableComponent implements OnInit {
                 let makeModelResponse: ISingleColumnEntityResponse = data;
                 this.makeModelSelectItemArray = new Array<SelectItem>();
                 makeModelResponse._embedded['makeModels'].forEach((makeModel: MakeModel) => {
-                    this.makeModelSelectItemArray.push({ label: makeModel.name, value: makeModel.name });
+                    this.makeModelSelectItemArray.push({ label: makeModel.makeModel, value: makeModel.makeModel });
                 });
             }
         });

@@ -28,6 +28,7 @@ export class TestArraySortComponent implements OnInit {
 
     tableName: string;
     tableNameCapitalized: string;
+    column1: string;
 
     constructor(private formBuilder: FormBuilder, private flightLogService: FlightLogServiceService, private route: ActivatedRoute) {
         this.createForm();
@@ -36,6 +37,7 @@ export class TestArraySortComponent implements OnInit {
     ngOnInit() {
         this.route.params.subscribe(params => {
             this.tableName = params['tableName'];
+            this.column1 = this.tableName;
             console.log('tableName', this.tableName);
             this.getSingleColumnEntity();
             this.tableNameCapitalized = this.capitalize(this.tableName);
@@ -44,7 +46,7 @@ export class TestArraySortComponent implements OnInit {
     }
     createForm() {
         this.crudForm = this.formBuilder.group({
-            name: [{value: ''}, Validators.required ]
+            column1: [{value: ''}, Validators.required ]
         });
     }
     
@@ -59,16 +61,16 @@ export class TestArraySortComponent implements OnInit {
         console.log('this.crudMode', this.crudMode);
         switch (this.crudMode) {
             case CrudEnum.Add:
-                this.crudForm.setValue({name: ''});
-                this.crudForm.get('name').enable();
+                this.crudForm.setValue({column1: ''});
+                this.crudForm.get('column1').enable();
                 break;
             case CrudEnum.Update:
-                this.crudForm.setValue({name: this.crudRow.name});
-                this.crudForm.get('name').enable();
+                this.crudForm.setValue({column1: this.crudRow[this.column1]});
+                this.crudForm.get('column1').enable();
                 break;
             case CrudEnum.Delete:
-                this.crudForm.setValue({name: this.crudRow.name});
-                this.crudForm.get('name').disable();
+                this.crudForm.setValue({column1: this.crudRow[this.column1]});
+                this.crudForm.get('column1').disable();
                 break;
             default:
                 console.error('this.crudMode is invalid. this.crudMode: ' + this.crudMode);
@@ -79,11 +81,11 @@ export class TestArraySortComponent implements OnInit {
         const crudFormModel = this.crudForm.value;
         console.log('this.crudForm.value', this.crudForm.value);
         console.log('crudFormModel', crudFormModel);
-        console.log('name', this.crudForm.get('name').value);
+        console.log('column1', this.crudForm.get('column1').value);
         switch (this.crudMode) {
             case CrudEnum.Add:
                 this.crudRow = <ISingleColumnEntity>{};
-                this.crudRow.name = this.crudForm.get('name').value;
+                this.crudRow[this.column1] = this.crudForm.get('column1').value;
                 this.flightLogService.addSingleColumnEntity(this.tableName, this.crudRow).subscribe({
                     next: savedRegistration => {
                         console.log('savedRegistration', savedRegistration);
@@ -99,7 +101,7 @@ export class TestArraySortComponent implements OnInit {
 
                 break;
             case CrudEnum.Update:
-                this.crudRow.name = this.crudForm.get('name').value;
+                this.crudRow[this.column1] = this.crudForm.get('column1').value;
                 this.flightLogService.updateSingleColumnEntity(this.crudRow).subscribe({
                     next: savedRow => {
                         console.log('savedRow', savedRow);
