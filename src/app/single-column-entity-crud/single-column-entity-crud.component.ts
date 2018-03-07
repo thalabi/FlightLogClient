@@ -5,13 +5,14 @@ import { FlightLogServiceService } from '../flight-log-service.service';
 import { ActivatedRoute } from '@angular/router';
 import { ISingleColumnEntity } from '../domain/i-single-column-entity';
 import { ISingleColumnEntityResponse } from '../response/i-single-column-entity-response';
+import { StringUtils } from '../string-utils';
 
 @Component({
     selector: 'app-test-array-sort',
     templateUrl: './single-column-entity-crud.component.html',
     styleUrls: ['./single-column-entity-crud.component.css']
 })
-export class TestArraySortComponent implements OnInit {
+export class SingleColumnEntityCrudComponent implements OnInit {
 
     rowArray: Array<ISingleColumnEntity>;
     selectedRow: ISingleColumnEntity;
@@ -40,7 +41,7 @@ export class TestArraySortComponent implements OnInit {
             this.column1 = this.tableName;
             console.log('tableName', this.tableName);
             this.getSingleColumnEntity();
-            this.tableNameCapitalized = this.capitalize(this.tableName);
+            this.tableNameCapitalized = StringUtils.capitalize(this.tableName);
         });
         this.row = <ISingleColumnEntity>{};
     }
@@ -158,9 +159,5 @@ export class TestArraySortComponent implements OnInit {
                     this.rowArray = singleEntityResponse._embedded[this.tableName+'s'];
                     console.log('this.rowArray', this.rowArray);
             }});
-    }
-    
-    private capitalize(text: string): string {
-        return text.charAt(0).toUpperCase() + text.substr(1);
     }
 }

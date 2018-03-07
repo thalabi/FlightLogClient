@@ -11,6 +11,7 @@ import { AirportResponse } from './response/airport-response';
 import { PilotResponse } from './response/pilot-response';
 import { Pilot } from './domain/pilot';
 import { ISingleColumnEntity } from './domain/i-single-column-entity';
+import { StringUtils } from './string-utils';
 
 @Injectable()
 export class FlightLogServiceService {
@@ -205,7 +206,7 @@ export class FlightLogServiceService {
     //
     getAllSingleColumnEntity(tableName: string): Observable<ISingleColumnEntityResponse> {
         // TODO use the capitalize method in single-column-crud and make it a global method
-        let url: string = 'http://localhost:8080/' + tableName + 's/search/findAllByOrderBy' + tableName.charAt(0).toUpperCase() + tableName.substr(1);
+        let url: string = 'http://localhost:8080/' + tableName + 's/search/findAllByOrderBy' + StringUtils.capitalize(tableName);
         console.log(url);
         return this.http.get<ISingleColumnEntityResponse>(url);
     }

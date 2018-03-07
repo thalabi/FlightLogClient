@@ -125,7 +125,7 @@ export class FlightLogTableComponent implements OnInit {
             console.log('registrationResponse', registrationResponse);
             this.registrationSelectItemArray = new Array<SelectItem>();
             registrationResponse._embedded['registrations'].forEach((registration: Registration) => {
-                this.registrationSelectItemArray.push({ label: registration.name, value: registration.name });
+                this.registrationSelectItemArray.push({ label: registration.registration, value: registration.registration });
             });
         });
     }

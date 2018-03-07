@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TestArraySortComponent } from './single-column-entity-crud.component';
+import { SingleColumnEntityCrudComponent } from './single-column-entity-crud.component';
 
 describe('TestArraySortComponent', () => {
-  let component: TestArraySortComponent;
-  let fixture: ComponentFixture<TestArraySortComponent>;
+  let component: SingleColumnEntityCrudComponent;
+  let fixture: ComponentFixture<SingleColumnEntityCrudComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TestArraySortComponent ]
+      declarations: [ SingleColumnEntityCrudComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TestArraySortComponent);
+    fixture = TestBed.createComponent(SingleColumnEntityCrudComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

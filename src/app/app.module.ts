@@ -15,7 +15,7 @@ import { MenuComponent } from './menu/menu.component';
 import { AppRoutingModule } from './/app-routing.module';
 import { AbbreviateComponent } from './abbreviate/abbreviate.component';
 import { PilotCrudComponent } from './pilot-crud/pilot-crud.component';
-import { TestArraySortComponent } from './single-column-entity-crud/single-column-entity-crud.component';
+import { SingleColumnEntityCrudComponent } from './single-column-entity-crud/single-column-entity-crud.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +25,7 @@ import { TestArraySortComponent } from './single-column-entity-crud/single-colum
     MenuComponent,
     AbbreviateComponent,
     PilotCrudComponent,
-    TestArraySortComponent
+    SingleColumnEntityCrudComponent
   ],
   imports: [
     BrowserModule,

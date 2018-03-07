@@ -3,7 +3,7 @@ import { ISingleColumnEntity } from "./i-single-column-entity";
 export class Registration implements ISingleColumnEntity {
     id: number;
 
-    name: string;
+    registration: string;
 
     created: Date;
     modified: Date;
