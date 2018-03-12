@@ -15,7 +15,7 @@ export class AbbreviateComponent implements OnInit {
     constructor() { }
 
     ngOnInit() {
-        if (this.inputText.length > this.maxLength) {
+        if (this.inputText && this.inputText.length > this.maxLength) {
             this.abbreviatedText = this.inputText.substr(0, this.inputText.lastIndexOf(' ', this.maxLength)) + ' ...';
             this.textAbbreviated = true;
         }
