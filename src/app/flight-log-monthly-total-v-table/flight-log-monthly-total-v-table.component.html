@@ -1,0 +1,19 @@
+<p>
+  flight-log-monthly-total-v-table works!
+</p>
+<p-table [value]="flightLogMonthlyTotalVArray">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Year Month</th>
+            <th>Day Dual</th>
+            <th>Day Solo</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-flightLogMonthlyTotalV>
+        <tr>
+            <td>{{flightLogMonthlyTotalV.yearMonth}}</td>
+            <td>{{flightLogMonthlyTotalV.dayDual}}</td>
+            <td>{{flightLogMonthlyTotalV.daySolo}}</td>
+        </tr>
+    </ng-template>
+</p-table>

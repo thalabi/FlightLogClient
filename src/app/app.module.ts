@@ -15,6 +15,7 @@ import { MenuComponent } from './menu/menu.component';
 import { AppRoutingModule } from './/app-routing.module';
 import { AbbreviateComponent } from './abbreviate/abbreviate.component';
 import { SingleColumnEntityCrudComponent } from './single-column-entity-crud/single-column-entity-crud.component';
+import { FlightLogMonthlyTotalVTableComponent } from './flight-log-monthly-total-v-table/flight-log-monthly-total-v-table.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { SingleColumnEntityCrudComponent } from './single-column-entity-crud/sin
     RegexValidatorDirective,
     MenuComponent,
     AbbreviateComponent,
-    SingleColumnEntityCrudComponent
+    SingleColumnEntityCrudComponent,
+    FlightLogMonthlyTotalVTableComponent
   ],
   imports: [
     BrowserModule,

@@ -12,6 +12,7 @@ import { PilotResponse } from './response/pilot-response';
 import { Pilot } from './domain/pilot';
 import { ISingleColumnEntity } from './domain/i-single-column-entity';
 import { StringUtils } from './string-utils';
+import { FlightLogMonthlyTotalVResponse } from './response/flight-log-monthly-total-v-response';
 
 @Injectable()
 export class FlightLogServiceService {
@@ -212,6 +213,12 @@ export class FlightLogServiceService {
                 this.handleError(httpErrorResponse);
                 return null;
               });;
+    }
+
+    getFlightLogMonthlyTotalV(): Observable<FlightLogMonthlyTotalVResponse>  {
+        let url: string = 'http://localhost:8080/flightLogMonthlyTotalVs/search/findAllByOrderById';
+        console.log(url);
+        return this.http.get<FlightLogMonthlyTotalVResponse>(url);
     }
     // TODO needs rewrite
     private handleError(httpErrorResponse: HttpErrorResponse) {
