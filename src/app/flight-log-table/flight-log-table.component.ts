@@ -53,6 +53,11 @@ export class FlightLogTableComponent implements OnInit {
     // used to pass as argument to getTableRowsLazy() when refreshing page after add/update/delete
     savedLazyLoadEvent: LazyLoadEvent;
 
+    readonly ROWS_PER_PAGE: number = 10; // default rows per page
+    firstRowOfTable: number; // zero based. 0 -> first page, 1 -> second page, ...
+
+    pageNumber: number;
+
     constructor(private formBuilder: FormBuilder, private flightLogService: FlightLogServiceService) {
         console.log('this.displayDialog', this.displayDialog);
         this.flightLogForm = FlightLogHelper.createForm(formBuilder);
@@ -104,6 +109,16 @@ export class FlightLogTableComponent implements OnInit {
         this.getMakeModels();
         this.getRegistrations();
         this.getPilots();
+        this.flightLogService.getFlightLogCount().subscribe({
+            next: data => {
+                let rowCount: number = data.count;
+                console.log('rowCount', rowCount);
+                let pageNumber: number = Math.floor(rowCount/this.ROWS_PER_PAGE);
+                if (rowCount % this.ROWS_PER_PAGE != 0) pageNumber++;
+                this.firstRowOfTable = (pageNumber - 1) * this.ROWS_PER_PAGE;
+                console.log('this.firstRowOfTable', this.firstRowOfTable);
+            }
+        });
     }
 
     private getMakeModels() {
@@ -131,13 +146,13 @@ export class FlightLogTableComponent implements OnInit {
     }
     
     private getPilots() {
-        this.flightLogService.getAllPilot().subscribe(data => {
+        this.flightLogService.getAllSingleColumnEntity('pilot').subscribe(data => {
             console.log('data', data);
-            let pilotResponse: PilotResponse = data;
+            let pilotResponse: ISingleColumnEntityResponse = data;
             console.log('pilotResponse', pilotResponse);
             this.pilotSelectItemArray = new Array<SelectItem>();
-            pilotResponse._embedded.pilots.forEach((pilot: Pilot) => {
-                this.pilotSelectItemArray.push({ label: pilot.name, value: pilot.name });
+            pilotResponse._embedded['pilots'].forEach((pilot: Pilot) => {
+                this.pilotSelectItemArray.push({ label: pilot.pilot, value: pilot.pilot });
             });
         });
     }
@@ -146,16 +161,22 @@ export class FlightLogTableComponent implements OnInit {
         this.savedLazyLoadEvent = lazyLoadEvent;
         console.log('event', lazyLoadEvent);
         console.log('event.first', lazyLoadEvent.first);
+        // console.log('this.firstRowOfTable', this.firstRowOfTable);
+        // lazyLoadEvent.first = lazyLoadEvent.first || this.firstRowOfTable;
+        // console.log('event.first', lazyLoadEvent.first);
         console.log('event.rows', lazyLoadEvent.rows);
         console.log('event.filters', lazyLoadEvent.filters);
         console.log('event.filters._embedded', lazyLoadEvent.filters._embedded);
         console.log('event.filters.registration', lazyLoadEvent.filters.registration);
+        this.getTableRows(lazyLoadEvent.first, lazyLoadEvent.rows, this.buildSearchString(lazyLoadEvent));
+    }
+    getTableRows(firstRowNumber: number, rowsPerPage: number, searchString: string) {
         // for (let filter of event.filters) {
 
         // }
         // let page: number = event.first / this.ROWS_PER_PAGE;
         // console.log('page', event.first / 10);
-        this.flightLogService.getPage(lazyLoadEvent.first, lazyLoadEvent.rows, this.buildSearchString(lazyLoadEvent))
+        this.flightLogService.getPage(firstRowNumber, rowsPerPage, searchString)
             .subscribe({
                 next: flightLogResponse => {
                     console.log('data', flightLogResponse);
@@ -295,6 +316,14 @@ export class FlightLogTableComponent implements OnInit {
             next: airportArray => {
                 this.filteredAirportArray = airportArray;
             }});
+    }
+
+    onGoToPage() {
+        console.log('this.pageNumber', this.pageNumber);
+        this.firstRowOfTable = (this.pageNumber - 1) * this.ROWS_PER_PAGE;
+        this.savedLazyLoadEvent.first = this.firstRowOfTable;
+        this.getTableRowsLazy(this.savedLazyLoadEvent);
+        this.getTableRows(this.firstRowOfTable, this.ROWS_PER_PAGE, '');
     }
 
     private buildSearchString (event): string {

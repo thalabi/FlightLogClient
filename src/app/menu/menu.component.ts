@@ -24,9 +24,7 @@ export class MenuComponent implements OnInit {
             items: [
                 { label: 'Make & Model', routerLink: 'testArraySort/makeModel', routerLinkActiveOptions: { exact: true }},
                 { label: 'Registration', routerLink: 'testArraySort/registration', routerLinkActiveOptions: { exact: true }},
-                // { label: 'Make & Model', routerLink: 'makeModelCrud', routerLinkActiveOptions: { exact: true }},
-                // { label: 'Registration', routerLink: 'registrationCrud', routerLinkActiveOptions: { exact: true }},
-                { label: 'Pilot/Passenger', routerLink: 'pilotCrud', routerLinkActiveOptions: { exact: true }},
+                { label: 'Pilot/Passenger', routerLink: 'testArraySort/pilot', routerLinkActiveOptions: { exact: true }},
             ]
         },
         // {

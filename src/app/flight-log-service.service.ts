@@ -48,20 +48,29 @@ export class FlightLogServiceService {
     getPage3(): Observable<FlightLogResponse> {
         return this.getPage(0, 9999, '');
     }
+    getFlightLogCount(): Observable<any> {
+        let url: string = 'http://localhost:8080/flightLogController/count';
+        return this.http.get<FlightLogResponse>(url);
+    }
+    /*
+    * first: first row, zero based
+    * size: page size
+    * search:
+    */
     getPage(first: number, size: number, search: string): Observable<FlightLogResponse> {
         console.log('first, size, search', first, size, search)
-        // let url: string = 'http://localhost:8080/flightLogController/findAll/?page=' + first/size + '&size=' + size + '&search=' + search;
-        let url: string = 'http://localhost:8080/flightLogController/findAll/';
-        if ((first || first == 0) && size) {
-            if (first == 999999) { // 999999 is indictaor of last page
-                url += '?page=' + first + '&size=' + size;
-            } else {
-                url += '?page=' + first/size + '&size=' + size;
-            }
-        } else {
-            url += '?page=0&size=9999';
-        }
-        url += '&search=' + search + '&sort=flightDate';
+        let url: string = 'http://localhost:8080/flightLogController/findAll/?page=' + first/size + '&size=' + size + '&search=' + search + '&sort=flightDate';
+        // let url: string = 'http://localhost:8080/flightLogController/findAll/';
+        // if ((first || first == 0) && size) {
+        //     if (first == 999999) { // 999999 is indictaor of last page
+        //         url += '?page=' + first + '&size=' + size;
+        //     } else {
+        //         url += '?page=' + first/size + '&size=' + size;
+        //     }
+        // } else {
+        //     url += '?page=0&size=9999';
+        // }
+        // url += '&search=' + search + '&sort=flightDate';
         console.log('url', url);
         //let url: string = this.URL + '&page=' + first/size;
         return this.http.get<FlightLogResponse>(url)
@@ -125,63 +134,6 @@ export class FlightLogServiceService {
                 let flightLogResponse = response;
                 console.log('flightLogResponse', flightLogResponse);
                 return flightLogResponse;
-            })
-            .catch((httpErrorResponse: HttpErrorResponse) => {
-                this.handleError(httpErrorResponse);
-                return null;
-              });;
-    }
-
-    getAllPilot(): Observable<PilotResponse> {
-        let url: string = 'http://localhost:8080/pilots/search/findAllByOrderByName';
-        return this.http.get<PilotResponse>(url);
-    }
-
-    addPilot(pilot: Pilot): Observable<PilotResponse> {
-        let url: string = 'http://localhost:8080/pilots';
-        console.log('pilot: ', pilot);
-        pilot.created = new Date();
-        pilot.modified = new Date();
-        console.log('pilot: ', pilot);
-        return this.http.post<Pilot>(url, pilot)
-            .map((response: any) => {
-                let pilotResponse = response;
-                console.log('pilotResponse', pilotResponse);
-                return pilotResponse;
-            })
-            .catch((httpErrorResponse: HttpErrorResponse) => {
-                this.handleError(httpErrorResponse);
-                return null;
-              });;
-    }
-    
-    updatePilot(pilot: Pilot): Observable<PilotResponse> {
-        console.log('pilot: ', pilot);
-        pilot.modified = new Date();
-        console.log('pilot: ', pilot);
-        
-        let url: string = pilot._links.pilot.href;
-        console.log('url: ', url);
-        return this.http.put<Pilot>(url, pilot)
-            .map((response: any) => {
-                let pilotResponse = response;
-                console.log('pilotResponse', pilotResponse);
-                return pilotResponse;
-            })
-            .catch((httpErrorResponse: HttpErrorResponse) => {
-                this.handleError(httpErrorResponse);
-                return null;
-              });;
-    }
-
-    deletePilot(pilot: Pilot): Observable<PilotResponse> {
-        let url: string = pilot._links.pilot.href;
-        console.log('url: ', url);
-        return this.http.delete<void>(url)
-            .map((response: any) => {
-                let pilotResponse = response;
-                console.log('pilotResponse', pilotResponse);
-                return pilotResponse;
             })
             .catch((httpErrorResponse: HttpErrorResponse) => {
                 this.handleError(httpErrorResponse);

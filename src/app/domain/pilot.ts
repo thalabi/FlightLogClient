@@ -1,9 +1,12 @@
-export class Pilot {
+import { ISingleColumnEntity } from "./i-single-column-entity";
+
+export class Pilot implements ISingleColumnEntity {
     id: number;
-    name: string;
+
+    pilot: string;
 
     created: Date;
     modified: Date;
     
-    _links: {pilot: {href: string}};
+    _links: {self: {href: string}};
 }

@@ -14,7 +14,6 @@ import { RegexValidatorDirective } from './regex-validator.directive';
 import { MenuComponent } from './menu/menu.component';
 import { AppRoutingModule } from './/app-routing.module';
 import { AbbreviateComponent } from './abbreviate/abbreviate.component';
-import { PilotCrudComponent } from './pilot-crud/pilot-crud.component';
 import { SingleColumnEntityCrudComponent } from './single-column-entity-crud/single-column-entity-crud.component';
 
 @NgModule({
@@ -24,7 +23,6 @@ import { SingleColumnEntityCrudComponent } from './single-column-entity-crud/sin
     RegexValidatorDirective,
     MenuComponent,
     AbbreviateComponent,
-    PilotCrudComponent,
     SingleColumnEntityCrudComponent
   ],
   imports: [

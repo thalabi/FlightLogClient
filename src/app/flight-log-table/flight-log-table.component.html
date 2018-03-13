@@ -1,6 +1,6 @@
-<p-table [value]="flightLogArray" [dataKey]="'_links.flightLog.href'"
-    [lazy]="true" [rows]="10" [paginator]="true" [totalRecords]="page.totalElements" [rowsPerPageOptions]="[5,10,20]" (onLazyLoad)="getTableRowsLazy($event)" responsive="true" selectionMode="single" [(selection)]="selectedFlightLog"
-    dataKey="_links.flightLog.href" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [responsive]="true" [first]="999999" #dt>
+<p-table *ngIf="firstRowOfTable" [value]="flightLogArray" [dataKey]="'_links.flightLog.href'"
+    [lazy]="true" [rows]="ROWS_PER_PAGE" [paginator]="true" [totalRecords]="page.totalElements" [rowsPerPageOptions]="[5,10,20]" (onLazyLoad)="getTableRowsLazy($event)" responsive="true" selectionMode="single" [(selection)]="selectedFlightLog"
+    dataKey="_links.flightLog.href" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [responsive]="true" [first]="firstRowOfTable" #dt>
 
     <ng-template pTemplate="caption">
         <div style="text-align:right">
@@ -40,6 +40,8 @@
             <button type="button" pButton icon="fa-remove" style="float:left" (click)="showDialog('Delete')" label="Delete" [disabled]="modifyAndDeleteButtonsDisable"></button>
             <div style="text-align:right; margin-top: 0.3em;">
                 <span>Total: {{page.totalElements}}</span>
+                <input type="text" id="pageNumber" [(ngModel)]="pageNumber" maxlength="4" size="3"/>
+                <button pButton type="button" label="Go" (click)="onGoToPage()"></button>
             </div>
         </div>
     </ng-template>
