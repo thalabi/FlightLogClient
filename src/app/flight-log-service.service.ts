@@ -13,6 +13,7 @@ import { Pilot } from './domain/pilot';
 import { ISingleColumnEntity } from './domain/i-single-column-entity';
 import { StringUtils } from './string-utils';
 import { FlightLogMonthlyTotalVResponse } from './response/flight-log-monthly-total-v-response';
+import { FlightLogYearlyTotalVResponse } from './response/flight-log-yearly-total-v-response';
 
 @Injectable()
 export class FlightLogServiceService {
@@ -220,6 +221,12 @@ export class FlightLogServiceService {
         console.log(url);
         return this.http.get<FlightLogMonthlyTotalVResponse>(url);
     }
+    getFlightLogYearlyTotalV(): Observable<FlightLogYearlyTotalVResponse>  {
+        let url: string = 'http://localhost:8080/flightLogYearlyTotalVs/search/findAllByOrderById';
+        console.log(url);
+        return this.http.get<FlightLogYearlyTotalVResponse>(url);
+    }
+
     // TODO needs rewrite
     private handleError(httpErrorResponse: HttpErrorResponse) {
         console.error('An error occurred. See blow info.');

@@ -9,23 +9,23 @@ import { MenuItem } from 'primeng/primeng';
 export class MenuComponent implements OnInit {
 
     menuModel: MenuItem[] = [
-        {
-            label: 'Home',
-            routerLink: 'flightLogTable',
-            // routerLinkActiveOptions: { exact: true }
-        },
+        {label: 'Home',   routerLink: 'flightLogTable'},
         // {
         //     label: 'Print',
         //     routerLink: '/print',
         //     routerLinkActiveOptions: { exact: true }
         // },
-        {
-            label: 'Misc',
+        {label: 'Summary',
+            items: [
+                { label: 'Monthly Report', routerLink: 'flightLogMonthlyTotalVTable', routerLinkActiveOptions: { exact: true }},
+                { label: 'Yearly Report', routerLink: 'flightLogYearlyTotalVTable', routerLinkActiveOptions: { exact: true }},
+            ]
+        },
+        {label: 'Misc',
             items: [
                 { label: 'Make & Model', routerLink: 'testArraySort/makeModel', routerLinkActiveOptions: { exact: true }},
                 { label: 'Registration', routerLink: 'testArraySort/registration', routerLinkActiveOptions: { exact: true }},
                 { label: 'Pilot/Passenger', routerLink: 'testArraySort/pilot', routerLinkActiveOptions: { exact: true }},
-                { label: 'Monthly Report', routerLink: 'flightLogMonthlyTotalVTable', routerLinkActiveOptions: { exact: true }},
             ]
         },
         // {

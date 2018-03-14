@@ -1,12 +1,21 @@
-<p>
-  flight-log-monthly-total-v-table works!
-</p>
-<p-table [value]="flightLogMonthlyTotalVArray">
+<p-table [value]="flightLogMonthlyTotalVArray" [scrollable]="true" scrollHeight="25rem">
     <ng-template pTemplate="header">
         <tr>
-            <th>Year Month</th>
+            <th>Month</th>
             <th>Day Dual</th>
             <th>Day Solo</th>
+            <th>Night Dual</th>
+            <th>Night Solo</th>
+
+            <th>Inst IMC</th>
+            <th>Inst Simulated</th>
+            <th>Inst Flight Sim</th>
+            <th>Inst # IFR Appr</th>
+
+            <th>X-cty Day</th>
+            <th>X-cty Night</th>
+            <th>T/Os & Ldgs Day</th>
+            <th>T/Os & Ldgs Night</th>
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-flightLogMonthlyTotalV>
@@ -14,6 +23,18 @@
             <td>{{flightLogMonthlyTotalV.yearMonth}}</td>
             <td>{{flightLogMonthlyTotalV.dayDual}}</td>
             <td>{{flightLogMonthlyTotalV.daySolo}}</td>
+            <td>{{flightLogMonthlyTotalV.nightDual}}</td>
+            <td>{{flightLogMonthlyTotalV.nightSolo}}</td>
+
+            <td>{{flightLogMonthlyTotalV.instrumentSimulated}}</td>
+            <td>{{flightLogMonthlyTotalV.instrumentFlightSim}}</td>
+            <td>{{flightLogMonthlyTotalV.instrumentImc}}</td>
+            <td>{{flightLogMonthlyTotalV.instrumentNoIfrAppr}}</td>
+
+            <td>{{flightLogMonthlyTotalV.xcountryDay}}</td>
+            <td>{{flightLogMonthlyTotalV.xcountryNight}}</td>
+            <td>{{flightLogMonthlyTotalV.tosLdgsDay}}</td>
+            <td>{{flightLogMonthlyTotalV.tosLdgsNight}}</td>
         </tr>
     </ng-template>
 </p-table>

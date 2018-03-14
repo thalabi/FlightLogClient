@@ -16,6 +16,7 @@ import { AppRoutingModule } from './/app-routing.module';
 import { AbbreviateComponent } from './abbreviate/abbreviate.component';
 import { SingleColumnEntityCrudComponent } from './single-column-entity-crud/single-column-entity-crud.component';
 import { FlightLogMonthlyTotalVTableComponent } from './flight-log-monthly-total-v-table/flight-log-monthly-total-v-table.component';
+import { FlightLogYearlyTotalVTableComponent } from './flight-log-yearly-total-v-table/flight-log-yearly-total-v-table.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { FlightLogMonthlyTotalVTableComponent } from './flight-log-monthly-total
     MenuComponent,
     AbbreviateComponent,
     SingleColumnEntityCrudComponent,
-    FlightLogMonthlyTotalVTableComponent
+    FlightLogMonthlyTotalVTableComponent,
+    FlightLogYearlyTotalVTableComponent
   ],
   imports: [
     BrowserModule,
