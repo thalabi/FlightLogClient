@@ -14,6 +14,7 @@ import { ISingleColumnEntity } from './domain/i-single-column-entity';
 import { StringUtils } from './string-utils';
 import { FlightLogMonthlyTotalVResponse } from './response/flight-log-monthly-total-v-response';
 import { FlightLogYearlyTotalVResponse } from './response/flight-log-yearly-total-v-response';
+import { FlightLogLastXDaysTotalVResponse } from './response/flight-log-last-x-days-total-v-response';
 
 @Injectable()
 export class FlightLogServiceService {
@@ -225,6 +226,11 @@ export class FlightLogServiceService {
         let url: string = 'http://localhost:8080/flightLogYearlyTotalVs/search/findAllByOrderById';
         console.log(url);
         return this.http.get<FlightLogYearlyTotalVResponse>(url);
+    }
+    getFlightLogLastXDaysTotalV(): Observable<FlightLogLastXDaysTotalVResponse>  {
+        let url: string = 'http://localhost:8080/flightLogLastXDaysTotalVs/search/findAllByOrderById';
+        console.log(url);
+        return this.http.get<FlightLogLastXDaysTotalVResponse>(url);
     }
 
     // TODO needs rewrite

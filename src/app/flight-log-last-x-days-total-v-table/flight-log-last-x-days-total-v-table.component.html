@@ -1,0 +1,40 @@
+<p-table [value]="flightLogLastXDaysTotalVArray" [scrollable]="true" scrollHeight="25rem">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Days</th>
+            <th>Day Dual</th>
+            <th>Day Solo</th>
+            <th>Night Dual</th>
+            <th>Night Solo</th>
+
+            <th>Inst IMC</th>
+            <th>Inst Simulated</th>
+            <th>Inst Flight Sim</th>
+            <th>Inst # IFR Appr</th>
+
+            <th>X-cty Day</th>
+            <th>X-cty Night</th>
+            <th>T/Os & Ldgs Day</th>
+            <th>T/Os & Ldgs Night</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-flightLogLastXDaysTotalV>
+        <tr>
+            <td>{{flightLogLastXDaysTotalV.days}}</td>
+            <td>{{flightLogLastXDaysTotalV.dayDual}}</td>
+            <td>{{flightLogLastXDaysTotalV.daySolo}}</td>
+            <td>{{flightLogLastXDaysTotalV.nightDual}}</td>
+            <td>{{flightLogLastXDaysTotalV.nightSolo}}</td>
+
+            <td>{{flightLogLastXDaysTotalV.instrumentSimulated}}</td>
+            <td>{{flightLogLastXDaysTotalV.instrumentFlightSim}}</td>
+            <td>{{flightLogLastXDaysTotalV.instrumentImc}}</td>
+            <td>{{flightLogLastXDaysTotalV.instrumentNoIfrAppr}}</td>
+
+            <td>{{flightLogLastXDaysTotalV.xcountryDay}}</td>
+            <td>{{flightLogLastXDaysTotalV.xcountryNight}}</td>
+            <td>{{flightLogLastXDaysTotalV.tosLdgsDay}}</td>
+            <td>{{flightLogLastXDaysTotalV.tosLdgsNight}}</td>
+        </tr>
+    </ng-template>
+</p-table>
