@@ -15,19 +15,30 @@ import { StringUtils } from './string-utils';
 import { FlightLogMonthlyTotalVResponse } from './response/flight-log-monthly-total-v-response';
 import { FlightLogYearlyTotalVResponse } from './response/flight-log-yearly-total-v-response';
 import { FlightLogLastXDaysTotalVResponse } from './response/flight-log-last-x-days-total-v-response';
+import { ConfigService } from './config/config.service';
+import { ApplicationProperties } from './config/application.properties';
 
 @Injectable()
 export class FlightLogServiceService {
     readonly URL 
     readonly SORT_COLUMN: string = 'flightDate';
+    readonly serviceUrl: string;
+
     //PAGE_SIZE: number = 10;
     //URL: string = 'http://localhost:8080/flightLogs/?sort=' + this.SORT_COLUMN + '&size=' + this.PAGE_SIZE;
 
-    constructor(private http: HttpClient) { }
+    constructor(
+        private http: HttpClient,
+        private configService: ConfigService
+    ) {
+        const applicationProperties: ApplicationProperties = this.configService.getApplicationProperties();
+        this.serviceUrl = applicationProperties.serviceUrl;
+        
+    }
 
     getAll(url?: string): Observable<FlightLogResponse> {
         if (! url) {
-            url = 'http://localhost:8080/flightLogs/?size=9999&sort=flightDate';
+            url = this.serviceUrl + '/flightLogs/?size=9999&sort=flightDate';
         }
         return this.http.get<FlightLogResponse>(url);
             // .map((response: any) => {
@@ -38,7 +49,7 @@ export class FlightLogServiceService {
     }
 
     getPageOld(first: number, size: number, search: string): Observable<FlightLogResponse> {
-        let url: string = 'http://localhost:8080/flightLogController/findAll/?page=' + first/size + '&size=' + size + '&search=' + search;
+        let url: string = this.serviceUrl + '/flightLogController/findAll/?page=' + first/size + '&size=' + size + '&search=' + search;
         console.log('url', url);
         //let url: string = this.URL + '&page=' + first/size;
         return this.http.get<FlightLogResponse>(url);
@@ -52,7 +63,7 @@ export class FlightLogServiceService {
         return this.getPage(0, 9999, '');
     }
     getFlightLogCount(): Observable<any> {
-        let url: string = 'http://localhost:8080/flightLogController/count';
+        let url: string = this.serviceUrl + '/flightLogController/count';
         return this.http.get<FlightLogResponse>(url);
     }
     /*
@@ -62,7 +73,7 @@ export class FlightLogServiceService {
     */
     getPage(first: number, size: number, search: string): Observable<FlightLogResponse> {
         console.log('first, size, search', first, size, search)
-        let url: string = 'http://localhost:8080/flightLogController/findAll/?page=' + first/size + '&size=' + size + '&search=' + search + '&sort=flightDate';
+        let url: string = this.serviceUrl + '/flightLogController/findAll/?page=' + first/size + '&size=' + size + '&search=' + search + '&sort=flightDate';
         // let url: string = 'http://localhost:8080/flightLogController/findAll/';
         // if ((first || first == 0) && size) {
         //     if (first == 999999) { // 999999 is indictaor of last page
@@ -82,7 +93,10 @@ export class FlightLogServiceService {
                 let flightLogArray = flightLogResponse._embedded.flightLogs;
                 // Revive dates to their proper format
                 for (let flightLog of flightLogArray) {
+                    console.log('flightLog.flightDate', flightLog.flightDate);
+                    console.log('new Date(flightLog.flightDate)', new Date(flightLog.flightDate));
                     flightLog.flightDate = new Date(flightLog.flightDate+' 00:00:00');
+                    //flightLog.flightDate = new Date(flightLog.flightDate);
                     flightLog.created = new Date(flightLog.created);
                 }
                 return flightLogResponse;
@@ -92,7 +106,7 @@ export class FlightLogServiceService {
     }
 
     addFlightLog(flightLog: FlightLog): Observable<FlightLogResponse> {
-        let url: string = 'http://localhost:8080/flightLogs';
+        let url: string = this.serviceUrl + '/flightLogs';
         console.log('flightLog: ', flightLog);
         flightLog.created = new Date();
         flightLog.modified = new Date();
@@ -145,7 +159,7 @@ export class FlightLogServiceService {
     }
 
     getAirportByIdentifierOrName(identifier: string, name: string): Observable<Array<Airport>> {
-        let url: string = 'http://localhost:8080/airports/search/findByIdentifierContainingIgnoreCaseOrNameContainingIgnoreCase?identifier=' + identifier + '&name=' + name;
+        let url: string = this.serviceUrl + '/airports/search/findByIdentifierContainingIgnoreCaseOrNameContainingIgnoreCase?identifier=' + identifier + '&name=' + name;
         return this.http.get<AirportResponse>(url)
             .map((response: any) => {
                 let airportResponse = response;
@@ -161,13 +175,13 @@ export class FlightLogServiceService {
     //
     getAllSingleColumnEntity(tableName: string): Observable<ISingleColumnEntityResponse> {
         // TODO use the capitalize method in single-column-crud and make it a global method
-        let url: string = 'http://localhost:8080/' + tableName + 's/search/findAllByOrderBy' + StringUtils.capitalize(tableName);
+        let url: string = this.serviceUrl + '/' + tableName + 's/search/findAllByOrderBy' + StringUtils.capitalize(tableName);
         console.log(url);
         return this.http.get<ISingleColumnEntityResponse>(url);
     }
 
     addSingleColumnEntity(tableName: string, row: ISingleColumnEntity): Observable<ISingleColumnEntityResponse> {
-        let url: string = 'http://localhost:8080/' + tableName + 's';
+        let url: string = this.serviceUrl + '/' + tableName + 's';
         console.log('row: ', row);
         row.created = new Date();
         row.modified = new Date();
@@ -218,17 +232,17 @@ export class FlightLogServiceService {
     }
 
     getFlightLogMonthlyTotalV(): Observable<FlightLogMonthlyTotalVResponse>  {
-        let url: string = 'http://localhost:8080/flightLogMonthlyTotalVs/search/findAllByOrderById';
+        let url: string = this.serviceUrl + '/flightLogMonthlyTotalVs/search/findAllByOrderById';
         console.log(url);
         return this.http.get<FlightLogMonthlyTotalVResponse>(url);
     }
     getFlightLogYearlyTotalV(): Observable<FlightLogYearlyTotalVResponse>  {
-        let url: string = 'http://localhost:8080/flightLogYearlyTotalVs/search/findAllByOrderById';
+        let url: string = this.serviceUrl + '/flightLogYearlyTotalVs/search/findAllByOrderById';
         console.log(url);
         return this.http.get<FlightLogYearlyTotalVResponse>(url);
     }
     getFlightLogLastXDaysTotalV(): Observable<FlightLogLastXDaysTotalVResponse>  {
-        let url: string = 'http://localhost:8080/flightLogLastXDaysTotalVs/search/findAllByOrderById';
+        let url: string = this.serviceUrl + '/flightLogLastXDaysTotalVs/search/findAllByOrderById';
         console.log(url);
         return this.http.get<FlightLogLastXDaysTotalVResponse>(url);
     }

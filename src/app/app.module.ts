@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations'
@@ -18,6 +18,7 @@ import { SingleColumnEntityCrudComponent } from './single-column-entity-crud/sin
 import { FlightLogMonthlyTotalVTableComponent } from './flight-log-monthly-total-v-table/flight-log-monthly-total-v-table.component';
 import { FlightLogYearlyTotalVTableComponent } from './flight-log-yearly-total-v-table/flight-log-yearly-total-v-table.component';
 import { FlightLogLastXDaysTotalVTableComponent } from './flight-log-last-x-days-total-v-table/flight-log-last-x-days-total-v-table.component';
+import { ConfigService, configServiceLoadConfig } from './config/config.service';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,11 @@ import { FlightLogLastXDaysTotalVTableComponent } from './flight-log-last-x-days
     
     AppRoutingModule
   ],
-  providers: [FlightLogServiceService],
+  providers: [
+      FlightLogServiceService,
+      ConfigService,
+      { provide: APP_INITIALIZER, useFactory: configServiceLoadConfig, deps: [ConfigService], multi: true },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
