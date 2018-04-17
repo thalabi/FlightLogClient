@@ -1,0 +1,65 @@
+<p-table [value]="rowArray" [dataKey]="'_links.self.href'" selectionMode="single" [(selection)]="selectedRow" (onRowSelect)="onRowSelect($event)" [scrollable]="true" scrollHeight="25rem" [sortField]="fieldAttributesArray[0].columnName">
+
+    <ng-template pTemplate="colgroup">
+        <colgroup>
+            <col *ngFor="let fieldAttributes of fieldAttributesArray" [ngStyle]="fieldAttributes.headerStyle">
+        </colgroup>
+    </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <th *ngFor="let fieldAttributes of fieldAttributesArray">{{fieldAttributes.header}}</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+        <tr [pSelectableRow]="row">
+            <td *ngFor="let fieldAttributes of fieldAttributesArray" [ngSwitch]="fieldAttributes.pipe">
+                <span *ngSwitchCase="'date-yyyy-mm-dd'">{{ row[fieldAttributes.columnName] | date:'yyyy-MM-dd' }}</span>
+                <span *ngSwitchDefault>{{ row[fieldAttributes.columnName] }}</span>
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="summary">
+        <div class="ui-helper-clearfix" style="width:100%">
+            <button type="button" pButton icon="fa-plus" style="float:left" (click)="showDialog('Add')" label="Add"></button>
+            <button type="button" pButton icon="fa-edit" style="float:left" (click)="showDialog('Update')" label="Modify" [disabled]="modifyAndDeleteButtonsDisable"></button>
+            <button type="button" pButton icon="fa-remove" style="float:left" (click)="showDialog('Delete')" label="Delete" [disabled]="modifyAndDeleteButtonsDisable"></button>
+        </div>
+    </ng-template>
+</p-table>
+
+<p-dialog header="{{formAttributes.formTitle}} - {{crudMode}}" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
+
+    <form [formGroup]="crudForm" (ngSubmit)="onSubmit()" novalidate>
+        <div class="ui-g">
+
+            <ng-template ngFor let-fieldAttributes [ngForOf]="fieldAttributesArray">
+                <div class="ui-g-6">
+                    <label [for]="fieldAttributes.columnName">{{fieldAttributes.header}}</label>
+                </div>
+                <div class="ui-g-6" [ngSwitch]="fieldAttributes.uiComponentType">
+
+                    <p-calendar *ngSwitchCase="'calendar'" [formControlName]="fieldAttributes.columnName" [id]="fieldAttributes.columnName" [dateFormat]="'yy-mm-dd'" [showIcon]="true" [readonlyInput]="true" [showOnFocus]="false" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2050">
+                    </p-calendar>
+
+                    <textarea *ngSwitchCase="'textArea'" pInputTextarea [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName">
+                    </textarea>
+
+                    <span *ngSwitchDefault>
+                        Unhandled {{fieldAttributes.uiComponentType}} type
+                    </span>
+                </div>
+            </ng-template>
+
+            <p-footer>
+                <div class="ui-g-6">
+                    <!-- TODO replace disabled logic with a function -->
+                    <button pButton type="submit" label="Submit"
+                    [disabled]="crudForm.invalid"></button>
+                </div>
+                <div class="ui-g-6">
+                    <button pButton type="reset" label="Cancel" (click)="onCancel()"></button>
+                </div>
+            </p-footer>
+        </div>
+    </form>
+</p-dialog>

@@ -19,6 +19,7 @@ import { FlightLogMonthlyTotalVTableComponent } from './flight-log-monthly-total
 import { FlightLogYearlyTotalVTableComponent } from './flight-log-yearly-total-v-table/flight-log-yearly-total-v-table.component';
 import { FlightLogLastXDaysTotalVTableComponent } from './flight-log-last-x-days-total-v-table/flight-log-last-x-days-total-v-table.component';
 import { ConfigService, configServiceLoadConfig } from './config/config.service';
+import { TwoColumnEntityCrudComponent } from './two-column-entity-crud/two-column-entity-crud.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { ConfigService, configServiceLoadConfig } from './config/config.service'
     SingleColumnEntityCrudComponent,
     FlightLogMonthlyTotalVTableComponent,
     FlightLogYearlyTotalVTableComponent,
-    FlightLogLastXDaysTotalVTableComponent
+    FlightLogLastXDaysTotalVTableComponent,
+    TwoColumnEntityCrudComponent
   ],
   imports: [
     BrowserModule,
