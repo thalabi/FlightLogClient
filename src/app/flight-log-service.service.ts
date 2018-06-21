@@ -22,7 +22,6 @@ import { ITwoColumnEntity } from './domain/i-two-column-entity';
 
 @Injectable()
 export class FlightLogServiceService {
-    readonly URL 
     readonly SORT_COLUMN: string = 'flightDate';
     readonly serviceUrl: string;
 
@@ -120,7 +119,7 @@ export class FlightLogServiceService {
                 return flightLogResponse;
             })
             .catch((httpErrorResponse: HttpErrorResponse) => {
-                this.handleError(httpErrorResponse);
+                FlightLogServiceService.handleError(httpErrorResponse);
                 return null;
               });;
     }
@@ -139,7 +138,7 @@ export class FlightLogServiceService {
                 return flightLogResponse;
             })
             .catch((httpErrorResponse: HttpErrorResponse) => {
-                this.handleError(httpErrorResponse);
+                FlightLogServiceService.handleError(httpErrorResponse);
                 return null;
               });;
     }
@@ -155,7 +154,7 @@ export class FlightLogServiceService {
                 return flightLogResponse;
             })
             .catch((httpErrorResponse: HttpErrorResponse) => {
-                this.handleError(httpErrorResponse);
+                FlightLogServiceService.handleError(httpErrorResponse);
                 return null;
               });;
     }
@@ -194,7 +193,7 @@ export class FlightLogServiceService {
                 return singleColumnEntityResponse;
             })
             .catch((httpErrorResponse: HttpErrorResponse) => {
-                this.handleError(httpErrorResponse);
+                FlightLogServiceService.handleError(httpErrorResponse);
                 return null;
               });;
     }
@@ -213,7 +212,7 @@ export class FlightLogServiceService {
                 return singleColumnEntityResponse;
             })
             .catch((httpErrorResponse: HttpErrorResponse) => {
-                this.handleError(httpErrorResponse);
+                FlightLogServiceService.handleError(httpErrorResponse);
                 return null;
               });;
     }
@@ -228,7 +227,7 @@ export class FlightLogServiceService {
                 return singleColumnEntityResponse;
             })
             .catch((httpErrorResponse: HttpErrorResponse) => {
-                this.handleError(httpErrorResponse);
+                FlightLogServiceService.handleError(httpErrorResponse);
                 return null;
               });;
     }
@@ -257,7 +256,7 @@ export class FlightLogServiceService {
                 return twoColumnEntityResponse;
             })
             .catch((httpErrorResponse: HttpErrorResponse) => {
-                this.handleError(httpErrorResponse);
+                FlightLogServiceService.handleError(httpErrorResponse);
                 return null;
               });;
     }
@@ -276,7 +275,7 @@ export class FlightLogServiceService {
                 return twoColumnEntityResponse;
             })
             .catch((httpErrorResponse: HttpErrorResponse) => {
-                this.handleError(httpErrorResponse);
+                FlightLogServiceService.handleError(httpErrorResponse);
                 return null;
               });;
     }
@@ -291,7 +290,7 @@ export class FlightLogServiceService {
                 return twoColumnEntityResponse;
             })
             .catch((httpErrorResponse: HttpErrorResponse) => {
-                this.handleError(httpErrorResponse);
+                FlightLogServiceService.handleError(httpErrorResponse);
                 return null;
               });;
     }
@@ -317,7 +316,7 @@ export class FlightLogServiceService {
     }
 
     // TODO needs rewrite
-    private handleError(httpErrorResponse: HttpErrorResponse) {
+    public static handleError(httpErrorResponse: HttpErrorResponse) {
         console.error('An error occurred. See blow info.');
         console.error('httpErrorResponse', httpErrorResponse);
         console.error('httpErrorResponse.error', httpErrorResponse.error);

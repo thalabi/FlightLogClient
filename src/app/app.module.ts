@@ -3,7 +3,7 @@ import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations'
-import { ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, TooltipModule } from 'primeng/primeng';
+import { ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, TooltipModule, ProgressSpinnerModule } from 'primeng/primeng';
 import {TableModule} from 'primeng/table';
 
 import { AppComponent } from './app.component';
@@ -20,6 +20,8 @@ import { FlightLogYearlyTotalVTableComponent } from './flight-log-yearly-total-v
 import { FlightLogLastXDaysTotalVTableComponent } from './flight-log-last-x-days-total-v-table/flight-log-last-x-days-total-v-table.component';
 import { ConfigService, configServiceLoadConfig } from './config/config.service';
 import { TwoColumnEntityCrudComponent } from './two-column-entity-crud/two-column-entity-crud.component';
+import { JobLauncherComponent } from './job-launcher/job-launcher.component';
+import { JobLauncherService } from './job-launcher.service';
 
 @NgModule({
   declarations: [
@@ -32,7 +34,8 @@ import { TwoColumnEntityCrudComponent } from './two-column-entity-crud/two-colum
     FlightLogMonthlyTotalVTableComponent,
     FlightLogYearlyTotalVTableComponent,
     FlightLogLastXDaysTotalVTableComponent,
-    TwoColumnEntityCrudComponent
+    TwoColumnEntityCrudComponent,
+    JobLauncherComponent
   ],
   imports: [
     BrowserModule,
@@ -40,12 +43,13 @@ import { TwoColumnEntityCrudComponent } from './two-column-entity-crud/two-colum
     ReactiveFormsModule,
     HttpClientModule,
 
-    BrowserAnimationsModule, TableModule, ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, TooltipModule,
+    BrowserAnimationsModule, TableModule, ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, TooltipModule, ProgressSpinnerModule,
     
     AppRoutingModule
   ],
   providers: [
       FlightLogServiceService,
+      JobLauncherService,
       ConfigService,
       { provide: APP_INITIALIZER, useFactory: configServiceLoadConfig, deps: [ConfigService], multi: true },
   ],

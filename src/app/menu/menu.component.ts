@@ -30,6 +30,7 @@ export class MenuComponent implements OnInit {
                 { label: 'Significant Event', routerLink: 'twoColumnEntityCrud/significantEvent', routerLinkActiveOptions: { exact: true }},
             ]
         },
+        {label: 'Jobs',   routerLink: 'jobLauncher'},
         // {
         //     label: 'About',
         //     routerLink: '/about',

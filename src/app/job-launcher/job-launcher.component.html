@@ -1,0 +1,10 @@
+<div style="margin-top: 1rem;">
+    <p-dropdown [options]="jobOptions" [(ngModel)]="selectedJobOption" placeholder="Select a Job" optionLabel="jobLabel" [showClear]="true"></p-dropdown>
+</div>
+
+<div *ngIf="jobCompleted">{{jobLauncherResponse | json}}</div>
+
+<div style="margin-top: 1rem;">
+    <button pButton type="submit" label="Submit Job" (click)="onClick($event)" *ngIf="!jobInProgress"></button>
+    <p-progressSpinner *ngIf="jobInProgress"></p-progressSpinner>
+</div>

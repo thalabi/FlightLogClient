@@ -120,11 +120,11 @@ export class TwoColumnEntityCrudComponent implements OnInit {
                 });
 
                 this.flightLogService.addTwoColumnEntity(this.tableName, this.crudRow).subscribe({
-                    next: savedRegistration => {
-                        console.log('savedRegistration', savedRegistration);
+                    next: savedTwoColumnEntity => {
+                        console.log('savedTwoColumnEntity', savedTwoColumnEntity);
                     },
                     error: error => {
-                        console.error('flightLogService.saveRegistration() returned error: ', error);
+                        console.error('flightLogService.addTwoColumnEntity() returned error: ', error);
                         //this.messageService.error(error);
                     },
                     complete: () => {
