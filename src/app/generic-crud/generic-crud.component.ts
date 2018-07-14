@@ -90,9 +90,9 @@ export class GenericCrudComponent implements OnInit {
                 console.log('data', rowResponse);
                 this.rowResponse = rowResponse;
                 console.log('this.rowResponse', this.rowResponse);
-                this.rowArray = this.rowResponse._embedded[this.tableName+'s'];
-                console.log('this.rowArray', this.rowArray);
                 this.page = this.rowResponse.page;
+                this.rowArray = this.page.totalElements ? this.rowResponse._embedded[this.tableName+'s'] : [];
+                console.log('this.rowArray', this.rowArray);
                 this.links = this.rowResponse._links;
         }});
     }

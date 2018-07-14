@@ -90,8 +90,8 @@ export class FlightLogServiceService {
         //let url: string = this.URL + '&page=' + first/size;
         return this.http.get<FlightLogResponse>(url)
             .map((response: any) => {
-                let flightLogResponse = response;
-                let flightLogArray = flightLogResponse._embedded.flightLogs;
+                let flightLogResponse: FlightLogResponse = response;
+                let flightLogArray = flightLogResponse.page.totalElements ? flightLogResponse._embedded.flightLogs : [];
                 // Revive dates to their proper format
                 for (let flightLog of flightLogArray) {
                     console.log('flightLog.flightDate', flightLog.flightDate);

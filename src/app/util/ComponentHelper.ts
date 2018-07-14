@@ -19,5 +19,5 @@ export class ComponentHelper {
         console.log('final search', search);
         return search;
     }
-    
+
 }

@@ -178,13 +178,13 @@ export class FlightLogTableComponent implements OnInit {
                     console.log('data', flightLogResponse);
                     this.flightLogResponse = flightLogResponse;
                     console.log('this.flightLogResponse', this.flightLogResponse);
-                    this.flightLogArray = this.flightLogResponse._embedded.flightLogs;
+                    this.page = this.flightLogResponse.page;
+                    this.flightLogArray = this.page.totalElements ? this.flightLogResponse._embedded.flightLogs : [];
                     // this.flightLogArray.forEach(flightLog => {
                     //     flightLog.airportFrom = new Airport();
                     //     flightLog.airportFrom.identifier = flightLog.routeFrom;
                     // })
                     console.log('this.flightLogArray', this.flightLogArray);
-                    this.page = this.flightLogResponse.page;
                     this.links = this.flightLogResponse._links;
             }});
     }
