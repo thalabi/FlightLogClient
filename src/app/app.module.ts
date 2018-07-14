@@ -22,6 +22,7 @@ import { ConfigService, configServiceLoadConfig } from './config/config.service'
 import { TwoColumnEntityCrudComponent } from './two-column-entity-crud/two-column-entity-crud.component';
 import { JobLauncherComponent } from './job-launcher/job-launcher.component';
 import { JobLauncherService } from './job-launcher.service';
+import { GenericCrudComponent } from './generic-crud/generic-crud.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { JobLauncherService } from './job-launcher.service';
     FlightLogYearlyTotalVTableComponent,
     FlightLogLastXDaysTotalVTableComponent,
     TwoColumnEntityCrudComponent,
-    JobLauncherComponent
+    JobLauncherComponent,
+    GenericCrudComponent
   ],
   imports: [
     BrowserModule,

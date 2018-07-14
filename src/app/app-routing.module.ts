@@ -7,6 +7,7 @@ import { FlightLogYearlyTotalVTableComponent } from './flight-log-yearly-total-v
 import { FlightLogLastXDaysTotalVTableComponent } from './flight-log-last-x-days-total-v-table/flight-log-last-x-days-total-v-table.component';
 import { TwoColumnEntityCrudComponent } from './two-column-entity-crud/two-column-entity-crud.component';
 import { JobLauncherComponent } from './job-launcher/job-launcher.component';
+import { GenericCrudComponent } from './generic-crud/generic-crud.component';
 
 const routes: Routes = [
     { path: '', redirectTo: '/flightLogTable', pathMatch: 'full' },
@@ -17,6 +18,7 @@ const routes: Routes = [
     { path: 'flightLogYearlyTotalVTable', component: FlightLogYearlyTotalVTableComponent },
     { path: 'flightLogLastXDaysTotalVTableComponent', component: FlightLogLastXDaysTotalVTableComponent },
     { path: 'jobLauncher', component: JobLauncherComponent },
+    { path: 'genericCrud/:tableName', component: GenericCrudComponent },
     ];
 
 @NgModule({

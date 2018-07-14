@@ -17,8 +17,8 @@ import { FlightLogYearlyTotalVResponse } from './response/flight-log-yearly-tota
 import { FlightLogLastXDaysTotalVResponse } from './response/flight-log-last-x-days-total-v-response';
 import { ConfigService } from './config/config.service';
 import { ApplicationProperties } from './config/application.properties';
-import { ITwoColumnEntityResponse } from './response/i-two-column-entity-response';
-import { ITwoColumnEntity } from './domain/i-two-column-entity';
+import { IGenericEntityResponse } from './response/i-generic-entity-response';
+import { IGenericEntity } from './domain/i-gerneric-entity';
 
 @Injectable()
 export class FlightLogServiceService {
@@ -238,19 +238,52 @@ export class FlightLogServiceService {
     //
     // two column entity end points, begin
     //
-    getAllTwoColumnEntity(tableName: string, sortColumnName: string): Observable<ITwoColumnEntityResponse> {
+    getGenericEntity(tableName: string, sortColumnName: string): Observable<IGenericEntityResponse> {
         // TODO use the capitalize method in single-column-crud and make it a global method
         let url: string = this.serviceUrl + '/' + tableName + 's/search/findAllByOrderBy' + StringUtils.capitalize(sortColumnName);
         console.log(url);
-        return this.http.get<ITwoColumnEntityResponse>(url);
+        return this.http.get<IGenericEntityResponse>(url);
     }
-    addTwoColumnEntity(tableName: string, row: ITwoColumnEntity): Observable<ISingleColumnEntityResponse> {
+    /*
+    * first: first row, zero based
+    * size: page size
+    * search:
+    */
+   getGenericEntityPage(tableName: string, first: number, size: number, search: string, queryOrderByColumns: string[]): Observable<IGenericEntityResponse> {
+        console.log('first, size, search', first, size, search)
+        // TODO pass in a dynamic sort value
+        let url: string = this.serviceUrl + '/' + tableName + 'Controller/findAll/?page=' + first/size + '&size=' + size + '&search=' + search + '&sort=' + queryOrderByColumns;
+        console.log('url', url);
+        return this.http.get<IGenericEntityResponse>(url)
+            // .map((response: any) => {
+            //     let airportResponse = response;
+            //     let airportArray = airportResponse._embedded.airports;
+            //     // Revive dates to their proper format
+            //     //for (let flightLog of airportArray) {
+            //         //console.log('flightLog.flightDate', flightLog.flightDate);
+            //         //console.log('new Date(flightLog.flightDate)', new Date(flightLog.flightDate));
+            //         //flightLog.flightDate = new Date(flightLog.flightDate+' 00:00:00');
+            //         //flightLog.flightDate = new Date(flightLog.flightDate);
+            //         //flightLog.created = new Date(flightLog.created);
+            //     //}
+            //     return airportResponse;
+            // })
+            ;
+            //.catch(this.handleError);
+}
+
+getGenericEntityCount(tableName: string): Observable<any> {
+    let url: string = this.serviceUrl + '/' + tableName + 'Controller/count';
+    return this.http.get<IGenericEntityResponse>(url);
+}
+
+addTwoColumnEntity(tableName: string, row: IGenericEntity): Observable<ISingleColumnEntityResponse> {
         let url: string = this.serviceUrl + '/' + tableName + 's';
         console.log('row: ', row);
         row.created = new Date();
         row.modified = new Date();
         console.log('row: ', row);
-        return this.http.post<ITwoColumnEntity>(url, row)
+        return this.http.post<IGenericEntity>(url, row)
             .map((twoColumnEntityResponse: any) => {
                 console.log('twoColumnEntityResponse', twoColumnEntityResponse);
                 return twoColumnEntityResponse;
@@ -261,14 +294,14 @@ export class FlightLogServiceService {
               });;
     }
 
-    updateTwoColumnEntity(row: ITwoColumnEntity): Observable<ITwoColumnEntityResponse> {
+    updateTwoColumnEntity(row: IGenericEntity): Observable<IGenericEntityResponse> {
         console.log('row: ', row);
         row.modified = new Date();
         console.log('row: ', row);
         
         let url: string = row._links.self.href;
         console.log('url: ', url);
-        return this.http.put<ITwoColumnEntity>(url, row)
+        return this.http.put<IGenericEntity>(url, row)
             .map((response: any) => {
                 let twoColumnEntityResponse = response;
                 console.log('twoColumnEntityResponse', twoColumnEntityResponse);
@@ -280,7 +313,7 @@ export class FlightLogServiceService {
               });;
     }
 
-    deleteTwoColumnEntity(row: ITwoColumnEntity): Observable<ITwoColumnEntityResponse> {
+    deleteTwoColumnEntity(row: IGenericEntity): Observable<IGenericEntityResponse> {
         let url: string = row._links.self.href;
         console.log('url: ', url);
         return this.http.delete<void>(url)

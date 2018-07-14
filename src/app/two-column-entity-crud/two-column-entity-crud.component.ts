@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray, AbstractControl } from '@angular/forms';
 import { FlightLogServiceService } from '../flight-log-service.service';
-import { ITwoColumnEntity } from '../domain/i-two-column-entity';
-import { ITwoColumnEntityResponse } from '../response/i-two-column-entity-response';
+import { IGenericEntity } from '../domain/i-gerneric-entity';
+import { IGenericEntityResponse } from '../response/i-generic-entity-response';
 import { CrudEnum } from '../crud-enum';
 import { StringUtils } from '../string-utils';
 import { CrudComponentConfig, FormAttributes, FieldAttributes } from '../config/crud-component-config';
@@ -16,11 +16,11 @@ import { forEach } from '@angular/router/src/utils/collection';
 })
 export class TwoColumnEntityCrudComponent implements OnInit {
 
-    rowArray: Array<ITwoColumnEntity>;
-    selectedRow: ITwoColumnEntity;
-    crudRow: ITwoColumnEntity;
-    rowResponse: ITwoColumnEntityResponse;
-    row: ITwoColumnEntity;
+    rowArray: Array<IGenericEntity>;
+    selectedRow: IGenericEntity;
+    crudRow: IGenericEntity;
+    rowResponse: IGenericEntityResponse;
+    row: IGenericEntity;
 
     crudForm: FormGroup;
     
@@ -43,7 +43,7 @@ export class TwoColumnEntityCrudComponent implements OnInit {
             this.tableName = params['tableName'];
 
             //let se: CrudComponentConfig = new CrudComponentConfig();
-            this.formAttributes = CrudComponentConfig.formConfig.get('significantEvent');
+            this.formAttributes = CrudComponentConfig.formConfig.get(this.tableName);
             this.fieldAttributesArray = this.formAttributes.fields;
             console.log('this.formAttributes', this.formAttributes);
 
@@ -54,7 +54,7 @@ export class TwoColumnEntityCrudComponent implements OnInit {
             this.tableNameCapitalized = StringUtils.capitalize(this.tableName);
             this.createForm();
         });
-        this.row = <ITwoColumnEntity>{};
+        this.row = <IGenericEntity>{};
     }
     
     createForm() {
@@ -113,7 +113,7 @@ export class TwoColumnEntityCrudComponent implements OnInit {
         //console.log('column1', this.crudForm.get('column1').value);
         switch (this.crudMode) {
             case CrudEnum.Add:
-                this.crudRow = <ITwoColumnEntity>{};
+                this.crudRow = <IGenericEntity>{};
 
                 this.fieldAttributesArray.forEach(fieldAttributes => {
                     this.crudRow[fieldAttributes.columnName] = this.crudForm.controls[fieldAttributes.columnName].value;
@@ -180,7 +180,7 @@ export class TwoColumnEntityCrudComponent implements OnInit {
     private resetDialoForm() {
         this.crudForm.reset();
         this.displayDialog = false;
-        this.selectedRow = <ITwoColumnEntity>{};
+        this.selectedRow = <IGenericEntity>{};
     }
     
     onCancel() {
@@ -189,9 +189,9 @@ export class TwoColumnEntityCrudComponent implements OnInit {
     }
     
     private getTwoColumnEntity(tableName: string, queryOrderByColumns: Array<string>) {
-        this.flightLogService.getAllTwoColumnEntity(tableName, queryOrderByColumns[0]) 
+        this.flightLogService.getGenericEntity(tableName, queryOrderByColumns[0]) 
             .subscribe({
-                next: (twoEntityResponse: ITwoColumnEntityResponse) => {
+                next: (twoEntityResponse: IGenericEntityResponse) => {
                     console.log('twoEntityResponse', twoEntityResponse);
                     this.rowArray = twoEntityResponse._embedded[this.tableName+'s'];
                     console.log('this.rowArray', this.rowArray);
@@ -199,7 +199,7 @@ export class TwoColumnEntityCrudComponent implements OnInit {
             }});
     }
 
-    private setDateFields(rowArray: Array<ITwoColumnEntity>, fieldAttributesArray: Array<FieldAttributes>) {
+    private setDateFields(rowArray: Array<IGenericEntity>, fieldAttributesArray: Array<FieldAttributes>) {
         rowArray.forEach(row => {
             fieldAttributesArray.forEach(fieldAttributes => {
                 if (fieldAttributes.dataType === 'date') {

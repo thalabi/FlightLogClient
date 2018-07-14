@@ -28,6 +28,7 @@ export class MenuComponent implements OnInit {
                 { label: 'Registration', routerLink: 'testArraySort/registration', routerLinkActiveOptions: { exact: true }},
                 { label: 'Pilot/Passenger', routerLink: 'testArraySort/pilot', routerLinkActiveOptions: { exact: true }},
                 { label: 'Significant Event', routerLink: 'twoColumnEntityCrud/significantEvent', routerLinkActiveOptions: { exact: true }},
+                { label: 'Airport', routerLink: 'genericCrud/airport', routerLinkActiveOptions: { exact: true }},
             ]
         },
         {label: 'Jobs',   routerLink: 'jobLauncher'},

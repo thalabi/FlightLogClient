@@ -1,4 +1,4 @@
-export interface ITwoColumnEntity{
+export interface IGenericEntity{
     id: number;
 
     [colums: string]: any;

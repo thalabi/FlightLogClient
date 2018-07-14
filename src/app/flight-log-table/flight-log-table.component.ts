@@ -15,6 +15,7 @@ import { PilotResponse } from '../response/pilot-response';
 import { Pilot } from '../domain/pilot';
 import { forEach } from '@angular/router/src/utils/collection';
 import { ISingleColumnEntityResponse } from '../response/i-single-column-entity-response';
+import { ComponentHelper } from '../util/ComponentHelper';
 
 @Component({
     selector: 'app-flight-log-table',
@@ -157,7 +158,7 @@ export class FlightLogTableComponent implements OnInit {
         });
     }
     
-    getTableRowsLazy(lazyLoadEvent: LazyLoadEvent) {
+    onLazyLoad(lazyLoadEvent: LazyLoadEvent) {
         this.savedLazyLoadEvent = lazyLoadEvent;
         console.log('event', lazyLoadEvent);
         console.log('event.first', lazyLoadEvent.first);
@@ -166,16 +167,11 @@ export class FlightLogTableComponent implements OnInit {
         // console.log('event.first', lazyLoadEvent.first);
         console.log('event.rows', lazyLoadEvent.rows);
         console.log('event.filters', lazyLoadEvent.filters);
-        console.log('event.filters._embedded', lazyLoadEvent.filters._embedded);
-        console.log('event.filters.registration', lazyLoadEvent.filters.registration);
-        this.getTableRows(lazyLoadEvent.first, lazyLoadEvent.rows, this.buildSearchString(lazyLoadEvent));
+        this.fetchPage(lazyLoadEvent.first,
+            lazyLoadEvent.rows, ComponentHelper.buildSearchString(lazyLoadEvent, this.fieldNames));
     }
-    getTableRows(firstRowNumber: number, rowsPerPage: number, searchString: string) {
-        // for (let filter of event.filters) {
 
-        // }
-        // let page: number = event.first / this.ROWS_PER_PAGE;
-        // console.log('page', event.first / 10);
+    fetchPage(firstRowNumber: number, rowsPerPage: number, searchString: string) {
         this.flightLogService.getPage(firstRowNumber, rowsPerPage, searchString)
             .subscribe({
                 next: flightLogResponse => {
@@ -298,7 +294,7 @@ export class FlightLogTableComponent implements OnInit {
         this.displayDialog = false;
         this.modifyAndDeleteButtonsDisable = true;
         this.resetDialoForm();
-        this.getTableRowsLazy(this.savedLazyLoadEvent);
+        this.onLazyLoad(this.savedLazyLoadEvent);
     }
     private resetDialoForm() {
         this.flightLogForm.reset();
@@ -322,24 +318,8 @@ export class FlightLogTableComponent implements OnInit {
         console.log('this.pageNumber', this.pageNumber);
         this.firstRowOfTable = (this.pageNumber - 1) * this.ROWS_PER_PAGE;
         this.savedLazyLoadEvent.first = this.firstRowOfTable;
-        this.getTableRowsLazy(this.savedLazyLoadEvent);
-        this.getTableRows(this.firstRowOfTable, this.ROWS_PER_PAGE, '');
+        this.onLazyLoad(this.savedLazyLoadEvent);
+        this.fetchPage(this.firstRowOfTable, this.ROWS_PER_PAGE, '');
     }
 
-    private buildSearchString (event): string {
-        let search: string = '';
-        for (let field of this.fieldNames) {
-            if (event.filters[field]) {
-                // if filter does not start with = < or > then prefix with =
-                if (event.filters[field].value[0] == '=' || event.filters[field].value[0] == '<' || event.filters[field].value[0] == '>') {
-                    search = search + field + event.filters[field].value + ',';
-                } else {
-                    search = search + field + encodeURIComponent('=') + event.filters[field].value + ',';
-                }
-            }
-        }
-        search = search.slice(0, -1);
-        console.log('search', search);
-        return search;
-    }
 }
