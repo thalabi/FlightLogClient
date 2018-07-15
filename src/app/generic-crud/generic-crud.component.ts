@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FlightLogServiceService } from '../service/flight-log-service.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { IGenericEntity } from '../domain/i-gerneric-entity';
 import { IGenericEntityResponse } from '../response/i-generic-entity-response';
@@ -11,6 +10,7 @@ import { LazyLoadEvent } from 'primeng/primeng';
 import { HalResponseLinks } from '../hal/hal-response-links';
 import { HalResponsePage } from '../hal/hal-response-page';
 import { ComponentHelper } from '../util/ComponentHelper';
+import { GenericEntityService } from '../service/generic-entity.service';
 
 @Component({
     selector: 'app-generic-crud',
@@ -50,7 +50,7 @@ export class GenericCrudComponent implements OnInit {
     
     pageNumber: number;
 
-    constructor(private formBuilder: FormBuilder, private flightLogService: FlightLogServiceService, private route: ActivatedRoute) { }
+    constructor(private formBuilder: FormBuilder, private genericEntityService: GenericEntityService, private route: ActivatedRoute) { }
 
     ngOnInit() {
         this.route.params.subscribe(params => {
@@ -84,7 +84,7 @@ export class GenericCrudComponent implements OnInit {
     }
 
     fetchPage(firstRowNumber: number, rowsPerPage: number, searchString: string, queryOrderByColumns: string[]) {
-        this.flightLogService.getGenericEntityPage(this.tableName, firstRowNumber, rowsPerPage, searchString, queryOrderByColumns)
+        this.genericEntityService.getGenericEntityPage(this.tableName, firstRowNumber, rowsPerPage, searchString, queryOrderByColumns)
         .subscribe({
             next: rowResponse => {
                 console.log('data', rowResponse);

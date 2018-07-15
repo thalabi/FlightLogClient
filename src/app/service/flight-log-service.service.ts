@@ -238,44 +238,11 @@ export class FlightLogServiceService {
     //
     // two column entity end points, begin
     //
-    getGenericEntity(tableName: string, sortColumnName: string): Observable<IGenericEntityResponse> {
-        // TODO use the capitalize method in single-column-crud and make it a global method
-        let url: string = this.serviceUrl + '/' + tableName + 's/search/findAllByOrderBy' + StringUtils.capitalize(sortColumnName);
-        console.log(url);
-        return this.http.get<IGenericEntityResponse>(url);
-    }
     /*
     * first: first row, zero based
     * size: page size
     * search:
     */
-   getGenericEntityPage(tableName: string, first: number, size: number, search: string, queryOrderByColumns: string[]): Observable<IGenericEntityResponse> {
-        console.log('first, size, search', first, size, search)
-        // TODO pass in a dynamic sort value
-        let url: string = this.serviceUrl + '/' + tableName + 'Controller/findAll/?page=' + first/size + '&size=' + size + '&search=' + search + '&sort=' + queryOrderByColumns;
-        console.log('url', url);
-        return this.http.get<IGenericEntityResponse>(url)
-            // .map((response: any) => {
-            //     let airportResponse = response;
-            //     let airportArray = airportResponse._embedded.airports;
-            //     // Revive dates to their proper format
-            //     //for (let flightLog of airportArray) {
-            //         //console.log('flightLog.flightDate', flightLog.flightDate);
-            //         //console.log('new Date(flightLog.flightDate)', new Date(flightLog.flightDate));
-            //         //flightLog.flightDate = new Date(flightLog.flightDate+' 00:00:00');
-            //         //flightLog.flightDate = new Date(flightLog.flightDate);
-            //         //flightLog.created = new Date(flightLog.created);
-            //     //}
-            //     return airportResponse;
-            // })
-            ;
-            //.catch(this.handleError);
-}
-
-getGenericEntityCount(tableName: string): Observable<any> {
-    let url: string = this.serviceUrl + '/' + tableName + 'Controller/count';
-    return this.http.get<IGenericEntityResponse>(url);
-}
 
 addTwoColumnEntity(tableName: string, row: IGenericEntity): Observable<ISingleColumnEntityResponse> {
         let url: string = this.serviceUrl + '/' + tableName + 's';

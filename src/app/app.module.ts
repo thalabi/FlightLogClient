@@ -23,6 +23,7 @@ import { TwoColumnEntityCrudComponent } from './two-column-entity-crud/two-colum
 import { JobLauncherComponent } from './job-launcher/job-launcher.component';
 import { JobLauncherService } from './job-launcher.service';
 import { GenericCrudComponent } from './generic-crud/generic-crud.component';
+import { GenericEntityService } from './service/generic-entity.service';
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import { GenericCrudComponent } from './generic-crud/generic-crud.component';
   ],
   providers: [
       FlightLogServiceService,
+      GenericEntityService,
       JobLauncherService,
       ConfigService,
       { provide: APP_INITIALIZER, useFactory: configServiceLoadConfig, deps: [ConfigService], multi: true },

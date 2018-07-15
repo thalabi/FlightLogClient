@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray, AbstractControl } from '@angular/forms';
-import { FlightLogServiceService } from '../service/flight-log-service.service';
 import { IGenericEntity } from '../domain/i-gerneric-entity';
 import { IGenericEntityResponse } from '../response/i-generic-entity-response';
 import { CrudEnum } from '../crud-enum';
 import { StringUtils } from '../string-utils';
 import { CrudComponentConfig, FormAttributes, FieldAttributes } from '../config/crud-component-config';
 import { forEach } from '@angular/router/src/utils/collection';
+import { GenericEntityService } from '../service/generic-entity.service';
+import { FlightLogServiceService } from '../service/flight-log-service.service';
 
 @Component({
     selector: 'app-two-column-entity-crud',
@@ -36,7 +37,7 @@ export class TwoColumnEntityCrudComponent implements OnInit {
     tableNameCapitalized: string;
     //columnName1: string;
 
-    constructor(private formBuilder: FormBuilder, private flightLogService: FlightLogServiceService, private route: ActivatedRoute) { }
+    constructor(private formBuilder: FormBuilder, private genericEntityService: GenericEntityService, private flightLogService: FlightLogServiceService, private route: ActivatedRoute) { }
 
     ngOnInit() {
         this.route.params.subscribe(params => {
@@ -189,7 +190,7 @@ export class TwoColumnEntityCrudComponent implements OnInit {
     }
     
     private getTwoColumnEntity(tableName: string, queryOrderByColumns: Array<string>) {
-        this.flightLogService.getGenericEntity(tableName, queryOrderByColumns[0]) 
+        this.genericEntityService.getGenericEntity(tableName, queryOrderByColumns[0]) 
             .subscribe({
                 next: (twoEntityResponse: IGenericEntityResponse) => {
                     console.log('twoEntityResponse', twoEntityResponse);
