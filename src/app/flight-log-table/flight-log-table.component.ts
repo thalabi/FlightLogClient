@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FlightLogServiceService } from '../flight-log-service.service';
+import { FlightLogServiceService } from '../service/flight-log-service.service';
 import { FlightLog } from '../domain/flight-log';
 import { FlightLogResponse } from '../response/flight-log-response';
 import { HalResponsePage } from '../hal/hal-response-page';

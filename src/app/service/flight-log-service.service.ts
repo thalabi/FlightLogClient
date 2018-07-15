@@ -1,24 +1,24 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse  } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-import { FlightLog } from './domain/flight-log';
+import { FlightLog } from '../domain/flight-log';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
-import { FlightLogResponse } from './response/flight-log-response';
-import { ISingleColumnEntityResponse } from './response/i-single-column-entity-response';
-import { Airport } from './domain/airport';
-import { AirportResponse } from './response/airport-response';
-import { PilotResponse } from './response/pilot-response';
-import { Pilot } from './domain/pilot';
-import { ISingleColumnEntity } from './domain/i-single-column-entity';
-import { StringUtils } from './string-utils';
-import { FlightLogMonthlyTotalVResponse } from './response/flight-log-monthly-total-v-response';
-import { FlightLogYearlyTotalVResponse } from './response/flight-log-yearly-total-v-response';
-import { FlightLogLastXDaysTotalVResponse } from './response/flight-log-last-x-days-total-v-response';
-import { ConfigService } from './config/config.service';
-import { ApplicationProperties } from './config/application.properties';
-import { IGenericEntityResponse } from './response/i-generic-entity-response';
-import { IGenericEntity } from './domain/i-gerneric-entity';
+import { FlightLogResponse } from '../response/flight-log-response';
+import { ISingleColumnEntityResponse } from '../response/i-single-column-entity-response';
+import { Airport } from '../domain/airport';
+import { AirportResponse } from '../response/airport-response';
+import { PilotResponse } from '../response/pilot-response';
+import { Pilot } from '../domain/pilot';
+import { ISingleColumnEntity } from '../domain/i-single-column-entity';
+import { StringUtils } from '../string-utils';
+import { FlightLogMonthlyTotalVResponse } from '../response/flight-log-monthly-total-v-response';
+import { FlightLogYearlyTotalVResponse } from '../response/flight-log-yearly-total-v-response';
+import { FlightLogLastXDaysTotalVResponse } from '../response/flight-log-last-x-days-total-v-response';
+import { ConfigService } from '../config/config.service';
+import { ApplicationProperties } from '../config/application.properties';
+import { IGenericEntityResponse } from '../response/i-generic-entity-response';
+import { IGenericEntity } from '../domain/i-gerneric-entity';
 
 @Injectable()
 export class FlightLogServiceService {

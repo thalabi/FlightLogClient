@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray, AbstractControl } from '@angular/forms';
-import { FlightLogServiceService } from '../flight-log-service.service';
+import { FlightLogServiceService } from '../service/flight-log-service.service';
 import { IGenericEntity } from '../domain/i-gerneric-entity';
 import { IGenericEntityResponse } from '../response/i-generic-entity-response';
 import { CrudEnum } from '../crud-enum';

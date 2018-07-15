@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ConfigService } from './config/config.service';
 import { ApplicationProperties } from './config/application.properties';
 import { Observable } from 'rxjs/Observable';
-import { FlightLogServiceService } from './flight-log-service.service';
+import { FlightLogServiceService } from './service/flight-log-service.service';
 
 @Injectable()
 export class JobLauncherService {

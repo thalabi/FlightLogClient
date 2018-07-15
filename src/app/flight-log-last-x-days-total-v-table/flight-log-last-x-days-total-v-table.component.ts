@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FlightLogServiceService } from '../flight-log-service.service';
+import { FlightLogServiceService } from '../service/flight-log-service.service';
 import { FlightLogLastXDaysTotalV } from '../domain/flight-log-last-x-days-total-v';
 import { FlightLogLastXDaysTotalVResponse } from '../response/flight-log-last-x-days-total-v-response';
 

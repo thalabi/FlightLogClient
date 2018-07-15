@@ -8,7 +8,7 @@ import {TableModule} from 'primeng/table';
 
 import { AppComponent } from './app.component';
 import { FlightLogTableComponent } from './flight-log-table/flight-log-table.component';
-import { FlightLogServiceService } from './flight-log-service.service';
+import { FlightLogServiceService } from './service/flight-log-service.service';
 import { HttpClientModule } from '@angular/common/http';
 import { RegexValidatorDirective } from './regex-validator.directive';
 import { MenuComponent } from './menu/menu.component';

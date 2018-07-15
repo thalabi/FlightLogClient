@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FlightLogServiceService } from '../flight-log-service.service';
+import { FlightLogServiceService } from '../service/flight-log-service.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { IGenericEntity } from '../domain/i-gerneric-entity';
 import { IGenericEntityResponse } from '../response/i-generic-entity-response';

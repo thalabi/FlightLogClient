@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CrudEnum } from '../crud-enum';
-import { FlightLogServiceService } from '../flight-log-service.service';
+import { FlightLogServiceService } from '../service/flight-log-service.service';
 import { ActivatedRoute } from '@angular/router';
 import { ISingleColumnEntity } from '../domain/i-single-column-entity';
 import { ISingleColumnEntityResponse } from '../response/i-single-column-entity-response';
