@@ -37,7 +37,7 @@ export class TwoColumnEntityCrudComponent implements OnInit {
     tableNameCapitalized: string;
     //columnName1: string;
 
-    constructor(private formBuilder: FormBuilder, private genericEntityService: GenericEntityService, private flightLogService: FlightLogServiceService, private route: ActivatedRoute) { }
+    constructor(private formBuilder: FormBuilder, private genericEntityService: GenericEntityService, private route: ActivatedRoute) { }
 
     ngOnInit() {
         this.route.params.subscribe(params => {
@@ -120,12 +120,12 @@ export class TwoColumnEntityCrudComponent implements OnInit {
                     this.crudRow[fieldAttributes.columnName] = this.crudForm.controls[fieldAttributes.columnName].value;
                 });
 
-                this.flightLogService.addTwoColumnEntity(this.tableName, this.crudRow).subscribe({
+                this.genericEntityService.addGenericEntity(this.tableName, this.crudRow).subscribe({
                     next: savedTwoColumnEntity => {
                         console.log('savedTwoColumnEntity', savedTwoColumnEntity);
                     },
                     error: error => {
-                        console.error('flightLogService.addTwoColumnEntity() returned error: ', error);
+                        console.error('genericEntityService.addGenericEntity returned error: ', error);
                         //this.messageService.error(error);
                     },
                     complete: () => {
@@ -140,12 +140,12 @@ export class TwoColumnEntityCrudComponent implements OnInit {
                     this.crudRow[fieldAttributes.columnName] = this.crudForm.controls[fieldAttributes.columnName].value;
                 });
 
-                this.flightLogService.updateTwoColumnEntity(this.crudRow).subscribe({
+                this.genericEntityService.updateGenericEntity(this.crudRow).subscribe({
                     next: savedRow => {
                         console.log('savedRow', savedRow);
                     },
                     error: error => {
-                        console.error('flightLogService.updateTwoColumnEntity() returned error: ', error);
+                        console.error('enericEntityService.updateGenericEntity returned error: ', error);
                         //this.messageService.error(error);
                     },
                     complete: () => {
@@ -154,12 +154,12 @@ export class TwoColumnEntityCrudComponent implements OnInit {
                 });
                 break;
             case CrudEnum.Delete:
-                this.flightLogService.deleteTwoColumnEntity(this.selectedRow).subscribe({
+                this.genericEntityService.deleteGenericEntity(this.selectedRow).subscribe({
                     next: savedRow => {
                         console.log('deleted row', this.selectedRow);
                     },
                     error: error => {
-                        console.error('flightLogService.deleteTwoColumnEntity() returned error: ', error);
+                        console.error('enericEntityService.deleteGenericEntity returned error: ', error);
                         //this.messageService.error(error);
                     },
                     complete: () => {

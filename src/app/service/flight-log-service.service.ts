@@ -49,20 +49,6 @@ export class FlightLogServiceService {
             //.catch(this.handleError);
     }
 
-    getPageOld(first: number, size: number, search: string): Observable<FlightLogResponse> {
-        let url: string = this.serviceUrl + '/flightLogController/findAll/?page=' + first/size + '&size=' + size + '&search=' + search;
-        console.log('url', url);
-        //let url: string = this.URL + '&page=' + first/size;
-        return this.http.get<FlightLogResponse>(url);
-            // .map((response: any) => {
-            //     return response._embedded.flightLogs;
-            // })
-            ;
-            //.catch(this.handleError);
-    }
-    getPage3(): Observable<FlightLogResponse> {
-        return this.getPage(0, 9999, '');
-    }
     getFlightLogCount(): Observable<any> {
         let url: string = this.serviceUrl + '/flightLogController/count';
         return this.http.get<FlightLogResponse>(url);
@@ -243,57 +229,6 @@ export class FlightLogServiceService {
     * size: page size
     * search:
     */
-
-addTwoColumnEntity(tableName: string, row: IGenericEntity): Observable<ISingleColumnEntityResponse> {
-        let url: string = this.serviceUrl + '/' + tableName + 's';
-        console.log('row: ', row);
-        row.created = new Date();
-        row.modified = new Date();
-        console.log('row: ', row);
-        return this.http.post<IGenericEntity>(url, row)
-            .map((twoColumnEntityResponse: any) => {
-                console.log('twoColumnEntityResponse', twoColumnEntityResponse);
-                return twoColumnEntityResponse;
-            })
-            .catch((httpErrorResponse: HttpErrorResponse) => {
-                FlightLogServiceService.handleError(httpErrorResponse);
-                return null;
-              });;
-    }
-
-    updateTwoColumnEntity(row: IGenericEntity): Observable<IGenericEntityResponse> {
-        console.log('row: ', row);
-        row.modified = new Date();
-        console.log('row: ', row);
-        
-        let url: string = row._links.self.href;
-        console.log('url: ', url);
-        return this.http.put<IGenericEntity>(url, row)
-            .map((response: any) => {
-                let twoColumnEntityResponse = response;
-                console.log('twoColumnEntityResponse', twoColumnEntityResponse);
-                return twoColumnEntityResponse;
-            })
-            .catch((httpErrorResponse: HttpErrorResponse) => {
-                FlightLogServiceService.handleError(httpErrorResponse);
-                return null;
-              });;
-    }
-
-    deleteTwoColumnEntity(row: IGenericEntity): Observable<IGenericEntityResponse> {
-        let url: string = row._links.self.href;
-        console.log('url: ', url);
-        return this.http.delete<void>(url)
-            .map((response: any) => {
-                let twoColumnEntityResponse = response;
-                console.log('twoColumnEntityResponse', twoColumnEntityResponse);
-                return twoColumnEntityResponse;
-            })
-            .catch((httpErrorResponse: HttpErrorResponse) => {
-                FlightLogServiceService.handleError(httpErrorResponse);
-                return null;
-              });;
-    }
 
     //
     // two column entity end points, end
