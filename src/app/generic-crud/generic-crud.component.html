@@ -44,3 +44,42 @@
         </div>
     </ng-template>
 </p-table>
+
+<p-dialog header="{{formAttributes.formTitle}} - {{crudMode}}" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
+
+    <form [formGroup]="crudForm" (ngSubmit)="onSubmit()" novalidate>
+        <div class="ui-g">
+
+            <ng-template ngFor let-fieldAttributes [ngForOf]="fieldAttributesArray">
+                <div class="ui-g-6">
+                    <label [for]="fieldAttributes.columnName">{{fieldAttributes.header}}</label>
+                </div>
+                <div class="ui-g-6" [ngSwitch]="fieldAttributes.uiComponentType">
+
+                    <p-calendar *ngSwitchCase="'calendar'" [formControlName]="fieldAttributes.columnName" [id]="fieldAttributes.columnName" [dateFormat]="'yy-mm-dd'" [showIcon]="true" [readonlyInput]="true" [showOnFocus]="false" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2050">
+                    </p-calendar>
+
+                    <textarea *ngSwitchCase="'textArea'" pInputTextarea [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName">
+                    </textarea>
+
+                    <input *ngSwitchCase="'text'" pInputText [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName"/>
+
+                    <span *ngSwitchDefault>
+                        Unhandled {{fieldAttributes.uiComponentType}} type
+                    </span>
+                </div>
+            </ng-template>
+
+            <p-footer>
+                <div class="ui-g-6">
+                    <!-- TODO replace disabled logic with a function -->
+                    <button pButton type="submit" label="Submit"
+                    [disabled]="crudForm.invalid" icon="fa-check"></button>
+                </div>
+                <div class="ui-g-6">
+                    <button pButton type="reset" label="Cancel" (click)="onCancel()"></button>
+                </div>
+            </p-footer>
+        </div>
+    </form>
+</p-dialog>

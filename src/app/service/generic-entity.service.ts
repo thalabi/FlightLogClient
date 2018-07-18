@@ -8,8 +8,6 @@ import { ApplicationProperties } from '../config/application.properties';
 import { StringUtils } from '../string-utils';
 import { IGenericEntity } from '../domain/i-gerneric-entity';
 import { FlightLogServiceService } from './flight-log-service.service';
-import { ISingleColumnEntityResponse } from '../response/i-single-column-entity-response';
-
 
 @Injectable()
 export class GenericEntityService {
@@ -22,11 +20,6 @@ export class GenericEntityService {
         const applicationProperties: ApplicationProperties = this.configService.getApplicationProperties();
         this.serviceUrl = applicationProperties.serviceUrl;
     }
-
-    // getGenericEntityCount(tableName: string): Observable<any> {
-    //     let url: string = this.serviceUrl + '/' + tableName + 'Controller/count';
-    //     return this.httpClient.get<IGenericEntityResponse>(url);
-    // }
 
     getGenericEntity(tableName: string, sortColumnName: string): Observable<IGenericEntityResponse> {
         // TODO use the capitalize method in single-column-crud and make it a global method

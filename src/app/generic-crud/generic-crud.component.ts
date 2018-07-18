@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, AbstractControl } from '@angular/forms';
 import { IGenericEntity } from '../domain/i-gerneric-entity';
 import { IGenericEntityResponse } from '../response/i-generic-entity-response';
 import { CrudEnum } from '../crud-enum';
@@ -62,11 +62,140 @@ export class GenericCrudComponent implements OnInit {
 
             console.log('tableName', this.tableName/*, 'sortColumnName', this.sortColumnName*/);
             this.tableNameCapitalized = StringUtils.capitalize(this.tableName);
-            // TODO un comment
-            //this.createForm();
+            this.createForm();
         });
         this.row = <IGenericEntity>{};
         this.fetchPage(0, this.ROWS_PER_PAGE, '', this.formAttributes.queryOrderByColumns);
+    }
+
+    createForm() {
+        this.crudForm = new FormGroup({});
+        this.fieldAttributesArray.forEach(fieldAttributes => {
+            this.crudForm.addControl(fieldAttributes.columnName, new FormControl());
+        })
+    }
+
+    showDialog(crudMode: string) {
+        this.displayDialog = true;
+        this.crudMode = CrudEnum[crudMode];
+        console.log('this.crudMode', this.crudMode);
+        switch (this.crudMode) {
+        case CrudEnum.Add:
+            this.fieldAttributesArray.forEach(fieldAttributes => {
+                let control: AbstractControl = this.crudForm.controls[fieldAttributes.columnName];
+                console.log('fieldAttributes.dataType', fieldAttributes.dataType);
+                if (fieldAttributes.dataType === 'date') {
+                    control.patchValue(new Date());
+                } else {
+                    control.patchValue(null);
+                }
+                control.enable();
+            });
+            break;
+        case CrudEnum.Update:
+            this.fieldAttributesArray.forEach(fieldAttributes => {
+                let control: AbstractControl = this.crudForm.controls[fieldAttributes.columnName];
+                control.patchValue(this.crudRow[fieldAttributes.columnName]);
+                control.enable();
+            });
+            break;
+        case CrudEnum.Delete:
+            this.fieldAttributesArray.forEach(fieldAttributes => {
+                let control: AbstractControl = this.crudForm.controls[fieldAttributes.columnName];
+                control.patchValue(this.crudRow[fieldAttributes.columnName]);
+                control.disable();
+            });
+            break;
+        default:
+            console.error('this.crudMode is invalid. this.crudMode: ' + this.crudMode);
+        }
+        console.log('this.crudForm', this.crudForm);
+    }
+
+    onSubmit() {
+        const crudFormModel = this.crudForm.value;
+        console.log('this.crudForm.value', this.crudForm.value);
+        console.log('crudFormModel', crudFormModel);
+        //console.log('column1', this.crudForm.get('column1').value);
+        switch (this.crudMode) {
+            case CrudEnum.Add:
+                this.crudRow = <IGenericEntity>{};
+
+                this.fieldAttributesArray.forEach(fieldAttributes => {
+                    this.crudRow[fieldAttributes.columnName] = this.crudForm.controls[fieldAttributes.columnName].value;
+                });
+
+                this.genericEntityService.addGenericEntity(this.tableName, this.crudRow).subscribe({
+                    next: savedTwoColumnEntity => {
+                        console.log('savedTwoColumnEntity', savedTwoColumnEntity);
+                    },
+                    error: error => {
+                        console.error('genericEntityService.addGenericEntity returned error: ', error);
+                        //this.messageService.error(error);
+                    },
+                    complete: () => {
+                        this.afterCrud();
+                    }
+                });
+
+                break;
+            case CrudEnum.Update:
+
+                this.fieldAttributesArray.forEach(fieldAttributes => {
+                    this.crudRow[fieldAttributes.columnName] = this.crudForm.controls[fieldAttributes.columnName].value;
+                });
+
+                this.genericEntityService.updateGenericEntity(this.crudRow).subscribe({
+                    next: savedRow => {
+                        console.log('savedRow', savedRow);
+                    },
+                    error: error => {
+                        console.error('enericEntityService.updateGenericEntity returned error: ', error);
+                        //this.messageService.error(error);
+                    },
+                    complete: () => {
+                        this.afterCrud();
+                    }
+                });
+                break;
+            case CrudEnum.Delete:
+                this.genericEntityService.deleteGenericEntity(this.selectedRow).subscribe({
+                    next: savedRow => {
+                        console.log('deleted row', this.selectedRow);
+                    },
+                    error: error => {
+                        console.error('enericEntityService.deleteGenericEntity returned error: ', error);
+                        //this.messageService.error(error);
+                    },
+                    complete: () => {
+                        this.afterCrud();
+                    }
+                });
+                break;
+            default:
+                console.error('this.crudMode is invalid. this.crudMode: ' + this.crudMode);
+        }
+    }
+
+    private afterCrud() {
+        this.displayDialog = false;
+        this.modifyAndDeleteButtonsDisable = true;
+        this.fetchPage(this.savedLazyLoadEvent.first, this.savedLazyLoadEvent.rows,
+            ComponentHelper.buildSearchString(this.savedLazyLoadEvent, this.formAttributes.fields.map(field => field.columnName)),
+            this.formAttributes.queryOrderByColumns);
+
+        this.resetDialoForm();
+    }
+    
+    private resetDialoForm() {
+        this.crudForm.reset();
+        this.displayDialog = false;
+        this.selectedRow = <IGenericEntity>{};
+    }
+    
+    onCancel() {
+        this.resetDialoForm();
+        this.modifyAndDeleteButtonsDisable = true;
     }
 
     onLazyLoad(lazyLoadEvent: LazyLoadEvent) {
