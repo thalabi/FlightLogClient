@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+
 import { catchError, map } from 'rxjs/operators';
 import { IGenericEntityResponse } from '../response/i-generic-entity-response';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
@@ -8,6 +8,7 @@ import { ApplicationProperties } from '../config/application.properties';
 import { StringUtils } from '../string-utils';
 import { IGenericEntity } from '../domain/i-gerneric-entity';
 import { FlightLogServiceService } from './flight-log-service.service';
+import { Observable } from '../../../node_modules/rxjs';
 
 @Injectable()
 export class GenericEntityService {

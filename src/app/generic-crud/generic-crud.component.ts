@@ -46,7 +46,7 @@ export class GenericCrudComponent implements OnInit {
     savedLazyLoadEvent: LazyLoadEvent;
 
     readonly ROWS_PER_PAGE: number = 10; // default rows per page
-    firstRowOfTable: number; // zero based. 0 -> first page, 1 -> second page, ...
+    firstRowOfTable: number; // triggers a page change, zero based. 0 -> first page, 1 -> second page, ...
     
     pageNumber: number;
 
@@ -216,10 +216,10 @@ export class GenericCrudComponent implements OnInit {
         this.genericEntityService.getGenericEntityPage(this.tableName, firstRowNumber, rowsPerPage, searchString, queryOrderByColumns)
         .subscribe({
             next: rowResponse => {
-                console.log('data', rowResponse);
+                console.log('rowResponse', rowResponse);
                 this.rowResponse = rowResponse;
-                console.log('this.rowResponse', this.rowResponse);
                 this.page = this.rowResponse.page;
+                this.firstRowOfTable = this.page.number * this.ROWS_PER_PAGE;
                 this.rowArray = this.page.totalElements ? this.rowResponse._embedded[this.tableName+'s'] : [];
                 console.log('this.rowArray', this.rowArray);
                 this.links = this.rowResponse._links;
@@ -228,10 +228,12 @@ export class GenericCrudComponent implements OnInit {
 
     onGoToPage() {
         console.log('this.pageNumber', this.pageNumber);
+        // TODO this might be redundant since it is set in fetchPage
         this.firstRowOfTable = (this.pageNumber - 1) * this.ROWS_PER_PAGE;
         this.savedLazyLoadEvent.first = this.firstRowOfTable;
         this.onLazyLoad(this.savedLazyLoadEvent);
         this.fetchPage(this.firstRowOfTable, this.ROWS_PER_PAGE, '', this.formAttributes.queryOrderByColumns);
+        this.pageNumber = null;
     }
  
     onRowSelect(event) {

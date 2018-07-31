@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse  } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
+import { catchError, map } from 'rxjs/operators';
 import { FlightLog } from '../domain/flight-log';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/map';
+
+
 import { FlightLogResponse } from '../response/flight-log-response';
 import { ISingleColumnEntityResponse } from '../response/i-single-column-entity-response';
 import { Airport } from '../domain/airport';
@@ -19,6 +19,7 @@ import { ConfigService } from '../config/config.service';
 import { ApplicationProperties } from '../config/application.properties';
 import { IGenericEntityResponse } from '../response/i-generic-entity-response';
 import { IGenericEntity } from '../domain/i-gerneric-entity';
+import { Observable } from '../../../node_modules/rxjs';
 
 @Injectable()
 export class FlightLogServiceService {
@@ -74,8 +75,8 @@ export class FlightLogServiceService {
         // url += '&search=' + search + '&sort=flightDate';
         console.log('url', url);
         //let url: string = this.URL + '&page=' + first/size;
-        return this.http.get<FlightLogResponse>(url)
-            .map((response: any) => {
+        return this.http.get<FlightLogResponse>(url).pipe(
+            map((response: any) => {
                 let flightLogResponse: FlightLogResponse = response;
                 let flightLogArray = flightLogResponse.page.totalElements ? flightLogResponse._embedded.flightLogs : [];
                 // Revive dates to their proper format
@@ -87,7 +88,7 @@ export class FlightLogServiceService {
                     flightLog.created = new Date(flightLog.created);
                 }
                 return flightLogResponse;
-            })
+            }))
             ;
             //.catch(this.handleError);
     }
@@ -98,16 +99,16 @@ export class FlightLogServiceService {
         flightLog.created = new Date();
         flightLog.modified = new Date();
         console.log('flightLog: ', flightLog);
-        return this.http.post<FlightLog>(url, flightLog)
-            .map((response: any) => {
+        return this.http.post<FlightLog>(url, flightLog).pipe(
+            map((response: any) => {
                 let flightLogResponse = response;
                 console.log('flightLogResponse', flightLogResponse);
                 return flightLogResponse;
-            })
-            .catch((httpErrorResponse: HttpErrorResponse) => {
+            }),
+            catchError((httpErrorResponse: HttpErrorResponse) => {
                 FlightLogServiceService.handleError(httpErrorResponse);
                 return null;
-              });;
+              }));
     }
     
     updateFlightLog(flightLog: FlightLog): Observable<FlightLogResponse> {
@@ -117,43 +118,42 @@ export class FlightLogServiceService {
         
         let url: string = flightLog._links.flightLog.href;
         console.log('url: ', url);
-        return this.http.put<FlightLog>(url, flightLog)
-            .map((response: any) => {
+        return this.http.put<FlightLog>(url, flightLog).pipe(
+            map((response: any) => {
                 let flightLogResponse = response;
                 console.log('flightLogResponse', flightLogResponse);
                 return flightLogResponse;
-            })
-            .catch((httpErrorResponse: HttpErrorResponse) => {
+            }),
+            catchError((httpErrorResponse: HttpErrorResponse) => {
                 FlightLogServiceService.handleError(httpErrorResponse);
                 return null;
-              });;
+              }));
     }
 
     deleteFlightLog(flightLog: FlightLog): Observable<FlightLogResponse> {
         
         let url: string = flightLog._links.flightLog.href;
         console.log('url: ', url);
-        return this.http.delete<void>(url)
-            .map((response: any) => {
+        return this.http.delete<void>(url).pipe(
+            map((response: any) => {
                 let flightLogResponse = response;
                 console.log('flightLogResponse', flightLogResponse);
                 return flightLogResponse;
-            })
-            .catch((httpErrorResponse: HttpErrorResponse) => {
+            }),
+            catchError((httpErrorResponse: HttpErrorResponse) => {
                 FlightLogServiceService.handleError(httpErrorResponse);
                 return null;
-              });;
+              }));
     }
 
     getAirportByIdentifierOrName(identifier: string, name: string): Observable<Array<Airport>> {
         let url: string = this.serviceUrl + '/airports/search/findByIdentifierContainingIgnoreCaseOrNameContainingIgnoreCase?identifier=' + identifier + '&name=' + name;
-        return this.http.get<AirportResponse>(url)
-            .map((response: any) => {
+        return this.http.get<AirportResponse>(url).pipe(
+            map((response: any) => {
                 let airportResponse = response;
                 //console.log('makeModelArray', makeModelArray);
                 return airportResponse._embedded.airports;
-            })
-            ;
+            }));
             //.catch(this.handleError);
     }
 
@@ -173,15 +173,15 @@ export class FlightLogServiceService {
         row.created = new Date();
         row.modified = new Date();
         console.log('row: ', row);
-        return this.http.post<ISingleColumnEntity>(url, row)
-            .map((singleColumnEntityResponse: any) => {
+        return this.http.post<ISingleColumnEntity>(url, row).pipe(
+            map((singleColumnEntityResponse: any) => {
                 console.log('singleColumnEntityResponse', singleColumnEntityResponse);
                 return singleColumnEntityResponse;
-            })
-            .catch((httpErrorResponse: HttpErrorResponse) => {
+            }),
+            catchError((httpErrorResponse: HttpErrorResponse) => {
                 FlightLogServiceService.handleError(httpErrorResponse);
                 return null;
-              });;
+              }));
     }
 
     updateSingleColumnEntity(row: ISingleColumnEntity): Observable<ISingleColumnEntityResponse> {
@@ -191,31 +191,31 @@ export class FlightLogServiceService {
         
         let url: string = row._links.self.href;
         console.log('url: ', url);
-        return this.http.put<ISingleColumnEntity>(url, row)
-            .map((response: any) => {
+        return this.http.put<ISingleColumnEntity>(url, row).pipe(
+            map((response: any) => {
                 let singleColumnEntityResponse = response;
                 console.log('singleColumnEntityResponse', singleColumnEntityResponse);
                 return singleColumnEntityResponse;
-            })
-            .catch((httpErrorResponse: HttpErrorResponse) => {
+            }),
+            catchError((httpErrorResponse: HttpErrorResponse) => {
                 FlightLogServiceService.handleError(httpErrorResponse);
                 return null;
-              });;
+              }));
     }
 
     deleteSingleColumnEntity(row: ISingleColumnEntity): Observable<ISingleColumnEntityResponse> {
         let url: string = row._links.self.href;
         console.log('url: ', url);
-        return this.http.delete<void>(url)
-            .map((response: any) => {
+        return this.http.delete<void>(url).pipe(
+            map((response: any) => {
                 let singleColumnEntityResponse = response;
                 console.log('singleColumnEntityResponse', singleColumnEntityResponse);
                 return singleColumnEntityResponse;
-            })
-            .catch((httpErrorResponse: HttpErrorResponse) => {
+            }),
+            catchError((httpErrorResponse: HttpErrorResponse) => {
                 FlightLogServiceService.handleError(httpErrorResponse);
                 return null;
-              });;
+              }));
     }
     //
     // single entity end points, end

@@ -21,7 +21,16 @@ export class CrudComponentConfig {
         tableName: 'registration',
         queryOrderByColumns: ['registration'],
         fields: [
-            {columnName: 'registration', dataType: 'string', orderNumber: 1, header: 'Registration', uiComponentType: 'calendar'}
+            {columnName: 'registration', dataType: 'string', orderNumber: 1, header: 'Registration', uiComponentType: 'text'}
+            ]
+    };
+
+    private static pilot: FormAttributes = {
+        formTitle: 'Pilot/Passenger',
+        tableName: 'pilot',
+        queryOrderByColumns: ['pilot'],
+        fields: [
+            {columnName: 'pilot', dataType: 'string', orderNumber: 1, header: 'Pilot/Passenger', uiComponentType: 'text'}
             ]
     };
 
@@ -47,13 +56,14 @@ export class CrudComponentConfig {
             {columnName: 'country', dataType: 'string', orderNumber: 5, header: 'Country', uiComponentType: 'text', headerStyle: {width: '5rem'}, filterStyle: {width: '3rem'}},
             {columnName: 'latitude', dataType: 'number', orderNumber: 6, header: 'Latitude', uiComponentType: 'text', headerStyle: {width: '6.5rem'}, filterStyle: {width: '5rem'}},
             {columnName: 'longitude', dataType: 'number', orderNumber: 7, header: 'Longitude', uiComponentType: 'text', headerStyle: {width: '6.5rem'}, filterStyle: {width: '5rem'}},
-            {columnName: 'upperWindsStationId', dataType: 'string', orderNumber: 8, header: 'Upper Winds Station Id', uiComponentType: 'text', headerStyle: {width: '5rem'}, filterStyle: {width: '3rem'}},
+            {columnName: 'upperWindsStationId', dataType: 'string', orderNumber: 8, header: 'U Wnd Id', uiComponentType: 'text', headerStyle: {width: '6rem'}, filterStyle: {width: '3rem'}},
             ]
     };
 
     static formConfig: Map<string, FormAttributes> = new Map([
         ['significantEvent', CrudComponentConfig.significantEvent],
         ['registration', CrudComponentConfig.registration],
+        ['pilot', CrudComponentConfig.pilot],
         ['airport', CrudComponentConfig.airport]
     ]);
 }

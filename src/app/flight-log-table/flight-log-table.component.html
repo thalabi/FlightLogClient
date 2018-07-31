@@ -1,6 +1,20 @@
-<p-table *ngIf="firstRowOfTable" [value]="flightLogArray" [dataKey]="'_links.flightLog.href'"
-    [lazy]="true" [rows]="ROWS_PER_PAGE" [paginator]="true" [totalRecords]="page.totalElements" [rowsPerPageOptions]="[5,10,20]" (onLazyLoad)="onLazyLoad($event)" [selectionMode]="'single'" [(selection)]="selectedFlightLog"
-    (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [responsive]="true" [first]="firstRowOfTable" #dt>
+<!-- *ngIf="page" -->
+<p-table
+    [value]="flightLogArray"
+    [dataKey]="'_links.flightLog.href'"
+    [lazy]="true"
+    [rows]="ROWS_PER_PAGE"
+    [paginator]="true"
+    [totalRecords]="page.totalElements"
+    [rowsPerPageOptions]="[5,10,20]"
+    (onLazyLoad)="onLazyLoad($event)"
+    [selectionMode]="'single'"
+    [(selection)]="selectedFlightLog"
+    (onRowSelect)="onRowSelect($event)"
+    (onRowUnselect)="onRowUnselect($event)"
+    [responsive]="true"
+    [first]="firstRowOfTable"
+    #dt>
 
     <ng-template pTemplate="caption">
         <div style="text-align:right">
@@ -39,9 +53,10 @@
             <button type="button" pButton icon="fa-edit" style="float:left" (click)="showDialog('Update')" label="Modify" [disabled]="modifyAndDeleteButtonsDisable"></button>
             <button type="button" pButton icon="fa-remove" style="float:left" (click)="showDialog('Delete')" label="Delete" [disabled]="modifyAndDeleteButtonsDisable"></button>
             <div style="text-align:right; margin-top: 0.3em;">
-                <span>Total: {{page.totalElements}}</span>
-                <input type="text" id="pageNumber" [(ngModel)]="pageNumber" maxlength="4" size="3"/>
-                <button pButton type="button" label="Go" (click)="onGoToPage()"></button>
+                <div style="display:inline-block; margin-right: 0.5rem;">Rows: {{page.totalElements}}</div>
+                <div style="display:inline-block; margin-right: 0.5rem;">Pages: {{page.totalPages}}</div>
+                <div style="display:inline-block;">Page: <input type="text" id="pageNumber" [(ngModel)]="pageNumber" maxlength="4" size="3"/></div>
+                <div style="display:inline-block;"><button pButton type="button" label="Go" (click)="onGoToPage()"></button></div>
             </div>
         </div>
     </ng-template>

@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ConfigService } from './config/config.service';
 import { ApplicationProperties } from './config/application.properties';
-import { Observable } from 'rxjs/Observable';
+import { catchError, map } from 'rxjs/operators';
 import { FlightLogServiceService } from './service/flight-log-service.service';
+import { Observable } from '../../node_modules/rxjs';
 
 @Injectable()
 export class JobLauncherService {
@@ -19,15 +20,15 @@ export class JobLauncherService {
 
     startJob(jobName: string): Observable<any> {
         let url: string = this.serviceUrl + '/jobLauncherController/' + jobName;
-        return this.http.get<any>(url)
-            .map((response: any) => {
+        return this.http.get<any>(url).pipe(
+            map((response: any) => {
                 let jobLauncherResponse = response;
                 console.log('jobLauncherResponse', jobLauncherResponse);
                 return jobLauncherResponse;
-            })
-            .catch((httpErrorResponse: HttpErrorResponse) => {
+            }),
+            catchError((httpErrorResponse: HttpErrorResponse) => {
                 FlightLogServiceService.handleError(httpErrorResponse);
                 return null;
-              });;
+              }));
     }
 }

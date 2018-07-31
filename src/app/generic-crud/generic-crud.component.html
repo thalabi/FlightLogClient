@@ -1,5 +1,5 @@
+<!-- *ngIf="page" -->
 <p-table
-    *ngIf="page"
 	[value]="rowArray"
 	[dataKey]="'_links.self.href'"
 	[lazy]="true"
@@ -11,6 +11,8 @@
 	[selectionMode]="'single'"
 	[(selection)]="selectedRow"
     (onRowSelect)="onRowSelect($event)"
+    [responsive]="true"
+    [first]="firstRowOfTable"
     #dt
 	>
 
@@ -41,6 +43,12 @@
             <button type="button" pButton icon="fa-plus" style="float:left" (click)="showDialog('Add')" label="Add"></button>
             <button type="button" pButton icon="fa-edit" style="float:left" (click)="showDialog('Update')" label="Modify" [disabled]="modifyAndDeleteButtonsDisable"></button>
             <button type="button" pButton icon="fa-remove" style="float:left" (click)="showDialog('Delete')" label="Delete" [disabled]="modifyAndDeleteButtonsDisable"></button>
+            <div style="text-align:right; margin-top: 0.3em;">
+                <div style="display:inline-block; margin-right: 0.5rem;">Rows: {{page.totalElements}}</div>
+                <div style="display:inline-block; margin-right: 0.5rem;">Pages: {{page.totalPages}}</div>
+                <div style="display:inline-block;">Page: <input type="text" id="pageNumber" [(ngModel)]="pageNumber" maxlength="4" size="3"/></div>
+                <div style="display:inline-block;"><button pButton type="button" label="Go" (click)="onGoToPage()"></button></div>
+            </div>
         </div>
     </ng-template>
 </p-table>

@@ -55,7 +55,7 @@ export class FlightLogTableComponent implements OnInit {
     savedLazyLoadEvent: LazyLoadEvent;
 
     readonly ROWS_PER_PAGE: number = 10; // default rows per page
-    firstRowOfTable: number; // zero based. 0 -> first page, 1 -> second page, ...
+    firstRowOfTable: number; // triggers a page change, zero based. 0 -> first page, 1 -> second page, ...
 
     pageNumber: number;
 
@@ -103,13 +103,11 @@ export class FlightLogTableComponent implements OnInit {
         for(let i = 0; i < this.colsPart2.length; i++) {
             this.columnOptions.push({label: this.colsPart2[i].header, value: this.colsPart2[i]});
         }
-        //this.getTableRows();
-        //this.selectedFlightLog = new FlightLog();
-        //this.selectedFlightLog.flightDate = new Date();
 
         this.getMakeModels();
         this.getRegistrations();
         this.getPilots();
+        // set the firstRowOfTable to the first row of the last page
         this.flightLogService.getFlightLogCount().subscribe({
             next: data => {
                 let rowCount: number = data.count;
@@ -175,9 +173,8 @@ export class FlightLogTableComponent implements OnInit {
         this.flightLogService.getPage(firstRowNumber, rowsPerPage, searchString)
             .subscribe({
                 next: flightLogResponse => {
-                    console.log('data', flightLogResponse);
+                    console.log('flightLogResponse', flightLogResponse);
                     this.flightLogResponse = flightLogResponse;
-                    console.log('this.flightLogResponse', this.flightLogResponse);
                     this.page = this.flightLogResponse.page;
                     this.flightLogArray = this.page.totalElements ? this.flightLogResponse._embedded.flightLogs : [];
                     // this.flightLogArray.forEach(flightLog => {
@@ -320,6 +317,7 @@ export class FlightLogTableComponent implements OnInit {
         this.savedLazyLoadEvent.first = this.firstRowOfTable;
         this.onLazyLoad(this.savedLazyLoadEvent);
         this.fetchPage(this.firstRowOfTable, this.ROWS_PER_PAGE, '');
+        this.pageNumber = null;
     }
 
 }

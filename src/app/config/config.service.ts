@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Headers, Response, ResponseContentType } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
+
+import { catchError, map } from 'rxjs/operators';
 // Observale operators
 import 'rxjs/add/operator/toPromise';
 import { Constants } from './../constants';
@@ -22,14 +23,14 @@ export class ConfigService {
 
     loadConfig(): Promise<string> {
         console.log('loadConfig() called');
-        let configPromise: Promise<string> = this.http.get(Constants.APPLICATION_PROPERTIES_FILE)
-            .map((response: any) => {
+        let configPromise: Promise<string> = this.http.get(Constants.APPLICATION_PROPERTIES_FILE).pipe(
+            map((response: any) => {
                 this.applicationProperties = response;
-            })
-            .catch((error: Response | any): Promise<any> => {
+            }),
+            catchError((error: Response | any): Promise<any> => {
                 console.error('Could not read ' + Constants.APPLICATION_PROPERTIES_FILE + '. Error is: ' + error);
                 return Promise.reject('');
-            })
+            }))
             .toPromise();
         //.catch(response => console.error('Could not read '+this.configfileUrl));
         configPromise.then(restUrl => this.restUrl = restUrl);
