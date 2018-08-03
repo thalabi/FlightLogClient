@@ -1,5 +1,5 @@
-<!-- *ngIf="page" -->
 <p-table
+    *ngIf="firstRowOfTable"
     [value]="flightLogArray"
     [dataKey]="'_links.flightLog.href'"
     [lazy]="true"
