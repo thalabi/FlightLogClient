@@ -24,6 +24,8 @@ import { JobLauncherComponent } from './job-launcher/job-launcher.component';
 import { JobLauncherService } from './job-launcher.service';
 import { GenericCrudComponent } from './generic-crud/generic-crud.component';
 import { GenericEntityService } from './service/generic-entity.service';
+import { CustomRouteReuseStrategy } from './util/CustomRouteReuseStrategy';
+import { RouteReuseStrategy } from '../../node_modules/@angular/router';
 
 @NgModule({
   declarations: [
@@ -56,6 +58,7 @@ import { GenericEntityService } from './service/generic-entity.service';
       JobLauncherService,
       ConfigService,
       { provide: APP_INITIALIZER, useFactory: configServiceLoadConfig, deps: [ConfigService], multi: true },
+      { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy}
   ],
   bootstrap: [AppComponent]
 })
