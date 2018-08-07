@@ -26,6 +26,7 @@ import { GenericCrudComponent } from './generic-crud/generic-crud.component';
 import { GenericEntityService } from './service/generic-entity.service';
 import { CustomRouteReuseStrategy } from './util/CustomRouteReuseStrategy';
 import { RouteReuseStrategy } from '../../node_modules/@angular/router';
+import { VersionService } from './service/version.service';
 
 @NgModule({
   declarations: [
@@ -53,13 +54,14 @@ import { RouteReuseStrategy } from '../../node_modules/@angular/router';
     AppRoutingModule
   ],
   providers: [
-      FlightLogServiceService,
-      GenericEntityService,
-      JobLauncherService,
-      ConfigService,
-      { provide: APP_INITIALIZER, useFactory: configServiceLoadConfig, deps: [ConfigService], multi: true },
-      { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy}
-  ],
+        VersionService,
+        FlightLogServiceService,
+        GenericEntityService,
+        JobLauncherService,
+        ConfigService,
+        { provide: APP_INITIALIZER, useFactory: configServiceLoadConfig, deps: [ConfigService], multi: true },
+        { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy}
+      ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

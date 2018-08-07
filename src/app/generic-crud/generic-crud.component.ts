@@ -22,11 +22,10 @@ export class GenericCrudComponent implements OnInit {
     rowArray: Array<IGenericEntity>;
     selectedRow: IGenericEntity;
     crudRow: IGenericEntity;
-    rowResponse: IGenericEntityResponse;
+    //rowResponse: IGenericEntityResponse;
     row: IGenericEntity;
     page: HalResponsePage;
     links: HalResponseLinks;
-
 
     crudForm: FormGroup;
     
@@ -50,9 +49,14 @@ export class GenericCrudComponent implements OnInit {
     
     pageNumber: number;
 
-    constructor(private formBuilder: FormBuilder, private genericEntityService: GenericEntityService, private route: ActivatedRoute) { }
+    counter: number = 0;
+    constructor(private formBuilder: FormBuilder, private genericEntityService: GenericEntityService, private route: ActivatedRoute) {
+        console.log("constructor() ===============================");
+    }
 
     ngOnInit() {
+        this.counter++;
+        console.log("this.counter: ", this.counter);
         this.route.params.subscribe(params => {
             this.tableName = params['tableName'];
 
@@ -63,8 +67,10 @@ export class GenericCrudComponent implements OnInit {
             console.log('tableName', this.tableName/*, 'sortColumnName', this.sortColumnName*/);
             this.tableNameCapitalized = StringUtils.capitalize(this.tableName);
             this.createForm();
+            console.log("after createForm");
         });
         this.row = <IGenericEntity>{};
+        console.log("before fetchPage");
         this.fetchPage(0, this.ROWS_PER_PAGE, '', this.formAttributes.queryOrderByColumns);
     }
 
@@ -213,16 +219,24 @@ export class GenericCrudComponent implements OnInit {
     }
 
     fetchPage(firstRowNumber: number, rowsPerPage: number, searchString: string, queryOrderByColumns: string[]) {
+        console.log("in fetchPage");
         this.genericEntityService.getGenericEntityPage(this.tableName, firstRowNumber, rowsPerPage, searchString, queryOrderByColumns)
         .subscribe({
             next: rowResponse => {
                 console.log('rowResponse', rowResponse);
-                this.rowResponse = rowResponse;
-                this.page = this.rowResponse.page;
-                this.firstRowOfTable = this.page.number * this.ROWS_PER_PAGE;
-                this.rowArray = this.page.totalElements ? this.rowResponse._embedded[this.tableName+'s'] : [];
-                console.log('this.rowArray', this.rowArray);
-                this.links = this.rowResponse._links;
+                this.page = rowResponse.page;
+                if (this.page) {
+                    this.firstRowOfTable = this.page.number * this.ROWS_PER_PAGE;
+                    this.rowArray = rowResponse._embedded[this.tableName+'s'];
+                } else {
+                    this.firstRowOfTable = 0;
+                    this.rowArray = [];
+                }
+                
+                // this.firstRowOfTable = page.number * this.ROWS_PER_PAGE;
+                // this.rowArray = page.totalElements ? rowResponse._embedded[this.tableName+'s'] : [];
+                // console.log('this.rowArray', this.rowArray);
+                this.links = rowResponse._links;
         }});
     }
 

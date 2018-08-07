@@ -1,11 +1,11 @@
-<!-- *ngIf="page" -->
 <p-table
+    *ngIf="page"
 	[value]="rowArray"
 	[dataKey]="'_links.self.href'"
 	[lazy]="true"
 	[rows]="ROWS_PER_PAGE"
 	[paginator]="true"
-	[totalRecords]="page.totalElements"
+	[totalRecords]="page?.totalElements"
 	[rowsPerPageOptions]="[5,10,20]"
 	(onLazyLoad)="onLazyLoad($event)"
 	[selectionMode]="'single'"

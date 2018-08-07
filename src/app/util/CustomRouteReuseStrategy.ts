@@ -14,6 +14,8 @@ export class CustomRouteReuseStrategy extends DefaultRouteReuseStrategy  {
 
     readonly DO_NOT_REUSE_COMPONENTS: Array<string> = ['GenericCrudComponent'];
 
+    // TODO not sure what is future and current
+    // The output from the log stmts below does not make sense
     shouldReuseRoute(future: ActivatedRouteSnapshot, current: ActivatedRouteSnapshot): any {
         // console.log('future: ', future, ', current: ', current);
         if (current && current.routeConfig && current.routeConfig.component && current.routeConfig.component.name) {
