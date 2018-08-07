@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { VersionService } from './service/version.service';
+import { environment } from '../environments/environment';
 
 @Component({
     selector: 'app-root',
@@ -7,6 +8,7 @@ import { VersionService } from './service/version.service';
     styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
+    clientBuildTimestamp: string;
     version: string;
     title = 'app';
 
@@ -15,6 +17,7 @@ export class AppComponent implements OnInit {
     ) {}
 
     ngOnInit() {
+        this.clientBuildTimestamp = environment.buildTimestamp;
         this.versionService.getVersion().subscribe({
             next: data => {
                 this.version = data;
