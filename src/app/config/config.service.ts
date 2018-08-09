@@ -4,7 +4,7 @@ import { Headers, Response, ResponseContentType } from '@angular/http';
 import { catchError, map } from 'rxjs/operators';
 // Observale operators
 import 'rxjs/add/operator/toPromise';
-import { Constants } from './../constants';
+import { Constants } from '../constants';
 import { ApplicationProperties } from './application.properties';
 import { HttpClient } from '@angular/common/http';
 

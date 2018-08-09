@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { ConfigService } from '../config/config.service';
 import { ApplicationProperties } from '../config/application.properties';
-import { HttpClient } from '../../../node_modules/@angular/common/http';
-import { Observable } from '../../../node_modules/rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class VersionService {
+export class AppInfoService {
     readonly serviceUrl: string;
 
     constructor(
@@ -18,8 +18,8 @@ export class VersionService {
         this.serviceUrl = applicationProperties.serviceUrl;
     }
 
-    getVersion(): Observable<string> {
-        return this.http.get(this.serviceUrl + '/versionController/getVersion', {responseType: "text"});
+    getBuildTimestamp(): Observable<string> {
+        return this.http.get(this.serviceUrl + '/appInfoController/getBuildTimestamp', {responseType: "text"});
     }
 
 }

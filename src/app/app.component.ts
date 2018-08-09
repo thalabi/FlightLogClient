@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { VersionService } from './service/version.service';
+import { AppInfoService } from './service/appInfo.service';
 import { environment } from '../environments/environment';
 
 @Component({
@@ -9,19 +9,19 @@ import { environment } from '../environments/environment';
 })
 export class AppComponent implements OnInit {
     clientBuildTimestamp: string;
-    version: string;
+    buildTimestamp: string;
     title = 'app';
 
     constructor (
-        private versionService: VersionService
+        private versionService: AppInfoService
     ) {}
 
     ngOnInit() {
         this.clientBuildTimestamp = environment.buildTimestamp;
-        this.versionService.getVersion().subscribe({
+        this.versionService.getBuildTimestamp().subscribe({
             next: data => {
-                this.version = data;
-                console.log('this.version: ', this.version);
+                this.buildTimestamp = data;
+                console.log('this.buildTimestamp: ', this.buildTimestamp);
             }
         });
     }

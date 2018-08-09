@@ -4,7 +4,7 @@ import { ConfigService } from './config/config.service';
 import { ApplicationProperties } from './config/application.properties';
 import { catchError, map } from 'rxjs/operators';
 import { FlightLogServiceService } from './service/flight-log-service.service';
-import { Observable } from '../../node_modules/rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class JobLauncherService {

@@ -19,7 +19,7 @@ import { ConfigService } from '../config/config.service';
 import { ApplicationProperties } from '../config/application.properties';
 import { IGenericEntityResponse } from '../response/i-generic-entity-response';
 import { IGenericEntity } from '../domain/i-gerneric-entity';
-import { Observable } from '../../../node_modules/rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class FlightLogServiceService {

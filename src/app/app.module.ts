@@ -12,7 +12,7 @@ import { FlightLogServiceService } from './service/flight-log-service.service';
 import { HttpClientModule } from '@angular/common/http';
 import { RegexValidatorDirective } from './regex-validator.directive';
 import { MenuComponent } from './menu/menu.component';
-import { AppRoutingModule } from './/app-routing.module';
+import { AppRoutingModule } from './app-routing.module';
 import { AbbreviateComponent } from './abbreviate/abbreviate.component';
 import { SingleColumnEntityCrudComponent } from './single-column-entity-crud/single-column-entity-crud.component';
 import { FlightLogMonthlyTotalVTableComponent } from './flight-log-monthly-total-v-table/flight-log-monthly-total-v-table.component';
@@ -25,8 +25,8 @@ import { JobLauncherService } from './job-launcher.service';
 import { GenericCrudComponent } from './generic-crud/generic-crud.component';
 import { GenericEntityService } from './service/generic-entity.service';
 import { CustomRouteReuseStrategy } from './util/CustomRouteReuseStrategy';
-import { RouteReuseStrategy } from '../../node_modules/@angular/router';
-import { VersionService } from './service/version.service';
+import { RouteReuseStrategy } from '@angular/router';
+import { AppInfoService } from './service/appInfo.service';
 
 @NgModule({
   declarations: [
@@ -54,7 +54,7 @@ import { VersionService } from './service/version.service';
     AppRoutingModule
   ],
   providers: [
-        VersionService,
+        AppInfoService,
         FlightLogServiceService,
         GenericEntityService,
         JobLauncherService,

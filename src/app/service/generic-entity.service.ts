@@ -8,7 +8,7 @@ import { ApplicationProperties } from '../config/application.properties';
 import { StringUtils } from '../string-utils';
 import { IGenericEntity } from '../domain/i-gerneric-entity';
 import { FlightLogServiceService } from './flight-log-service.service';
-import { Observable } from '../../../node_modules/rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class GenericEntityService {
