@@ -9,7 +9,7 @@ import { environment } from '../environments/environment';
 })
 export class AppComponent implements OnInit {
     clientBuildTimestamp: string;
-    buildTimestamp: string;
+    serverBuildTimestamp: string;
     title = 'app';
 
     constructor (
@@ -18,10 +18,10 @@ export class AppComponent implements OnInit {
 
     ngOnInit() {
         this.clientBuildTimestamp = environment.buildTimestamp;
-        this.versionService.getBuildTimestamp().subscribe({
+        this.versionService.getServerBuildTimestamp().subscribe({
             next: data => {
-                this.buildTimestamp = data;
-                console.log('this.buildTimestamp: ', this.buildTimestamp);
+                this.serverBuildTimestamp = data;
+                console.log('this.serverBuildTimestamp: ', this.serverBuildTimestamp);
             }
         });
     }

@@ -18,8 +18,7 @@ export class AppInfoService {
         this.serviceUrl = applicationProperties.serviceUrl;
     }
 
-    getBuildTimestamp(): Observable<string> {
+    getServerBuildTimestamp(): Observable<string> {
         return this.http.get(this.serviceUrl + '/appInfoController/getBuildTimestamp', {responseType: "text"});
     }
-
 }
