@@ -225,7 +225,7 @@ export class GenericCrudComponent implements OnInit {
             next: rowResponse => {
                 console.log('rowResponse', rowResponse);
                 this.page = rowResponse.page;
-                if (this.page) {
+                if (rowResponse._embedded) {
                     this.firstRowOfTable = this.page.number * this.ROWS_PER_PAGE;
                     this.rowArray = rowResponse._embedded[this.tableName+'s'];
                 } else {
