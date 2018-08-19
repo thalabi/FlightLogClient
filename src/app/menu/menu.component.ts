@@ -24,12 +24,11 @@ export class MenuComponent implements OnInit {
         },
         {label: 'Misc',
             items: [
-                
-                { label: 'Make & Model', routerLink: 'testArraySort/makeModel', routerLinkActiveOptions: { exact: true }},
-                { label: 'Registration', routerLink: 'genericCrud/registration', routerLinkActiveOptions: { exact: true }},
-                { label: 'Pilot/Passenger', routerLink: 'genericCrud/pilot', routerLinkActiveOptions: { exact: true }},
-                { label: 'Significant Event', routerLink: 'twoColumnEntityCrud/significantEvent', routerLinkActiveOptions: { exact: true }},
                 { label: 'Airport', routerLink: 'genericCrud/airport', routerLinkActiveOptions: { exact: true }},
+                { label: 'Make & Model', routerLink: 'genericCrud/makeModel', routerLinkActiveOptions: { exact: true }},
+                { label: 'Pilot/Passenger', routerLink: 'genericCrud/pilot', routerLinkActiveOptions: { exact: true }},
+                { label: 'Registration', routerLink: 'genericCrud/registration', routerLinkActiveOptions: { exact: true }},
+                { label: 'Significant Event', routerLink: 'twoColumnEntityCrud/significantEvent', routerLinkActiveOptions: { exact: true }},
             ]
         },
         {label: 'Jobs',   routerLink: 'jobLauncher'},

@@ -16,34 +16,6 @@ export class FieldAttributes {
 }
 export class CrudComponentConfig {
 
-    private static registration: FormAttributes = {
-        formTitle: 'Registration',
-        tableName: 'registration',
-        queryOrderByColumns: ['registration'],
-        fields: [
-            {columnName: 'registration', dataType: 'string', orderNumber: 1, header: 'Registration', uiComponentType: 'text'}
-            ]
-    };
-
-    private static pilot: FormAttributes = {
-        formTitle: 'Pilot/Passenger',
-        tableName: 'pilot',
-        queryOrderByColumns: ['pilot'],
-        fields: [
-            {columnName: 'pilot', dataType: 'string', orderNumber: 1, header: 'Pilot/Passenger', uiComponentType: 'text'}
-            ]
-    };
-
-    private static significantEvent: FormAttributes = {
-        formTitle: 'Significant Event',
-        tableName: 'significantEvent',
-        queryOrderByColumns: ['eventDate'],
-        fields: [
-            {columnName: 'eventDate', dataType: 'date', orderNumber: 1, header: 'Date', headerStyle: {width: '7rem'}, uiComponentType: 'calendar', pipe: 'date-yyyy-mm-dd'},
-            {columnName: 'eventDescription', dataType: 'string', orderNumber: 2, header: 'Description', uiComponentType: 'textArea'}
-            ]
-    };
-
     private static airport: FormAttributes = {
         formTitle: 'Airport',
         tableName: 'airport',
@@ -60,10 +32,48 @@ export class CrudComponentConfig {
             ]
     };
 
+    private static makeModel: FormAttributes = {
+        formTitle: 'MakeModel',
+        tableName: 'makeModel',
+        queryOrderByColumns: ['makeModel'],
+        fields: [
+            {columnName: 'makeModel', dataType: 'string', orderNumber: 1, header: 'MakeModel', uiComponentType: 'text'}
+            ]
+    };
+
+    private static pilot: FormAttributes = {
+        formTitle: 'Pilot/Passenger',
+        tableName: 'pilot',
+        queryOrderByColumns: ['pilot'],
+        fields: [
+            {columnName: 'pilot', dataType: 'string', orderNumber: 1, header: 'Pilot/Passenger', uiComponentType: 'text'}
+            ]
+    };
+
+    private static registration: FormAttributes = {
+        formTitle: 'Registration',
+        tableName: 'registration',
+        queryOrderByColumns: ['registration'],
+        fields: [
+            {columnName: 'registration', dataType: 'string', orderNumber: 1, header: 'Registration', uiComponentType: 'text'}
+            ]
+    };
+
+    private static significantEvent: FormAttributes = {
+        formTitle: 'Significant Event',
+        tableName: 'significantEvent',
+        queryOrderByColumns: ['eventDate'],
+        fields: [
+            {columnName: 'eventDate', dataType: 'date', orderNumber: 1, header: 'Date', headerStyle: {width: '7rem'}, uiComponentType: 'calendar', pipe: 'date-yyyy-mm-dd'},
+            {columnName: 'eventDescription', dataType: 'string', orderNumber: 2, header: 'Description', uiComponentType: 'textArea'}
+            ]
+    };
+
     static formConfig: Map<string, FormAttributes> = new Map([
-        ['significantEvent', CrudComponentConfig.significantEvent],
-        ['registration', CrudComponentConfig.registration],
+        ['airport', CrudComponentConfig.airport],
+        ['makeModel', CrudComponentConfig.makeModel],
         ['pilot', CrudComponentConfig.pilot],
-        ['airport', CrudComponentConfig.airport]
+        ['registration', CrudComponentConfig.registration],
+        ['significantEvent', CrudComponentConfig.significantEvent]
     ]);
 }
