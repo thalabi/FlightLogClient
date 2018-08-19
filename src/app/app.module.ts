@@ -14,7 +14,6 @@ import { RegexValidatorDirective } from './regex-validator.directive';
 import { MenuComponent } from './menu/menu.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AbbreviateComponent } from './abbreviate/abbreviate.component';
-import { SingleColumnEntityCrudComponent } from './single-column-entity-crud/single-column-entity-crud.component';
 import { FlightLogMonthlyTotalVTableComponent } from './flight-log-monthly-total-v-table/flight-log-monthly-total-v-table.component';
 import { FlightLogYearlyTotalVTableComponent } from './flight-log-yearly-total-v-table/flight-log-yearly-total-v-table.component';
 import { FlightLogLastXDaysTotalVTableComponent } from './flight-log-last-x-days-total-v-table/flight-log-last-x-days-total-v-table.component';
@@ -35,7 +34,6 @@ import { AppInfoService } from './service/appInfo.service';
     RegexValidatorDirective,
     MenuComponent,
     AbbreviateComponent,
-    SingleColumnEntityCrudComponent,
     FlightLogMonthlyTotalVTableComponent,
     FlightLogYearlyTotalVTableComponent,
     FlightLogLastXDaysTotalVTableComponent,
