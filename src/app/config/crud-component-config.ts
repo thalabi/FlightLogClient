@@ -64,7 +64,7 @@ export class CrudComponentConfig {
         tableName: 'significantEvent',
         queryOrderByColumns: ['eventDate'],
         fields: [
-            {columnName: 'eventDate', dataType: 'date', orderNumber: 1, header: 'Date', headerStyle: {width: '7rem'}, uiComponentType: 'calendar', pipe: 'date-yyyy-mm-dd'},
+            {columnName: 'eventDate', dataType: 'date', orderNumber: 1, header: 'Date', headerStyle: {width: '7rem'}, uiComponentType: 'calendar', pipe: 'date-yyyy-mm-dd', filterStyle: {width: '6rem'}},
             {columnName: 'eventDescription', dataType: 'string', orderNumber: 2, header: 'Description', uiComponentType: 'textArea'}
             ]
     };
