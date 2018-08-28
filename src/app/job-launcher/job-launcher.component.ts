@@ -19,6 +19,7 @@ export class JobLauncherComponent implements OnInit {
     ngOnInit() {
         this.jobOptions = [
             {jobLabel: 'Flight Log', jobName: 'copyFlightLogTable'},
+            {jobLabel: 'Make & Model', jobName: 'copyMakeModelTable'},
             {jobLabel: 'Registration', jobName: 'copyRegistrationTable'},
             {jobLabel: 'Significant Event', jobName: 'copySignificantEventTable'},
         ];
