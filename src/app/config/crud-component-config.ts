@@ -12,7 +12,9 @@ export class FieldAttributes {
     uiComponentType: string;
     pipe?: string;
     headerStyle?: any;
-    filterStyle?: any
+    filterStyle?: any;
+    textAreaRows?: number;
+    textAreaColumns?: number;
 }
 export class CrudComponentConfig {
 
@@ -65,7 +67,7 @@ export class CrudComponentConfig {
         queryOrderByColumns: ['eventDate'],
         fields: [
             {columnName: 'eventDate', dataType: 'date', orderNumber: 1, header: 'Date', headerStyle: {width: '7rem'}, uiComponentType: 'calendar', pipe: 'date-yyyy-mm-dd', filterStyle: {width: '6rem'}},
-            {columnName: 'eventDescription', dataType: 'string', orderNumber: 2, header: 'Description', uiComponentType: 'textArea'}
+            {columnName: 'eventDescription', dataType: 'string', orderNumber: 2, header: 'Description', uiComponentType: 'textArea', textAreaRows: 4, textAreaColumns: 30}
             ]
     };
 

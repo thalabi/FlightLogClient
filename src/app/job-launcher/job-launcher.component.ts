@@ -18,10 +18,11 @@ export class JobLauncherComponent implements OnInit {
 
     ngOnInit() {
         this.jobOptions = [
-            {jobLabel: 'Flight Log', jobName: 'copyFlightLogTable'},
-            {jobLabel: 'Make & Model', jobName: 'copyMakeModelTable'},
-            {jobLabel: 'Registration', jobName: 'copyRegistrationTable'},
-            {jobLabel: 'Significant Event', jobName: 'copySignificantEventTable'},
+            {jobLabel: 'Flight Log Refresh', jobName: 'copyFlightLogTable'},
+            {jobLabel: 'Make & Model Refresh', jobName: 'copyMakeModelTable'},
+            {jobLabel: 'Pilot Refresh', jobName: 'copyPilotTable'},
+            {jobLabel: 'Registration Refresh', jobName: 'copyRegistrationTable'},
+            {jobLabel: 'Significant Event Refresh', jobName: 'copySignificantEventTable'},
         ];
 
     }

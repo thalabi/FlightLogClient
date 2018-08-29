@@ -67,7 +67,7 @@
                     <p-calendar *ngSwitchCase="'calendar'" [formControlName]="fieldAttributes.columnName" [id]="fieldAttributes.columnName" [dateFormat]="'yy-mm-dd'" [showIcon]="true" [readonlyInput]="true" [showOnFocus]="false" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2050">
                     </p-calendar>
 
-                    <textarea *ngSwitchCase="'textArea'" pInputTextarea [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName">
+                    <textarea *ngSwitchCase="'textArea'" pInputTextarea [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName" [rows]="fieldAttributes.textAreaRows" [cols]="fieldAttributes.textAreaColumns">
                     </textarea>
 
                     <input *ngSwitchCase="'text'" pInputText [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName"/>
