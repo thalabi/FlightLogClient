@@ -7,7 +7,7 @@
     color: black;
     font-weight: 500;
     border: none;
-    background: none;
+    background: lightgray;
 }
 :host ::ng-deep .ui-menu.ui-widget {
     border: none;
