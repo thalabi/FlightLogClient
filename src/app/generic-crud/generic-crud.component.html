@@ -39,15 +39,19 @@
     </ng-template>
     
     <ng-template pTemplate="summary">
-        <div class="ui-helper-clearfix" style="width:100%">
-            <button type="button" pButton icon="fa-plus" style="float:left" (click)="showDialog('Add')" label="Add"></button>
-            <button type="button" pButton icon="fa-edit" style="float:left" (click)="showDialog('Update')" label="Modify" [disabled]="modifyAndDeleteButtonsDisable"></button>
-            <button type="button" pButton icon="fa-remove" style="float:left" (click)="showDialog('Delete')" label="Delete" [disabled]="modifyAndDeleteButtonsDisable"></button>
-            <div style="text-align:right; margin-top: 0.3em;">
-                <div style="display:inline-block; margin-right: 0.5rem;">Rows: {{page.totalElements}}</div>
-                <div style="display:inline-block; margin-right: 0.5rem;">Pages: {{page.totalPages}}</div>
-                <div style="display:inline-block;">Page: <input type="text" id="pageNumber" [(ngModel)]="pageNumber" maxlength="4" size="3"/></div>
-                <div style="display:inline-block;"><button pButton type="button" label="Go" (click)="onGoToPage()"></button></div>
+        <div class="p-grid" style="margin-bottom: -0.6em;">
+            <div class="p-col-4">
+                <button type="button" pButton icon="pi pi-plus" style="float:left" (click)="showDialog('Add')" label="Add"></button>
+                <button type="button" pButton icon="pi pi-pencil" style="float:left; margin-left:0.5rem;" (click)="showDialog('Update')" label="Modify" [disabled]="modifyAndDeleteButtonsDisable"></button>
+                <button type="button" pButton icon="pi pi-minus" style="float:left; margin-left:0.5rem;" (click)="showDialog('Delete')" label="Delete" [disabled]="modifyAndDeleteButtonsDisable"></button>
+            </div>
+            <div class="p-col-4 p-offset-4">
+                <div style="float:right;">
+                <span style="margin-right: 1rem;">Rows: {{page.totalElements}}</span>
+                <span style="margin-right: 1rem;">Pages: {{page.totalPages}}</span>
+                <span style="margin-right: 0.5rem;">Page: <input type="text" id="pageNumber" [(ngModel)]="pageNumber" maxlength="4" size="3"/></span>
+                <button pButton type="button" label="Go" (click)="onGoToPage()"></button>
+                </div>
             </div>
         </div>
     </ng-template>
@@ -56,13 +60,13 @@
 <p-dialog header="{{formAttributes.formTitle}} - {{crudMode}}" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
 
     <form [formGroup]="crudForm" (ngSubmit)="onSubmit()" novalidate>
-        <div class="ui-g">
+        <div class="p-grid" style="width: 30em;">
 
             <ng-template ngFor let-fieldAttributes [ngForOf]="fieldAttributesArray">
-                <div class="ui-g-6">
+                <div class="p-col-4">
                     <label [for]="fieldAttributes.columnName">{{fieldAttributes.header}}</label>
                 </div>
-                <div class="ui-g-6" [ngSwitch]="fieldAttributes.uiComponentType">
+                <div class="p-col-8" [ngSwitch]="fieldAttributes.uiComponentType">
 
                     <p-calendar *ngSwitchCase="'calendar'" [formControlName]="fieldAttributes.columnName" [id]="fieldAttributes.columnName" [dateFormat]="'yy-mm-dd'" [showIcon]="true" [readonlyInput]="true" [showOnFocus]="false" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2050">
                     </p-calendar>
@@ -78,13 +82,13 @@
                 </div>
             </ng-template>
 
-            <p-footer>
-                <div class="ui-g-6">
+            <p-footer class="p-grid">
+                <div class="p-col-6">
                     <!-- TODO replace disabled logic with a function -->
                     <button pButton type="submit" label="Submit"
-                    [disabled]="crudForm.invalid" icon="fa-check"></button>
+                    [disabled]="crudForm.invalid" icon="pi pi-check"></button>
                 </div>
-                <div class="ui-g-6">
+                <div class="p-col-6">
                     <button pButton type="reset" label="Cancel" (click)="onCancel()"></button>
                 </div>
             </p-footer>
