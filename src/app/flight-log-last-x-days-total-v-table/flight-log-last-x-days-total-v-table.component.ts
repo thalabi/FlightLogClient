@@ -11,10 +11,13 @@ import { FlightLogLastXDaysTotalVResponse } from '../response/flight-log-last-x-
 export class FlightLogLastXDaysTotalVTableComponent implements OnInit {
 
     flightLogLastXDaysTotalVArray: Array<FlightLogLastXDaysTotalV>;
-    
+
+    loadingFlag: boolean;
+
     constructor(private flightLogService: FlightLogServiceService) { }
 
     ngOnInit() {
+        this.loadingFlag = true;
         this.flightLogService.getFlightLogLastXDaysTotalV().subscribe({
             next: response => {
                 let flightLogLastXDaysTotalVResponse: FlightLogLastXDaysTotalVResponse = response;
@@ -23,8 +26,10 @@ export class FlightLogLastXDaysTotalVTableComponent implements OnInit {
                 console.log('this.flightLogLastXDaysTotalVArray', this.flightLogLastXDaysTotalVArray);
             },
             complete: () => {
+                this.loadingFlag = false;
             },
             error: error => {
+                this.loadingFlag = false;
                 console.error(error);
                 // TODO uncomment later
                 //this.messageService.clear();

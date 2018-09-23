@@ -1,4 +1,4 @@
-<p-table [value]="flightLogYearlyTotalVArray" [scrollable]="true" scrollHeight="25rem">
+<p-table [value]="flightLogYearlyTotalVArray" [scrollable]="true" scrollHeight="25rem" [loading]="loadingFlag">
     <ng-template pTemplate="header">
         <tr>
             <th>Year</th>

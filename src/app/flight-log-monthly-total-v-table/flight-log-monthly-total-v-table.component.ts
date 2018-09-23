@@ -11,10 +11,12 @@ import { FlightLogMonthlyTotalV } from '../domain/flight-log-monthly-total-v';
 export class FlightLogMonthlyTotalVTableComponent implements OnInit {
 
     flightLogMonthlyTotalVArray: Array<FlightLogMonthlyTotalV>;
+    loadingFlag: boolean;
 
     constructor(private flightLogService: FlightLogServiceService) { }
 
     ngOnInit() {
+        this.loadingFlag = true;
         this.flightLogService.getFlightLogMonthlyTotalV().subscribe({
             next: response => {
                 let flightLogMonthlyTotalVResponse: FlightLogMonthlyTotalVResponse = response;
@@ -23,8 +25,10 @@ export class FlightLogMonthlyTotalVTableComponent implements OnInit {
                 console.log('this.flightLogMonthlyTotalVArray', this.flightLogMonthlyTotalVArray);
             },
             complete: () => {
+                this.loadingFlag = false;
             },
             error: error => {
+                this.loadingFlag = false;
                 console.error(error);
                 // TODO uncomment later
                 //this.messageService.clear();

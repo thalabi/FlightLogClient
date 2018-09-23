@@ -12,9 +12,12 @@ export class FlightLogYearlyTotalVTableComponent implements OnInit {
 
     flightLogYearlyTotalVArray: Array<FlightLogYearlyTotalV>;
 
+    loadingFlag: boolean;
+
     constructor(private flightLogService: FlightLogServiceService) { }
 
     ngOnInit() {
+        this.loadingFlag = true;
         this.flightLogService.getFlightLogYearlyTotalV().subscribe({
             next: response => {
                 let flightLogYearlyTotalVResponse: FlightLogYearlyTotalVResponse = response;
@@ -23,8 +26,10 @@ export class FlightLogYearlyTotalVTableComponent implements OnInit {
                 console.log('this.flightLogYearlyTotalVArray', this.flightLogYearlyTotalVArray);
             },
             complete: () => {
+                this.loadingFlag = false;
             },
             error: error => {
+                this.loadingFlag = false;
                 console.error(error);
                 // TODO uncomment later
                 //this.messageService.clear();
