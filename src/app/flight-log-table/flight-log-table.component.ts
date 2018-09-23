@@ -59,6 +59,8 @@ export class FlightLogTableComponent implements OnInit {
 
     pageNumber: number;
 
+    loadingFlag: boolean;
+
     constructor(private formBuilder: FormBuilder, private flightLogService: FlightLogServiceService) {
         console.log('this.displayDialog', this.displayDialog);
         this.flightLogForm = FlightLogHelper.createForm(formBuilder);
@@ -170,19 +172,29 @@ export class FlightLogTableComponent implements OnInit {
     }
 
     fetchPage(firstRowNumber: number, rowsPerPage: number, searchString: string) {
-        this.flightLogService.getPage(firstRowNumber, rowsPerPage, searchString)
-            .subscribe({
-                next: flightLogResponse => {
-                    console.log('flightLogResponse', flightLogResponse);
-                    this.flightLogResponse = flightLogResponse;
-                    this.page = this.flightLogResponse.page;
-                    this.flightLogArray = this.page.totalElements ? this.flightLogResponse._embedded.flightLogs : [];
-                    // this.flightLogArray.forEach(flightLog => {
-                    //     flightLog.airportFrom = new Airport();
-                    //     flightLog.airportFrom.identifier = flightLog.routeFrom;
-                    // })
-                    console.log('this.flightLogArray', this.flightLogArray);
-                    this.links = this.flightLogResponse._links;
+        this.loadingFlag = true;
+        this.flightLogService.getPage(firstRowNumber, rowsPerPage, searchString).subscribe({
+            next: flightLogResponse => {
+                console.log('flightLogResponse', flightLogResponse);
+                this.flightLogResponse = flightLogResponse;
+                this.page = this.flightLogResponse.page;
+                this.flightLogArray = this.page.totalElements ? this.flightLogResponse._embedded.flightLogs : [];
+                // this.flightLogArray.forEach(flightLog => {
+                //     flightLog.airportFrom = new Airport();
+                //     flightLog.airportFrom.identifier = flightLog.routeFrom;
+                // })
+                console.log('this.flightLogArray', this.flightLogArray);
+                this.links = this.flightLogResponse._links;
+            },
+            complete: () => {
+                this.loadingFlag = false;
+            },
+            error: error => {
+                this.loadingFlag = false;
+                console.error(error);
+                // TODO uncomment later
+                //this.messageService.clear();
+                //this.messageService.error(error);
             }});
     }
 
