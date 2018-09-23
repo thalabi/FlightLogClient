@@ -50,6 +50,9 @@ export class GenericCrudComponent implements OnInit {
     pageNumber: number;
 
     counter: number = 0;
+
+    loadingFlag: boolean;
+
     constructor(private formBuilder: FormBuilder, private genericEntityService: GenericEntityService, private route: ActivatedRoute) {
         console.log("constructor() ===============================");
     }
@@ -220,6 +223,7 @@ export class GenericCrudComponent implements OnInit {
 
     fetchPage(firstRowNumber: number, rowsPerPage: number, searchString: string, queryOrderByColumns: string[]) {
         console.log("in fetchPage");
+        this.loadingFlag = true;
         this.genericEntityService.getGenericEntityPage(this.tableName, firstRowNumber, rowsPerPage, searchString, queryOrderByColumns)
         .subscribe({
             next: rowResponse => {
@@ -237,6 +241,16 @@ export class GenericCrudComponent implements OnInit {
                 // this.rowArray = page.totalElements ? rowResponse._embedded[this.tableName+'s'] : [];
                 // console.log('this.rowArray', this.rowArray);
                 this.links = rowResponse._links;
+        },
+        complete: () => {
+            this.loadingFlag = false;
+        },
+        error: error => {
+            this.loadingFlag = false;
+            console.error(error);
+            // TODO uncomment later
+            //this.messageService.clear();
+            //this.messageService.error(error);
         }});
     }
 
