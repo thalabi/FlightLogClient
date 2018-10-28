@@ -23,6 +23,7 @@ export class JobLauncherComponent implements OnInit {
             {jobLabel: 'Pilot Refresh', jobName: 'copyPilotTable'},
             {jobLabel: 'Registration Refresh', jobName: 'copyRegistrationTable'},
             {jobLabel: 'Significant Event Refresh', jobName: 'copySignificantEventTable'},
+            {jobLabel: 'Airport Refresh', jobName: 'copyAirportTable'},
         ];
 
     }
