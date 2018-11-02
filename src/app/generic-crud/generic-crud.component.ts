@@ -232,6 +232,7 @@ export class GenericCrudComponent implements OnInit {
                 if (rowResponse._embedded) {
                     this.firstRowOfTable = this.page.number * this.ROWS_PER_PAGE;
                     this.rowArray = rowResponse._embedded[this.tableName+'s'];
+                    this.setDateFields(this.rowArray, this.fieldAttributesArray);
                 } else {
                     this.firstRowOfTable = 0;
                     this.rowArray = [];
@@ -276,11 +277,14 @@ export class GenericCrudComponent implements OnInit {
         //this.selectedRow = new FlightLog(); // This a hack. If don't init selectedFlightLog, dialog will produce exception
     }
 
+    /*
+    Change data type to date and set time to zero
+    */
     private setDateFields(rowArray: Array<IGenericEntity>, fieldAttributesArray: Array<FieldAttributes>) {
         rowArray.forEach(row => {
             fieldAttributesArray.forEach(fieldAttributes => {
                 if (fieldAttributes.dataType === 'date') {
-                    row[fieldAttributes.columnName] = new Date(row[fieldAttributes.columnName]);
+                    row[fieldAttributes.columnName] = new Date(row[fieldAttributes.columnName]+' 00:00:00');
                 }
             })
         })
