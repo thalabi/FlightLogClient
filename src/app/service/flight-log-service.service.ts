@@ -75,22 +75,23 @@ export class FlightLogServiceService {
         // url += '&search=' + search + '&sort=flightDate';
         console.log('url', url);
         //let url: string = this.URL + '&page=' + first/size;
-        return this.http.get<FlightLogResponse>(url).pipe(
-            map((response: any) => {
-                let flightLogResponse: FlightLogResponse = response;
-                let flightLogArray = flightLogResponse.page.totalElements ? flightLogResponse._embedded.flightLogs : [];
-                // Revive dates to their proper format
-                for (let flightLog of flightLogArray) {
-                    // console.log('flightLog.flightDate', flightLog.flightDate);
-                    // console.log('new Date(flightLog.flightDate)', new Date(flightLog.flightDate));
-                    flightLog.flightDate = new Date(flightLog.flightDate+' 00:00:00');
-                    //flightLog.flightDate = new Date(flightLog.flightDate);
-                    flightLog.created = new Date(flightLog.created);
-                }
-                return flightLogResponse;
-            }))
-            ;
-            //.catch(this.handleError);
+        // return this.http.get<FlightLogResponse>(url).pipe(
+        //     map((response: any) => {
+        //         let flightLogResponse: FlightLogResponse = response;
+        //         let flightLogArray = flightLogResponse.page.totalElements ? flightLogResponse._embedded.flightLogs : [];
+        //         // Revive dates to their proper format
+        //         for (let flightLog of flightLogArray) {
+        //             // console.log('flightLog.flightDate', flightLog.flightDate);
+        //             // console.log('new Date(flightLog.flightDate)', new Date(flightLog.flightDate));
+        //             flightLog.flightDate = new Date(flightLog.flightDate+' 00:00:00');
+        //             //flightLog.flightDate = new Date(flightLog.flightDate);
+        //             flightLog.created = new Date(flightLog.created);
+        //         }
+        //         return flightLogResponse;
+        //     }))
+        //     ;
+        //     //.catch(this.handleError);
+        return this.http.get<FlightLogResponse>(url)
     }
 
     addFlightLog(flightLog: FlightLog): Observable<FlightLogResponse> {

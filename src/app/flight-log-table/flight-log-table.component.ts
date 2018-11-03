@@ -183,6 +183,7 @@ export class FlightLogTableComponent implements OnInit {
                 //     flightLog.airportFrom = new Airport();
                 //     flightLog.airportFrom.identifier = flightLog.routeFrom;
                 // })
+                this.clearTimes(this.flightLogArray);
                 console.log('this.flightLogArray', this.flightLogArray);
                 this.links = this.flightLogResponse._links;
             },
@@ -253,6 +254,7 @@ export class FlightLogTableComponent implements OnInit {
         console.log('this.crudFlightLog: ', this.crudFlightLog);
         switch (this.crudMode) {
             case CrudEnum.Add:
+                this.clearTime(this.crudFlightLog);
                 this.flightLogService.addFlightLog(this.crudFlightLog).subscribe({
                     next: savedFlightLog => {
                         console.log('savedFlightLog', savedFlightLog);
@@ -267,7 +269,8 @@ export class FlightLogTableComponent implements OnInit {
                 });
                 break;
             case CrudEnum.Update:
-                this.flightLogService.updateFlightLog(this.crudFlightLog).subscribe({
+            this.clearTime(this.crudFlightLog);
+            this.flightLogService.updateFlightLog(this.crudFlightLog).subscribe({
                     next: savedFlightLog => {
                         console.log('updatedFlightLog', savedFlightLog);
                     },
@@ -332,4 +335,16 @@ export class FlightLogTableComponent implements OnInit {
         this.pageNumber = null;
     }
 
+    private clearTime(flightLog: FlightLog) {
+        flightLog.flightDate.setHours(0);
+        flightLog.flightDate.setMinutes(0);
+        flightLog.flightDate.setSeconds(0);
+        flightLog.flightDate.setMilliseconds(0);
+    }
+
+    private clearTimes(flightLogArray: Array<FlightLog>) {
+        flightLogArray.forEach(flightLog => {
+            flightLog.flightDate = new Date(flightLog.flightDate+'T00:00:00');
+        });
+    }
 }

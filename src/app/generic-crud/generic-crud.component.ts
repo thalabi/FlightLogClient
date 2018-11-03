@@ -133,7 +133,7 @@ export class GenericCrudComponent implements OnInit {
                 this.fieldAttributesArray.forEach(fieldAttributes => {
                     this.crudRow[fieldAttributes.columnName] = this.crudForm.controls[fieldAttributes.columnName].value;
                 });
-
+                this.setRowDateFields(this.crudRow, this.fieldAttributesArray);
                 this.genericEntityService.addGenericEntity(this.tableName, this.crudRow).subscribe({
                     next: savedTwoColumnEntity => {
                         console.log('savedTwoColumnEntity', savedTwoColumnEntity);
@@ -153,7 +153,7 @@ export class GenericCrudComponent implements OnInit {
                 this.fieldAttributesArray.forEach(fieldAttributes => {
                     this.crudRow[fieldAttributes.columnName] = this.crudForm.controls[fieldAttributes.columnName].value;
                 });
-
+                this.setRowDateFields(this.crudRow, this.fieldAttributesArray);
                 this.genericEntityService.updateGenericEntity(this.crudRow).subscribe({
                     next: savedRow => {
                         console.log('savedRow', savedRow);
@@ -232,7 +232,7 @@ export class GenericCrudComponent implements OnInit {
                 if (rowResponse._embedded) {
                     this.firstRowOfTable = this.page.number * this.ROWS_PER_PAGE;
                     this.rowArray = rowResponse._embedded[this.tableName+'s'];
-                    this.setDateFields(this.rowArray, this.fieldAttributesArray);
+                    this.setRowArrayDateFields(this.rowArray, this.fieldAttributesArray);
                 } else {
                     this.firstRowOfTable = 0;
                     this.rowArray = [];
@@ -280,14 +280,26 @@ export class GenericCrudComponent implements OnInit {
     /*
     Change data type to date and set time to zero
     */
-    private setDateFields(rowArray: Array<IGenericEntity>, fieldAttributesArray: Array<FieldAttributes>) {
+    private setRowArrayDateFields(rowArray: Array<IGenericEntity>, fieldAttributesArray: Array<FieldAttributes>) {
         rowArray.forEach(row => {
             fieldAttributesArray.forEach(fieldAttributes => {
                 if (fieldAttributes.dataType === 'date') {
-                    row[fieldAttributes.columnName] = new Date(row[fieldAttributes.columnName]+' 00:00:00');
+                    row[fieldAttributes.columnName] = new Date(row[fieldAttributes.columnName]+'T00:00:00');
                 }
-            })
-        })
+            });
+        });
+    }
+
+    private setRowDateFields(row: IGenericEntity, fieldAttributesArray: Array<FieldAttributes>) {
+        fieldAttributesArray.forEach(fieldAttributes => {
+            if (fieldAttributes.dataType === 'date') {
+                console.log('row[fieldAttributes.columnName]', row[fieldAttributes.columnName]);
+                let dateOnly: Date = new Date(row[fieldAttributes.columnName]);
+                dateOnly.setHours(0); dateOnly.setMinutes(0); dateOnly.setSeconds(0); dateOnly.setMilliseconds(0);
+                row[fieldAttributes.columnName] = dateOnly;
+                console.log('row[fieldAttributes.columnName]', row[fieldAttributes.columnName]);
+            }
+        });
     }
 
 }
