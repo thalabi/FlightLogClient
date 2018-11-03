@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, FormControl, AbstractControl } from '@angular/f
 import { IGenericEntity } from '../domain/i-gerneric-entity';
 import { IGenericEntityResponse } from '../response/i-generic-entity-response';
 import { CrudEnum } from '../crud-enum';
-import { FormAttributes, FieldAttributes, CrudComponentConfig } from '../config/crud-component-config';
+import { FormAttributes, FieldAttributes, CrudComponentConfig, DataTypeEnum } from '../config/crud-component-config';
 import { StringUtils } from '../string-utils';
 import { LazyLoadEvent } from 'primeng/primeng';
 import { HalResponseLinks } from '../hal/hal-response-links';
@@ -93,7 +93,7 @@ export class GenericCrudComponent implements OnInit {
             this.fieldAttributesArray.forEach(fieldAttributes => {
                 let control: AbstractControl = this.crudForm.controls[fieldAttributes.columnName];
                 console.log('fieldAttributes.dataType', fieldAttributes.dataType);
-                if (fieldAttributes.dataType === 'date') {
+                if (fieldAttributes.dataType === DataTypeEnum.Date) {
                     control.patchValue(new Date());
                 } else {
                     control.patchValue(null);
@@ -278,12 +278,12 @@ export class GenericCrudComponent implements OnInit {
     }
 
     /*
-    Change data type to date and set time to zero
+    Change fields withDataTypeEnum.Date type to date and set time to zero
     */
     private setRowArrayDateFields(rowArray: Array<IGenericEntity>, fieldAttributesArray: Array<FieldAttributes>) {
         rowArray.forEach(row => {
             fieldAttributesArray.forEach(fieldAttributes => {
-                if (fieldAttributes.dataType === 'date') {
+                if (fieldAttributes.dataType === DataTypeEnum.Date) {
                     row[fieldAttributes.columnName] = new Date(row[fieldAttributes.columnName]+'T00:00:00');
                 }
             });
@@ -292,7 +292,7 @@ export class GenericCrudComponent implements OnInit {
 
     private setRowDateFields(row: IGenericEntity, fieldAttributesArray: Array<FieldAttributes>) {
         fieldAttributesArray.forEach(fieldAttributes => {
-            if (fieldAttributes.dataType === 'date') {
+            if (fieldAttributes.dataType === DataTypeEnum.Date) {
                 console.log('row[fieldAttributes.columnName]', row[fieldAttributes.columnName]);
                 let dateOnly: Date = new Date(row[fieldAttributes.columnName]);
                 dateOnly.setHours(0); dateOnly.setMinutes(0); dateOnly.setSeconds(0); dateOnly.setMilliseconds(0);

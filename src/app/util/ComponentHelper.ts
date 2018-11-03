@@ -1,6 +1,6 @@
 import { LazyLoadEvent } from "primeng/primeng";
 import { IGenericEntity } from "../domain/i-gerneric-entity";
-import { FieldAttributes } from "../config/crud-component-config";
+import { FieldAttributes, DataTypeEnum } from "../config/crud-component-config";
 
 export class ComponentHelper {
 
@@ -22,14 +22,14 @@ export class ComponentHelper {
         return search;
     }
 
-    public static setDateFields(rowArray: Array<IGenericEntity>, fieldAttributesArray: Array<FieldAttributes>) {
-        rowArray.forEach(row => {
-            fieldAttributesArray.forEach(fieldAttributes => {
-                if (fieldAttributes.dataType === 'date') {
-                    row[fieldAttributes.columnName] = new Date(row[fieldAttributes.columnName]);
-                }
-            })
-        })
-    }
+    // public static setDateFields(rowArray: Array<IGenericEntity>, fieldAttributesArray: Array<FieldAttributes>) {
+    //     rowArray.forEach(row => {
+    //         fieldAttributesArray.forEach(fieldAttributes => {
+    //             if (fieldAttributes.dataType === DataTypeEnum.Date) {
+    //                 row[fieldAttributes.columnName] = new Date(row[fieldAttributes.columnName]);
+    //             }
+    //         })
+    //     })
+    // }
 
 }
