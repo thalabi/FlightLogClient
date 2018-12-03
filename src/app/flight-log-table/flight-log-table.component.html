@@ -1,5 +1,5 @@
 <p-table
-    *ngIf="firstRowOfTable !== 'undefined' && firstRowOfTable >= 0"
+    *ngIf="firstRowOfTable >= 0"
     [value]="flightLogArray"
     [dataKey]="'_links.flightLog.href'"
     [lazy]="true"
