@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { Abbreviate } from './abbreviate';
 
 @Component({
     selector: 'app-abbreviate',
@@ -15,10 +16,8 @@ export class AbbreviateComponent implements OnInit {
     constructor() { }
 
     ngOnInit() {
-        if (this.inputText && this.inputText.length > this.maxLength) {
-            this.abbreviatedText = this.inputText.substr(0, this.inputText.lastIndexOf(' ', this.maxLength)) + ' ...';
-            this.textAbbreviated = true;
-        }
+        this.abbreviatedText = Abbreviate.abbreviateText(this.inputText, this.maxLength);
+        this.textAbbreviated = this.abbreviatedText ? this.abbreviatedText.length < this.inputText.length : false;
     }
 
 }

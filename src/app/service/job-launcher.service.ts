@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { ConfigService } from './config/config.service';
-import { ApplicationProperties } from './config/application.properties';
+import { ConfigService } from '../config/config.service';
+import { ApplicationProperties } from '../config/application.properties';
 import { catchError, map } from 'rxjs/operators';
-import { FlightLogServiceService } from './service/flight-log-service.service';
+import { FlightLogServiceService } from './flight-log-service.service';
 import { Observable } from 'rxjs';
 
 @Injectable()

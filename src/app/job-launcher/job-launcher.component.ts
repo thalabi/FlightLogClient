@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { JobLauncherService } from '../job-launcher.service';
+import { JobLauncherService } from '../service/job-launcher.service';
+import { MyMessageService } from '../message/mymessage.service';
 
 @Component({
   selector: 'app-job-launcher',
@@ -14,9 +15,10 @@ export class JobLauncherComponent implements OnInit {
     jobCompleted: boolean;
     jobLauncherResponse: any;
 
-    constructor(private jobLauncherService: JobLauncherService) { }
+    constructor(private jobLauncherService: JobLauncherService,private messageService: MyMessageService) { }
 
     ngOnInit() {
+        this.messageService.clear();
         this.jobOptions = [
             {jobLabel: 'Flight Log Refresh', jobName: 'copyFlightLogTable'},
             {jobLabel: 'Make & Model Refresh', jobName: 'copyMakeModelTable'},
@@ -24,6 +26,12 @@ export class JobLauncherComponent implements OnInit {
             {jobLabel: 'Registration Refresh', jobName: 'copyRegistrationTable'},
             {jobLabel: 'Significant Event Refresh', jobName: 'copySignificantEventTable'},
             {jobLabel: 'Airport Refresh', jobName: 'copyAirportTable'},
+            {jobLabel: 'Flight Log Sync Disable', jobName: 'disableFlightLogTriggers'},
+            {jobLabel: 'Flight Log Sync Enable', jobName: 'enableFlightLogTriggers'},
+            {jobLabel: 'Make & Model Sync Disable', jobName: 'disableMakeModelTriggers'},
+            {jobLabel: 'Make & Model Sync Enable', jobName: 'enableMakeModelTriggers'},
+            {jobLabel: 'Significant Sync Event Disable', jobName: 'disableSignificantEventTriggers'},
+            {jobLabel: 'Significant Sync Event Enable', jobName: 'enableSignificantEventTriggers'},
         ];
 
     }

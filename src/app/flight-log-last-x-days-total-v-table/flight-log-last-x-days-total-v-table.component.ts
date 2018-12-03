@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FlightLogServiceService } from '../service/flight-log-service.service';
 import { FlightLogLastXDaysTotalV } from '../domain/flight-log-last-x-days-total-v';
 import { FlightLogLastXDaysTotalVResponse } from '../response/flight-log-last-x-days-total-v-response';
+import { MyMessageService } from '../message/mymessage.service';
 
 @Component({
   selector: 'app-flight-log-last-x-days-total-v-table',
@@ -14,9 +15,10 @@ export class FlightLogLastXDaysTotalVTableComponent implements OnInit {
 
     loadingFlag: boolean;
 
-    constructor(private flightLogService: FlightLogServiceService) { }
+    constructor(private flightLogService: FlightLogServiceService, private messageService: MyMessageService) { }
 
     ngOnInit() {
+        this.messageService.clear();
         this.loadingFlag = true;
         this.flightLogService.getFlightLogLastXDaysTotalV().subscribe({
             next: response => {

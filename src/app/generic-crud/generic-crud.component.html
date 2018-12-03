@@ -41,12 +41,13 @@
     
     <ng-template pTemplate="summary">
         <div class="p-grid" style="margin-bottom: -0.6em;">
-            <div class="p-col-4">
+            <div class="p-col-5">
                 <button type="button" pButton icon="pi pi-plus" style="float:left" (click)="showDialog('Add')" label="Add"></button>
                 <button type="button" pButton icon="pi pi-pencil" style="float:left; margin-left:0.5rem;" (click)="showDialog('Update')" label="Modify" [disabled]="modifyAndDeleteButtonsDisable"></button>
                 <button type="button" pButton icon="pi pi-minus" style="float:left; margin-left:0.5rem;" (click)="showDialog('Delete')" label="Delete" [disabled]="modifyAndDeleteButtonsDisable"></button>
+                <p-toggleButton [(ngModel)]="replicationStatus" (onChange)="onChangeReplicationStatus($event)" [disabled]="replicationStatusDisabled" [onLabel]="replicationStatusLabel" [offLabel]="replicationStatusLabel" onIcon="pi pi-refresh" offIcon="pi pi-times" [style]="{'float':'left','left':'0.5rem'}"></p-toggleButton>
             </div>
-            <div class="p-col-4 p-offset-4">
+            <div class="p-col-4 p-offset-3">
                 <div style="float:right;">
                 <span style="margin-right: 1rem;">Rows: {{page.totalElements}}</span>
                 <span style="margin-right: 1rem;">Pages: {{page.totalPages}}</span>

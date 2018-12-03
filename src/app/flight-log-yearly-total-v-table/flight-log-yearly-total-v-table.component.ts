@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FlightLogServiceService } from '../service/flight-log-service.service';
 import { FlightLogYearlyTotalV } from '../domain/flight-log-yearly-total-v';
 import { FlightLogYearlyTotalVResponse } from '../response/flight-log-yearly-total-v-response';
+import { MyMessageService } from '../message/mymessage.service';
 
 @Component({
   selector: 'app-flight-log-yearly-total-v-table',
@@ -14,9 +15,10 @@ export class FlightLogYearlyTotalVTableComponent implements OnInit {
 
     loadingFlag: boolean;
 
-    constructor(private flightLogService: FlightLogServiceService) { }
+    constructor(private flightLogService: FlightLogServiceService, private messageService: MyMessageService) { }
 
     ngOnInit() {
+        this.messageService.clear();
         this.loadingFlag = true;
         this.flightLogService.getFlightLogYearlyTotalV().subscribe({
             next: response => {

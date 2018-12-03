@@ -1,9 +1,9 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, APP_INITIALIZER } from '@angular/core';
+import { NgModule, APP_INITIALIZER, ErrorHandler } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations'
-import { ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, TooltipModule, ProgressSpinnerModule } from 'primeng/primeng';
+import { ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, TooltipModule, ProgressSpinnerModule, ToggleButtonModule, MessagesModule, MessageModule, OverlayPanelModule } from 'primeng/primeng';
 import {TableModule} from 'primeng/table';
 
 import { AppComponent } from './app.component';
@@ -19,12 +19,16 @@ import { FlightLogYearlyTotalVTableComponent } from './flight-log-yearly-total-v
 import { FlightLogLastXDaysTotalVTableComponent } from './flight-log-last-x-days-total-v-table/flight-log-last-x-days-total-v-table.component';
 import { ConfigService, configServiceLoadConfig } from './config/config.service';
 import { JobLauncherComponent } from './job-launcher/job-launcher.component';
-import { JobLauncherService } from './job-launcher.service';
+import { JobLauncherService } from './service/job-launcher.service';
 import { GenericCrudComponent } from './generic-crud/generic-crud.component';
 import { GenericEntityService } from './service/generic-entity.service';
 import { CustomRouteReuseStrategy } from './util/CustomRouteReuseStrategy';
 import { RouteReuseStrategy } from '@angular/router';
 import { AppInfoService } from './service/appInfo.service';
+import { ReplicationService } from './service/replication.service';
+import { CustomErrorHandler } from './custom-error-handler';
+import { MyMessageService } from './message/mymessage.service';
+import { MessageComponent } from './message/message.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +41,8 @@ import { AppInfoService } from './service/appInfo.service';
     FlightLogYearlyTotalVTableComponent,
     FlightLogLastXDaysTotalVTableComponent,
     JobLauncherComponent,
-    GenericCrudComponent
+    GenericCrudComponent,
+    MessageComponent
   ],
   imports: [
     BrowserModule,
@@ -45,8 +50,8 @@ import { AppInfoService } from './service/appInfo.service';
     ReactiveFormsModule,
     HttpClientModule,
 
-    BrowserAnimationsModule, TableModule, ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, TooltipModule, ProgressSpinnerModule,
-    
+    BrowserAnimationsModule, TableModule, ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, TooltipModule, ProgressSpinnerModule, ToggleButtonModule, MessageModule, MessagesModule, OverlayPanelModule,
+
     AppRoutingModule
   ],
   providers: [
@@ -54,9 +59,12 @@ import { AppInfoService } from './service/appInfo.service';
         FlightLogServiceService,
         GenericEntityService,
         JobLauncherService,
+        ReplicationService,
         ConfigService,
+        MyMessageService,
         { provide: APP_INITIALIZER, useFactory: configServiceLoadConfig, deps: [ConfigService], multi: true },
-        { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy}
+        { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy},
+        { provide: ErrorHandler, useClass: CustomErrorHandler }, // overrride default error handler
       ],
   bootstrap: [AppComponent]
 })

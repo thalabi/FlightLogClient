@@ -1,5 +1,5 @@
 <p-table
-    *ngIf="firstRowOfTable"
+    *ngIf="firstRowOfTable !== 'undefined' && firstRowOfTable >= 0"
     [value]="flightLogArray"
     [dataKey]="'_links.flightLog.href'"
     [lazy]="true"
@@ -73,7 +73,7 @@
     <form [formGroup]="flightLogForm" (ngSubmit)="onSubmit()" novalidate>
             
 
-        <div class="p-grid" style="width: 50em;">
+        <div class="p-grid" style="width: 50rem;">
             <!-- line 1 -->
             <div class="p-col-3">
                 <label for="flightDate">Flight date</label>

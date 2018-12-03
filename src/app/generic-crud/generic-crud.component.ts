@@ -2,15 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, AbstractControl } from '@angular/forms';
 import { IGenericEntity } from '../domain/i-gerneric-entity';
-import { IGenericEntityResponse } from '../response/i-generic-entity-response';
 import { CrudEnum } from '../crud-enum';
 import { FormAttributes, FieldAttributes, CrudComponentConfig, DataTypeEnum } from '../config/crud-component-config';
 import { StringUtils } from '../string-utils';
-import { LazyLoadEvent } from 'primeng/primeng';
+import { LazyLoadEvent, Message } from 'primeng/primeng';
 import { HalResponseLinks } from '../hal/hal-response-links';
 import { HalResponsePage } from '../hal/hal-response-page';
 import { ComponentHelper } from '../util/ComponentHelper';
 import { GenericEntityService } from '../service/generic-entity.service';
+import { ReplicationService } from '../service/replication.service';
+import { MyMessageService } from '../message/mymessage.service';
 
 @Component({
     selector: 'app-generic-crud',
@@ -53,11 +54,17 @@ export class GenericCrudComponent implements OnInit {
 
     loadingFlag: boolean;
 
-    constructor(private formBuilder: FormBuilder, private genericEntityService: GenericEntityService, private route: ActivatedRoute) {
+    replicationStatus: boolean;
+    triggerStatusCode: number;
+    replicationStatusLabel: string;
+    replicationStatusDisabled: boolean = true;
+
+    constructor(private formBuilder: FormBuilder, private genericEntityService: GenericEntityService, private route: ActivatedRoute, private replicationService: ReplicationService, private messageService: MyMessageService) {
         console.log("constructor() ===============================");
     }
 
     ngOnInit() {
+        this.messageService.clear();
         this.counter++;
         console.log("this.counter: ", this.counter);
         this.route.params.subscribe(params => {
@@ -71,10 +78,28 @@ export class GenericCrudComponent implements OnInit {
             this.tableNameCapitalized = StringUtils.capitalize(this.tableName);
             this.createForm();
             console.log("after createForm");
+
+            this.getTableReplicationStatus();
         });
         this.row = <IGenericEntity>{};
         console.log("before fetchPage");
         this.fetchPage(0, this.ROWS_PER_PAGE, '', this.formAttributes.queryOrderByColumns);
+
+        // this.triggerStatusCode = 1;
+        // this.replicationService.getTableReplicationStatus(this.tableName).subscribe(params => {
+        //     this.triggerStatusCode = params;
+        //     console.log('this.triggerStatusCode', this.triggerStatusCode);
+        //     if (this.triggerStatusCode == 2) {
+        //         this.replicationStatus = true;
+        //         this.replicationStatusLabel = "Sync On";
+        //     } else if (this.triggerStatusCode == 0) {
+        //         this.replicationStatus = false;
+        //         this.replicationStatusLabel = "Sync Off";
+        //     } else {
+        //         this.replicationStatus = false;
+        //         this.replicationStatusLabel = "Sync Partial";
+        //     }
+        // });
     }
 
     createForm() {
@@ -275,6 +300,35 @@ export class GenericCrudComponent implements OnInit {
         console.log(event);
         this.modifyAndDeleteButtonsDisable = true;
         //this.selectedRow = new FlightLog(); // This a hack. If don't init selectedFlightLog, dialog will produce exception
+    }
+
+    private getTableReplicationStatus() {
+        this.replicationStatusLabel = "Fetching";
+        this.replicationService.getTableReplicationStatus(this.tableName).subscribe(params => {
+            this.triggerStatusCode = params;
+            console.log('this.triggerStatusCode', this.triggerStatusCode);
+            if (this.triggerStatusCode == 2) {
+                this.replicationStatus = true;
+                this.replicationStatusLabel = "Sync On";
+            } else if (this.triggerStatusCode == 0) {
+                this.replicationStatus = false;
+                this.replicationStatusLabel = "Sync Off";
+            } else {
+                this.replicationStatus = false;
+                this.replicationStatusLabel = "Sync Partial";
+            }
+            this.replicationStatusDisabled = false;
+            });
+    }
+
+    onChangeReplicationStatus(event) {
+        this.replicationStatusLabel = "Updating";
+        console.log('onChangeReplicationStatus', event);
+        console.log('checked: ', event.checked);
+        this.replicationStatusDisabled = true;
+        this.replicationService.setTableReplicationStatus(this.tableName, event.checked).subscribe(params => 
+            this.getTableReplicationStatus()
+        );
     }
 
     /*

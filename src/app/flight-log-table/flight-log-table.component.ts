@@ -16,6 +16,7 @@ import { Pilot } from '../domain/pilot';
 import { forEach } from '@angular/router/src/utils/collection';
 import { ISingleColumnEntityResponse } from '../response/i-single-column-entity-response';
 import { ComponentHelper } from '../util/ComponentHelper';
+import { MyMessageService } from '../message/mymessage.service';
 
 @Component({
     selector: 'app-flight-log-table',
@@ -61,12 +62,13 @@ export class FlightLogTableComponent implements OnInit {
 
     loadingFlag: boolean;
 
-    constructor(private formBuilder: FormBuilder, private flightLogService: FlightLogServiceService) {
+    constructor(private formBuilder: FormBuilder, private flightLogService: FlightLogServiceService, private messageService: MyMessageService) {
         console.log('this.displayDialog', this.displayDialog);
         this.flightLogForm = FlightLogHelper.createForm(formBuilder);
     }
 
     ngOnInit() {
+        this.messageService.clear();
         this.page = new HalResponsePage();
         this.cols = [
             {field: 'flightDate', header: 'Date', style: {'width': '6em', 'white-space': 'nowrap'}},
