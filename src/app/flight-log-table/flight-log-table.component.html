@@ -205,26 +205,30 @@
                 <label for="xcountryDay">X-cty day</label>
             </div>
             <div class="p-col-3">
-                <input pInputText id="xcountryDay" formControlName="xcountryDay" />
+                <input pInputText id="xcountryDay" formControlName="xcountryDay" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
+                <div [hidden]="flightLogForm.controls.xcountryDay.valid || flightLogForm.controls.xcountryDay.pristine" class="red-font">Invalid value</div>            
             </div>
             <div class="p-col-3">
                 <label for="xcountryNight">X-cty night</label>
             </div>
             <div class="p-col-3">
-                <input pInputText id="xcountryNight" formControlName="xcountryNight" />
+                <input pInputText id="xcountryNight" formControlName="xcountryNight" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
+                <div [hidden]="flightLogForm.controls.xcountryNight.valid || flightLogForm.controls.xcountryNight.pristine" class="red-font">Invalid value</div>            
             </div>
             <!-- line 11 -->
             <div class="p-col-3">
                 <label for="tosLdgsDay">T/Os & ldgs day</label>
             </div>
             <div class="p-col-3">
-                <input pInputText id="tosLdgsDay" formControlName="tosLdgsDay" />
+                <input pInputText id="tosLdgsDay" formControlName="tosLdgsDay" regexValidator="^\d*$"/>
+                <div [hidden]="flightLogForm.controls.tosLdgsDay.valid || flightLogForm.controls.tosLdgsDay.pristine" class="red-font">Invalid value</div>            
             </div>
             <div class="p-col-3">
                 <label for="tosLdgsNight">T/Os & ldgs night</label>
             </div>
             <div class="p-col-3">
-                <input pInputText id="tosLdgsNight" formControlName="tosLdgsNight" />
+                <input pInputText id="tosLdgsNight" formControlName="tosLdgsNight" regexValidator="^\d*$"/>
+                <div [hidden]="flightLogForm.controls.tosLdgsNight.valid || flightLogForm.controls.tosLdgsNight.pristine" class="red-font">Invalid value</div>            
             </div>
             <!-- <div>{{flightLogForm.status}}</div> -->
             <p-footer class="p-grid">
