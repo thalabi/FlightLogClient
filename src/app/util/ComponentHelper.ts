@@ -1,6 +1,9 @@
 import { LazyLoadEvent } from "primeng/primeng";
 import { IGenericEntity } from "../domain/i-gerneric-entity";
 import { FieldAttributes, DataTypeEnum } from "../config/crud-component-config";
+import { ReplicationService } from "../service/replication.service";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
 
 export class ComponentHelper {
 
@@ -31,5 +34,27 @@ export class ComponentHelper {
     //         })
     //     })
     // }
+
+    public static getTableReplicationStatusAndLabel(replicationService: ReplicationService, tableName: string): Observable<{"replicationStatus": boolean, "replicationStatusLabel": string}> {
+
+        return replicationService.getTableReplicationStatus(tableName).pipe(
+            map(params => {
+                let triggerStatusCode: number = params;
+                console.log('triggerStatusCode', triggerStatusCode);
+                switch (triggerStatusCode) {
+                    case 0: {
+                        return {"replicationStatus": false, "replicationStatusLabel": "Sync Off"};
+                        }
+                    case 1: {
+                        return {"replicationStatus": false, "replicationStatusLabel": "Sync Partial"};
+                        }
+                    case 2: {
+                        return {"replicationStatus": true, "replicationStatusLabel": "Sync On"};
+                        }
+                    }
+                }
+            )
+        );
+    }
 
 }

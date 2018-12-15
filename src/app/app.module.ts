@@ -29,6 +29,7 @@ import { ReplicationService } from './service/replication.service';
 import { CustomErrorHandler } from './custom-error-handler';
 import { MyMessageService } from './message/mymessage.service';
 import { MessageComponent } from './message/message.component';
+import { SyncButtonComponent } from './sync-button/sync-button.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { MessageComponent } from './message/message.component';
     FlightLogLastXDaysTotalVTableComponent,
     JobLauncherComponent,
     GenericCrudComponent,
-    MessageComponent
+    MessageComponent,
+    SyncButtonComponent
   ],
   imports: [
     BrowserModule,

@@ -17,6 +17,7 @@ import { forEach } from '@angular/router/src/utils/collection';
 import { ISingleColumnEntityResponse } from '../response/i-single-column-entity-response';
 import { ComponentHelper } from '../util/ComponentHelper';
 import { MyMessageService } from '../message/mymessage.service';
+import { ReplicationService } from '../service/replication.service';
 
 @Component({
     selector: 'app-flight-log-table',
@@ -62,7 +63,13 @@ export class FlightLogTableComponent implements OnInit {
 
     loadingFlag: boolean;
 
-    constructor(private formBuilder: FormBuilder, private flightLogService: FlightLogServiceService, private messageService: MyMessageService) {
+    replicationStatus: boolean;
+    replicationStatusLabel: string;
+    replicationStatusControlDisabled: boolean = true;
+
+    readonly tableName: string = 'flightLog';
+
+    constructor(private formBuilder: FormBuilder, private flightLogService: FlightLogServiceService, private replicationService: ReplicationService, private messageService: MyMessageService) {
         console.log('this.displayDialog', this.displayDialog);
         this.flightLogForm = FlightLogHelper.createForm(formBuilder);
     }
@@ -349,4 +356,24 @@ export class FlightLogTableComponent implements OnInit {
             flightLog.flightDate = new Date(flightLog.flightDate+'T00:00:00');
         });
     }
+
+    private getTableReplicationStatus() {
+        this.replicationStatusLabel = "Fetching";
+        this.replicationStatusControlDisabled = false;
+        ComponentHelper.getTableReplicationStatusAndLabel(this.replicationService, this.tableName).subscribe(params => {
+            this.replicationStatus = params.replicationStatus;
+            this.replicationStatusLabel = params.replicationStatusLabel;
+        })
+    }
+
+    onChangeReplicationStatus(event) {
+        this.replicationStatusLabel = "Updating";
+        console.log('onChangeReplicationStatus', event);
+        console.log('checked: ', event.checked);
+        this.replicationStatusControlDisabled = true;
+        this.replicationService.setTableReplicationStatus(this.tableName, event.checked).subscribe(params => 
+            this.getTableReplicationStatus()
+        );
+    }
+
 }

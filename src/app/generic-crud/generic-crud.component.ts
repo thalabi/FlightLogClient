@@ -10,7 +10,6 @@ import { HalResponseLinks } from '../hal/hal-response-links';
 import { HalResponsePage } from '../hal/hal-response-page';
 import { ComponentHelper } from '../util/ComponentHelper';
 import { GenericEntityService } from '../service/generic-entity.service';
-import { ReplicationService } from '../service/replication.service';
 import { MyMessageService } from '../message/mymessage.service';
 
 @Component({
@@ -54,12 +53,7 @@ export class GenericCrudComponent implements OnInit {
 
     loadingFlag: boolean;
 
-    replicationStatus: boolean;
-    triggerStatusCode: number;
-    replicationStatusLabel: string;
-    replicationStatusDisabled: boolean = true;
-
-    constructor(private formBuilder: FormBuilder, private genericEntityService: GenericEntityService, private route: ActivatedRoute, private replicationService: ReplicationService, private messageService: MyMessageService) {
+    constructor(private formBuilder: FormBuilder, private genericEntityService: GenericEntityService, private route: ActivatedRoute, private messageService: MyMessageService) {
         console.log("constructor() ===============================");
     }
 
@@ -78,28 +72,10 @@ export class GenericCrudComponent implements OnInit {
             this.tableNameCapitalized = StringUtils.capitalize(this.tableName);
             this.createForm();
             console.log("after createForm");
-
-            this.getTableReplicationStatus();
         });
         this.row = <IGenericEntity>{};
         console.log("before fetchPage");
         this.fetchPage(0, this.ROWS_PER_PAGE, '', this.formAttributes.queryOrderByColumns);
-
-        // this.triggerStatusCode = 1;
-        // this.replicationService.getTableReplicationStatus(this.tableName).subscribe(params => {
-        //     this.triggerStatusCode = params;
-        //     console.log('this.triggerStatusCode', this.triggerStatusCode);
-        //     if (this.triggerStatusCode == 2) {
-        //         this.replicationStatus = true;
-        //         this.replicationStatusLabel = "Sync On";
-        //     } else if (this.triggerStatusCode == 0) {
-        //         this.replicationStatus = false;
-        //         this.replicationStatusLabel = "Sync Off";
-        //     } else {
-        //         this.replicationStatus = false;
-        //         this.replicationStatusLabel = "Sync Partial";
-        //     }
-        // });
     }
 
     createForm() {
@@ -300,35 +276,6 @@ export class GenericCrudComponent implements OnInit {
         console.log(event);
         this.modifyAndDeleteButtonsDisable = true;
         //this.selectedRow = new FlightLog(); // This a hack. If don't init selectedFlightLog, dialog will produce exception
-    }
-
-    private getTableReplicationStatus() {
-        this.replicationStatusLabel = "Fetching";
-        this.replicationService.getTableReplicationStatus(this.tableName).subscribe(params => {
-            this.triggerStatusCode = params;
-            console.log('this.triggerStatusCode', this.triggerStatusCode);
-            if (this.triggerStatusCode == 2) {
-                this.replicationStatus = true;
-                this.replicationStatusLabel = "Sync On";
-            } else if (this.triggerStatusCode == 0) {
-                this.replicationStatus = false;
-                this.replicationStatusLabel = "Sync Off";
-            } else {
-                this.replicationStatus = false;
-                this.replicationStatusLabel = "Sync Partial";
-            }
-            this.replicationStatusDisabled = false;
-            });
-    }
-
-    onChangeReplicationStatus(event) {
-        this.replicationStatusLabel = "Updating";
-        console.log('onChangeReplicationStatus', event);
-        console.log('checked: ', event.checked);
-        this.replicationStatusDisabled = true;
-        this.replicationService.setTableReplicationStatus(this.tableName, event.checked).subscribe(params => 
-            this.getTableReplicationStatus()
-        );
     }
 
     /*
