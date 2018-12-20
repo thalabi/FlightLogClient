@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse  } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders  } from '@angular/common/http';
 import { catchError, map } from 'rxjs/operators';
 import { FlightLog } from '../domain/flight-log';
 
@@ -8,18 +8,14 @@ import { FlightLogResponse } from '../response/flight-log-response';
 import { ISingleColumnEntityResponse } from '../response/i-single-column-entity-response';
 import { Airport } from '../domain/airport';
 import { AirportResponse } from '../response/airport-response';
-import { PilotResponse } from '../response/pilot-response';
-import { Pilot } from '../domain/pilot';
-import { ISingleColumnEntity } from '../domain/i-single-column-entity';
 import { StringUtils } from '../string-utils';
 import { FlightLogMonthlyTotalVResponse } from '../response/flight-log-monthly-total-v-response';
 import { FlightLogYearlyTotalVResponse } from '../response/flight-log-yearly-total-v-response';
 import { FlightLogLastXDaysTotalVResponse } from '../response/flight-log-last-x-days-total-v-response';
 import { ConfigService } from '../config/config.service';
 import { ApplicationProperties } from '../config/application.properties';
-import { IGenericEntityResponse } from '../response/i-generic-entity-response';
-import { IGenericEntity } from '../domain/i-gerneric-entity';
 import { Observable } from 'rxjs';
+import { SessionDataService } from './session-data.service';
 
 @Injectable()
 export class FlightLogServiceService {
@@ -31,28 +27,29 @@ export class FlightLogServiceService {
 
     constructor(
         private http: HttpClient,
-        private configService: ConfigService
+        private configService: ConfigService,
+        private sessionDataService: SessionDataService
     ) {
         const applicationProperties: ApplicationProperties = this.configService.getApplicationProperties();
         this.serviceUrl = applicationProperties.serviceUrl;
         
     }
 
-    getAll(url?: string): Observable<FlightLogResponse> {
-        if (! url) {
-            url = this.serviceUrl + '/flightLogs/?size=9999&sort=flightDate';
-        }
-        return this.http.get<FlightLogResponse>(url);
-            // .map((response: any) => {
-            //     return response._embedded.flightLogs;
-            // })
-            ;
-            //.catch(this.handleError);
-    }
+    // getAll(url?: string): Observable<FlightLogResponse> {
+    //     if (! url) {
+    //         url = this.serviceUrl + '/flightLogs/?size=9999&sort=flightDate';
+    //     }
+    //     return this.http.get<FlightLogResponse>(url);
+    //         // .map((response: any) => {
+    //         //     return response._embedded.flightLogs;
+    //         // })
+    //         ;
+    //         //.catch(this.handleError);
+    // }
 
     getFlightLogCount(): Observable<any> {
         let url: string = this.serviceUrl + '/flightLogController/count';
-        return this.http.get<FlightLogResponse>(url);
+        return this.http.get<FlightLogResponse>(url, this.getHttpOptions());
     }
     /*
     * first: first row, zero based
@@ -91,7 +88,7 @@ export class FlightLogServiceService {
         //     }))
         //     ;
         //     //.catch(this.handleError);
-        return this.http.get<FlightLogResponse>(url)
+        return this.http.get<FlightLogResponse>(url, this.getHttpOptions());
     }
 
     addFlightLog(flightLog: FlightLog): Observable<FlightLogResponse> {
@@ -100,7 +97,7 @@ export class FlightLogServiceService {
         flightLog.created = new Date();
         flightLog.modified = new Date();
         console.log('flightLog: ', flightLog);
-        return this.http.post<FlightLog>(url, flightLog).pipe(
+        return this.http.post<FlightLog>(url, flightLog, this.getHttpOptions()).pipe(
             map((response: any) => {
                 let flightLogResponse = response;
                 console.log('flightLogResponse', flightLogResponse);
@@ -119,7 +116,7 @@ export class FlightLogServiceService {
         
         let url: string = flightLog._links.flightLog.href;
         console.log('url: ', url);
-        return this.http.put<FlightLog>(url, flightLog).pipe(
+        return this.http.put<FlightLog>(url, flightLog, this.getHttpOptions()).pipe(
             map((response: any) => {
                 let flightLogResponse = response;
                 console.log('flightLogResponse', flightLogResponse);
@@ -135,7 +132,7 @@ export class FlightLogServiceService {
         
         let url: string = flightLog._links.flightLog.href;
         console.log('url: ', url);
-        return this.http.delete<void>(url).pipe(
+        return this.http.delete<void>(url, this.getHttpOptions()).pipe(
             map((response: any) => {
                 let flightLogResponse = response;
                 console.log('flightLogResponse', flightLogResponse);
@@ -149,7 +146,7 @@ export class FlightLogServiceService {
 
     getAirportByIdentifierOrName(identifier: string, name: string): Observable<Array<Airport>> {
         let url: string = this.serviceUrl + '/airports/search/findByIdentifierContainingIgnoreCaseOrNameContainingIgnoreCase?identifier=' + identifier + '&name=' + name;
-        return this.http.get<AirportResponse>(url).pipe(
+        return this.http.get<AirportResponse>(url, this.getHttpOptions()).pipe(
             map((response: any) => {
                 let airportResponse = response;
                 //console.log('makeModelArray', makeModelArray);
@@ -165,59 +162,59 @@ export class FlightLogServiceService {
         // TODO use the capitalize method in single-column-crud and make it a global method
         let url: string = this.serviceUrl + '/' + tableName + 's/search/findAllByOrderBy' + StringUtils.capitalize(tableName);
         console.log(url);
-        return this.http.get<ISingleColumnEntityResponse>(url);
+        return this.http.get<ISingleColumnEntityResponse>(url, this.getHttpOptions());
     }
 
-    addSingleColumnEntity(tableName: string, row: ISingleColumnEntity): Observable<ISingleColumnEntityResponse> {
-        let url: string = this.serviceUrl + '/' + tableName + 's';
-        console.log('row: ', row);
-        row.created = new Date();
-        row.modified = new Date();
-        console.log('row: ', row);
-        return this.http.post<ISingleColumnEntity>(url, row).pipe(
-            map((singleColumnEntityResponse: any) => {
-                console.log('singleColumnEntityResponse', singleColumnEntityResponse);
-                return singleColumnEntityResponse;
-            }),
-            catchError((httpErrorResponse: HttpErrorResponse) => {
-                FlightLogServiceService.handleError(httpErrorResponse);
-                return null;
-              }));
-    }
+    // addSingleColumnEntity(tableName: string, row: ISingleColumnEntity): Observable<ISingleColumnEntityResponse> {
+    //     let url: string = this.serviceUrl + '/' + tableName + 's';
+    //     console.log('row: ', row);
+    //     row.created = new Date();
+    //     row.modified = new Date();
+    //     console.log('row: ', row);
+    //     return this.http.post<ISingleColumnEntity>(url, row).pipe(
+    //         map((singleColumnEntityResponse: any) => {
+    //             console.log('singleColumnEntityResponse', singleColumnEntityResponse);
+    //             return singleColumnEntityResponse;
+    //         }),
+    //         catchError((httpErrorResponse: HttpErrorResponse) => {
+    //             FlightLogServiceService.handleError(httpErrorResponse);
+    //             return null;
+    //           }));
+    // }
 
-    updateSingleColumnEntity(row: ISingleColumnEntity): Observable<ISingleColumnEntityResponse> {
-        console.log('row: ', row);
-        row.modified = new Date();
-        console.log('row: ', row);
+    // updateSingleColumnEntity(row: ISingleColumnEntity): Observable<ISingleColumnEntityResponse> {
+    //     console.log('row: ', row);
+    //     row.modified = new Date();
+    //     console.log('row: ', row);
         
-        let url: string = row._links.self.href;
-        console.log('url: ', url);
-        return this.http.put<ISingleColumnEntity>(url, row).pipe(
-            map((response: any) => {
-                let singleColumnEntityResponse = response;
-                console.log('singleColumnEntityResponse', singleColumnEntityResponse);
-                return singleColumnEntityResponse;
-            }),
-            catchError((httpErrorResponse: HttpErrorResponse) => {
-                FlightLogServiceService.handleError(httpErrorResponse);
-                return null;
-              }));
-    }
+    //     let url: string = row._links.self.href;
+    //     console.log('url: ', url);
+    //     return this.http.put<ISingleColumnEntity>(url, row).pipe(
+    //         map((response: any) => {
+    //             let singleColumnEntityResponse = response;
+    //             console.log('singleColumnEntityResponse', singleColumnEntityResponse);
+    //             return singleColumnEntityResponse;
+    //         }),
+    //         catchError((httpErrorResponse: HttpErrorResponse) => {
+    //             FlightLogServiceService.handleError(httpErrorResponse);
+    //             return null;
+    //           }));
+    // }
 
-    deleteSingleColumnEntity(row: ISingleColumnEntity): Observable<ISingleColumnEntityResponse> {
-        let url: string = row._links.self.href;
-        console.log('url: ', url);
-        return this.http.delete<void>(url).pipe(
-            map((response: any) => {
-                let singleColumnEntityResponse = response;
-                console.log('singleColumnEntityResponse', singleColumnEntityResponse);
-                return singleColumnEntityResponse;
-            }),
-            catchError((httpErrorResponse: HttpErrorResponse) => {
-                FlightLogServiceService.handleError(httpErrorResponse);
-                return null;
-              }));
-    }
+    // deleteSingleColumnEntity(row: ISingleColumnEntity): Observable<ISingleColumnEntityResponse> {
+    //     let url: string = row._links.self.href;
+    //     console.log('url: ', url);
+    //     return this.http.delete<void>(url).pipe(
+    //         map((response: any) => {
+    //             let singleColumnEntityResponse = response;
+    //             console.log('singleColumnEntityResponse', singleColumnEntityResponse);
+    //             return singleColumnEntityResponse;
+    //         }),
+    //         catchError((httpErrorResponse: HttpErrorResponse) => {
+    //             FlightLogServiceService.handleError(httpErrorResponse);
+    //             return null;
+    //           }));
+    // }
     //
     // single entity end points, end
     //
@@ -238,18 +235,27 @@ export class FlightLogServiceService {
     getFlightLogMonthlyTotalV(): Observable<FlightLogMonthlyTotalVResponse>  {
         let url: string = this.serviceUrl + '/flightLogMonthlyTotalVs/search/findAllByOrderById';
         console.log(url);
-        return this.http.get<FlightLogMonthlyTotalVResponse>(url);
+        return this.http.get<FlightLogMonthlyTotalVResponse>(url, this.getHttpOptions());
     }
     getFlightLogYearlyTotalV(): Observable<FlightLogYearlyTotalVResponse>  {
         let url: string = this.serviceUrl + '/flightLogYearlyTotalVs/search/findAllByOrderById';
         console.log(url);
-        return this.http.get<FlightLogYearlyTotalVResponse>(url);
+        return this.http.get<FlightLogYearlyTotalVResponse>(url, this.getHttpOptions());
     }
     getFlightLogLastXDaysTotalV(): Observable<FlightLogLastXDaysTotalVResponse>  {
         let url: string = this.serviceUrl + '/flightLogLastXDaysTotalVs/search/findAllByOrderById';
         console.log(url);
-        return this.http.get<FlightLogLastXDaysTotalVResponse>(url);
+        return this.http.get<FlightLogLastXDaysTotalVResponse>(url, this.getHttpOptions());
     }
+
+    private getHttpOptions() {
+        console.log('this.sessionDataService.user.token', this.sessionDataService.user.token);
+        return {headers: new HttpHeaders({
+            'Authorization': 'Bearer ' + this.sessionDataService.user.token,
+            'Content-Type': 'application/json'
+            })
+        }
+    };
 
     // TODO needs rewrite
     public static handleError(httpErrorResponse: HttpErrorResponse) {

@@ -30,6 +30,8 @@ import { CustomErrorHandler } from './custom-error-handler';
 import { MyMessageService } from './message/mymessage.service';
 import { MessageComponent } from './message/message.component';
 import { SyncButtonComponent } from './sync-button/sync-button.component';
+import { LoginComponent } from './security/login/login.component';
+import { AuthGuard } from './security/auth.guard';
 
 @NgModule({
   declarations: [
@@ -44,7 +46,8 @@ import { SyncButtonComponent } from './sync-button/sync-button.component';
     JobLauncherComponent,
     GenericCrudComponent,
     MessageComponent,
-    SyncButtonComponent
+    SyncButtonComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
@@ -64,6 +67,7 @@ import { SyncButtonComponent } from './sync-button/sync-button.component';
         ReplicationService,
         ConfigService,
         MyMessageService,
+        AuthGuard,
         { provide: APP_INITIALIZER, useFactory: configServiceLoadConfig, deps: [ConfigService], multi: true },
         { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy},
         { provide: ErrorHandler, useClass: CustomErrorHandler }, // overrride default error handler

@@ -6,15 +6,18 @@ import { FlightLogYearlyTotalVTableComponent } from './flight-log-yearly-total-v
 import { FlightLogLastXDaysTotalVTableComponent } from './flight-log-last-x-days-total-v-table/flight-log-last-x-days-total-v-table.component';
 import { JobLauncherComponent } from './job-launcher/job-launcher.component';
 import { GenericCrudComponent } from './generic-crud/generic-crud.component';
+import { LoginComponent } from './security/login/login.component';
+import { AuthGuard } from './security/auth.guard';
 
 const routes: Routes = [
-    { path: '', redirectTo: '/flightLogTable', pathMatch: 'full' },
-    { path: 'flightLogTable', component: FlightLogTableComponent },
-    { path: 'flightLogMonthlyTotalVTable', component: FlightLogMonthlyTotalVTableComponent },
-    { path: 'flightLogYearlyTotalVTable', component: FlightLogYearlyTotalVTableComponent },
-    { path: 'flightLogLastXDaysTotalVTableComponent', component: FlightLogLastXDaysTotalVTableComponent },
-    { path: 'jobLauncher', component: JobLauncherComponent },
-    { path: 'genericCrud/:tableName', component: GenericCrudComponent },
+    { path: '', redirectTo: '/flightLogTable', pathMatch: 'full', canActivate: [AuthGuard] },
+    { path: 'flightLogTable', component: FlightLogTableComponent, canActivate: [AuthGuard] },
+    { path: 'flightLogMonthlyTotalVTable', component: FlightLogMonthlyTotalVTableComponent, canActivate: [AuthGuard] },
+    { path: 'flightLogYearlyTotalVTable', component: FlightLogYearlyTotalVTableComponent, canActivate: [AuthGuard] },
+    { path: 'flightLogLastXDaysTotalVTableComponent', component: FlightLogLastXDaysTotalVTableComponent, canActivate: [AuthGuard] },
+    { path: 'jobLauncher', component: JobLauncherComponent, canActivate: [AuthGuard] },
+    { path: 'genericCrud/:tableName', component: GenericCrudComponent, canActivate: [AuthGuard] },
+    { path: 'login', component: LoginComponent },
     ];
 
 @NgModule({

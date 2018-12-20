@@ -1,0 +1,25 @@
+
+    <form (ngSubmit)="login()" #loginForm="ngForm">
+        <h4>Login</h4>
+        <div class="p-grid">
+            <div class="p-col-1">
+                <label for="username">Username</label>
+            </div>
+            <div class="p-col-11">
+                <input type="text" pInputText name="username" id="username" [(ngModel)]="model.username" #username="ngModel"
+                 required>
+                <div [hidden]="username.valid || username.pristine" class="alert alert-danger">Username is required</div>
+            </div>
+        <!-- </div>
+        <div> -->
+            <div class="p-col-1">
+                <label for="password">Password</label>
+            </div>
+            <div class="p-col-11">
+                <input type="password" pPassword name="password" id="password" [(ngModel)]="model.password" #password="ngModel"
+                required/>
+                <div [hidden]="password.valid || password.pristine" class="alert alert-danger">Password is required</div>
+            </div>
+        </div>
+        <button pButton type="submit" label="Login"></button>
+    </form>
