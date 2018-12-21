@@ -39,4 +39,8 @@ export class AuthenticationService {
                 })
             );
     }
+
+    logout() {
+        this.isAuthenticated = false;
+    }
 }

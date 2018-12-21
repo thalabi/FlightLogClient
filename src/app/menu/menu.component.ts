@@ -48,6 +48,7 @@ export class MenuComponent implements OnInit {
         //     routerLink: '/login',
         //     routerLinkActiveOptions: { exact: true }
         // }
+        {label: 'Logout',   routerLink: 'login'},
     ];
 
     constructor() { }

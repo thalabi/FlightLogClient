@@ -20,6 +20,7 @@ export class LoginComponent implements OnInit {
 
     ngOnInit() {
         this.messageService.clear();
+        this.authenticationService.logout();
         // get return url from route parameters or default to '/'
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     }
