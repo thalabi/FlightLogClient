@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { User } from '../security/user';
+import { Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -7,6 +8,10 @@ import { User } from '../security/user';
 export class SessionDataService {
 
     public user: User;
+    public userSubject: Subject<User>;
 
-    constructor() { }
+    constructor() {
+        this.userSubject = new Subject<User>();
+        this.userSubject.next(new User());
+    }
 }

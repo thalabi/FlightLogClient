@@ -21,6 +21,7 @@ export class LoginComponent implements OnInit {
     ngOnInit() {
         this.messageService.clear();
         this.authenticationService.logout();
+        this.sessionDataService.userSubject.next(null);
         // get return url from route parameters or default to '/'
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     }
@@ -32,6 +33,7 @@ export class LoginComponent implements OnInit {
             (user: User) => {
                 console.log("user", user);
                 this.sessionDataService.user = user;
+                this.sessionDataService.userSubject.next(user);
                 this.router.navigate([this.returnUrl]);
                 this.messageService.clear();
         },
