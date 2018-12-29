@@ -11,6 +11,7 @@ import { HalResponsePage } from '../hal/hal-response-page';
 import { ComponentHelper } from '../util/ComponentHelper';
 import { GenericEntityService } from '../service/generic-entity.service';
 import { MyMessageService } from '../message/mymessage.service';
+import { CustomErrorHandler } from '../custom-error-handler';
 
 @Component({
     selector: 'app-generic-crud',
@@ -18,6 +19,7 @@ import { MyMessageService } from '../message/mymessage.service';
     styleUrls: ['./generic-crud.component.css']
 })
 export class GenericCrudComponent implements OnInit {
+    [x: string]: any;
 
     rowArray: Array<IGenericEntity>;
     selectedRow: IGenericEntity;
@@ -249,7 +251,12 @@ export class GenericCrudComponent implements OnInit {
         },
         error: error => {
             this.loadingFlag = false;
+            this.messageService.error('summary', error);
             console.error(error);
+            let message: {summaryMessage: string, detailMessage: string} = CustomErrorHandler.getHttpErrorResponseMessages(error);
+            console.log(message.summaryMessage, message.detailMessage);
+            this.messageService.error(message.summaryMessage, message.detailMessage);
+            this.messageService.error('summary', 'detail');
             // TODO uncomment later
             //this.messageService.clear();
             //this.messageService.error(error);
