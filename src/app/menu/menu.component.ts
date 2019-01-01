@@ -13,20 +13,15 @@ export class MenuComponent implements OnInit {
     user: User;
 
     menuModel: MenuItem[] = [
-        {label: 'Home',   routerLink: 'flightLogTable'},
-        // {
-        //     label: 'Print',
-        //     routerLink: '/print',
-        //     routerLinkActiveOptions: { exact: true }
-        // },
-        {label: 'Summary',
+        {id: 'home', label: 'Home',   routerLink: 'flightLogTable'},
+        {id: 'summary', label: 'Summary',
             items: [
                 { label: 'Monthly Report', routerLink: 'flightLogMonthlyTotalVTable', routerLinkActiveOptions: { exact: true }},
                 { label: 'Yearly Report', routerLink: 'flightLogYearlyTotalVTable', routerLinkActiveOptions: { exact: true }},
                 { label: 'Last X Days Report', routerLink: 'flightLogLastXDaysTotalVTableComponent', routerLinkActiveOptions: { exact: true }},
             ]
         },
-        {label: 'Misc',
+        {id: 'misc', label: 'Misc',
             items: [
                 { label: 'Airport', routerLink: 'genericCrud/airport', routerLinkActiveOptions: { exact: true }},
                 { label: 'Make & Model', routerLink: 'genericCrud/makeModel', routerLinkActiveOptions: { exact: true }},
@@ -35,24 +30,13 @@ export class MenuComponent implements OnInit {
                 { label: 'Significant Event', routerLink: 'genericCrud/significantEvent', routerLinkActiveOptions: { exact: true }},
             ]
         },
-        {label: 'Jobs',   routerLink: 'jobLauncher'},
-        // {
-        //     label: 'About',
-        //     routerLink: '/about',
-        //     routerLinkActiveOptions: { exact: true }
-        // },
-        // {
-        //     label: 'Contact Us',
-        //     routerLink: '/contact-us',
-        //     routerLinkActiveOptions: { exact: true },
-        //     badge: 'My Badge'
-        // },
-        // {
-        //     label: 'Logout',
-        //     routerLink: '/login',
-        //     routerLinkActiveOptions: { exact: true }
-        // }
-        {label: 'Logout',   routerLink: 'login'},
+        {id: 'jobs', label: 'Jobs',   routerLink: 'jobLauncher'},
+        {id: 'logout', icon: 'pi pi-fw pi-cog',
+            items: [
+                { label: 'Change Password', routerLink: 'changePassword', routerLinkActiveOptions: { exact: true }},
+                { label: 'Logout', routerLink: 'login', routerLinkActiveOptions: { exact: true }},
+            ]
+        },
     ];
 
     constructor(private sessionDataService: SessionDataService) { }
@@ -71,24 +55,24 @@ export class MenuComponent implements OnInit {
             );
     }
 
-    private getMenuItem(array: any, label: string): any {
-        return array.find(item => item.label === label);
+    private getMenuItem(array: any, id: string): any {
+        return array.find(item => item.id === id);
     }
 
     public showMenuItems(show: boolean): void {
         //const topLevel = this.getMenuItem(this.menuModel, 'Top Level Menu');
         if (show) {
-            this.getMenuItem(this.menuModel, 'Home').visible = true;
-            this.getMenuItem(this.menuModel, 'Summary').visible = true;
-            this.getMenuItem(this.menuModel, 'Misc').visible = true;
-            this.getMenuItem(this.menuModel, 'Jobs').visible = true;
-            this.getMenuItem(this.menuModel, 'Logout').visible = true;
+            this.getMenuItem(this.menuModel, 'home').visible = true;
+            this.getMenuItem(this.menuModel, 'summary').visible = true;
+            this.getMenuItem(this.menuModel, 'misc').visible = true;
+            this.getMenuItem(this.menuModel, 'jobs').visible = true;
+            this.getMenuItem(this.menuModel, 'logout').visible = true;
         } else {
-            this.getMenuItem(this.menuModel, 'Home').visible = false;
-            this.getMenuItem(this.menuModel, 'Summary').visible = false;
-            this.getMenuItem(this.menuModel, 'Misc').visible = false;
-            this.getMenuItem(this.menuModel, 'Jobs').visible = false;
-            this.getMenuItem(this.menuModel, 'Logout').visible = false;
+            this.getMenuItem(this.menuModel, 'home').visible = false;
+            this.getMenuItem(this.menuModel, 'summary').visible = false;
+            this.getMenuItem(this.menuModel, 'misc').visible = false;
+            this.getMenuItem(this.menuModel, 'jobs').visible = false;
+            this.getMenuItem(this.menuModel, 'logout').visible = false;
         }
     }
 

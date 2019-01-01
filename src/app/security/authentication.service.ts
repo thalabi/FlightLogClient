@@ -5,7 +5,7 @@ import { Observable, throwError } from 'rxjs';
 import { User } from './user';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { map, catchError } from 'rxjs/operators';
-import { ReplicationService } from '../service/replication.service';
+import { SessionDataService } from '../service/session-data.service';
 
 
 @Injectable({
@@ -23,7 +23,7 @@ export class AuthenticationService {
         })
       };
 
-    constructor(private httpClient: HttpClient, private configService: ConfigService) {
+    constructor(private httpClient: HttpClient, private configService: ConfigService, private sessionDataService: SessionDataService) {
         const applicationProperties: ApplicationProperties = this.configService.getApplicationProperties();
         this.serviceUrl = applicationProperties.serviceUrl;
     }
@@ -40,7 +40,28 @@ export class AuthenticationService {
             );
     }
 
+    changePassword(username: string, oldPassword: string, newPassword: string): Observable<string> {
+        let changePasswordRequest = {"usernameOrEmail": username, "oldPassword": oldPassword, "newPassword": newPassword};
+        console.log('changePasswordRequest', changePasswordRequest);
+        return this.httpClient.post<string>(this.serviceUrl + '/authenticationController/changePassword', changePasswordRequest, this.getHttpOptions())
+            .pipe(
+                map((string: string) => {
+                    return string;
+                })
+            );
+    }
+
     logout() {
         this.isAuthenticated = false;
     }
+
+    private getHttpOptions() {
+        console.log('this.sessionDataService.user.token', this.sessionDataService.user.token);
+        return {headers: new HttpHeaders({
+            'Authorization': 'Bearer ' + this.sessionDataService.user.token,
+            'Content-Type': 'application/json'
+            })
+        }
+    };
+
 }

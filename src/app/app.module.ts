@@ -32,6 +32,7 @@ import { MessageComponent } from './message/message.component';
 import { SyncButtonComponent } from './sync-button/sync-button.component';
 import { LoginComponent } from './security/login/login.component';
 import { AuthGuard } from './security/auth.guard';
+import { ChangePasswordComponent } from './security/change-password/change-password.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import { AuthGuard } from './security/auth.guard';
     GenericCrudComponent,
     MessageComponent,
     SyncButtonComponent,
-    LoginComponent
+    LoginComponent,
+    ChangePasswordComponent
   ],
   imports: [
     BrowserModule,
