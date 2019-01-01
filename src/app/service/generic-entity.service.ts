@@ -44,7 +44,7 @@ export class GenericEntityService {
         row.created = new Date();
         row.modified = new Date();
         console.log('row: ', row);
-        return this.httpClient.post<IGenericEntity>(url, row).pipe(
+        return this.httpClient.post<IGenericEntity>(url, row, this.getHttpOptions()).pipe(
             map((twoColumnEntityResponse: any) => {
                 console.log('twoColumnEntityResponse', twoColumnEntityResponse);
                 return twoColumnEntityResponse;
@@ -62,7 +62,7 @@ export class GenericEntityService {
 
         let url: string = row._links.self.href;
         console.log('url: ', url);
-        return this.httpClient.put<IGenericEntity>(url, row).pipe(
+        return this.httpClient.put<IGenericEntity>(url, row, this.getHttpOptions()).pipe(
             map((response: any) => {
                 let twoColumnEntityResponse = response;
                 console.log('twoColumnEntityResponse', twoColumnEntityResponse);
@@ -77,7 +77,7 @@ export class GenericEntityService {
     deleteGenericEntity(row: IGenericEntity): Observable<IGenericEntityResponse> {
         let url: string = row._links.self.href;
         console.log('url: ', url);
-        return this.httpClient.delete<void>(url).pipe(
+        return this.httpClient.delete<void>(url, this.getHttpOptions()).pipe(
             map((response: any) => {
                 let twoColumnEntityResponse = response;
                 console.log('twoColumnEntityResponse', twoColumnEntityResponse);
