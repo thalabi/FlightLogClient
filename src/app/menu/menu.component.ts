@@ -30,7 +30,7 @@ export class MenuComponent implements OnInit {
                 { label: 'Significant Event', routerLink: 'genericCrud/significantEvent', routerLinkActiveOptions: { exact: true }},
             ]
         },
-        {id: 'jobs', label: 'Jobs',   routerLink: 'jobLauncher'},
+        {id: 'jobs', label: 'Jobs', routerLink: 'jobLauncher'},
         {id: 'logout', icon: 'pi pi-fw pi-cog',
             items: [
                 { label: 'Change Password', routerLink: 'changePassword', routerLinkActiveOptions: { exact: true }},
