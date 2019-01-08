@@ -1,3 +1,3 @@
 export enum CrudEnum {
-    Add = 'Add', Update = 'Update', Delete = 'Delete'        
+    ADD = 'Add', UPDATE = 'Update', DELETE = 'Delete'        
 }

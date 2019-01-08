@@ -43,6 +43,7 @@ export class FlightLogTableComponent implements OnInit {
     
     modifyAndDeleteButtonsDisable: boolean = true;
     crudMode: CrudEnum;
+    crudEnum = CrudEnum; // Used in html to refere to enum
     displayDialog: boolean = false;
 
     makeModelSelectItemArray: Array<SelectItem>;
@@ -224,13 +225,13 @@ export class FlightLogTableComponent implements OnInit {
         this.modifyAndDeleteButtonsDisable = true;
         this.selectedFlightLog = new FlightLog(); // This a hack. If don't init selectedFlightLog, dialog will produce exception
     }
-    showDialog(crudMode: string) {
-        this.crudMode = CrudEnum[crudMode];
+    showDialog(crudMode: CrudEnum) {
+        this.crudMode = crudMode;
         console.log('crudMode', crudMode);
         console.log('this.crudMode', this.crudMode);
 
         switch (this.crudMode) {
-            case CrudEnum.Add:
+            case CrudEnum.ADD:
                 this.flightLogForm.reset();
                 this.flightLogForm.get('flightDate').setValue(new Date());
                 this.flightLogForm.get('makeModel').setValue('PA28-181');
@@ -244,11 +245,11 @@ export class FlightLogTableComponent implements OnInit {
                 FlightLogHelper.enableForm(this.flightLogForm);
                 this.crudFlightLog = new FlightLog();
                 break;
-            case CrudEnum.Update:
+            case CrudEnum.UPDATE:
                 FlightLogHelper.copyToForm(this.crudFlightLog, this.flightLogForm);
                 FlightLogHelper.enableForm(this.flightLogForm);
                 break;
-            case CrudEnum.Delete:
+            case CrudEnum.DELETE:
                 FlightLogHelper.copyToForm(this.crudFlightLog, this.flightLogForm);
                 FlightLogHelper.disableForm(this.flightLogForm);
                 break;
@@ -262,7 +263,7 @@ export class FlightLogTableComponent implements OnInit {
         FlightLogHelper.copyFromForm(this.flightLogForm, this.crudFlightLog);
         console.log('this.crudFlightLog: ', this.crudFlightLog);
         switch (this.crudMode) {
-            case CrudEnum.Add:
+            case CrudEnum.ADD:
                 this.clearTime(this.crudFlightLog);
                 this.flightLogService.addFlightLog(this.crudFlightLog).subscribe({
                     next: savedFlightLog => {
@@ -277,7 +278,7 @@ export class FlightLogTableComponent implements OnInit {
                     }
                 });
                 break;
-            case CrudEnum.Update:
+            case CrudEnum.UPDATE:
             this.clearTime(this.crudFlightLog);
             this.flightLogService.updateFlightLog(this.crudFlightLog).subscribe({
                     next: savedFlightLog => {
@@ -292,7 +293,7 @@ export class FlightLogTableComponent implements OnInit {
                     }
                 });
                 break;
-            case CrudEnum.Delete:
+            case CrudEnum.DELETE:
                 this.flightLogService.deleteFlightLog(this.crudFlightLog).subscribe({
                     next: savedFlightLog => {
                         console.log('deleted flightLog', this.crudFlightLog);

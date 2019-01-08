@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, AbstractControl } from '@angular/forms';
 import { IGenericEntity } from '../domain/i-gerneric-entity';
 import { CrudEnum } from '../crud-enum';
-import { FormAttributes, FieldAttributes, CrudComponentConfig, DataTypeEnum } from '../config/crud-component-config';
+import { FormAttributes, FieldAttributes, CrudComponentConfig, DataTypeEnum, UiComponentEnum } from '../config/crud-component-config';
 import { StringUtils } from '../string-utils';
 import { LazyLoadEvent, Message } from 'primeng/primeng';
 import { HalResponseLinks } from '../hal/hal-response-links';
@@ -34,6 +34,7 @@ export class GenericCrudComponent implements OnInit {
     displayDialog: boolean;
 
     crudMode: CrudEnum;
+    crudEnum = CrudEnum; // Used in html to refere to enum
     modifyAndDeleteButtonsDisable: boolean = true;
 
     formAttributes: FormAttributes;
@@ -54,6 +55,8 @@ export class GenericCrudComponent implements OnInit {
     counter: number = 0;
 
     loadingFlag: boolean;
+
+    uiComponentEnum = UiComponentEnum; // Used in html to refere to enum
 
     constructor(private formBuilder: FormBuilder, private genericEntityService: GenericEntityService, private route: ActivatedRoute, private messageService: MyMessageService) {
         console.log("constructor() ===============================");
@@ -87,16 +90,16 @@ export class GenericCrudComponent implements OnInit {
         })
     }
 
-    showDialog(crudMode: string) {
+    showDialog(crudMode: CrudEnum) {
         this.displayDialog = true;
-        this.crudMode = CrudEnum[crudMode];
+        this.crudMode = crudMode;
         console.log('this.crudMode', this.crudMode);
         switch (this.crudMode) {
-        case CrudEnum.Add:
+        case CrudEnum.ADD:
             this.fieldAttributesArray.forEach(fieldAttributes => {
                 let control: AbstractControl = this.crudForm.controls[fieldAttributes.columnName];
                 console.log('fieldAttributes.dataType', fieldAttributes.dataType);
-                if (fieldAttributes.dataType === DataTypeEnum.Date) {
+                if (fieldAttributes.dataType === DataTypeEnum.DATE) {
                     control.patchValue(new Date());
                 } else {
                     control.patchValue(null);
@@ -104,14 +107,14 @@ export class GenericCrudComponent implements OnInit {
                 control.enable();
             });
             break;
-        case CrudEnum.Update:
+        case CrudEnum.UPDATE:
             this.fieldAttributesArray.forEach(fieldAttributes => {
                 let control: AbstractControl = this.crudForm.controls[fieldAttributes.columnName];
                 control.patchValue(this.crudRow[fieldAttributes.columnName]);
                 control.enable();
             });
             break;
-        case CrudEnum.Delete:
+        case CrudEnum.DELETE:
             this.fieldAttributesArray.forEach(fieldAttributes => {
                 let control: AbstractControl = this.crudForm.controls[fieldAttributes.columnName];
                 control.patchValue(this.crudRow[fieldAttributes.columnName]);
@@ -130,7 +133,7 @@ export class GenericCrudComponent implements OnInit {
         console.log('crudFormModel', crudFormModel);
         //console.log('column1', this.crudForm.get('column1').value);
         switch (this.crudMode) {
-            case CrudEnum.Add:
+            case CrudEnum.ADD:
                 this.crudRow = <IGenericEntity>{};
 
                 this.fieldAttributesArray.forEach(fieldAttributes => {
@@ -151,7 +154,7 @@ export class GenericCrudComponent implements OnInit {
                 });
 
                 break;
-            case CrudEnum.Update:
+            case CrudEnum.UPDATE:
 
                 this.fieldAttributesArray.forEach(fieldAttributes => {
                     this.crudRow[fieldAttributes.columnName] = this.crudForm.controls[fieldAttributes.columnName].value;
@@ -170,7 +173,7 @@ export class GenericCrudComponent implements OnInit {
                     }
                 });
                 break;
-            case CrudEnum.Delete:
+            case CrudEnum.DELETE:
                 this.genericEntityService.deleteGenericEntity(this.selectedRow).subscribe({
                     next: savedRow => {
                         console.log('deleted row', this.selectedRow);
@@ -291,7 +294,7 @@ export class GenericCrudComponent implements OnInit {
     private setRowArrayDateFields(rowArray: Array<IGenericEntity>, fieldAttributesArray: Array<FieldAttributes>) {
         rowArray.forEach(row => {
             fieldAttributesArray.forEach(fieldAttributes => {
-                if (fieldAttributes.dataType === DataTypeEnum.Date) {
+                if (fieldAttributes.dataType === DataTypeEnum.DATE) {
                     row[fieldAttributes.columnName] = new Date(row[fieldAttributes.columnName]+'T00:00:00');
                 }
             });
@@ -300,7 +303,7 @@ export class GenericCrudComponent implements OnInit {
 
     private setRowDateFields(row: IGenericEntity, fieldAttributesArray: Array<FieldAttributes>) {
         fieldAttributesArray.forEach(fieldAttributes => {
-            if (fieldAttributes.dataType === DataTypeEnum.Date) {
+            if (fieldAttributes.dataType === DataTypeEnum.DATE) {
                 console.log('row[fieldAttributes.columnName]', row[fieldAttributes.columnName]);
                 let dateOnly: Date = new Date(row[fieldAttributes.columnName]);
                 dateOnly.setHours(0); dateOnly.setMinutes(0); dateOnly.setSeconds(0); dateOnly.setMilliseconds(0);

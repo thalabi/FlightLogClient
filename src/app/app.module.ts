@@ -3,7 +3,7 @@ import { NgModule, APP_INITIALIZER, ErrorHandler } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations'
-import { ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, TooltipModule, ProgressSpinnerModule, ToggleButtonModule, MessagesModule, MessageModule, OverlayPanelModule } from 'primeng/primeng';
+import { ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, TooltipModule, ProgressSpinnerModule, ToggleButtonModule, MessagesModule, MessageModule, OverlayPanelModule, CheckboxModule } from 'primeng/primeng';
 import {TableModule} from 'primeng/table';
 
 import { AppComponent } from './app.component';
@@ -33,6 +33,7 @@ import { SyncButtonComponent } from './sync-button/sync-button.component';
 import { LoginComponent } from './security/login/login.component';
 import { AuthGuard } from './security/auth.guard';
 import { ChangePasswordComponent } from './security/change-password/change-password.component';
+import { PasswordMaskPipe } from './util/password-mask-pipe';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,8 @@ import { ChangePasswordComponent } from './security/change-password/change-passw
     MessageComponent,
     SyncButtonComponent,
     LoginComponent,
-    ChangePasswordComponent
+    ChangePasswordComponent,
+    PasswordMaskPipe
   ],
   imports: [
     BrowserModule,
@@ -57,7 +59,7 @@ import { ChangePasswordComponent } from './security/change-password/change-passw
     ReactiveFormsModule,
     HttpClientModule,
 
-    BrowserAnimationsModule, TableModule, ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, TooltipModule, ProgressSpinnerModule, ToggleButtonModule, MessageModule, MessagesModule, OverlayPanelModule,
+    BrowserAnimationsModule, TableModule, ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, TooltipModule, ProgressSpinnerModule, ToggleButtonModule, MessageModule, MessagesModule, OverlayPanelModule, CheckboxModule,
 
     AppRoutingModule
   ],

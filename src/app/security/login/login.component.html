@@ -16,7 +16,7 @@
                 <label for="password">Password</label>
             </div>
             <div class="p-col-11">
-                <input type="password" pPassword name="password" id="password" [(ngModel)]="model.password" #password="ngModel"
+                <input type="password" name="password" id="password" [(ngModel)]="model.password" #password="ngModel"
                 required/>
                 <div [hidden]="password.valid || password.pristine" class="red-font">Password is required</div>
             </div>

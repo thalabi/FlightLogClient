@@ -34,6 +34,7 @@
         <tr [pSelectableRow]="row">
             <td *ngFor="let fieldAttributes of fieldAttributesArray" [ngSwitch]="fieldAttributes.pipe">
                 <span *ngSwitchCase="'date-yyyy-mm-dd'">{{ row[fieldAttributes.columnName] | date:'yyyy-MM-dd' }}</span>
+                <span *ngSwitchCase="'password'">{{ row[fieldAttributes.columnName] | password }}</span>
                 <span *ngSwitchDefault>{{ row[fieldAttributes.columnName] }}</span>
             </td>
         </tr>
@@ -42,10 +43,10 @@
     <ng-template pTemplate="summary">
         <div class="p-grid" style="margin-bottom: -0.6em;">
             <div class="p-col-5">
-                <button type="button" pButton icon="pi pi-plus" style="float:left" (click)="showDialog('Add')" label="Add"></button>
-                <button type="button" pButton icon="pi pi-pencil" style="float:left; margin-left:0.5rem;" (click)="showDialog('Update')" label="Modify" [disabled]="modifyAndDeleteButtonsDisable"></button>
-                <button type="button" pButton icon="pi pi-minus" style="float:left; margin-left:0.5rem;" (click)="showDialog('Delete')" label="Delete" [disabled]="modifyAndDeleteButtonsDisable"></button>
-                <app-sync-button [tableName]="tableName"></app-sync-button>
+                <button type="button" pButton icon="pi pi-plus" style="float:left" (click)="showDialog(crudEnum.ADD)" label="Add"></button>
+                <button type="button" pButton icon="pi pi-pencil" style="float:left; margin-left:0.5rem;" (click)="showDialog(crudEnum.UPDATE)" label="Modify" [disabled]="modifyAndDeleteButtonsDisable"></button>
+                <button type="button" pButton icon="pi pi-minus" style="float:left; margin-left:0.5rem;" (click)="showDialog(crudEnum.DELETE)" label="Delete" [disabled]="modifyAndDeleteButtonsDisable"></button>
+                <app-sync-button *ngIf="formAttributes.showReplicationStatus" [tableName]="tableName"></app-sync-button>
             </div>
             <div class="p-col-4 p-offset-3">
                 <div style="float:right;">
@@ -70,14 +71,18 @@
                 </div>
                 <div class="p-col-8" [ngSwitch]="fieldAttributes.uiComponentType">
 
-                    <p-calendar *ngSwitchCase="'calendar'" [formControlName]="fieldAttributes.columnName" [id]="fieldAttributes.columnName" [dateFormat]="'yy-mm-dd'" [showIcon]="true" [readonlyInput]="true" [showOnFocus]="false" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2050">
+                    <p-calendar *ngSwitchCase="uiComponentEnum.CALENDAR" [formControlName]="fieldAttributes.columnName" [id]="fieldAttributes.columnName" [dateFormat]="'yy-mm-dd'" [showIcon]="true" [readonlyInput]="true" [showOnFocus]="false" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2050">
                     </p-calendar>
 
-                    <textarea *ngSwitchCase="'textArea'" pInputTextarea [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName" [rows]="fieldAttributes.textAreaRows" [cols]="fieldAttributes.textAreaColumns">
+                    <textarea *ngSwitchCase="uiComponentEnum.TEXT_AREA" pInputTextarea [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName" [rows]="fieldAttributes.textAreaRows" [cols]="fieldAttributes.textAreaColumns">
                     </textarea>
 
-                    <input *ngSwitchCase="'text'" pInputText [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName"/>
+                    <input *ngSwitchCase="uiComponentEnum.TEXT" pInputText [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName"/>
 
+                    <p-checkbox *ngSwitchCase="uiComponentEnum.BOOLEAN_CHECKBOX" [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName" binary="true"></p-checkbox>
+
+                    <input *ngSwitchCase="uiComponentEnum.PASSWORD" type="password" [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName" autocomplete="new-password"/>
+    
                     <span *ngSwitchDefault>
                         Unhandled {{fieldAttributes.uiComponentType}} type
                     </span>

@@ -51,9 +51,9 @@
     <ng-template pTemplate="summary">
         <div class="p-grid" style="margin-bottom: -0.6em;">
             <div class="p-col-5">
-                <button type="button" pButton icon="pi pi-plus" style="float:left" (click)="showDialog('Add')" label="Add"></button>
-                <button type="button" pButton icon="pi pi-pencil" style="float:left; margin-left:0.5rem;" (click)="showDialog('Update')" label="Modify" [disabled]="modifyAndDeleteButtonsDisable"></button>
-                <button type="button" pButton icon="pi pi-minus" style="float:left; margin-left:0.5rem;" (click)="showDialog('Delete')" label="Delete" [disabled]="modifyAndDeleteButtonsDisable"></button>
+                <button type="button" pButton icon="pi pi-plus" style="float:left" (click)="showDialog(crudEnum.ADD)" label="Add"></button>
+                <button type="button" pButton icon="pi pi-pencil" style="float:left; margin-left:0.5rem;" (click)="showDialog(crudEnum.UPDATE)" label="Modify" [disabled]="modifyAndDeleteButtonsDisable"></button>
+                <button type="button" pButton icon="pi pi-minus" style="float:left; margin-left:0.5rem;" (click)="showDialog(crudEnum.DELETE)" label="Delete" [disabled]="modifyAndDeleteButtonsDisable"></button>
                 <app-sync-button [tableName]="tableName"></app-sync-button>
             </div>
             <div class="p-col-4 p-offset-3">

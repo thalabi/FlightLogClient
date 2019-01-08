@@ -31,6 +31,12 @@ export class MenuComponent implements OnInit {
             ]
         },
         {id: 'jobs', label: 'Jobs', routerLink: 'jobLauncher'},
+        {id: 'security', label: 'Security',
+            items: [
+                { label: 'User', routerLink: 'genericCrud/user', routerLinkActiveOptions: { exact: true }},
+                { label: 'Group', routerLink: 'genericCrud/group', routerLinkActiveOptions: { exact: true }},
+            ]
+        },
         {id: 'logout', icon: 'pi pi-fw pi-cog',
             items: [
                 { label: 'Change Password', routerLink: 'changePassword', routerLinkActiveOptions: { exact: true }},
@@ -66,12 +72,14 @@ export class MenuComponent implements OnInit {
             this.getMenuItem(this.menuModel, 'summary').visible = true;
             this.getMenuItem(this.menuModel, 'misc').visible = true;
             this.getMenuItem(this.menuModel, 'jobs').visible = true;
+            this.getMenuItem(this.menuModel, 'security').visible = true;
             this.getMenuItem(this.menuModel, 'logout').visible = true;
         } else {
             this.getMenuItem(this.menuModel, 'home').visible = false;
             this.getMenuItem(this.menuModel, 'summary').visible = false;
             this.getMenuItem(this.menuModel, 'misc').visible = false;
             this.getMenuItem(this.menuModel, 'jobs').visible = false;
+            this.getMenuItem(this.menuModel, 'security').visible = false;
             this.getMenuItem(this.menuModel, 'logout').visible = false;
         }
     }
