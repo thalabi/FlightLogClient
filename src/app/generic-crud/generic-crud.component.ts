@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, FormControl, AbstractControl } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, AbstractControl, Validators } from '@angular/forms';
 import { IGenericEntity } from '../domain/i-gerneric-entity';
 import { CrudEnum } from '../crud-enum';
-import { FormAttributes, FieldAttributes, CrudComponentConfig, DataTypeEnum, UiComponentEnum } from '../config/crud-component-config';
+import { FormAttributes, FieldAttributes, CrudComponentConfig, DataTypeEnum, UiComponentEnum, AssociationAttributes } from '../config/crud-component-config';
 import { StringUtils } from '../string-utils';
 import { LazyLoadEvent, Message } from 'primeng/primeng';
 import { HalResponseLinks } from '../hal/hal-response-links';
@@ -12,6 +12,11 @@ import { ComponentHelper } from '../util/ComponentHelper';
 import { GenericEntityService } from '../service/generic-entity.service';
 import { MyMessageService } from '../message/mymessage.service';
 import { CustomErrorHandler } from '../custom-error-handler';
+import { Observable } from 'rxjs';
+import 'rxjs/add/observable/of';
+import 'rxjs/add/operator/concatMap';
+import { IGenericEntityListResponse } from '../response/i-generic-entity-list-response';
+import { IGenericEntityResponse } from '../response/i-generic-entity-response';
 
 @Component({
     selector: 'app-generic-crud',
@@ -19,10 +24,16 @@ import { CustomErrorHandler } from '../custom-error-handler';
     styleUrls: ['./generic-crud.component.css']
 })
 export class GenericCrudComponent implements OnInit {
-    [x: string]: any;
+    //[x: string]: any;
 
     rowArray: Array<IGenericEntity>;
+    // Holds all rows of the associated table
+    associationArray: Array<IGenericEntity>;
+    // Holds rows of the associated table ['associationArray - selectedAssociationArray'
+    availableAssociationArray: Array<IGenericEntity>;
     selectedRow: IGenericEntity;
+    // Holds rows associated with the selected rows
+    selectedAssociationArray: Array<IGenericEntity> = [];
     crudRow: IGenericEntity;
     //rowResponse: IGenericEntityResponse;
     row: IGenericEntity;
@@ -39,6 +50,7 @@ export class GenericCrudComponent implements OnInit {
 
     formAttributes: FormAttributes;
     fieldAttributesArray: Array<FieldAttributes>;
+    associationAttributesArray: Array<AssociationAttributes>;
     tableName: string;
     // sortColumnName: string;
     tableNameCapitalized: string;
@@ -71,22 +83,35 @@ export class GenericCrudComponent implements OnInit {
 
             this.formAttributes = CrudComponentConfig.formConfig.get(this.tableName);
             this.fieldAttributesArray = this.formAttributes.fields;
-            console.log('this.formAttributes', this.formAttributes);
+            this.associationAttributesArray = this.formAttributes.associations;
+            console.log('this.formAttributes', this.formAttributes, 'this.associationAttributesArray', this.associationAttributesArray);
 
             console.log('tableName', this.tableName/*, 'sortColumnName', this.sortColumnName*/);
             this.tableNameCapitalized = StringUtils.capitalize(this.tableName);
             this.createForm();
             console.log("after createForm");
+
+            this.row = <IGenericEntity>{};
+            console.log("before fetchPage");
+            this.fetchPage(0, this.ROWS_PER_PAGE, '', this.formAttributes.queryOrderByColumns);
+            
+            this.fetchAssociations();
         });
-        this.row = <IGenericEntity>{};
-        console.log("before fetchPage");
-        this.fetchPage(0, this.ROWS_PER_PAGE, '', this.formAttributes.queryOrderByColumns);
+        // this.row = <IGenericEntity>{};
+        // console.log("before fetchPage");
+        // this.fetchPage(0, this.ROWS_PER_PAGE, '', this.formAttributes.queryOrderByColumns);
+
+        // TODO testing only, this should be configurable
     }
 
     createForm() {
         this.crudForm = new FormGroup({});
         this.fieldAttributesArray.forEach(fieldAttributes => {
-            this.crudForm.addControl(fieldAttributes.columnName, new FormControl());
+            if (fieldAttributes.mandatory) {
+                this.crudForm.addControl(fieldAttributes.columnName, new FormControl('', Validators.required));
+            } else {
+                this.crudForm.addControl(fieldAttributes.columnName, new FormControl(''));
+            }
         })
     }
 
@@ -99,13 +124,11 @@ export class GenericCrudComponent implements OnInit {
             this.fieldAttributesArray.forEach(fieldAttributes => {
                 let control: AbstractControl = this.crudForm.controls[fieldAttributes.columnName];
                 console.log('fieldAttributes.dataType', fieldAttributes.dataType);
-                if (fieldAttributes.dataType === DataTypeEnum.DATE) {
-                    control.patchValue(new Date());
-                } else {
-                    control.patchValue(null);
-                }
+                ComponentHelper.initControlValues(control, fieldAttributes.dataType);
                 control.enable();
             });
+            this.selectedAssociationArray = [];
+            this.populateAvailableAssociationArray();
             break;
         case CrudEnum.UPDATE:
             this.fieldAttributesArray.forEach(fieldAttributes => {
@@ -132,41 +155,58 @@ export class GenericCrudComponent implements OnInit {
         console.log('this.crudForm.value', this.crudForm.value);
         console.log('crudFormModel', crudFormModel);
         //console.log('column1', this.crudForm.get('column1').value);
+        let associationTableName: string = '';
+        if (this.formAttributes.associations && this.formAttributes.associations.length != 0) {
+            associationTableName = this.formAttributes.associations[0].associationTableName;
+        }
         switch (this.crudMode) {
             case CrudEnum.ADD:
                 this.crudRow = <IGenericEntity>{};
-
                 this.fieldAttributesArray.forEach(fieldAttributes => {
                     this.crudRow[fieldAttributes.columnName] = this.crudForm.controls[fieldAttributes.columnName].value;
                 });
                 this.setRowDateFields(this.crudRow, this.fieldAttributesArray);
-                this.genericEntityService.addGenericEntity(this.tableName, this.crudRow).subscribe({
+                let addGenericEntityAndAssociation$: Observable<IGenericEntityResponse> = this.genericEntityService.addGenericEntity(this.tableName, this.crudRow)
+                    .concatMap(savedSingleGenericEntityResponse => {
+                        if (this.formAttributes.associations && this.formAttributes.associations.length != 0) {
+                            return this.genericEntityService.updateAssociationGenericEntity(savedSingleGenericEntityResponse, associationTableName, this.selectedAssociationArray);
+                        } else {
+                            return Observable.of<IGenericEntityResponse>(savedSingleGenericEntityResponse);
+                        }
+                    });
+                addGenericEntityAndAssociation$.subscribe({
                     next: savedTwoColumnEntity => {
                         console.log('savedTwoColumnEntity', savedTwoColumnEntity);
                     },
                     error: error => {
-                        console.error('genericEntityService.addGenericEntity returned error: ', error);
+                        console.error('genericEntityService.updateAssociationGenericEntity returned error: ', error);
                         //this.messageService.error(error);
                     },
                     complete: () => {
                         this.afterCrud();
                     }
                 });
-
                 break;
             case CrudEnum.UPDATE:
-
                 this.fieldAttributesArray.forEach(fieldAttributes => {
                     this.crudRow[fieldAttributes.columnName] = this.crudForm.controls[fieldAttributes.columnName].value;
                 });
                 this.setRowDateFields(this.crudRow, this.fieldAttributesArray);
-                this.genericEntityService.updateGenericEntity(this.crudRow).subscribe({
+
+                let updateGenericEntityAndAssociation$: Observable<IGenericEntityResponse> = this.genericEntityService.updateGenericEntity(this.crudRow)
+                    .concatMap(savedSingleGenericEntityResponse => {
+                        if (this.formAttributes.associations && this.formAttributes.associations.length != 0) {
+                            return this.genericEntityService.updateAssociationGenericEntity(savedSingleGenericEntityResponse, associationTableName, this.selectedAssociationArray);
+                        } else {
+                            return Observable.of<IGenericEntityResponse>(savedSingleGenericEntityResponse);
+                        }
+                    });
+                updateGenericEntityAndAssociation$.subscribe({
                     next: savedRow => {
                         console.log('savedRow', savedRow);
                     },
                     error: error => {
-                        console.error('enericEntityService.updateGenericEntity returned error: ', error);
-                        //this.messageService.error(error);
+                        console.error('enericEntityService.updateAssociationGenericEntity returned error: ', error);
                     },
                     complete: () => {
                         this.afterCrud();
@@ -266,6 +306,88 @@ export class GenericCrudComponent implements OnInit {
         }});
     }
 
+    fetchAssociations() {
+        // Get all rows of association table
+        this.formAttributes.associations.forEach(associationAttributes => {
+            this.genericEntityService.getAssociationGenericEntity(associationAttributes.associationTableName, null).subscribe({
+                next: rowResponse => {
+                    //this.availableStudents = students;
+                    console.log('rowResponse: ', rowResponse);
+                    if (rowResponse._embedded) {
+                        this.associationArray = rowResponse._embedded[associationAttributes.associationTableName+'s'];
+                        this.setRowArrayDateFields(this.associationArray, this.fieldAttributesArray);
+                        console.log('this.associationArray: ', this.associationArray);
+                    } else {
+                        this.firstRowOfTable = 0;
+                        this.rowArray = [];
+                    }
+                },
+                error: error => {
+                    console.error(error);
+                    this.messageService.error(error);
+                }
+            });
+        })
+    }
+
+    private fetchAssosciatedRows(crudRow: IGenericEntity, associationTableName: string) {
+        // Get associated rows
+
+        this.genericEntityService.getAssociatedRows(crudRow, associationTableName, null).subscribe({
+            next: rowResponse => {
+                //this.availableStudents = students;
+                console.log('rowResponse: ', rowResponse);
+                if (rowResponse._embedded) {
+                    this.selectedAssociationArray = rowResponse._embedded[associationTableName+'s'];
+                    this.setRowArrayDateFields(this.selectedAssociationArray, this.fieldAttributesArray);
+                    console.log('this.selectedAssociationArray: ', this.selectedAssociationArray);
+                    console.log('this.associationArray: ', this.associationArray);
+                    this.populateAvailableAssociationArray();
+                    // // compute availableAssociationArray = associationArray - selectedAssociationArray
+                    // this.availableAssociationArray = [];
+                    // this.associationArray.forEach(row=> {
+                    //     let found: boolean = false;
+                    //     for (let selectedRow of this.selectedAssociationArray) {
+                    //         if (row._links.self.href === selectedRow._links.self.href) {
+                    //             found = true;
+                    //             break;
+                    //         }
+                    //     }
+                    //     if (! /* not */ found) {
+                    //         this.availableAssociationArray.push(row);
+                    //     }
+                    // });
+                    // console.log('this.availableAssociationArray: ', this.availableAssociationArray);
+                } else {
+                    this.firstRowOfTable = 0;
+                    this.rowArray = [];
+                }
+            },
+            error: error => {
+                console.error(error);
+                this.messageService.error(error);
+            }
+        });
+    }
+
+    private populateAvailableAssociationArray() {
+        // compute availableAssociationArray = associationArray - selectedAssociationArray
+        this.availableAssociationArray = [];
+        this.associationArray.forEach(row=> {
+            let found: boolean = false;
+            for (let selectedRow of this.selectedAssociationArray) {
+                if (row._links.self.href === selectedRow._links.self.href) {
+                    found = true;
+                    break;
+                }
+            }
+            if (! /* not */ found) {
+                this.availableAssociationArray.push(row);
+            }
+        });
+        console.log('this.availableAssociationArray: ', this.availableAssociationArray);
+    }
+
     onGoToPage() {
         console.log('this.pageNumber', this.pageNumber);
         // TODO this might be redundant since it is set in fetchPage
@@ -281,6 +403,10 @@ export class GenericCrudComponent implements OnInit {
 
         this.crudRow = Object.assign({}, this.selectedRow);
         this.modifyAndDeleteButtonsDisable = false;
+        this.formAttributes.associations.forEach(associationAttributes => {
+            this.fetchAssosciatedRows(this.crudRow, associationAttributes.associationTableName);
+        });
+        
     }
     onRowUnselect(event) {
         console.log(event);
@@ -288,6 +414,18 @@ export class GenericCrudComponent implements OnInit {
         //this.selectedRow = new FlightLog(); // This a hack. If don't init selectedFlightLog, dialog will produce exception
     }
 
+    onMoveAllToTarget() {
+
+    }
+    onMoveToTarget() {
+
+    }
+    onMoveAllToSource() {
+
+    }
+    onMoveToSource() {
+
+    }
     /*
     Change fields withDataTypeEnum.Date type to date and set time to zero
     */

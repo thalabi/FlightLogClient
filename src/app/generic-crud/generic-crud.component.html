@@ -78,6 +78,8 @@
                     </textarea>
 
                     <input *ngSwitchCase="uiComponentEnum.TEXT" pInputText [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName"/>
+                    <!-- <div *ngIf="fieldAttributes.mandatory" [hidden]="fieldAttributes.columnName.valid || fieldAttributes.columnName.pristine" class="red-font">Field is required</div> -->
+                    <div *ngIf="fieldAttributes.mandatory && crudForm.controls[fieldAttributes.columnName].invalid && crudForm.controls[fieldAttributes.columnName].touched" class="red-font">Field is required</div>
 
                     <p-checkbox *ngSwitchCase="uiComponentEnum.BOOLEAN_CHECKBOX" [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName" binary="true"></p-checkbox>
 
@@ -89,6 +91,23 @@
                 </div>
             </ng-template>
 
+            <ng-template ngFor let-associationAttributes [ngForOf]="associationAttributesArray">
+                <div class="p-col-12">
+                    <p-pickList [source]="availableAssociationArray" [target]="selectedAssociationArray" sourceHeader="Available {{associationAttributes.associationTableName}}s" targetHeader="{{associationAttributes.associationTableName | titlecase}}s"
+                    (onMoveAllToTarget)="onMoveAllToTarget()" (onMoveToTarget)="onMoveToTarget()" (onMoveAllToSource)="onMoveAllToSource()"
+                    (onMoveToSource)="onMoveToSource()" [showSourceControls]="false" [showTargetControls]="false" [sourceStyle]="{'height':'20em'}"
+                    [targetStyle]="{'height':'20em'}">
+                    <ng-template let-association pTemplate="item">
+                        <div class="ui-helper-clearfix">
+                            <div style="font-size:14px;float:left;margin:0 0 0 0">
+                                <span [pTooltip]="association.description" tooltipPosition="top">{{association.name}}</span>
+                            </div>
+                        </div>
+                    </ng-template>
+                    </p-pickList>
+                </div>
+            </ng-template>
+            
             <p-footer class="p-grid">
                 <div class="p-col-6">
                     <!-- TODO replace disabled logic with a function -->

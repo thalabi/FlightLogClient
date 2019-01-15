@@ -6,5 +6,7 @@ export interface IGenericEntity{
     created: Date;
     modified: Date;
     
+    //version: number; is set as ETag
+
     _links: {self: {href: string}};
 }

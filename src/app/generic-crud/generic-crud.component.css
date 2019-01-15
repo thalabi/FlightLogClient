@@ -5,3 +5,7 @@ th {
     font-weight: normal;
 }
 ::ng-deep .ui-paginator-page.ui-paginator-element.ui-state-default.ui-corner-all.ui-state-active, ::ng-deep .ui-paginator-page.ui-paginator-element.ui-state-default.ui-corner-all {padding-left: 0.3em; padding-right: 0.3em; width: auto;}
+
+.red-font {
+    color: red;
+}

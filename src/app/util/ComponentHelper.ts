@@ -1,9 +1,9 @@
 import { LazyLoadEvent } from "primeng/primeng";
-import { IGenericEntity } from "../domain/i-gerneric-entity";
-import { FieldAttributes, DataTypeEnum } from "../config/crud-component-config";
 import { ReplicationService } from "../service/replication.service";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
+import { AbstractControl } from "@angular/forms";
+import { DataTypeEnum } from "../config/crud-component-config";
 
 export class ComponentHelper {
 
@@ -35,6 +35,18 @@ export class ComponentHelper {
     //     })
     // }
 
+    public static initControlValues(control: AbstractControl, dataType: DataTypeEnum) {
+        switch (dataType) {
+            case DataTypeEnum.DATE:
+                control.patchValue(new Date());
+                break;
+            case DataTypeEnum.BOOLEAN:
+                control.patchValue(false);
+            break;
+        default:
+            control.patchValue(null);
+        }
+    }
     public static getTableReplicationStatusAndLabel(replicationService: ReplicationService, tableName: string): Observable<{"replicationStatus": boolean, "replicationStatusLabel": string}> {
 
         return replicationService.getTableReplicationStatus(tableName).pipe(

@@ -15,6 +15,7 @@ export class LoginComponent implements OnInit {
 
     model: any = {};
     returnUrl: string;
+    isPprocessingRequest: boolean;
 
     constructor(private route: ActivatedRoute, private router: Router, private authenticationService: AuthenticationService, private messageService: MyMessageService, private sessionDataService: SessionDataService) { }
 
@@ -24,9 +25,11 @@ export class LoginComponent implements OnInit {
         this.sessionDataService.userSubject.next(null);
         // get return url from route parameters or default to '/'
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+        this.isPprocessingRequest = false;
     }
 
     login() {
+        this.isPprocessingRequest = true;
         this.messageService.clear();
         this.authenticationService.login(this.model.username, this.model.password)
         .subscribe(
@@ -36,6 +39,7 @@ export class LoginComponent implements OnInit {
                 this.sessionDataService.userSubject.next(user);
                 this.router.navigate([this.returnUrl]);
                 this.messageService.clear();
+                this.isPprocessingRequest = false;
         },
             (error: HttpErrorResponse) => {
                 console.log('error', error);
@@ -45,6 +49,7 @@ export class LoginComponent implements OnInit {
                 } else {
                     throw(error);
                 }
+                this.isPprocessingRequest = false;
             });
     }
 
