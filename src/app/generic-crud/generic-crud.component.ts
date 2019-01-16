@@ -155,10 +155,6 @@ export class GenericCrudComponent implements OnInit {
         console.log('this.crudForm.value', this.crudForm.value);
         console.log('crudFormModel', crudFormModel);
         //console.log('column1', this.crudForm.get('column1').value);
-        let associationTableName: string = '';
-        if (this.formAttributes.associations && this.formAttributes.associations.length != 0) {
-            associationTableName = this.formAttributes.associations[0].associationTableName;
-        }
         switch (this.crudMode) {
             case CrudEnum.ADD:
                 this.crudRow = <IGenericEntity>{};
@@ -169,7 +165,7 @@ export class GenericCrudComponent implements OnInit {
                 let addGenericEntityAndAssociation$: Observable<IGenericEntityResponse> = this.genericEntityService.addGenericEntity(this.tableName, this.crudRow)
                     .concatMap(savedSingleGenericEntityResponse => {
                         if (this.formAttributes.associations && this.formAttributes.associations.length != 0) {
-                            return this.genericEntityService.updateAssociationGenericEntity(savedSingleGenericEntityResponse, associationTableName, this.selectedAssociationArray);
+                            return this.genericEntityService.updateAssociationGenericEntity(savedSingleGenericEntityResponse, this.formAttributes.associations[0], this.selectedAssociationArray);
                         } else {
                             return Observable.of<IGenericEntityResponse>(savedSingleGenericEntityResponse);
                         }
@@ -196,7 +192,7 @@ export class GenericCrudComponent implements OnInit {
                 let updateGenericEntityAndAssociation$: Observable<IGenericEntityResponse> = this.genericEntityService.updateGenericEntity(this.crudRow)
                     .concatMap(savedSingleGenericEntityResponse => {
                         if (this.formAttributes.associations && this.formAttributes.associations.length != 0) {
-                            return this.genericEntityService.updateAssociationGenericEntity(savedSingleGenericEntityResponse, associationTableName, this.selectedAssociationArray);
+                            return this.genericEntityService.updateAssociationGenericEntity(savedSingleGenericEntityResponse, this.formAttributes.associations[0], this.selectedAssociationArray);
                         } else {
                             return Observable.of<IGenericEntityResponse>(savedSingleGenericEntityResponse);
                         }
@@ -330,34 +326,19 @@ export class GenericCrudComponent implements OnInit {
         })
     }
 
-    private fetchAssosciatedRows(crudRow: IGenericEntity, associationTableName: string) {
+    private fetchAssosciatedRows(crudRow: IGenericEntity, associationAttributes: AssociationAttributes) {
         // Get associated rows
 
-        this.genericEntityService.getAssociatedRows(crudRow, associationTableName, null).subscribe({
+        this.genericEntityService.getAssociatedRows(crudRow, associationAttributes, null).subscribe({
             next: rowResponse => {
                 //this.availableStudents = students;
                 console.log('rowResponse: ', rowResponse);
                 if (rowResponse._embedded) {
-                    this.selectedAssociationArray = rowResponse._embedded[associationTableName+'s'];
+                    this.selectedAssociationArray = rowResponse._embedded[associationAttributes.associationTableName+'s'];
                     this.setRowArrayDateFields(this.selectedAssociationArray, this.fieldAttributesArray);
                     console.log('this.selectedAssociationArray: ', this.selectedAssociationArray);
                     console.log('this.associationArray: ', this.associationArray);
                     this.populateAvailableAssociationArray();
-                    // // compute availableAssociationArray = associationArray - selectedAssociationArray
-                    // this.availableAssociationArray = [];
-                    // this.associationArray.forEach(row=> {
-                    //     let found: boolean = false;
-                    //     for (let selectedRow of this.selectedAssociationArray) {
-                    //         if (row._links.self.href === selectedRow._links.self.href) {
-                    //             found = true;
-                    //             break;
-                    //         }
-                    //     }
-                    //     if (! /* not */ found) {
-                    //         this.availableAssociationArray.push(row);
-                    //     }
-                    // });
-                    // console.log('this.availableAssociationArray: ', this.availableAssociationArray);
                 } else {
                     this.firstRowOfTable = 0;
                     this.rowArray = [];
@@ -404,7 +385,7 @@ export class GenericCrudComponent implements OnInit {
         this.crudRow = Object.assign({}, this.selectedRow);
         this.modifyAndDeleteButtonsDisable = false;
         this.formAttributes.associations.forEach(associationAttributes => {
-            this.fetchAssosciatedRows(this.crudRow, associationAttributes.associationTableName);
+            this.fetchAssosciatedRows(this.crudRow, associationAttributes);
         });
         
     }

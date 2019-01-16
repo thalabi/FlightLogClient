@@ -13,6 +13,7 @@ import { of as observableOf } from 'rxjs/observable/of'
 import { SessionDataService } from './session-data.service';
 import { s } from '@angular/core/src/render3';
 import { IGenericEntityResponse } from '../response/i-generic-entity-response';
+import { AssociationAttributes } from '../config/crud-component-config';
 
 @Injectable()
 export class GenericEntityService {
@@ -97,14 +98,14 @@ export class GenericEntityService {
         return this.httpClient.get<IGenericEntityListResponse>(url, this.getHttpOptions());
     }
 
-    getAssociatedRows(crudRow: IGenericEntity, associationTableName: string, queryOrderByColumns: string[]): Observable<IGenericEntityListResponse> {
+    getAssociatedRows(crudRow: IGenericEntity, associationAttributes: AssociationAttributes, queryOrderByColumns: string[]): Observable<IGenericEntityListResponse> {
         // TODO fix
-        let associationLink: string = crudRow._links[associationTableName+'Set'].href;
+        let associationLink: string = crudRow._links[associationAttributes.associationPropertyName].href;
         console.log('associationLink', associationLink);
         return this.httpClient.get<IGenericEntityListResponse>(associationLink, this.getHttpOptions());
     }
 
-    updateAssociationGenericEntity(row: IGenericEntityResponse, associationTableName: string, associationArray: Array<IGenericEntity>): Observable<IGenericEntityResponse> {
+    updateAssociationGenericEntity(row: IGenericEntityResponse, associationAttributes: AssociationAttributes, associationArray: Array<IGenericEntity>): Observable<IGenericEntityResponse> {
         console.log('row._links.self', row._links.self);
         associationArray.forEach(association=> console.log('association._links.self', association._links.self));
         let associationUriList: string = '';
@@ -112,7 +113,7 @@ export class GenericEntityService {
         associationUriList = associationUriList.substring(0, associationUriList.length);
         console.log('associationUriList', associationUriList);
         // TODO fix
-        return this.httpClient.put<IGenericEntity>(row._links[associationTableName+'Set'].href, associationUriList, this.getUriListHttpOptions()).pipe(
+        return this.httpClient.put<IGenericEntity>(row._links[associationAttributes.associationPropertyName].href, associationUriList, this.getUriListHttpOptions()).pipe(
             map((response: any) => {
                 console.log('response', response);
                 return response;
