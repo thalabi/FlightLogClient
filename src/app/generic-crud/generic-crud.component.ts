@@ -312,6 +312,7 @@ export class GenericCrudComponent implements OnInit {
                     if (rowResponse._embedded) {
                         this.associationArray = rowResponse._embedded[associationAttributes.associationTableName+'s'];
                         this.setRowArrayDateFields(this.associationArray, this.fieldAttributesArray);
+                        this.sortAssociation(this.associationArray, this.formAttributes.associations[0].orderByColumns);
                         console.log('this.associationArray: ', this.associationArray);
                     } else {
                         this.firstRowOfTable = 0;
@@ -396,17 +397,27 @@ export class GenericCrudComponent implements OnInit {
     }
 
     onMoveAllToTarget() {
-
+        this.onMoveToTarget();
     }
     onMoveToTarget() {
-
+        this.sortAssociation(this.selectedAssociationArray, this.formAttributes.associations[0].orderByColumns);
     }
     onMoveAllToSource() {
-
+        this.onMoveToSource();
     }
     onMoveToSource() {
-
+        this.sortAssociation(this.availableAssociationArray, this.formAttributes.associations[0].orderByColumns);
     }
+
+    private sortAssociation(students: IGenericEntity[], orderByColumns: Array<string>): void {
+        // TODO allow more than one order column
+        students.sort((n1, n2): number => {
+            if (n1[orderByColumns[0]] < n2[orderByColumns[0]]) return -1;
+            if (n1[orderByColumns[0]] > n2[orderByColumns[0]]) return 1;
+            return 0;
+        });
+    }
+
     /*
     Change fields withDataTypeEnum.Date type to date and set time to zero
     */

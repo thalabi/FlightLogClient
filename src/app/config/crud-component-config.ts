@@ -36,6 +36,7 @@ export class FieldAttributes {
 export class AssociationAttributes {
     associationTableName: string;
     associationPropertyName: string;
+    orderByColumns: Array<string>;
 }
 
 export class CrudComponentConfig {
@@ -116,7 +117,7 @@ export class CrudComponentConfig {
             ],
         showReplicationStatus: false,
         associations: [
-            {associationTableName: 'group', associationPropertyName: 'groupSet'}
+            {associationTableName: 'group', associationPropertyName: 'groupSet', orderByColumns: ['name']}
         ]
     };
 
@@ -130,7 +131,7 @@ export class CrudComponentConfig {
             ],
         showReplicationStatus: false,
         associations: [
-            {associationTableName: 'permission', associationPropertyName: 'permissionSet'}
+            {associationTableName: 'permission', associationPropertyName: 'permissionSet', orderByColumns: ['name']}
         ]
     };
 
