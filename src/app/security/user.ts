@@ -4,6 +4,6 @@ export class User {
     password: string;
     firstName: string;
     lastName: string;
-    authorities: string[];
+    authorities: Array<{authority: string}>;
     token: string;
 }

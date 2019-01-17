@@ -12,6 +12,7 @@ export class SessionDataService {
 
     constructor() {
         this.userSubject = new Subject<User>();
-        this.userSubject.next(new User());
+        // this.userSubject.next(new User());
+        // this.userSubject.complete();
     }
 }
