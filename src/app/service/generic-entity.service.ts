@@ -93,7 +93,7 @@ export class GenericEntityService {
 
     getAssociationGenericEntity(tableName: string, queryOrderByColumns: string[]): Observable<IGenericEntityListResponse> {
         // TODO use queryOrderByColumns and call the controller instead of the resource repository directly
-        let url: string = this.serviceUrl + '/' + tableName + 's';
+        let url: string = this.serviceUrl + '/' + tableName + 's?size=10000';
         console.log('url', url);
         return this.httpClient.get<IGenericEntityListResponse>(url, this.getHttpOptions());
     }

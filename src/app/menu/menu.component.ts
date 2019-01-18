@@ -85,20 +85,20 @@ export class MenuComponent implements OnInit {
         //const topLevel = this.getMenuItem(this.menuModel, 'Top Level Menu');
         if (show) {
             this.getMenuItem(this.menuModel, 'home').visible = true;
-            this.getMenuItem(this.menuModel, 'summary').visible = this.isHolderOfAuthority(this.user, PermissionEnum.SUMMARY);
+            this.getMenuItem(this.menuModel, 'summary').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.SUMMARY);
             
-            this.getMenuItem(this.menuModel, 'misc').visible = this.isHolderOfAuthority(this.user, PermissionEnum.AIRPORT_READ, PermissionEnum.MAKE_MODEL_READ, PermissionEnum.PILOT_READ, PermissionEnum.REGISTRATION_READ, PermissionEnum.SIGNIFICANT_EVENT_READ);
-            this.getMenuItem(this.menuModel, 'airport').visible = this.isHolderOfAuthority(this.user, PermissionEnum.AIRPORT_READ);
-            this.getMenuItem(this.menuModel, 'make_model').visible = this.isHolderOfAuthority(this.user, PermissionEnum.MAKE_MODEL_READ);
-            this.getMenuItem(this.menuModel, 'pilot').visible = this.isHolderOfAuthority(this.user, PermissionEnum.PILOT_READ);
-            this.getMenuItem(this.menuModel, 'registration').visible = this.isHolderOfAuthority(this.user, PermissionEnum.REGISTRATION_READ);
-            this.getMenuItem(this.menuModel, 'significant_event').visible = this.isHolderOfAuthority(this.user, PermissionEnum.SIGNIFICANT_EVENT_READ);
+            this.getMenuItem(this.menuModel, 'misc').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.AIRPORT_READ, PermissionEnum.MAKE_MODEL_READ, PermissionEnum.PILOT_READ, PermissionEnum.REGISTRATION_READ, PermissionEnum.SIGNIFICANT_EVENT_READ);
+            this.getMenuItem(this.menuModel, 'airport').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.AIRPORT_READ);
+            this.getMenuItem(this.menuModel, 'make_model').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.MAKE_MODEL_READ);
+            this.getMenuItem(this.menuModel, 'pilot').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.PILOT_READ);
+            this.getMenuItem(this.menuModel, 'registration').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.REGISTRATION_READ);
+            this.getMenuItem(this.menuModel, 'significant_event').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.SIGNIFICANT_EVENT_READ);
 
-            this.getMenuItem(this.menuModel, 'jobs').visible = true;
+            this.getMenuItem(this.menuModel, 'jobs').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.AIRPORT_SYNC, PermissionEnum.FLIGHT_LOG_SYNC, PermissionEnum.MAKE_MODEL_SYNC, PermissionEnum.PILOT_SYNC, PermissionEnum.REGISTRATION_SYNC, PermissionEnum.SIGNIFICANT_EVENT_SYNC);
 
-            this.getMenuItem(this.menuModel, 'security').visible = this.isHolderOfAuthority(this.user, PermissionEnum.USER_READ, PermissionEnum.GROUP_READ);
-            this.getMenuItem(this.menuModel, 'user').visible = this.isHolderOfAuthority(this.user, PermissionEnum.USER_READ);
-            this.getMenuItem(this.menuModel, 'group').visible = this.isHolderOfAuthority(this.user, PermissionEnum.GROUP_READ);
+            this.getMenuItem(this.menuModel, 'security').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.USER_READ, PermissionEnum.GROUP_READ);
+            this.getMenuItem(this.menuModel, 'user').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.USER_READ);
+            this.getMenuItem(this.menuModel, 'group').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.GROUP_READ);
             
             this.getMenuItem(this.menuModel, 'logout').visible = true;
         } else {
@@ -111,7 +111,7 @@ export class MenuComponent implements OnInit {
         }
     }
 
-    private isHolderOfAuthority(user: User, ...givenAuthorities: string[]): boolean {
+    private isHolderOfAnyAuthority(user: User, ...givenAuthorities: string[]): boolean {
         return user.authorities.find(authority => {
             return givenAuthorities.find(givenAuthority => givenAuthority === authority.authority) !== undefined
         }) !== undefined;

@@ -16,5 +16,11 @@ export enum PermissionEnum {
     SIGNIFICANT_EVENT_WRITE               = 'significant_event write',
     SUMMARY                               = 'summary',
     USER_READ                             = 'user read',
-    USER_WRITE                            = 'user write'
+    USER_WRITE                            = 'user write',
+    AIRPORT_SYNC                          = 'airport sync',
+    FLIGHT_LOG_SYNC                       = 'flight_log sync',
+    MAKE_MODEL_SYNC                       = 'make_model sync',
+    PILOT_SYNC                            = 'pilot sync',
+    REGISTRATION_SYNC                     = 'registration sync',
+    SIGNIFICANT_EVENT_SYNC                = 'significant_event sync'
 }
