@@ -11,13 +11,11 @@ import { Registration } from '../domain/registration';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { CrudEnum } from '../crud-enum';
 import { FlightLogHelper } from './flight-log-table-helper';
-import { PilotResponse } from '../response/pilot-response';
 import { Pilot } from '../domain/pilot';
-import { forEach } from '@angular/router/src/utils/collection';
-import { ISingleColumnEntityResponse } from '../response/i-single-column-entity-response';
 import { ComponentHelper } from '../util/ComponentHelper';
 import { MyMessageService } from '../message/mymessage.service';
 import { ReplicationService } from '../service/replication.service';
+import { IGenericEntityResponse } from '../response/i-generic-entity-response';
 
 @Component({
     selector: 'app-flight-log-table',
@@ -133,9 +131,9 @@ export class FlightLogTableComponent implements OnInit {
     }
 
     private getMakeModels() {
-        this.flightLogService.getAllSingleColumnEntity('makeModel').subscribe({
+        this.flightLogService.getAllGenericEntity('makeModel').subscribe({
             next: data => {
-                let makeModelResponse: ISingleColumnEntityResponse = data;
+                let makeModelResponse: IGenericEntityResponse = data;
                 this.makeModelSelectItemArray = new Array<SelectItem>();
                 makeModelResponse._embedded['makeModels'].forEach((makeModel: MakeModel) => {
                     this.makeModelSelectItemArray.push({ label: makeModel.makeModel, value: makeModel.makeModel });
@@ -145,9 +143,9 @@ export class FlightLogTableComponent implements OnInit {
     }
 
     private getRegistrations() {
-        this.flightLogService.getAllSingleColumnEntity('registration').subscribe(data => {
+        this.flightLogService.getAllGenericEntity('registration').subscribe(data => {
             console.log('data', data);
-            let registrationResponse: ISingleColumnEntityResponse = data;
+            let registrationResponse: IGenericEntityResponse = data;
             console.log('registrationResponse', registrationResponse);
             this.registrationSelectItemArray = new Array<SelectItem>();
             registrationResponse._embedded['registrations'].forEach((registration: Registration) => {
@@ -157,9 +155,9 @@ export class FlightLogTableComponent implements OnInit {
     }
     
     private getPilots() {
-        this.flightLogService.getAllSingleColumnEntity('pilot').subscribe(data => {
+        this.flightLogService.getAllGenericEntity('pilot').subscribe(data => {
             console.log('data', data);
-            let pilotResponse: ISingleColumnEntityResponse = data;
+            let pilotResponse: IGenericEntityResponse = data;
             console.log('pilotResponse', pilotResponse);
             this.pilotSelectItemArray = new Array<SelectItem>();
             pilotResponse._embedded['pilots'].forEach((pilot: Pilot) => {

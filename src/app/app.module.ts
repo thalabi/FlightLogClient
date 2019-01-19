@@ -34,6 +34,7 @@ import { LoginComponent } from './security/login/login.component';
 import { AuthGuard } from './security/auth.guard';
 import { ChangePasswordComponent } from './security/change-password/change-password.component';
 import { PasswordMaskPipe } from './util/password-mask-pipe';
+import { CopyUserComponent } from './security/copy-user/copy-user.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { PasswordMaskPipe } from './util/password-mask-pipe';
     SyncButtonComponent,
     LoginComponent,
     ChangePasswordComponent,
-    PasswordMaskPipe
+    PasswordMaskPipe,
+    CopyUserComponent
   ],
   imports: [
     BrowserModule,

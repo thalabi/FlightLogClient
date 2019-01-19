@@ -5,7 +5,6 @@ import { FlightLog } from '../domain/flight-log';
 
 
 import { FlightLogResponse } from '../response/flight-log-response';
-import { ISingleColumnEntityResponse } from '../response/i-single-column-entity-response';
 import { Airport } from '../domain/airport';
 import { AirportResponse } from '../response/airport-response';
 import { StringUtils } from '../string-utils';
@@ -16,6 +15,7 @@ import { ConfigService } from '../config/config.service';
 import { ApplicationProperties } from '../config/application.properties';
 import { Observable } from 'rxjs';
 import { SessionDataService } from './session-data.service';
+import { IGenericEntityResponse } from '../response/i-generic-entity-response';
 
 @Injectable()
 export class FlightLogServiceService {
@@ -155,82 +155,12 @@ export class FlightLogServiceService {
             //.catch(this.handleError);
     }
 
-    //
-    // single entity end points, begin
-    //
-    getAllSingleColumnEntity(tableName: string): Observable<ISingleColumnEntityResponse> {
+    getAllGenericEntity(tableName: string): Observable<IGenericEntityResponse> {
         // TODO use the capitalize method in single-column-crud and make it a global method
         let url: string = this.serviceUrl + '/' + tableName + 's/search/findAllByOrderBy' + StringUtils.capitalize(tableName);
         console.log(url);
-        return this.httpClient.get<ISingleColumnEntityResponse>(url, this.getHttpOptions());
+        return this.httpClient.get<IGenericEntityResponse>(url, this.getHttpOptions());
     }
-
-    // addSingleColumnEntity(tableName: string, row: ISingleColumnEntity): Observable<ISingleColumnEntityResponse> {
-    //     let url: string = this.serviceUrl + '/' + tableName + 's';
-    //     console.log('row: ', row);
-    //     row.created = new Date();
-    //     row.modified = new Date();
-    //     console.log('row: ', row);
-    //     return this.http.post<ISingleColumnEntity>(url, row).pipe(
-    //         map((singleColumnEntityResponse: any) => {
-    //             console.log('singleColumnEntityResponse', singleColumnEntityResponse);
-    //             return singleColumnEntityResponse;
-    //         }),
-    //         catchError((httpErrorResponse: HttpErrorResponse) => {
-    //             FlightLogServiceService.handleError(httpErrorResponse);
-    //             return null;
-    //           }));
-    // }
-
-    // updateSingleColumnEntity(row: ISingleColumnEntity): Observable<ISingleColumnEntityResponse> {
-    //     console.log('row: ', row);
-    //     row.modified = new Date();
-    //     console.log('row: ', row);
-        
-    //     let url: string = row._links.self.href;
-    //     console.log('url: ', url);
-    //     return this.http.put<ISingleColumnEntity>(url, row).pipe(
-    //         map((response: any) => {
-    //             let singleColumnEntityResponse = response;
-    //             console.log('singleColumnEntityResponse', singleColumnEntityResponse);
-    //             return singleColumnEntityResponse;
-    //         }),
-    //         catchError((httpErrorResponse: HttpErrorResponse) => {
-    //             FlightLogServiceService.handleError(httpErrorResponse);
-    //             return null;
-    //           }));
-    // }
-
-    // deleteSingleColumnEntity(row: ISingleColumnEntity): Observable<ISingleColumnEntityResponse> {
-    //     let url: string = row._links.self.href;
-    //     console.log('url: ', url);
-    //     return this.http.delete<void>(url).pipe(
-    //         map((response: any) => {
-    //             let singleColumnEntityResponse = response;
-    //             console.log('singleColumnEntityResponse', singleColumnEntityResponse);
-    //             return singleColumnEntityResponse;
-    //         }),
-    //         catchError((httpErrorResponse: HttpErrorResponse) => {
-    //             FlightLogServiceService.handleError(httpErrorResponse);
-    //             return null;
-    //           }));
-    // }
-    //
-    // single entity end points, end
-    //
-
-    //
-    // two column entity end points, begin
-    //
-    /*
-    * first: first row, zero based
-    * size: page size
-    * search:
-    */
-
-    //
-    // two column entity end points, end
-    //
     
     getFlightLogMonthlyTotalV(): Observable<FlightLogMonthlyTotalVResponse>  {
         let url: string = this.serviceUrl + '/flightLogMonthlyTotalVs/search/findAllByOrderById';

@@ -9,6 +9,7 @@ import { GenericCrudComponent } from './generic-crud/generic-crud.component';
 import { LoginComponent } from './security/login/login.component';
 import { AuthGuard } from './security/auth.guard';
 import { ChangePasswordComponent } from './security/change-password/change-password.component';
+import { CopyUserComponent } from './security/copy-user/copy-user.component';
 
 const routes: Routes = [
     { path: '', redirectTo: '/flightLogTable', pathMatch: 'full', canActivate: [AuthGuard] },
@@ -19,6 +20,7 @@ const routes: Routes = [
     { path: 'jobLauncher', component: JobLauncherComponent, canActivate: [AuthGuard] },
     { path: 'genericCrud/:tableName', component: GenericCrudComponent, canActivate: [AuthGuard] },
     { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
+    { path: 'copyUser', component: CopyUserComponent, canActivate: [AuthGuard] },
     { path: 'login', component: LoginComponent },
     ];
 

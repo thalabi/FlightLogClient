@@ -36,6 +36,7 @@ export class MenuComponent implements OnInit {
             items: [
                 { id: 'user', label: 'User', routerLink: 'genericCrud/user', routerLinkActiveOptions: { exact: true }},
                 { id: 'group', label: 'Group', routerLink: 'genericCrud/group', routerLinkActiveOptions: { exact: true }},
+                { id: 'copy_user', label: 'Copy User', routerLink: 'copyUser', routerLinkActiveOptions: { exact: true }},
             ]
         },
         {id: 'logout', icon: 'pi pi-fw pi-cog',
@@ -62,7 +63,40 @@ export class MenuComponent implements OnInit {
             );
     }
 
-    private getMenuItem(array: Array<MenuItem>, id: string): any {
+    // show the menu item and submenu item depending the user's permissions
+    public showMenuItems(show: boolean): void {
+        if (show) {
+            this.findMenuItem(this.menuModel, 'home').visible = true;
+            this.findMenuItem(this.menuModel, 'summary').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.SUMMARY);
+            
+            this.findMenuItem(this.menuModel, 'misc').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.AIRPORT_READ, PermissionEnum.MAKE_MODEL_READ, PermissionEnum.PILOT_READ, PermissionEnum.REGISTRATION_READ, PermissionEnum.SIGNIFICANT_EVENT_READ);
+            this.findMenuItem(this.menuModel, 'airport').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.AIRPORT_READ);
+            this.findMenuItem(this.menuModel, 'make_model').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.MAKE_MODEL_READ);
+            this.findMenuItem(this.menuModel, 'pilot').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.PILOT_READ);
+            this.findMenuItem(this.menuModel, 'registration').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.REGISTRATION_READ);
+            this.findMenuItem(this.menuModel, 'significant_event').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.SIGNIFICANT_EVENT_READ);
+
+            this.findMenuItem(this.menuModel, 'jobs').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.AIRPORT_SYNC, PermissionEnum.FLIGHT_LOG_SYNC, PermissionEnum.MAKE_MODEL_SYNC, PermissionEnum.PILOT_SYNC, PermissionEnum.REGISTRATION_SYNC, PermissionEnum.SIGNIFICANT_EVENT_SYNC);
+
+            this.findMenuItem(this.menuModel, 'security').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.USER_READ, PermissionEnum.GROUP_READ);
+            this.findMenuItem(this.menuModel, 'user').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.USER_READ);
+            this.findMenuItem(this.menuModel, 'group').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.GROUP_READ);
+            // TODO change to correct permission enum
+            this.findMenuItem(this.menuModel, 'copy_user').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.GROUP_READ);
+            
+            this.findMenuItem(this.menuModel, 'logout').visible = true;
+        } else {
+            this.findMenuItem(this.menuModel, 'home').visible = false;
+            this.findMenuItem(this.menuModel, PermissionEnum.SUMMARY).visible = false;
+            this.findMenuItem(this.menuModel, 'misc').visible = false;
+            this.findMenuItem(this.menuModel, 'jobs').visible = false;
+            this.findMenuItem(this.menuModel, 'security').visible = false;
+            this.findMenuItem(this.menuModel, 'logout').visible = false;
+        }
+    }
+
+    // Look for the id of the menu item or submenu item
+    private findMenuItem(array: Array<MenuItem>, id: string): any {
         for (const item of array) {
             if (item.id === id) {
                 return item;
@@ -78,37 +112,6 @@ export class MenuComponent implements OnInit {
             }
         }
         return null;
-//        return array.find(item => item.id === id);
-    }
-
-    public showMenuItems(show: boolean): void {
-        //const topLevel = this.getMenuItem(this.menuModel, 'Top Level Menu');
-        if (show) {
-            this.getMenuItem(this.menuModel, 'home').visible = true;
-            this.getMenuItem(this.menuModel, 'summary').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.SUMMARY);
-            
-            this.getMenuItem(this.menuModel, 'misc').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.AIRPORT_READ, PermissionEnum.MAKE_MODEL_READ, PermissionEnum.PILOT_READ, PermissionEnum.REGISTRATION_READ, PermissionEnum.SIGNIFICANT_EVENT_READ);
-            this.getMenuItem(this.menuModel, 'airport').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.AIRPORT_READ);
-            this.getMenuItem(this.menuModel, 'make_model').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.MAKE_MODEL_READ);
-            this.getMenuItem(this.menuModel, 'pilot').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.PILOT_READ);
-            this.getMenuItem(this.menuModel, 'registration').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.REGISTRATION_READ);
-            this.getMenuItem(this.menuModel, 'significant_event').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.SIGNIFICANT_EVENT_READ);
-
-            this.getMenuItem(this.menuModel, 'jobs').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.AIRPORT_SYNC, PermissionEnum.FLIGHT_LOG_SYNC, PermissionEnum.MAKE_MODEL_SYNC, PermissionEnum.PILOT_SYNC, PermissionEnum.REGISTRATION_SYNC, PermissionEnum.SIGNIFICANT_EVENT_SYNC);
-
-            this.getMenuItem(this.menuModel, 'security').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.USER_READ, PermissionEnum.GROUP_READ);
-            this.getMenuItem(this.menuModel, 'user').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.USER_READ);
-            this.getMenuItem(this.menuModel, 'group').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.GROUP_READ);
-            
-            this.getMenuItem(this.menuModel, 'logout').visible = true;
-        } else {
-            this.getMenuItem(this.menuModel, 'home').visible = false;
-            this.getMenuItem(this.menuModel, PermissionEnum.SUMMARY).visible = false;
-            this.getMenuItem(this.menuModel, 'misc').visible = false;
-            this.getMenuItem(this.menuModel, 'jobs').visible = false;
-            this.getMenuItem(this.menuModel, 'security').visible = false;
-            this.getMenuItem(this.menuModel, 'logout').visible = false;
-        }
     }
 
     private isHolderOfAnyAuthority(user: User, ...givenAuthorities: string[]): boolean {
