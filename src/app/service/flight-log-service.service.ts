@@ -15,7 +15,6 @@ import { ConfigService } from '../config/config.service';
 import { ApplicationProperties } from '../config/application.properties';
 import { Observable } from 'rxjs';
 import { SessionDataService } from './session-data.service';
-import { IGenericEntityResponse } from '../response/i-generic-entity-response';
 
 @Injectable()
 export class FlightLogServiceService {
@@ -155,13 +154,6 @@ export class FlightLogServiceService {
             //.catch(this.handleError);
     }
 
-    getAllGenericEntity(tableName: string): Observable<IGenericEntityResponse> {
-        // TODO use the capitalize method in single-column-crud and make it a global method
-        let url: string = this.serviceUrl + '/' + tableName + 's/search/findAllByOrderBy' + StringUtils.capitalize(tableName);
-        console.log(url);
-        return this.httpClient.get<IGenericEntityResponse>(url, this.getHttpOptions());
-    }
-    
     getFlightLogMonthlyTotalV(): Observable<FlightLogMonthlyTotalVResponse>  {
         let url: string = this.serviceUrl + '/flightLogMonthlyTotalVs/search/findAllByOrderById';
         console.log(url);

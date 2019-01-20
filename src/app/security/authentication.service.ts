@@ -51,6 +51,17 @@ export class AuthenticationService {
             );
     }
 
+    copyUser(fromUsername: string, toUsername: string): Observable<string> {
+        let copyUserRequest = {"fromUsername": fromUsername, "toUsername": toUsername};
+        console.log('changePasswordRequest', copyUserRequest);
+        return this.httpClient.post<string>(this.serviceUrl + '/copyUserController/copyUser', copyUserRequest, this.getHttpOptions())
+            .pipe(
+                map((string: string) => {
+                    return string;
+                })
+            );
+    }
+
     logout() {
         this.isAuthenticated = false;
     }

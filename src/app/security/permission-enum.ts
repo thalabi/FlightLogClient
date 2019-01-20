@@ -22,5 +22,6 @@ export enum PermissionEnum {
     MAKE_MODEL_SYNC                       = 'make_model sync',
     PILOT_SYNC                            = 'pilot sync',
     REGISTRATION_SYNC                     = 'registration sync',
-    SIGNIFICANT_EVENT_SYNC                = 'significant_event sync'
+    SIGNIFICANT_EVENT_SYNC                = 'significant_event sync',
+    COPY_USER                             = 'copy user'
 }

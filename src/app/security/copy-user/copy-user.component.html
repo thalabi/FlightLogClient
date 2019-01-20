@@ -1,3 +1,23 @@
-<p>
-  copy-user works!
-</p>
+<form (ngSubmit)="copyUser()" #copyUserForm="ngForm">
+
+    <h4>Copy User</h4>
+    <div class="p-grid">
+        <div class="p-col-2">
+            <label for="fromUsername">From username</label>
+        </div>
+        <div class="p-col-10">
+            <p-dropdown [(ngModel)]="model.fromUsername" name="fromUsername" id="fromUsername" [options]="usernameSelectItemArray" id="pic" placeholder="Select username" [style]="{'width': '12rem', 'min-height': '1.8rem'}"></p-dropdown>
+            <!-- <div [hidden]="oldPassword.valid || oldPassword.pristine" class="red-font">Password is required</div> -->
+        </div>
+        <div class="p-col-2">
+            <label for="toUsername">To username</label>
+        </div>
+        <div class="p-col-10">
+            <input type="text" pInputText name="toUsername" id="toUsername" [(ngModel)]="model.toUsername" #toUsername="ngModel"
+            required/>
+            <div [hidden]="toUsername.valid || toUsername.pristine" class="red-font">To username is required</div>
+        </div>
+    </div>
+    <button pButton type="submit" label="Copy user" *ngIf="!isPprocessingRequest" [disabled]="copyUserForm.invalid"></button>
+
+</form>

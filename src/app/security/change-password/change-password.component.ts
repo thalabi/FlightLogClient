@@ -32,21 +32,21 @@ export class ChangePasswordComponent implements OnInit {
             return;
         }
         this.authenticationService.changePassword(this.sessionDataService.user.username, this.model.oldPassword, this.model.newPassword)
-        .subscribe(
-            (string: string) => {
-                console.log("string", string);
-                this.messageService.clear();
-                this.messageService.info('Password changed');
-        },
-            (error: HttpErrorResponse) => {
-                console.log('error', error);
-                if (error.status == 401) {
-                    console.log("error.error.error", error.error.error);
-                    this.messageService.error("Invalid login", "");
-                } else {
-                    throw(error);
-                }
-            });
+            .subscribe(
+                (string: string) => {
+                    console.log("string", string);
+                    this.messageService.clear();
+                    this.messageService.info('Password changed');
+            },
+                (error: HttpErrorResponse) => {
+                    console.log('error', error);
+                    if (error.status == 401) {
+                        console.log("error.error.error", error.error.error);
+                        this.messageService.error("Invalid login", "");
+                    } else {
+                        throw(error);
+                    }
+                });
     }
 
 }

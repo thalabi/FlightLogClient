@@ -28,8 +28,8 @@ export class CustomErrorHandler implements ErrorHandler {
 
     public static getHttpErrorResponseMessages(httpErrorResponse: HttpErrorResponse): {summaryMessage: string, detailMessage: string} {
         console.log('Begin ...');
-        let summaryMessage: string = httpErrorResponse.name + ', HTTP Status Code: ' + httpErrorResponse.status + ', ' + httpErrorResponse.error.message;
-        let detailMessage: string = httpErrorResponse.error.message;
+        let summaryMessage: string = httpErrorResponse.name + ', HTTP Status Code: ' + httpErrorResponse.status;
+        let detailMessage: string = JSON.stringify(httpErrorResponse.error);
         console.log('End ...');
         return {summaryMessage, detailMessage}
     }

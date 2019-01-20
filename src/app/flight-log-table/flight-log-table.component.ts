@@ -16,6 +16,7 @@ import { ComponentHelper } from '../util/ComponentHelper';
 import { MyMessageService } from '../message/mymessage.service';
 import { ReplicationService } from '../service/replication.service';
 import { IGenericEntityResponse } from '../response/i-generic-entity-response';
+import { GenericEntityService } from '../service/generic-entity.service';
 
 @Component({
     selector: 'app-flight-log-table',
@@ -68,7 +69,7 @@ export class FlightLogTableComponent implements OnInit {
 
     readonly tableName: string = 'flightLog';
 
-    constructor(private formBuilder: FormBuilder, private flightLogService: FlightLogServiceService, private replicationService: ReplicationService, private messageService: MyMessageService) {
+    constructor(private formBuilder: FormBuilder, private flightLogService: FlightLogServiceService, private genericEntityService: GenericEntityService, private replicationService: ReplicationService, private messageService: MyMessageService) {
         console.log('this.displayDialog', this.displayDialog);
         this.flightLogForm = FlightLogHelper.createForm(formBuilder);
     }
@@ -131,7 +132,7 @@ export class FlightLogTableComponent implements OnInit {
     }
 
     private getMakeModels() {
-        this.flightLogService.getAllGenericEntity('makeModel').subscribe({
+        this.genericEntityService.getAllGenericEntity('makeModel').subscribe({
             next: data => {
                 let makeModelResponse: IGenericEntityResponse = data;
                 this.makeModelSelectItemArray = new Array<SelectItem>();
@@ -143,7 +144,7 @@ export class FlightLogTableComponent implements OnInit {
     }
 
     private getRegistrations() {
-        this.flightLogService.getAllGenericEntity('registration').subscribe(data => {
+        this.genericEntityService.getAllGenericEntity('registration').subscribe(data => {
             console.log('data', data);
             let registrationResponse: IGenericEntityResponse = data;
             console.log('registrationResponse', registrationResponse);
@@ -155,7 +156,7 @@ export class FlightLogTableComponent implements OnInit {
     }
     
     private getPilots() {
-        this.flightLogService.getAllGenericEntity('pilot').subscribe(data => {
+        this.genericEntityService.getAllGenericEntity('pilot').subscribe(data => {
             console.log('data', data);
             let pilotResponse: IGenericEntityResponse = data;
             console.log('pilotResponse', pilotResponse);

@@ -28,13 +28,22 @@ export class GenericEntityService {
         this.serviceUrl = applicationProperties.serviceUrl;
     }
 
-    // getGenericEntity(tableName: string, sortColumnName: string): Observable<IGenericEntityResponse> {
+    // getAllGenericEntity(tableName: string): Observable<IGenericEntityResponse> {
     //     // TODO use the capitalize method in single-column-crud and make it a global method
-    //     let url: string = this.serviceUrl + '/' + tableName + 's/search/findAllByOrderBy' + StringUtils.capitalize(sortColumnName);
+    //     let url: string = this.serviceUrl + '/' + tableName + 's/search/findAllByOrderBy' + StringUtils.capitalize(tableName);
     //     console.log(url);
     //     return this.httpClient.get<IGenericEntityResponse>(url, this.getHttpOptions());
     // }
-
+    getAllGenericEntity(tableName: string, orderColumnName?: string): Observable<IGenericEntityResponse> {
+        // TODO use the capitalize method in single-column-crud and make it a global method
+        if (! /* not */ orderColumnName) {
+            orderColumnName = tableName;
+        }
+        let url: string = this.serviceUrl + '/' + tableName + 's/search/findAllByOrderBy' + StringUtils.capitalize(orderColumnName);
+        console.log(url);
+        return this.httpClient.get<IGenericEntityResponse>(url, this.getHttpOptions());
+    }
+    
     getGenericEntityPage(tableName: string, first: number, size: number, search: string, queryOrderByColumns: string[]): Observable<IGenericEntityListResponse> {
         console.log('first, size, search', first, size, search)
         let url: string = this.serviceUrl + '/' + tableName + 'Controller/findAll/?page=' + first / size + '&size=' + size + '&search=' + search + '&sort=' + queryOrderByColumns;
