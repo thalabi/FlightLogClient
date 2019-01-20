@@ -36,6 +36,7 @@ import { ChangePasswordComponent } from './security/change-password/change-passw
 import { PasswordMaskPipe } from './util/password-mask-pipe';
 import { CopyUserComponent } from './security/copy-user/copy-user.component';
 import { _404Component } from './404.component';
+import { TestComponent } from './test/test.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +56,8 @@ import { _404Component } from './404.component';
     LoginComponent,
     ChangePasswordComponent,
     PasswordMaskPipe,
-    CopyUserComponent
+    CopyUserComponent,
+    TestComponent
   ],
   imports: [
     BrowserModule,
