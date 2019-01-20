@@ -18,6 +18,6 @@
             <div [hidden]="toUsername.valid || toUsername.pristine" class="red-font">To username is required</div>
         </div>
     </div>
-    <button pButton type="submit" label="Copy user" *ngIf="!isPprocessingRequest" [disabled]="copyUserForm.invalid"></button>
+    <button pButton type="submit" label="Copy user" [disabled]="copyUserForm.invalid"></button>
 
 </form>
