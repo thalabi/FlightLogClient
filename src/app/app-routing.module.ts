@@ -24,7 +24,7 @@ const routes: Routes = [
     { path: 'copyUser', component: CopyUserComponent, canActivate: [AuthGuard] },
     { path: 'login', component: LoginComponent },
     { path: '404', component: _404Component },
-    { path: '**', redirectTo: '404' }
+    { path: '**', redirectTo: '/FlightLog/404' }
     ];
 
 @NgModule({
