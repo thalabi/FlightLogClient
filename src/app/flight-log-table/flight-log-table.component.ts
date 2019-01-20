@@ -70,7 +70,6 @@ export class FlightLogTableComponent implements OnInit {
     readonly tableName: string = 'flightLog';
 
     constructor(private formBuilder: FormBuilder, private flightLogService: FlightLogServiceService, private genericEntityService: GenericEntityService, private replicationService: ReplicationService, private messageService: MyMessageService) {
-        console.log('this.displayDialog', this.displayDialog);
         this.flightLogForm = FlightLogHelper.createForm(formBuilder);
     }
 
