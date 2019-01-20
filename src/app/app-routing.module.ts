@@ -10,6 +10,7 @@ import { LoginComponent } from './security/login/login.component';
 import { AuthGuard } from './security/auth.guard';
 import { ChangePasswordComponent } from './security/change-password/change-password.component';
 import { CopyUserComponent } from './security/copy-user/copy-user.component';
+import { _404Component } from './404.component';
 
 const routes: Routes = [
     { path: '', redirectTo: '/flightLogTable', pathMatch: 'full', canActivate: [AuthGuard] },
@@ -22,6 +23,7 @@ const routes: Routes = [
     { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
     { path: 'copyUser', component: CopyUserComponent, canActivate: [AuthGuard] },
     { path: 'login', component: LoginComponent },
+    { path: '**', component: _404Component }
     ];
 
 @NgModule({

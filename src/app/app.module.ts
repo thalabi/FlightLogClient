@@ -35,10 +35,12 @@ import { AuthGuard } from './security/auth.guard';
 import { ChangePasswordComponent } from './security/change-password/change-password.component';
 import { PasswordMaskPipe } from './util/password-mask-pipe';
 import { CopyUserComponent } from './security/copy-user/copy-user.component';
+import { _404Component } from './404.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    _404Component,
     FlightLogTableComponent,
     RegexValidatorDirective,
     MenuComponent,

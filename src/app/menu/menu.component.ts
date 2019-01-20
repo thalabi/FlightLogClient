@@ -50,6 +50,7 @@ export class MenuComponent implements OnInit {
     constructor(private sessionDataService: SessionDataService) { }
 
     ngOnInit() {
+        this.showMenuItems(false);
         this.sessionDataService.userSubject
             //.map((data:User)=>{console.log(data})
             .subscribe(

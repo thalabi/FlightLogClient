@@ -32,25 +32,26 @@ export class LoginComponent implements OnInit {
         this.isPprocessingRequest = true;
         this.messageService.clear();
         this.authenticationService.login(this.model.username, this.model.password)
-        .subscribe(
-            (user: User) => {
-                console.log("user", user);
-                this.sessionDataService.user = user;
-                this.sessionDataService.userSubject.next(user);
-                this.router.navigate([this.returnUrl]);
-                this.messageService.clear();
-                this.isPprocessingRequest = false;
-        },
-            (error: HttpErrorResponse) => {
-                console.log('error', error);
-                if (error.status == 401) {
-                    console.log("error.error.error", error.error.error);
-                    this.messageService.error("Invalid login", "");
-                } else {
-                    throw(error);
-                }
-                this.isPprocessingRequest = false;
-            });
+            .subscribe(
+                (user: User) => {
+                    console.log("user", user);
+                    this.sessionDataService.user = user;
+                    this.sessionDataService.userSubject.next(user);
+                    this.router.navigate([this.returnUrl]);
+                    this.messageService.clear();
+                    this.isPprocessingRequest = false;
+                },
+                (error: HttpErrorResponse) => {
+                    console.log('error', error);
+                    if (error.status == 401) {
+                        console.log("error.error.error", error.error.error);
+                        this.messageService.error("Invalid login", "");
+                    } else {
+                        throw(error);
+                    }
+                    this.isPprocessingRequest = false;
+                },
+                (/* copleted */) => {}
+            );
     }
-
 }
