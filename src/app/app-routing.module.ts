@@ -23,7 +23,8 @@ const routes: Routes = [
     { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
     { path: 'copyUser', component: CopyUserComponent, canActivate: [AuthGuard] },
     { path: 'login', component: LoginComponent },
-    { path: '**', component: _404Component }
+    { path: '404', component: _404Component },
+    { path: '**', redirectTo: '/404' }
     ];
 
 @NgModule({
