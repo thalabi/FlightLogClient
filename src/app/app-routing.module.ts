@@ -25,10 +25,6 @@ const routes: Routes = [
     { path: 'copyUser', component: CopyUserComponent, canActivate: [AuthGuard] },
     { path: 'login', component: LoginComponent },
     { path: '404', component: _404Component },
-    { path: 'test', component: TestComponent },
-    { path: 'pageNotFound', component: _404Component },
-    { path: 'redirect1', redirectTo: 'test' },
-    { path: 'redirect2', redirectTo: '/test' },
     { path: '**', redirectTo: '404' }
     ];
 
