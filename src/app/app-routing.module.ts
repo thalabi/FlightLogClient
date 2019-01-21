@@ -11,7 +11,6 @@ import { AuthGuard } from './security/auth.guard';
 import { ChangePasswordComponent } from './security/change-password/change-password.component';
 import { CopyUserComponent } from './security/copy-user/copy-user.component';
 import { _404Component } from './404.component';
-import { TestComponent } from './test/test.component';
 
 const routes: Routes = [
     { path: '', redirectTo: '/flightLogTable', pathMatch: 'full', canActivate: [AuthGuard] },
