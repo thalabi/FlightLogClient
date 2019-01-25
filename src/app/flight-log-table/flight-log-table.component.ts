@@ -17,6 +17,9 @@ import { MyMessageService } from '../message/mymessage.service';
 import { ReplicationService } from '../service/replication.service';
 import { IGenericEntityResponse } from '../response/i-generic-entity-response';
 import { GenericEntityService } from '../service/generic-entity.service';
+import { SessionDataService } from '../service/session-data.service';
+import { PermissionEnum } from '../security/permission-enum';
+import { MenuComponent } from '../menu/menu.component';
 
 @Component({
     selector: 'app-flight-log-table',
@@ -69,7 +72,9 @@ export class FlightLogTableComponent implements OnInit {
 
     readonly tableName: string = 'flightLog';
 
-    constructor(private formBuilder: FormBuilder, private flightLogService: FlightLogServiceService, private genericEntityService: GenericEntityService, private replicationService: ReplicationService, private messageService: MyMessageService) {
+    hasWritePermission: boolean = false;
+
+    constructor(private formBuilder: FormBuilder, private flightLogService: FlightLogServiceService, private genericEntityService: GenericEntityService, private replicationService: ReplicationService, private messageService: MyMessageService, private sessionDataService: SessionDataService) {
         this.flightLogForm = FlightLogHelper.createForm(formBuilder);
     }
 
@@ -128,6 +133,8 @@ export class FlightLogTableComponent implements OnInit {
                 console.log('this.firstRowOfTable', this.firstRowOfTable);
             }
         });
+
+        this.hasWritePermission = MenuComponent.isHolderOfAnyAuthority(this.sessionDataService.user, PermissionEnum.FLIGHT_LOG_WRITE);
     }
 
     private getMakeModels() {

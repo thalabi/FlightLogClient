@@ -15,8 +15,9 @@ import { CustomErrorHandler } from '../custom-error-handler';
 import { Observable } from 'rxjs';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/concatMap';
-import { IGenericEntityListResponse } from '../response/i-generic-entity-list-response';
 import { IGenericEntityResponse } from '../response/i-generic-entity-response';
+import { SessionDataService } from '../service/session-data.service';
+import { MenuComponent } from '../menu/menu.component';
 
 @Component({
     selector: 'app-generic-crud',
@@ -70,7 +71,9 @@ export class GenericCrudComponent implements OnInit {
 
     uiComponentEnum = UiComponentEnum; // Used in html to refere to enum
 
-    constructor(private formBuilder: FormBuilder, private genericEntityService: GenericEntityService, private route: ActivatedRoute, private messageService: MyMessageService) {
+    hasWritePermission: boolean = false;
+
+    constructor(private formBuilder: FormBuilder, private genericEntityService: GenericEntityService, private route: ActivatedRoute, private messageService: MyMessageService, private sessionDataService: SessionDataService) {
         console.log("constructor() ===============================");
     }
 
@@ -96,6 +99,10 @@ export class GenericCrudComponent implements OnInit {
             this.fetchPage(0, this.ROWS_PER_PAGE, '', this.formAttributes.queryOrderByColumns);
             
             this.fetchAssociations();
+
+            this.hasWritePermission = MenuComponent.isHolderOfAnyAuthority(
+                this.sessionDataService.user, CrudComponentConfig.entityToWritePermissionMap.get(this.tableName));
+
         });
         // this.row = <IGenericEntity>{};
         // console.log("before fetchPage");

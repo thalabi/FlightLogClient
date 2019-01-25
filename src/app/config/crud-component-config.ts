@@ -1,3 +1,4 @@
+import { PermissionEnum } from "../security/permission-enum";
 
 export class FormAttributes {
     formTitle: string;
@@ -143,5 +144,15 @@ export class CrudComponentConfig {
         ['significantEvent', CrudComponentConfig.significantEvent],
         ['user', CrudComponentConfig.user],
         ['group', CrudComponentConfig.group]
+    ]);
+
+    static entityToWritePermissionMap: Map<string, PermissionEnum> = new Map([
+        ['airport', PermissionEnum.AIRPORT_WRITE],
+        ['makeModel', PermissionEnum.MAKE_MODEL_WRITE],
+        ['pilot', PermissionEnum.PILOT_WRITE],
+        ['registration', PermissionEnum.REGISTRATION_WRITE],
+        ['significantEvent', PermissionEnum.SIGNIFICANT_EVENT_WRITE],
+        ['user', PermissionEnum.USER_WRITE],
+        ['group', PermissionEnum.GROUP_WRITE]
     ]);
 }

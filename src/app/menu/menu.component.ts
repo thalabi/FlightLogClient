@@ -67,23 +67,23 @@ export class MenuComponent implements OnInit {
     // show the menu item and submenu item depending the user's permissions
     public showMenuItems(show: boolean): void {
         if (show) {
-            this.findMenuItem(this.menuModel, 'home').visible = true;
-            this.findMenuItem(this.menuModel, 'summary').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.SUMMARY);
+            this.findMenuItem(this.menuModel, 'home').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.FLIGHT_LOG_READ, PermissionEnum.FLIGHT_LOG_WRITE);
+            this.findMenuItem(this.menuModel, 'summary').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.SUMMARY);
             
-            this.findMenuItem(this.menuModel, 'misc').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.AIRPORT_READ, PermissionEnum.MAKE_MODEL_READ, PermissionEnum.PILOT_READ, PermissionEnum.REGISTRATION_READ, PermissionEnum.SIGNIFICANT_EVENT_READ);
-            this.findMenuItem(this.menuModel, 'airport').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.AIRPORT_READ);
-            this.findMenuItem(this.menuModel, 'make_model').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.MAKE_MODEL_READ);
-            this.findMenuItem(this.menuModel, 'pilot').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.PILOT_READ);
-            this.findMenuItem(this.menuModel, 'registration').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.REGISTRATION_READ);
-            this.findMenuItem(this.menuModel, 'significant_event').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.SIGNIFICANT_EVENT_READ);
+            this.findMenuItem(this.menuModel, 'misc').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.AIRPORT_READ, PermissionEnum.MAKE_MODEL_READ, PermissionEnum.PILOT_READ, PermissionEnum.REGISTRATION_READ, PermissionEnum.SIGNIFICANT_EVENT_READ);
+            this.findMenuItem(this.menuModel, 'airport').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.AIRPORT_READ);
+            this.findMenuItem(this.menuModel, 'make_model').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.MAKE_MODEL_READ);
+            this.findMenuItem(this.menuModel, 'pilot').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.PILOT_READ);
+            this.findMenuItem(this.menuModel, 'registration').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.REGISTRATION_READ);
+            this.findMenuItem(this.menuModel, 'significant_event').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.SIGNIFICANT_EVENT_READ);
 
-            this.findMenuItem(this.menuModel, 'jobs').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.AIRPORT_SYNC, PermissionEnum.FLIGHT_LOG_SYNC, PermissionEnum.MAKE_MODEL_SYNC, PermissionEnum.PILOT_SYNC, PermissionEnum.REGISTRATION_SYNC, PermissionEnum.SIGNIFICANT_EVENT_SYNC);
+            this.findMenuItem(this.menuModel, 'jobs').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.AIRPORT_SYNC, PermissionEnum.FLIGHT_LOG_SYNC, PermissionEnum.MAKE_MODEL_SYNC, PermissionEnum.PILOT_SYNC, PermissionEnum.REGISTRATION_SYNC, PermissionEnum.SIGNIFICANT_EVENT_SYNC);
 
-            this.findMenuItem(this.menuModel, 'security').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.USER_READ, PermissionEnum.GROUP_READ);
-            this.findMenuItem(this.menuModel, 'user').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.USER_READ);
-            this.findMenuItem(this.menuModel, 'group').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.GROUP_READ);
+            this.findMenuItem(this.menuModel, 'security').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.USER_READ, PermissionEnum.GROUP_READ);
+            this.findMenuItem(this.menuModel, 'user').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.USER_READ);
+            this.findMenuItem(this.menuModel, 'group').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.GROUP_READ);
             // TODO change to correct permission enum
-            this.findMenuItem(this.menuModel, 'copy_user').visible = this.isHolderOfAnyAuthority(this.user, PermissionEnum.GROUP_READ);
+            this.findMenuItem(this.menuModel, 'copy_user').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.GROUP_READ);
             
             this.findMenuItem(this.menuModel, 'logout').visible = true;
         } else {
@@ -115,7 +115,7 @@ export class MenuComponent implements OnInit {
         return null;
     }
 
-    private isHolderOfAnyAuthority(user: User, ...givenAuthorities: string[]): boolean {
+    public static isHolderOfAnyAuthority(user: User, ...givenAuthorities: string[]): boolean {
         return user.authorities.find(authority => {
             return givenAuthorities.find(givenAuthority => givenAuthority === authority.authority) !== undefined
         }) !== undefined;

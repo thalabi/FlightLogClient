@@ -8,6 +8,7 @@ export enum PermissionEnum {
     MAKE_MODEL_READ                       = 'make_model read',
     MAKE_MODEL_WRITE                      = 'make_model write',
     PERMISSION_READ                       = 'permission read',
+    PERMISSION_WRITE                      = 'permission write',
     PILOT_READ                            = 'pilot read',
     PILOT_WRITE                           = 'pilot write',
     REGISTRATION_READ                     = 'registration read',
