@@ -11,6 +11,7 @@ import { FlightLogTableComponent } from './flight-log-table/flight-log-table.com
 import { FlightLogServiceService } from './service/flight-log-service.service';
 import { HttpClientModule } from '@angular/common/http';
 import { RegexValidatorDirective } from './regex-validator.directive';
+import { DeviceDetectorModule } from 'ngx-device-detector';
 import { MenuComponent } from './menu/menu.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AbbreviateComponent } from './abbreviate/abbreviate.component';
@@ -64,6 +65,8 @@ import { _404Component } from './404.component';
     HttpClientModule,
 
     BrowserAnimationsModule, TableModule, ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, TooltipModule, ProgressSpinnerModule, ToggleButtonModule, MessageModule, MessagesModule, OverlayPanelModule, CheckboxModule, PickListModule, ProgressBarModule,
+
+    DeviceDetectorModule.forRoot(),
 
     AppRoutingModule
   ],

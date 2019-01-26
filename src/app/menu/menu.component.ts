@@ -3,6 +3,7 @@ import { MenuItem } from 'primeng/primeng';
 import { SessionDataService } from '../service/session-data.service';
 import { User } from '../security/user';
 import { PermissionEnum } from '../security/permission-enum';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
     selector: 'app-menu',
@@ -47,9 +48,12 @@ export class MenuComponent implements OnInit {
         },
     ];
 
-    constructor(private sessionDataService: SessionDataService) { }
+    isDesktop: boolean;
+
+    constructor(private sessionDataService: SessionDataService, private deviceDetectorService: DeviceDetectorService) { }
 
     ngOnInit() {
+        this.isDesktop = this.deviceDetectorService.isDesktop();
         this.showMenuItems(false);
         this.sessionDataService.userSubject
             //.map((data:User)=>{console.log(data})
