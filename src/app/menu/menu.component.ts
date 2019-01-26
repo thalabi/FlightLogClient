@@ -15,7 +15,7 @@ export class MenuComponent implements OnInit {
     user: User;
 
     menuModel: MenuItem[] = [
-        {id: 'home', label: 'Home',   routerLink: 'flightLogTable'},
+        {id: 'home', label: 'Log',   routerLink: 'flightLogTable'},
         {id: 'summary', label: 'Summary',
             items: [
                 { label: 'Monthly Report', routerLink: 'flightLogMonthlyTotalVTable', routerLinkActiveOptions: { exact: true }},
