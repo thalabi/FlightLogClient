@@ -61,7 +61,7 @@ export class CrudComponentConfig {
     };
 
     private static makeModel: FormAttributes = {
-        formTitle: 'MakeModel',
+        formTitle: '',
         tableName: 'makeModel',
         queryOrderByColumns: ['makeModel'],
         fields: [
@@ -72,7 +72,7 @@ export class CrudComponentConfig {
     };
 
     private static pilot: FormAttributes = {
-        formTitle: 'Pilot/Passenger',
+        formTitle: '',
         tableName: 'pilot',
         queryOrderByColumns: ['pilot'],
         fields: [
@@ -83,7 +83,7 @@ export class CrudComponentConfig {
     };
 
     private static registration: FormAttributes = {
-        formTitle: 'Registration',
+        formTitle: '',
         tableName: 'registration',
         queryOrderByColumns: ['registration'],
         fields: [

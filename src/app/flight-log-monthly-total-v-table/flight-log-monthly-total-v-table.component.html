@@ -1,5 +1,8 @@
 <p-table [value]="flightLogMonthlyTotalVArray" [scrollable]="true" scrollHeight="25rem" [loading]="loadingFlag">
-    <ng-template pTemplate="header">
+        <ng-template pTemplate="caption">
+                Monthly Summary
+        </ng-template>
+        <ng-template pTemplate="header">
         <tr>
             <th>Month</th>
             <th>Day Dual</th>

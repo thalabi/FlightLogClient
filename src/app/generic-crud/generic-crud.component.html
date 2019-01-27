@@ -16,6 +16,9 @@
     [loading]="loadingFlag"
     #dt
 	>
+    <ng-template *ngIf="formAttributes.formTitle" pTemplate="caption">
+        {{formAttributes.formTitle}}
+    </ng-template>
 
     <ng-template pTemplate="header">
         <tr>
