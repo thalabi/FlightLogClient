@@ -47,21 +47,24 @@ export class ComponentHelper {
             control.patchValue(null);
         }
     }
-    public static getTableReplicationStatusAndLabel(replicationService: ReplicationService, tableName: string): Observable<{"replicationStatus": boolean, "replicationStatusLabel": string}> {
+    public static getTableReplicationStatusAndLabel(replicationService: ReplicationService, tableName: string): Observable<{"replicationSupported": boolean, "replicationStatus": boolean, "replicationStatusLabel": string}> {
 
         return replicationService.getTableReplicationStatus(tableName).pipe(
             map(params => {
                 let triggerStatusCode: number = params;
                 console.log('triggerStatusCode', triggerStatusCode);
                 switch (triggerStatusCode) {
+                    case -1: {
+                        return {"replicationSupported": false, "replicationStatus": false, "replicationStatusLabel": "Not Supported"};
+                        }
                     case 0: {
-                        return {"replicationStatus": false, "replicationStatusLabel": "Sync Off"};
+                        return {"replicationSupported": true, "replicationStatus": false, "replicationStatusLabel": "Sync Off"};
                         }
                     case 1: {
-                        return {"replicationStatus": false, "replicationStatusLabel": "Sync Partial"};
+                        return {"replicationSupported": true, "replicationStatus": false, "replicationStatusLabel": "Sync Partial"};
                         }
                     case 2: {
-                        return {"replicationStatus": true, "replicationStatusLabel": "Sync On"};
+                        return {"replicationSupported": true, "replicationStatus": true, "replicationStatusLabel": "Sync On"};
                         }
                     }
                 }

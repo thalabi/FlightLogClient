@@ -10,6 +10,8 @@ import { ReplicationService } from '../service/replication.service';
 export class SyncButtonComponent implements OnInit {
     @Input() tableName: string;
 
+    replicationStatusPending: boolean;
+    replicationSupported: boolean;
     replicationStatus: boolean;
     replicationStatusLabel: string;
     replicationStatusControlDisabled: boolean = true;
@@ -22,9 +24,13 @@ export class SyncButtonComponent implements OnInit {
     }
 
     private getTableReplicationStatus() {
+        this.replicationStatusPending = true;
         this.replicationStatusLabel = "Fetching";
         this.replicationStatusControlDisabled = false;
+        this.replicationSupported = false;
         ComponentHelper.getTableReplicationStatusAndLabel(this.replicationService, this.tableName).subscribe(params => {
+            this.replicationStatusPending = false;
+            this.replicationSupported = params.replicationSupported;
             this.replicationStatus = params.replicationStatus;
             this.replicationStatusLabel = params.replicationStatusLabel;
         })
