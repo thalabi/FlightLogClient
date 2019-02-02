@@ -139,7 +139,7 @@
                 <label for="remarks">Remarks</label>
             </div>
             <div class="p-col-9">
-                <textarea pInputTextarea formControlName="remarks" [rows]="3" autoResize="autoResize" style="width: 100%;" id="remarks" class="form-control"></textarea>
+                <textarea pInputTextarea formControlName="remarks" [rows]="3" [maxLength]="128"autoResize="autoResize" style="width: 100%;" id="remarks" class="form-control"></textarea>
             </div>
             <!-- line 6 -->
             <div class="p-col-3">
