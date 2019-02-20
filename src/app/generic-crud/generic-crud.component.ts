@@ -3,7 +3,12 @@ import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, AbstractControl, Validators } from '@angular/forms';
 import { IGenericEntity } from '../domain/i-gerneric-entity';
 import { CrudEnum } from '../crud-enum';
-import { FormAttributes, FieldAttributes, CrudComponentConfig, DataTypeEnum, UiComponentEnum, AssociationAttributes } from '../config/crud-component-config';
+import { CrudComponentConfig } from '../config/crud-component-config';
+import { AssociationAttributes } from "../config/AssociationAttributes";
+import { FieldAttributes } from "../config/FieldAttributes";
+import { UiComponentEnum } from "../config/UiComponentEnum";
+import { FormAttributes } from "../config/FormAttributes";
+import { DataTypeEnum } from "../config/DataTypeEnum";
 import { StringUtils } from '../string-utils';
 import { LazyLoadEvent, Message } from 'primeng/primeng';
 import { HalResponseLinks } from '../hal/hal-response-links';
@@ -18,6 +23,8 @@ import 'rxjs/add/operator/concatMap';
 import { IGenericEntityResponse } from '../response/i-generic-entity-response';
 import { SessionDataService } from '../service/session-data.service';
 import { MenuComponent } from '../menu/menu.component';
+import { EntityAttributes } from '../config/EntityAttributes';
+import { AssociationTypeEnum } from '../config/AssociationTypeEnum';
 
 @Component({
     selector: 'app-generic-crud',
@@ -79,6 +86,8 @@ export class GenericCrudComponent implements OnInit {
 
     ngOnInit() {
         this.messageService.clear();
+        this.rowArray = [];
+        this.page = new HalResponsePage();
         this.counter++;
         console.log("this.counter: ", this.counter);
         this.route.params.subscribe(params => {
@@ -95,29 +104,33 @@ export class GenericCrudComponent implements OnInit {
             console.log("after createForm");
 
             this.row = <IGenericEntity>{};
-            console.log("before fetchPage");
-            this.fetchPage(0, this.ROWS_PER_PAGE, '', this.formAttributes.queryOrderByColumns);
             
-            this.fetchAssociations();
+            this.fetchAllAssociationRows();
+            this.fieldAttributesArray.forEach(fieldAttributes => {
+                if (fieldAttributes.associationAttributes) {
+                    this.fetchAllAssociationRows2(fieldAttributes.associationAttributes);
+                }
+            })
+            
 
             this.hasWritePermission = MenuComponent.isHolderOfAnyAuthority(
                 this.sessionDataService.user, CrudComponentConfig.entityToWritePermissionMap.get(this.tableName));
 
+            // console.log("before fetchPage");
+            // this.fetchPage(0, this.ROWS_PER_PAGE, '', this.formAttributes.queryOrderByColumns);
+            //this.firstRowOfTable = 0;
         });
-        // this.row = <IGenericEntity>{};
-        // console.log("before fetchPage");
-        // this.fetchPage(0, this.ROWS_PER_PAGE, '', this.formAttributes.queryOrderByColumns);
-
-        // TODO testing only, this should be configurable
     }
 
     createForm() {
         this.crudForm = new FormGroup({});
         this.fieldAttributesArray.forEach(fieldAttributes => {
-            if (fieldAttributes.mandatory) {
-                this.crudForm.addControl(fieldAttributes.columnName, new FormControl('', Validators.required));
-            } else {
-                this.crudForm.addControl(fieldAttributes.columnName, new FormControl(''));
+            if (fieldAttributes.isPartOfTemplateForm) {
+                if (fieldAttributes.mandatory) {
+                    this.crudForm.addControl(fieldAttributes.columnName, new FormControl('', Validators.required));
+                } else {
+                    this.crudForm.addControl(fieldAttributes.columnName, new FormControl(''));
+                }
             }
         })
     }
@@ -125,7 +138,7 @@ export class GenericCrudComponent implements OnInit {
     showDialog(crudMode: CrudEnum) {
         this.displayDialog = true;
         this.crudMode = crudMode;
-        console.log('this.crudMode', this.crudMode);
+        console.log('crudMode: %o, crudRow: %o', this.crudMode, this.crudRow);
         switch (this.crudMode) {
         case CrudEnum.ADD:
             this.fieldAttributesArray.forEach(fieldAttributes => {
@@ -138,19 +151,31 @@ export class GenericCrudComponent implements OnInit {
             this.populateAvailableAssociationArray();
             break;
         case CrudEnum.UPDATE:
+        case CrudEnum.DELETE:
             this.fieldAttributesArray.forEach(fieldAttributes => {
                 let control: AbstractControl = this.crudForm.controls[fieldAttributes.columnName];
                 control.patchValue(this.crudRow[fieldAttributes.columnName]);
                 control.enable();
             });
+            // Update form with many-to-one associations 
+            // this.associationAttributesArray.forEach(associationAttributes => {
+            //     if (! /* not */ associationAttributes.isSetAssociation) {
+            //         let control: AbstractControl = this.crudForm.controls[associationAttributes.associationPropertyName];
+            //         control.patchValue(this.selectedAssociationArray[0]);
+            //         console.log('this.selectedAssociationArray[0]', this.selectedAssociationArray[0]);
+            //         console.log('control', control);
+            //         control.enable();
+            //         }
+            // });
+
             break;
-        case CrudEnum.DELETE:
-            this.fieldAttributesArray.forEach(fieldAttributes => {
-                let control: AbstractControl = this.crudForm.controls[fieldAttributes.columnName];
-                control.patchValue(this.crudRow[fieldAttributes.columnName]);
-                control.disable();
-            });
-            break;
+        // case CrudEnum.DELETE:
+        //     this.fieldAttributesArray.forEach(fieldAttributes => {
+        //         let control: AbstractControl = this.crudForm.controls[fieldAttributes.columnName];
+        //         control.patchValue(this.crudRow[fieldAttributes.columnName]);
+        //         control.disable();
+        //     });
+        //     break;
         default:
             console.error('this.crudMode is invalid. this.crudMode: ' + this.crudMode);
         }
@@ -169,9 +194,12 @@ export class GenericCrudComponent implements OnInit {
                     this.crudRow[fieldAttributes.columnName] = this.crudForm.controls[fieldAttributes.columnName].value;
                 });
                 this.setRowDateFields(this.crudRow, this.fieldAttributesArray);
+                this.setRowDefaultValues(this.crudRow, CrudComponentConfig.entityAttributesMap.get(this.tableName));
+                this.setSelectedAssociationArrayForSingleValueAssociations(this.selectedAssociationArray, this.crudForm, this.formAttributes.associations);
                 let addGenericEntityAndAssociation$: Observable<IGenericEntityResponse> = this.genericEntityService.addGenericEntity(this.tableName, this.crudRow)
                     .concatMap(savedSingleGenericEntityResponse => {
-                        if (this.formAttributes.associations && this.formAttributes.associations.length != 0) {
+                        // if (this.formAttributes.associations && this.formAttributes.associations.length != 0 && this.formAttributes.associations[0].isSetAssociation) {
+                        if (this.selectedAssociationArray.length > 0) {
                             return this.genericEntityService.updateAssociationGenericEntity(savedSingleGenericEntityResponse, this.formAttributes.associations[0], this.selectedAssociationArray);
                         } else {
                             return Observable.of<IGenericEntityResponse>(savedSingleGenericEntityResponse);
@@ -196,9 +224,10 @@ export class GenericCrudComponent implements OnInit {
                 });
                 this.setRowDateFields(this.crudRow, this.fieldAttributesArray);
 
+                this.setSelectedAssociationArrayForSingleValueAssociations(this.selectedAssociationArray, this.crudForm, this.formAttributes.associations);
                 let updateGenericEntityAndAssociation$: Observable<IGenericEntityResponse> = this.genericEntityService.updateGenericEntity(this.crudRow)
                     .concatMap(savedSingleGenericEntityResponse => {
-                        if (this.formAttributes.associations && this.formAttributes.associations.length != 0) {
+                        if (this.selectedAssociationArray.length > 0) {
                             return this.genericEntityService.updateAssociationGenericEntity(savedSingleGenericEntityResponse, this.formAttributes.associations[0], this.selectedAssociationArray);
                         } else {
                             return Observable.of<IGenericEntityResponse>(savedSingleGenericEntityResponse);
@@ -276,7 +305,7 @@ export class GenericCrudComponent implements OnInit {
         this.genericEntityService.getGenericEntityPage(this.tableName, firstRowNumber, rowsPerPage, searchString, queryOrderByColumns)
         .subscribe({
             next: rowResponse => {
-                console.log('rowResponse', rowResponse);
+                console.log('rowResponse for table %s: %o', this.tableName, rowResponse);
                 this.page = rowResponse.page;
                 if (rowResponse._embedded) {
                     this.firstRowOfTable = this.page.number * this.ROWS_PER_PAGE;
@@ -309,15 +338,14 @@ export class GenericCrudComponent implements OnInit {
         }});
     }
 
-    fetchAssociations() {
-        // Get all rows of association table
+    // Get all rows of association table
+    private fetchAllAssociationRows() {
         this.formAttributes.associations.forEach(associationAttributes => {
-            this.genericEntityService.getAssociationGenericEntity(associationAttributes.associationTableName, null).subscribe({
+            this.genericEntityService.getAssociationGenericEntity(associationAttributes.tableName, null).subscribe({
                 next: rowResponse => {
-                    //this.availableStudents = students;
-                    console.log('rowResponse: ', rowResponse);
+                    console.log('rowResponse for association %s: %o', associationAttributes.tableName, rowResponse);
                     if (rowResponse._embedded) {
-                        this.associationArray = rowResponse._embedded[associationAttributes.associationTableName+'s'];
+                        this.associationArray = rowResponse._embedded[associationAttributes.tableName+'s'];
                         this.setRowArrayDateFields(this.associationArray, this.fieldAttributesArray);
                         this.sortAssociation(this.associationArray, this.formAttributes.associations[0].orderByColumns);
                         console.log('this.associationArray: ', this.associationArray);
@@ -333,20 +361,15 @@ export class GenericCrudComponent implements OnInit {
             });
         })
     }
-
-        // Get associated rows of this entity
-    private fetchAssosciatedRows(crudRow: IGenericEntity, associationAttributes: AssociationAttributes) {
-        this.genericEntityService.getAssociatedRows(crudRow, associationAttributes, null).subscribe({
+    private fetchAllAssociationRows2(associationAttributes: AssociationAttributes) {
+        this.genericEntityService.getAssociationGenericEntity(associationAttributes.tableName, null).subscribe({
             next: rowResponse => {
-                //this.availableStudents = students;
-                console.log('rowResponse: ', rowResponse);
+                console.log('rowResponse for association %s: %o', associationAttributes.tableName, rowResponse);
                 if (rowResponse._embedded) {
-                    this.selectedAssociationArray = rowResponse._embedded[associationAttributes.associationTableName+'s'];
-                    this.setRowArrayDateFields(this.selectedAssociationArray, this.fieldAttributesArray);
-                    this.sortAssociation(this.selectedAssociationArray, this.formAttributes.associations[0].orderByColumns);
-                    console.log('this.selectedAssociationArray: ', this.selectedAssociationArray);
-                    console.log('this.associationArray: ', this.associationArray);
-                    this.populateAvailableAssociationArray();
+                    associationAttributes.optionsArray = rowResponse._embedded[associationAttributes.tableName+'s'];
+                    this.setRowArrayDateFields(associationAttributes.optionsArray, this.fieldAttributesArray);
+                    this.sortAssociation(associationAttributes.optionsArray, associationAttributes.orderByColumns);
+                    console.log('associationAttributes.optionsArray: ', associationAttributes.optionsArray);
                 } else {
                     this.firstRowOfTable = 0;
                     this.rowArray = [];
@@ -359,7 +382,48 @@ export class GenericCrudComponent implements OnInit {
         });
     }
 
+    // Get associated rows of this entity
+    private fetchAssosciatedRows(crudRow: IGenericEntity, associationAttributes: AssociationAttributes) {
+        switch (associationAttributes.associationTypeEnum) {
+            case AssociationTypeEnum.MANY_TO_MANY:
+                this.genericEntityService.getAssociatedRows(crudRow, associationAttributes, null).subscribe({
+                    next: rowResponse => {
+                        console.log('rowResponse of associated rows of %o: %o', crudRow._links.self, rowResponse);
+                        this.selectedAssociationArray = rowResponse._embedded[associationAttributes.tableName+'s'];
+                        this.setRowArrayDateFields(this.selectedAssociationArray, this.fieldAttributesArray);
+                        this.sortAssociation(this.selectedAssociationArray, this.formAttributes.associations[0].orderByColumns);
+                        console.log('this.selectedAssociationArray: ', this.selectedAssociationArray);
+                        // console.log('this.associationArray: ', this.associationArray);
+                        this.populateAvailableAssociationArray();
+                    },
+                    error: error => {
+                        console.error(error);
+                        this.messageService.error(error);
+                    }
+                });
+                break;
+            case AssociationTypeEnum.MANY_TO_ONE:
+                this.genericEntityService.getAssociatedRow(crudRow, associationAttributes, null).subscribe({
+                    next: rowResponse => {
+                        console.log('rowResponse of associated rows of %o: %o', crudRow._links.self, rowResponse);
+                        this.selectedAssociationArray[0] = rowResponse;
+                        console.log('this.selectedAssociationArray: ', this.selectedAssociationArray);
+                    },
+                    error: error => {
+                        console.error(error);
+                        this.messageService.error(error);
+                    }
+                });
+                break;
+            default:
+                console.error('AssociationTypeEnum %s is not hadled', associationAttributes.associationTypeEnum);
+        }
+    }
+
     private populateAvailableAssociationArray() {
+        if (this.formAttributes.associations.length === 0) {
+            return;
+        }
         // compute availableAssociationArray = associationArray - selectedAssociationArray
         this.availableAssociationArray = [];
         this.associationArray.forEach(row=> {
@@ -392,9 +456,11 @@ export class GenericCrudComponent implements OnInit {
 
         this.crudRow = Object.assign({}, this.selectedRow);
         this.modifyAndDeleteButtonsDisable = false;
-        this.formAttributes.associations.forEach(associationAttributes => {
-            this.fetchAssosciatedRows(this.crudRow, associationAttributes);
-        });
+        if (this.formAttributes.associations && this.formAttributes.associations.length > 0) {
+            this.formAttributes.associations.forEach(associationAttributes => {
+                this.fetchAssosciatedRows(this.crudRow, associationAttributes);
+            });
+        }
         
     }
     onRowUnselect(event) {
@@ -431,7 +497,7 @@ export class GenericCrudComponent implements OnInit {
     private setRowArrayDateFields(rowArray: Array<IGenericEntity>, fieldAttributesArray: Array<FieldAttributes>) {
         rowArray.forEach(row => {
             fieldAttributesArray.forEach(fieldAttributes => {
-                if (fieldAttributes.dataType === DataTypeEnum.DATE) {
+                if (fieldAttributes.dataType === DataTypeEnum.DATE && row[fieldAttributes.columnName]) {
                     row[fieldAttributes.columnName] = new Date(row[fieldAttributes.columnName]+'T00:00:00');
                 }
             });
@@ -448,6 +514,33 @@ export class GenericCrudComponent implements OnInit {
                 console.log('row[fieldAttributes.columnName]', row[fieldAttributes.columnName]);
             }
         });
+    }
+
+    private setRowDefaultValues(crudRow: IGenericEntity, entityAttributes: EntityAttributes): void {
+        console.log('entityAttributes: ', entityAttributes);
+        if (entityAttributes && entityAttributes.columnDefaultValueMap) {
+            let columnDefaultValueMap = entityAttributes.columnDefaultValueMap;
+            console.log('columnDefaultValueMap', columnDefaultValueMap);
+            columnDefaultValueMap.forEach((defaultValue: any, columnName: string) => {
+                console.log(columnName, defaultValue);
+                crudRow[columnName] = defaultValue;
+            });
+        }
+        console.log('crudRow: %o', crudRow);
+    }
+
+    private setSelectedAssociationArrayForSingleValueAssociations(selectedAssociationArray: Array<IGenericEntity>, crudForm: FormGroup, associationAttributesArray: Array<AssociationAttributes>): void {
+        console.log('in setSingleValueAssociations, crudRow: %o', crudForm);
+        console.log('associationAttributesArray: %o', associationAttributesArray);
+        if (associationAttributesArray && associationAttributesArray.length > 0) {
+            associationAttributesArray.forEach(associationAttributes => {
+                
+                if (associationAttributes.associationTypeEnum == AssociationTypeEnum.MANY_TO_ONE) {
+                    selectedAssociationArray[0] = crudForm.controls[associationAttributes.associationPropertyName].value;
+                }
+            });
+            console.log('crudRow: %o', crudForm);
+        }
     }
 
 }

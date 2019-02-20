@@ -1,5 +1,4 @@
 <p-table
-    *ngIf="rowArray"
 	[value]="rowArray"
 	[dataKey]="'_links.self.href'"
 	[lazy]="true"
@@ -33,8 +32,22 @@
         </tr>
     </ng-template>
 
-    <ng-template pTemplate="body" let-row>
+    <ng-template pTemplate="body"
+    
+
+
+    
+    let-row let-expanded="expanded">
         <tr [pSelectableRow]="row">
+                <td>
+                        <a href="#" [pRowToggler]="rowData">
+                                <i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+                        </a>
+                    </td>
+
+
+
+                    
             <td *ngFor="let fieldAttributes of fieldAttributesArray" [ngSwitch]="fieldAttributes.pipe">
                 <span *ngSwitchCase="'date-yyyy-mm-dd'">{{ row[fieldAttributes.columnName] | date:'yyyy-MM-dd' }}</span>
                 <span *ngSwitchCase="'password'">{{ row[fieldAttributes.columnName] | password }}</span>
@@ -42,6 +55,7 @@
             </td>
         </tr>
     </ng-template>
+    
     
     <ng-template pTemplate="summary">
         <div class="p-grid" style="margin-bottom: -0.6em;">
@@ -76,7 +90,7 @@
                 </div>
                 <div class="p-col-8" [ngSwitch]="fieldAttributes.uiComponentType">
 
-                    <p-calendar *ngSwitchCase="uiComponentEnum.CALENDAR" [formControlName]="fieldAttributes.columnName" [id]="fieldAttributes.columnName" [dateFormat]="'yy-mm-dd'" [showIcon]="true" [readonlyInput]="true" [showOnFocus]="false" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2050">
+                    <p-calendar *ngSwitchCase="uiComponentEnum.CALENDAR" [formControlName]="fieldAttributes.columnName" [id]="fieldAttributes.columnName" [dateFormat]="'yy-mm-dd'" [showIcon]="true" [readonlyInput]="true" [showOnFocus]="false" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2050" appendTo="body">
                     </p-calendar>
 
                     <textarea *ngSwitchCase="uiComponentEnum.TEXT_AREA" pInputTextarea [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName" [rows]="fieldAttributes.textAreaRows" [cols]="fieldAttributes.textAreaColumns">
@@ -89,7 +103,10 @@
                     <p-checkbox *ngSwitchCase="uiComponentEnum.BOOLEAN_CHECKBOX" [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName" binary="true"></p-checkbox>
 
                     <input *ngSwitchCase="uiComponentEnum.PASSWORD" type="password" [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName" autocomplete="new-password"/>
-    
+
+                    <p-dropdown *ngSwitchCase="uiComponentEnum.DROPDOWN" [id]="fieldAttributes.columnName" [options]="fieldAttributes.associationAttributes.optionsArray" [formControlName]="fieldAttributes.columnName" [optionLabel]="fieldAttributes.associationAttributes.propertyAsName" placeholder="Select part" appendTo="body">
+                    </p-dropdown>
+
                     <span *ngSwitchDefault>
                         Unhandled {{fieldAttributes.uiComponentType}} type
                     </span>
@@ -97,20 +114,32 @@
             </ng-template>
 
             <ng-template ngFor let-associationAttributes [ngForOf]="associationAttributesArray">
-                <div class="p-col-12">
+                <div *ngIf="associationAttributes.isSetAssociation" class="p-col-12">
+
                     <p-pickList [source]="availableAssociationArray" [target]="selectedAssociationArray" sourceHeader="Available {{associationAttributes.associationTableName}}s" targetHeader="{{associationAttributes.associationTableName | titlecase}}s"
                     (onMoveAllToTarget)="onMoveAllToTarget()" (onMoveToTarget)="onMoveToTarget()" (onMoveAllToSource)="onMoveAllToSource()"
                     (onMoveToSource)="onMoveToSource()" [showSourceControls]="false" [showTargetControls]="false" [sourceStyle]="{'height':'20em'}"
                     [targetStyle]="{'height':'20em'}">
-                    <ng-template let-association pTemplate="item">
-                        <div class="ui-helper-clearfix">
-                            <div style="font-size:14px;float:left;margin:0 0 0 0">
-                                <span [pTooltip]="association.description" tooltipPosition="top">{{association.name}}</span>
+                        <ng-template let-association pTemplate="item">
+                            <div class="ui-helper-clearfix">
+                                <div style="font-size:14px;float:left;margin:0 0 0 0">
+                                    <span [pTooltip]="association[associationAttributes.propertyAsDescription]" tooltipPosition="top">{{association[associationAttributes.propertyAsName]}}</span>
+                                </div>
                             </div>
-                        </div>
-                    </ng-template>
+                        </ng-template>
                     </p-pickList>
                 </div>
+
+                <div *ngIf="! associationAttributes.isSetAssociation" class="p-col-4">
+                    <label [for]="associationAttributes.associationPropertyName">{{associationAttributes.associationPropertyName | titlecase}}</label>
+                </div>
+                <div *ngIf="! associationAttributes.isSetAssociation" class="p-col-8">
+
+                    <!-- <p-dropdown [id]="associationAttributes.associationPropertyName" [options]="associationArray" [formControlName]="associationAttributes.associationPropertyName"  [optionLabel]="associationAttributes.propertyAsName" placeholder="Select part" appendTo="body">
+                    </p-dropdown> -->
+
+                </div>
+
             </ng-template>
             
             <p-footer class="p-grid">

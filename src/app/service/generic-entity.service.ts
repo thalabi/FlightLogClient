@@ -13,7 +13,7 @@ import { of as observableOf } from 'rxjs/observable/of'
 import { SessionDataService } from './session-data.service';
 import { s } from '@angular/core/src/render3';
 import { IGenericEntityResponse } from '../response/i-generic-entity-response';
-import { AssociationAttributes } from '../config/crud-component-config';
+import { AssociationAttributes } from "../config/AssociationAttributes";
 
 @Injectable()
 export class GenericEntityService {
@@ -112,6 +112,12 @@ export class GenericEntityService {
         let associationLink: string = crudRow._links[associationAttributes.associationPropertyName].href;
         console.log('associationLink', associationLink);
         return this.httpClient.get<IGenericEntityListResponse>(associationLink, this.getHttpOptions());
+    }
+    getAssociatedRow(crudRow: IGenericEntity, associationAttributes: AssociationAttributes, queryOrderByColumns: string[]): Observable<IGenericEntity> {
+        // TODO fix
+        let associationLink: string = crudRow._links[associationAttributes.associationPropertyName].href;
+        console.log('associationLink', associationLink);
+        return this.httpClient.get<IGenericEntity>(associationLink, this.getHttpOptions());
     }
 
     updateAssociationGenericEntity(row: IGenericEntityResponse, associationAttributes: AssociationAttributes, associationArray: Array<IGenericEntity>): Observable<IGenericEntityResponse> {

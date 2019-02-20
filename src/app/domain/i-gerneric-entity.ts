@@ -1,5 +1,5 @@
 export interface IGenericEntity{
-    id: number;
+    //id: number;
 
     [colums: string]: any;
 

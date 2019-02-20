@@ -7,7 +7,6 @@ import { FlightLog } from '../domain/flight-log';
 import { FlightLogResponse } from '../response/flight-log-response';
 import { Airport } from '../domain/airport';
 import { AirportResponse } from '../response/airport-response';
-import { StringUtils } from '../string-utils';
 import { FlightLogMonthlyTotalVResponse } from '../response/flight-log-monthly-total-v-response';
 import { FlightLogYearlyTotalVResponse } from '../response/flight-log-yearly-total-v-response';
 import { FlightLogLastXDaysTotalVResponse } from '../response/flight-log-last-x-days-total-v-response';
