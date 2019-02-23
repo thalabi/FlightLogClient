@@ -24,5 +24,9 @@ export enum PermissionEnum {
     PILOT_SYNC                            = 'pilot sync',
     REGISTRATION_SYNC                     = 'registration sync',
     SIGNIFICANT_EVENT_SYNC                = 'significant_event sync',
-    COPY_USER                             = 'copy user'
+    COPY_USER                             = 'copy user',
+    PART_READ                             = 'part read',
+    PART_WRITE                            = 'part write',
+    COMPONENT_READ                        = 'component read',
+    COMPONENT_WRITE                       = 'component write'
 }

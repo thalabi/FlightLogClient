@@ -11,6 +11,7 @@ import { AuthGuard } from './security/auth.guard';
 import { ChangePasswordComponent } from './security/change-password/change-password.component';
 import { CopyUserComponent } from './security/copy-user/copy-user.component';
 import { _404Component } from './404.component';
+import { ExpandableTableComponent } from './test/expandable-table/expandable-table.component';
 
 const routes: Routes = [
     { path: '', redirectTo: '/flightLogTable', pathMatch: 'full', canActivate: [AuthGuard] },
@@ -22,6 +23,7 @@ const routes: Routes = [
     { path: 'genericCrud/:tableName', component: GenericCrudComponent, canActivate: [AuthGuard] },
     { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
     { path: 'copyUser', component: CopyUserComponent, canActivate: [AuthGuard] },
+    { path: 'expandableTable', component: ExpandableTableComponent },
     { path: 'login', component: LoginComponent },
     { path: '**', component: _404Component },
     ];

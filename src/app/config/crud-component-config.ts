@@ -136,6 +136,18 @@ export class CrudComponentConfig {
         ]
     };
 
+    private static part: FormAttributes = {
+        formTitle: 'Part',
+        tableName: 'part',
+        queryOrderByColumns: ['name'],
+        fields: [
+            {columnName: 'name', dataType: DataTypeEnum.STRING, mandatory: true, orderNumber: 1, header: 'Name', uiComponentType: UiComponentEnum.TEXT},
+            {columnName: 'description', dataType: DataTypeEnum.STRING, mandatory: false, orderNumber: 2, header: 'Description', uiComponentType: UiComponentEnum.TEXT}
+            ],
+        showReplicationStatus: false,
+        associations: []
+    };
+
     static formConfig: Map<string, FormAttributes> = new Map([
         ['airport', CrudComponentConfig.airport],
         ['makeModel', CrudComponentConfig.makeModel],
@@ -143,7 +155,8 @@ export class CrudComponentConfig {
         ['registration', CrudComponentConfig.registration],
         ['significantEvent', CrudComponentConfig.significantEvent],
         ['user', CrudComponentConfig.user],
-        ['group', CrudComponentConfig.group]
+        ['group', CrudComponentConfig.group],
+        ['part', CrudComponentConfig.part]
     ]);
 
     static entityToWritePermissionMap: Map<string, PermissionEnum> = new Map([
@@ -153,6 +166,7 @@ export class CrudComponentConfig {
         ['registration', PermissionEnum.REGISTRATION_WRITE],
         ['significantEvent', PermissionEnum.SIGNIFICANT_EVENT_WRITE],
         ['user', PermissionEnum.USER_WRITE],
-        ['group', PermissionEnum.GROUP_WRITE]
+        ['group', PermissionEnum.GROUP_WRITE],
+        ['part', PermissionEnum.PART_WRITE]
     ]);
 }

@@ -33,6 +33,12 @@ export class MenuComponent implements OnInit {
             ]
         },
         {id: 'jobs', label: 'Jobs', routerLink: 'jobLauncher'},
+        {id: 'acMaint', label: 'A/C Maint',
+            items: [
+                { id: 'part', label: 'Part', routerLink: 'genericCrud/part', routerLinkActiveOptions: { exact: true }},
+                { id: 'expandableTable', label: 'Component', routerLink: 'expandableTable', routerLinkActiveOptions: { exact: true }},
+            ]
+        },
         {id: 'security', label: 'Security',
             items: [
                 { id: 'user', label: 'User', routerLink: 'genericCrud/user', routerLinkActiveOptions: { exact: true }},
@@ -83,6 +89,10 @@ export class MenuComponent implements OnInit {
 
             this.findMenuItem(this.menuModel, 'jobs').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.AIRPORT_SYNC, PermissionEnum.FLIGHT_LOG_SYNC, PermissionEnum.MAKE_MODEL_SYNC, PermissionEnum.PILOT_SYNC, PermissionEnum.REGISTRATION_SYNC, PermissionEnum.SIGNIFICANT_EVENT_SYNC);
 
+            this.findMenuItem(this.menuModel, 'acMaint').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.PART_READ, PermissionEnum.PART_WRITE, PermissionEnum.COMPONENT_READ, PermissionEnum.COMPONENT_WRITE);
+            this.findMenuItem(this.menuModel, 'part').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.PART_READ, PermissionEnum.PART_WRITE);
+            this.findMenuItem(this.menuModel, 'expandableTable').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.COMPONENT_READ, PermissionEnum.COMPONENT_WRITE);
+
             this.findMenuItem(this.menuModel, 'security').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.USER_READ, PermissionEnum.GROUP_READ);
             this.findMenuItem(this.menuModel, 'user').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.USER_READ);
             this.findMenuItem(this.menuModel, 'group').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.GROUP_READ);
@@ -95,6 +105,7 @@ export class MenuComponent implements OnInit {
             this.findMenuItem(this.menuModel, PermissionEnum.SUMMARY).visible = false;
             this.findMenuItem(this.menuModel, 'misc').visible = false;
             this.findMenuItem(this.menuModel, 'jobs').visible = false;
+            this.findMenuItem(this.menuModel, 'acMaint').visible = false;
             this.findMenuItem(this.menuModel, 'security').visible = false;
             this.findMenuItem(this.menuModel, 'logout').visible = false;
         }

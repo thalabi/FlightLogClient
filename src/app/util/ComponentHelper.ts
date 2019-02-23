@@ -3,7 +3,8 @@ import { ReplicationService } from "../service/replication.service";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { AbstractControl } from "@angular/forms";
-import { DataTypeEnum } from "../config/crud-component-config";
+import { DataTypeEnum, FieldAttributes } from "../config/crud-component-config";
+import { IGenericEntity } from "../domain/i-gerneric-entity";
 
 export class ComponentHelper {
 
@@ -47,6 +48,7 @@ export class ComponentHelper {
             control.patchValue(null);
         }
     }
+
     public static getTableReplicationStatusAndLabel(replicationService: ReplicationService, tableName: string): Observable<{"replicationSupported": boolean, "replicationStatus": boolean, "replicationStatusLabel": string}> {
 
         return replicationService.getTableReplicationStatus(tableName).pipe(
@@ -71,5 +73,18 @@ export class ComponentHelper {
             )
         );
     }
+
+    /*
+    Change fields withDataTypeEnum.Date type to date and set time to zero
+    */
+   public static setRowArrayDateFields(rowArray: Array<IGenericEntity>, fieldAttributesArray: Array<FieldAttributes>) {
+    rowArray.forEach(row => {
+        fieldAttributesArray.forEach(fieldAttributes => {
+            if (fieldAttributes.dataType === DataTypeEnum.DATE) {
+                row[fieldAttributes.columnName] = new Date(row[fieldAttributes.columnName]+'T00:00:00');
+            }
+        });
+    });
+}
 
 }
