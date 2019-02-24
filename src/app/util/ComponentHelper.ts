@@ -77,14 +77,14 @@ export class ComponentHelper {
     /*
     Change fields withDataTypeEnum.Date type to date and set time to zero
     */
-   public static setRowArrayDateFields(rowArray: Array<IGenericEntity>, fieldAttributesArray: Array<FieldAttributes>) {
-    rowArray.forEach(row => {
-        fieldAttributesArray.forEach(fieldAttributes => {
-            if (fieldAttributes.dataType === DataTypeEnum.DATE) {
-                row[fieldAttributes.columnName] = new Date(row[fieldAttributes.columnName]+'T00:00:00');
-            }
+    public static setRowArrayDateFields(rowArray: Array<IGenericEntity>, fieldAttributesArray: Array<FieldAttributes>) {
+        rowArray && rowArray.forEach(row => {
+            fieldAttributesArray.forEach(fieldAttributes => {
+                if (fieldAttributes.dataType === DataTypeEnum.DATE && row[fieldAttributes.columnName]) {
+                    row[fieldAttributes.columnName] = new Date(row[fieldAttributes.columnName]+'T00:00:00');
+                }
+            });
         });
-    });
-}
+    }
 
 }

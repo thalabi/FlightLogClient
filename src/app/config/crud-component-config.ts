@@ -159,14 +159,4 @@ export class CrudComponentConfig {
         ['part', CrudComponentConfig.part]
     ]);
 
-    static entityToWritePermissionMap: Map<string, PermissionEnum> = new Map([
-        ['airport', PermissionEnum.AIRPORT_WRITE],
-        ['makeModel', PermissionEnum.MAKE_MODEL_WRITE],
-        ['pilot', PermissionEnum.PILOT_WRITE],
-        ['registration', PermissionEnum.REGISTRATION_WRITE],
-        ['significantEvent', PermissionEnum.SIGNIFICANT_EVENT_WRITE],
-        ['user', PermissionEnum.USER_WRITE],
-        ['group', PermissionEnum.GROUP_WRITE],
-        ['part', PermissionEnum.PART_WRITE]
-    ]);
 }

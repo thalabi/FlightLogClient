@@ -4,7 +4,7 @@ import { Headers, Response, ResponseContentType } from '@angular/http';
 import { catchError, map } from 'rxjs/operators';
 // Observale operators
 import 'rxjs/add/operator/toPromise';
-import { Constants } from '../constants';
+import { Constant } from '../constant';
 import { ApplicationProperties } from './application.properties';
 import { HttpClient } from '@angular/common/http';
 
@@ -23,12 +23,12 @@ export class ConfigService {
 
     loadConfig(): Promise<string> {
         console.log('loadConfig() called');
-        let configPromise: Promise<string> = this.http.get(Constants.APPLICATION_PROPERTIES_FILE).pipe(
+        let configPromise: Promise<string> = this.http.get(Constant.APPLICATION_PROPERTIES_FILE).pipe(
             map((response: any) => {
                 this.applicationProperties = response;
             }),
             catchError((error: Response | any): Promise<any> => {
-                console.error('Could not read ' + Constants.APPLICATION_PROPERTIES_FILE + '. Error is: ' + error);
+                console.error('Could not read ' + Constant.APPLICATION_PROPERTIES_FILE + '. Error is: ' + error);
                 return Promise.reject('');
             }))
             .toPromise();

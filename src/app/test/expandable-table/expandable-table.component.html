@@ -1,6 +1,6 @@
 <p-table
     [value]="rowArray"
-    [columns]="fields"
+    [columns]="componentColumns"
     [dataKey]="'_links.self.href'"
 	[lazy]="true"
 	[rows]="ROWS_PER_PAGE"
@@ -14,6 +14,7 @@
     [responsive]="true"
     [first]="firstRowOfTable"
     [loading]="loadingFlag"
+    #dt
     >
 
     <ng-template pTemplate="caption">
@@ -23,8 +24,14 @@
     <ng-template pTemplate="header" let-columns>
         <tr>
             <th style="width: 3em"></th>
-            <th *ngFor="let col of columns">
-                {{col.header}}
+            <th *ngFor="let column of columns">
+                {{column.header}}
+            </th>
+        </tr>
+        <tr>
+            <th style="width: 3em"></th>
+            <th *ngFor="let fieldAttributes of columns">
+                <input pInputText type="text" (input)="dt.filter($event.target.value, fieldAttributes.columnName, fieldAttributes.filterMatchMode)" [ngStyle]="fieldAttributes.filterStyle">
             </th>
         </tr>
     </ng-template>
@@ -36,7 +43,7 @@
                 </a>
             </td>
             <td *ngFor="let fieldAttributes of columns" [ngSwitch]="fieldAttributes.pipe">
-                <!-- <span *ngSwitchCase="'date-yyyy-mm-dd'">{{ rowData[fieldAttributes.columnName] | date:'yyyy-MM-dd' }}</span> -->
+                <span *ngSwitchCase="'date-yyyy-mm-dd'">{{ rowData[fieldAttributes.columnName] | date:'yyyy-MM-dd' }}</span>
                 <span *ngSwitchCase="'password'">{{ rowData[fieldAttributes.columnName] | password }}</span>
                 <span *ngSwitchDefault>{{ rowData[fieldAttributes.columnName] }}</span>
             </td>
@@ -49,10 +56,31 @@
     <ng-template pTemplate="rowexpansion" let-rowData let-columns="columns">
         <tr *ngFor="let componentHistory of rowData.componentHistorySet">
             <td [attr.colspan]="4"></td>
-            <td>{{componentHistory.workPerformed}}</td>
-            <td>{{componentHistory.datePerformed}}</td>
-            <td>{{componentHistory.hoursPerformed}}</td>
+            <td *ngFor="let fieldAttributes of componentHistoryColumns" [ngSwitch]="fieldAttributes.pipe">
+                <span *ngSwitchCase="'date-yyyy-mm-dd'">{{ componentHistory[fieldAttributes.columnName] | date:'yyyy-MM-dd' }}</span>
+                <span *ngSwitchCase="'password'">{{ componentHistory[fieldAttributes.columnName] | password }}</span>
+                <span *ngSwitchDefault>{{ componentHistory[fieldAttributes.columnName] }}</span>
+            </td>
             <td [attr.colspan]="2"></td>
         </tr>
+    </ng-template>
+    <ng-template pTemplate="summary">
+        <div class="p-grid" style="margin-bottom: -0.6em;">
+            <div class="p-col-5">
+                <span *ngIf="hasWritePermission">
+                    <button type="button" pButton icon="pi pi-plus" style="float:left" (click)="showDialog(crudEnum.ADD)" label="Add"></button>
+                    <button type="button" pButton icon="pi pi-pencil" style="float:left; margin-left:0.5rem;" (click)="showDialog(crudEnum.UPDATE)" label="Modify" [disabled]="modifyAndDeleteButtonsDisable"></button>
+                    <button type="button" pButton icon="pi pi-minus" style="float:left; margin-left:0.5rem;" (click)="showDialog(crudEnum.DELETE)" label="Delete" [disabled]="modifyAndDeleteButtonsDisable"></button>
+                </span>
+            </div>
+            <div class="p-col-4 p-offset-3">
+                <div style="float:right;">
+                <span style="margin-right: 1rem;">Rows: {{page.totalElements}}</span>
+                <span style="margin-right: 1rem;">Pages: {{page.totalPages}}</span>
+                <span style="margin-right: 0.5rem;">Page: <input type="text" id="pageNumber" [(ngModel)]="pageNumber" maxlength="4" size="3"/></span>
+                <button pButton type="button" label="Go" (click)="onGoToPage()"></button>
+                </div>
+            </div>
+        </div>
     </ng-template>
 </p-table>

@@ -18,6 +18,7 @@ import 'rxjs/add/operator/concatMap';
 import { IGenericEntityResponse } from '../response/i-generic-entity-response';
 import { SessionDataService } from '../service/session-data.service';
 import { MenuComponent } from '../menu/menu.component';
+import { Constant } from '../constant';
 
 @Component({
     selector: 'app-generic-crud',
@@ -79,6 +80,8 @@ export class GenericCrudComponent implements OnInit {
 
     ngOnInit() {
         this.messageService.clear();
+        this.rowArray = [];
+        this.page = new HalResponsePage();
         this.counter++;
         console.log("this.counter: ", this.counter);
         this.route.params.subscribe(params => {
@@ -95,13 +98,13 @@ export class GenericCrudComponent implements OnInit {
             console.log("after createForm");
 
             this.row = <IGenericEntity>{};
-            console.log("before fetchPage");
-            this.fetchPage(0, this.ROWS_PER_PAGE, '', this.formAttributes.queryOrderByColumns);
+            // console.log("before fetchPage");
+            // this.fetchPage(0, this.ROWS_PER_PAGE, '', this.formAttributes.queryOrderByColumns);
             
             this.fetchAssociations();
 
             this.hasWritePermission = MenuComponent.isHolderOfAnyAuthority(
-                this.sessionDataService.user, CrudComponentConfig.entityToWritePermissionMap.get(this.tableName));
+                this.sessionDataService.user, Constant.entityToWritePermissionMap.get(this.tableName));
 
         });
         // this.row = <IGenericEntity>{};
@@ -281,7 +284,7 @@ export class GenericCrudComponent implements OnInit {
                 if (rowResponse._embedded) {
                     this.firstRowOfTable = this.page.number * this.ROWS_PER_PAGE;
                     this.rowArray = rowResponse._embedded[this.tableName+'s'];
-                    this.setRowArrayDateFields(this.rowArray, this.fieldAttributesArray);
+                    ComponentHelper.setRowArrayDateFields(this.rowArray, this.fieldAttributesArray);
                 } else {
                     this.firstRowOfTable = 0;
                     this.rowArray = [];
@@ -318,7 +321,7 @@ export class GenericCrudComponent implements OnInit {
                     console.log('rowResponse: ', rowResponse);
                     if (rowResponse._embedded) {
                         this.associationArray = rowResponse._embedded[associationAttributes.associationTableName+'s'];
-                        this.setRowArrayDateFields(this.associationArray, this.fieldAttributesArray);
+                        ComponentHelper.setRowArrayDateFields(this.associationArray, this.fieldAttributesArray);
                         this.sortAssociation(this.associationArray, this.formAttributes.associations[0].orderByColumns);
                         console.log('this.associationArray: ', this.associationArray);
                     } else {
@@ -342,7 +345,7 @@ export class GenericCrudComponent implements OnInit {
                 console.log('rowResponse: ', rowResponse);
                 if (rowResponse._embedded) {
                     this.selectedAssociationArray = rowResponse._embedded[associationAttributes.associationTableName+'s'];
-                    this.setRowArrayDateFields(this.selectedAssociationArray, this.fieldAttributesArray);
+                    ComponentHelper.setRowArrayDateFields(this.selectedAssociationArray, this.fieldAttributesArray);
                     this.sortAssociation(this.selectedAssociationArray, this.formAttributes.associations[0].orderByColumns);
                     console.log('this.selectedAssociationArray: ', this.selectedAssociationArray);
                     console.log('this.associationArray: ', this.associationArray);
@@ -362,7 +365,7 @@ export class GenericCrudComponent implements OnInit {
     private populateAvailableAssociationArray() {
         // compute availableAssociationArray = associationArray - selectedAssociationArray
         this.availableAssociationArray = [];
-        this.associationArray.forEach(row=> {
+        this.associationArray && this.associationArray.forEach(row=> {
             let found: boolean = false;
             for (let selectedRow of this.selectedAssociationArray) {
                 if (row._links.self.href === selectedRow._links.self.href) {
@@ -422,19 +425,6 @@ export class GenericCrudComponent implements OnInit {
             if (n1[orderByColumns[0]] < n2[orderByColumns[0]]) return -1;
             if (n1[orderByColumns[0]] > n2[orderByColumns[0]]) return 1;
             return 0;
-        });
-    }
-
-    /*
-    Change fields withDataTypeEnum.Date type to date and set time to zero
-    */
-    private setRowArrayDateFields(rowArray: Array<IGenericEntity>, fieldAttributesArray: Array<FieldAttributes>) {
-        rowArray.forEach(row => {
-            fieldAttributesArray.forEach(fieldAttributes => {
-                if (fieldAttributes.dataType === DataTypeEnum.DATE) {
-                    row[fieldAttributes.columnName] = new Date(row[fieldAttributes.columnName]+'T00:00:00');
-                }
-            });
         });
     }
 
