@@ -22,6 +22,7 @@ import { AbstractControl, FormGroup, FormControl, Validators } from '@angular/fo
 export class ExpandableTableComponent implements OnInit {
 
     rowArray: Array<IGenericEntity>;
+    partRowArray: Array<IGenericEntity>;
     selectedRow: IGenericEntity;
     componentRow: IGenericEntity;
 
@@ -42,7 +43,8 @@ export class ExpandableTableComponent implements OnInit {
     pageNumber: number;
 
     links: HalResponseLinks;
-    readonly TABLE_NAME: string = 'component';
+    readonly COMPONENT_TABLE_NAME: string = 'component';
+    readonly PART_TABLE_NAME: string = 'part';
     readonly SORT_COLUMNS: Array<string> = ['name'];
     componentFields: Array<FieldAttributes>;
     componentFormFields: Array<FieldAttributes>; // is componentFields minus part field
@@ -62,13 +64,13 @@ export class ExpandableTableComponent implements OnInit {
 
         this.componentFields = [
             {columnName: 'name', dataType: DataTypeEnum.STRING, mandatory: true, orderNumber: 1, header: 'Name', uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}},
-            {columnName: 'description', dataType: DataTypeEnum.STRING, mandatory: true, orderNumber: 2, header: 'Description', uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}},
-            {columnName: 'partName', dataType: DataTypeEnum.STRING, mandatory: true, orderNumber: 3, header: 'Part', uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}},
+            {columnName: 'description', dataType: DataTypeEnum.STRING, mandatory: false, orderNumber: 2, header: 'Description', uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}},
+            {columnName: 'partName', dataType: DataTypeEnum.STRING, mandatory: false, orderNumber: 3, header: 'Part', uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}},
             {columnName: 'workPerformed', dataType: DataTypeEnum.STRING, mandatory: true, orderNumber: 4, header: 'Work Performed', uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}},
             {columnName: 'datePerformed', dataType: DataTypeEnum.DATE, mandatory: true, orderNumber: 5, header: 'Date Performed', headerStyle: {width: '7rem'}, uiComponentType: UiComponentEnum.CALENDAR, pipe: 'date-yyyy-mm-dd', filterStyle: {width: '6rem'}},
-            {columnName: 'hoursPerformed', dataType: DataTypeEnum.NUMBER, mandatory: true, orderNumber: 6, header: 'Hours Performed', uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}},
-            {columnName: 'dateDue', dataType: DataTypeEnum.DATE, mandatory: true, orderNumber: 7, header: 'Date Due', headerStyle: {width: '7rem'}, uiComponentType: UiComponentEnum.CALENDAR, pipe: 'date-yyyy-mm-dd', filterStyle: {width: '6rem'}},
-            {columnName: 'hoursDue', dataType: DataTypeEnum.NUMBER, mandatory: true, orderNumber: 8, header: 'Hours Due', uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}}
+            {columnName: 'hoursPerformed', dataType: DataTypeEnum.NUMBER, mandatory: false, orderNumber: 6, header: 'Hours Performed', uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}},
+            {columnName: 'dateDue', dataType: DataTypeEnum.DATE, mandatory: false, orderNumber: 7, header: 'Date Due', headerStyle: {width: '7rem'}, uiComponentType: UiComponentEnum.CALENDAR, pipe: 'date-yyyy-mm-dd', filterStyle: {width: '6rem'}},
+            {columnName: 'hoursDue', dataType: DataTypeEnum.NUMBER, mandatory: false, orderNumber: 8, header: 'Hours Due', uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}}
             ];
         this.componentFormFields = this.componentFields.filter(fieldAttributes => fieldAttributes.columnName != 'partName');
         this.componentHistoryFields = [
@@ -79,9 +81,10 @@ export class ExpandableTableComponent implements OnInit {
     
     
         this.createForm();
+        this.fetchPartTable();
 
         this.hasWritePermission = MenuComponent.isHolderOfAnyAuthority(
-            this.sessionDataService.user, Constant.entityToWritePermissionMap.get(this.TABLE_NAME));
+            this.sessionDataService.user, Constant.entityToWritePermissionMap.get(this.COMPONENT_TABLE_NAME));
     }
 
     createForm() {
@@ -144,14 +147,14 @@ export class ExpandableTableComponent implements OnInit {
     fetchPage(firstRowNumber: number, rowsPerPage: number, searchString: string, queryOrderByColumns: string[]) {
         console.log("in fetchPage");
         this.loadingFlag = true;
-        this.genericEntityService.getGenericEntityPage(this.TABLE_NAME, firstRowNumber, rowsPerPage, searchString, queryOrderByColumns)
+        this.genericEntityService.getGenericEntityPage(this.COMPONENT_TABLE_NAME, firstRowNumber, rowsPerPage, searchString, queryOrderByColumns)
         .subscribe({
             next: rowResponse => {
                 console.log('rowResponse', rowResponse);
                 this.page = rowResponse.page;
                 if (rowResponse._embedded) {
                     this.firstRowOfTable = this.page.number * this.ROWS_PER_PAGE;
-                    this.rowArray = rowResponse._embedded[this.TABLE_NAME+'s'];
+                    this.rowArray = rowResponse._embedded[this.COMPONENT_TABLE_NAME+'s'];
                     this.setRowArrayDateFields(this.rowArray, this.componentFields, this.componentHistoryFields);
                     this.rowArray = this.transformAttributes(this.rowArray);
                 } else {
@@ -179,6 +182,28 @@ export class ExpandableTableComponent implements OnInit {
             //this.messageService.clear();
             //this.messageService.error(error);
         }});
+    }
+
+    private fetchPartTable() {
+        // Get all rows of part table
+        this.genericEntityService.getAssociationGenericEntity(this.PART_TABLE_NAME, null).subscribe({
+            next: rowResponse => {
+                //this.availableStudents = students;
+                console.log('rowResponse: ', rowResponse);
+                if (rowResponse._embedded) {
+                    this.partRowArray = rowResponse._embedded[this.PART_TABLE_NAME+'s'];
+                    ComponentHelper.sortGenericEntity(this.partRowArray, ['name']);
+                    console.log('this.partRowArray: ', this.partRowArray);
+                } else {
+                    this.firstRowOfTable = 0;
+                    this.rowArray = [];
+                }
+            },
+            error: error => {
+                console.error(error);
+                this.messageService.error(error);
+            }
+        });
     }
 
     onGoToPage() {

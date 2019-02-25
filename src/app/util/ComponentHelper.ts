@@ -87,4 +87,13 @@ export class ComponentHelper {
         });
     }
 
+    public static sortGenericEntity(genericEntity: IGenericEntity[], orderByColumns: Array<string>): void {
+        // TODO allow more than one order column
+        genericEntity.sort((n1, n2): number => {
+            if (n1[orderByColumns[0]] < n2[orderByColumns[0]]) return -1;
+            if (n1[orderByColumns[0]] > n2[orderByColumns[0]]) return 1;
+            return 0;
+        });
+    }
+
 }
