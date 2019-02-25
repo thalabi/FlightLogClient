@@ -1,6 +1,6 @@
 <p-table
     [value]="rowArray"
-    [columns]="componentColumns"
+    [columns]="componentFields"
     [dataKey]="'_links.self.href'"
 	[lazy]="true"
 	[rows]="ROWS_PER_PAGE"
@@ -56,7 +56,7 @@
     <ng-template pTemplate="rowexpansion" let-rowData let-columns="columns">
         <tr *ngFor="let componentHistory of rowData.componentHistorySet">
             <td [attr.colspan]="4"></td>
-            <td *ngFor="let fieldAttributes of componentHistoryColumns" [ngSwitch]="fieldAttributes.pipe">
+            <td *ngFor="let fieldAttributes of componentHistoryFields" [ngSwitch]="fieldAttributes.pipe">
                 <span *ngSwitchCase="'date-yyyy-mm-dd'">{{ componentHistory[fieldAttributes.columnName] | date:'yyyy-MM-dd' }}</span>
                 <span *ngSwitchCase="'password'">{{ componentHistory[fieldAttributes.columnName] | password }}</span>
                 <span *ngSwitchDefault>{{ componentHistory[fieldAttributes.columnName] }}</span>
@@ -84,3 +84,62 @@
         </div>
     </ng-template>
 </p-table>
+<p-dialog header="Component - {{crudMode}}" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
+
+    <form [formGroup]="componentForm" (ngSubmit)="onSubmit()" novalidate>
+        <div class="p-grid" style="width: 30em;">
+
+            <ng-template ngFor let-fieldAttributes [ngForOf]="componentFormFields">
+                <div class="p-col-4">
+                    <label [for]="fieldAttributes.columnName">{{fieldAttributes.header}}</label>
+                </div>
+                <div class="p-col-8" [ngSwitch]="fieldAttributes.uiComponentType">
+
+                    <p-calendar *ngSwitchCase="uiComponentEnum.CALENDAR" [formControlName]="fieldAttributes.columnName" [id]="fieldAttributes.columnName" [dateFormat]="'yy-mm-dd'" [showIcon]="true" [readonlyInput]="true" [showOnFocus]="false" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2050">
+                    </p-calendar>
+
+                    <!-- <textarea *ngSwitchCase="uiComponentEnum.TEXT_AREA" pInputTextarea [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName" [rows]="fieldAttributes.textAreaRows" [cols]="fieldAttributes.textAreaColumns">
+                    </textarea> -->
+
+                    <input *ngSwitchCase="uiComponentEnum.TEXT" pInputText [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName"/>
+                    <div *ngIf="fieldAttributes.mandatory && componentForm.controls[fieldAttributes.columnName].invalid && componentForm.controls[fieldAttributes.columnName].touched" class="red-font">Field is required</div>
+
+                    <p-checkbox *ngSwitchCase="uiComponentEnum.BOOLEAN_CHECKBOX" [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName" binary="true"></p-checkbox>
+
+                    <input *ngSwitchCase="uiComponentEnum.PASSWORD" type="password" [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName" autocomplete="new-password"/>
+    
+                    <span *ngSwitchDefault>
+                        Unhandled {{fieldAttributes.uiComponentType}} type
+                    </span>
+                </div>
+            </ng-template>
+
+            <!-- <ng-template ngFor let-associationAttributes [ngForOf]="associationAttributesArray">
+                <div class="p-col-12">
+                    <p-pickList [source]="availableAssociationArray" [target]="selectedAssociationArray" sourceHeader="Available {{associationAttributes.associationTableName}}s" targetHeader="{{associationAttributes.associationTableName | titlecase}}s"
+                    (onMoveAllToTarget)="onMoveAllToTarget()" (onMoveToTarget)="onMoveToTarget()" (onMoveAllToSource)="onMoveAllToSource()"
+                    (onMoveToSource)="onMoveToSource()" [showSourceControls]="false" [showTargetControls]="false" [sourceStyle]="{'height':'20em'}"
+                    [targetStyle]="{'height':'20em'}">
+                    <ng-template let-association pTemplate="item">
+                        <div class="ui-helper-clearfix">
+                            <div style="font-size:14px;float:left;margin:0 0 0 0">
+                                <span [pTooltip]="association.description" tooltipPosition="top">{{association.name}}</span>
+                            </div>
+                        </div>
+                    </ng-template>
+                    </p-pickList>
+                </div>
+            </ng-template>
+             -->
+            <p-footer class="p-grid">
+                <div class="p-col-6">
+                    <button pButton type="submit" label="Submit"
+                    [disabled]="componentForm.invalid" icon="pi pi-check"></button>
+                </div>
+                <div class="p-col-6">
+                    <button pButton type="reset" label="Cancel" (click)="onCancel()"></button>
+                </div>
+            </p-footer>
+        </div>
+    </form>
+</p-dialog>

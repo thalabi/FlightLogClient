@@ -36,10 +36,10 @@ export class ComponentHelper {
     //     })
     // }
 
-    public static initControlValues(control: AbstractControl, dataType: DataTypeEnum) {
+    public static initControlValues(control: AbstractControl, dataType: DataTypeEnum, setNullDate?: boolean) {
         switch (dataType) {
             case DataTypeEnum.DATE:
-                control.patchValue(new Date());
+                control.patchValue(setNullDate ? null : new Date());
                 break;
             case DataTypeEnum.BOOLEAN:
                 control.patchValue(false);

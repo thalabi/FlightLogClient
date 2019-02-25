@@ -12,6 +12,7 @@ import { CrudEnum } from '../../crud-enum';
 import { MenuComponent } from '../../menu/menu.component';
 import { SessionDataService } from '../../service/session-data.service';
 import { Constant } from '../../constant';
+import { AbstractControl, FormGroup, FormControl, Validators } from '@angular/forms';
 
 @Component({
     selector: 'app-expandable-table',
@@ -22,9 +23,12 @@ export class ExpandableTableComponent implements OnInit {
 
     rowArray: Array<IGenericEntity>;
     selectedRow: IGenericEntity;
+    componentRow: IGenericEntity;
+
     loadingFlag: boolean;
     page: HalResponsePage;
 
+    componentForm: FormGroup;
     displayDialog: boolean;
 
     crudMode: CrudEnum;
@@ -40,8 +44,11 @@ export class ExpandableTableComponent implements OnInit {
     links: HalResponseLinks;
     readonly TABLE_NAME: string = 'component';
     readonly SORT_COLUMNS: Array<string> = ['name'];
-    componentColumns: Array<FieldAttributes>;
-    componentHistoryColumns: Array<FieldAttributes>;
+    componentFields: Array<FieldAttributes>;
+    componentFormFields: Array<FieldAttributes>; // is componentFields minus part field
+    componentHistoryFields: Array<FieldAttributes>;
+
+    uiComponentEnum = UiComponentEnum; // Used in html to refere to enum
 
     hasWritePermission: boolean = false;
 
@@ -53,7 +60,7 @@ export class ExpandableTableComponent implements OnInit {
         this.rowArray = [];
         this.page = new HalResponsePage();
 
-        this.componentColumns = [
+        this.componentFields = [
             {columnName: 'name', dataType: DataTypeEnum.STRING, mandatory: true, orderNumber: 1, header: 'Name', uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}},
             {columnName: 'description', dataType: DataTypeEnum.STRING, mandatory: true, orderNumber: 2, header: 'Description', uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}},
             {columnName: 'partName', dataType: DataTypeEnum.STRING, mandatory: true, orderNumber: 3, header: 'Part', uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}},
@@ -63,17 +70,62 @@ export class ExpandableTableComponent implements OnInit {
             {columnName: 'dateDue', dataType: DataTypeEnum.DATE, mandatory: true, orderNumber: 7, header: 'Date Due', headerStyle: {width: '7rem'}, uiComponentType: UiComponentEnum.CALENDAR, pipe: 'date-yyyy-mm-dd', filterStyle: {width: '6rem'}},
             {columnName: 'hoursDue', dataType: DataTypeEnum.NUMBER, mandatory: true, orderNumber: 8, header: 'Hours Due', uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}}
             ];
-
-        this.componentHistoryColumns = [
+        this.componentFormFields = this.componentFields.filter(fieldAttributes => fieldAttributes.columnName != 'partName');
+        this.componentHistoryFields = [
             {columnName: 'workPerformed', dataType: DataTypeEnum.STRING, mandatory: true, orderNumber: 4, header: 'Work Performed', uiComponentType: UiComponentEnum.TEXT, textAreaRows: 4, textAreaColumns: 30},
             {columnName: 'datePerformed', dataType: DataTypeEnum.DATE, mandatory: true, orderNumber: 5, header: 'Date Performed', headerStyle: {width: '7rem'}, uiComponentType: UiComponentEnum.CALENDAR, pipe: 'date-yyyy-mm-dd', filterStyle: {width: '6rem'}},
             {columnName: 'hoursPerformed', dataType: DataTypeEnum.NUMBER, mandatory: true, orderNumber: 6, header: 'Hours Performed', uiComponentType: UiComponentEnum.TEXT}
             ];
     
     
+        this.createForm();
+
         this.hasWritePermission = MenuComponent.isHolderOfAnyAuthority(
             this.sessionDataService.user, Constant.entityToWritePermissionMap.get(this.TABLE_NAME));
-        console
+    }
+
+    createForm() {
+        this.componentForm = new FormGroup({});
+        this.componentFormFields.forEach(fieldAttributes => {
+            if (fieldAttributes.mandatory) {
+                this.componentForm.addControl(fieldAttributes.columnName, new FormControl('', Validators.required));
+            } else {
+                this.componentForm.addControl(fieldAttributes.columnName, new FormControl(''));
+            }
+        })
+    }
+
+    showDialog(crudMode: CrudEnum) {
+        this.displayDialog = true;
+        this.crudMode = crudMode;
+        console.log('this.crudMode', this.crudMode);
+        switch (this.crudMode) {
+        case CrudEnum.ADD:
+            this.componentFormFields.forEach(fieldAttributes => {
+                let control: AbstractControl = this.componentForm.controls[fieldAttributes.columnName];
+                console.log('fieldAttributes.dataType', fieldAttributes.dataType);
+                ComponentHelper.initControlValues(control, fieldAttributes.dataType, true);
+                control.enable();
+            });
+            break;
+        case CrudEnum.UPDATE:
+            this.componentFormFields.forEach(fieldAttributes => {
+                let control: AbstractControl = this.componentForm.controls[fieldAttributes.columnName];
+                control.patchValue(this.componentRow[fieldAttributes.columnName]);
+                control.enable();
+            });
+            break;
+        case CrudEnum.DELETE:
+            this.componentFormFields.forEach(fieldAttributes => {
+                let control: AbstractControl = this.componentForm.controls[fieldAttributes.columnName];
+                control.patchValue(this.componentRow[fieldAttributes.columnName]);
+                control.disable();
+            });
+            break;
+        default:
+            console.error('this.crudMode is invalid. this.crudMode: ' + this.crudMode);
+        }
+        console.log('this.crudForm', this.componentForm);
     }
 
     onLazyLoad(lazyLoadEvent: LazyLoadEvent) {
@@ -86,7 +138,7 @@ export class ExpandableTableComponent implements OnInit {
         console.log('event.rows', lazyLoadEvent.rows);
         console.log('event.filters', lazyLoadEvent.filters);
         this.fetchPage(lazyLoadEvent.first, lazyLoadEvent.rows,
-            ComponentHelper.buildSearchString(lazyLoadEvent, this.componentColumns.map(field => field.columnName)), this.SORT_COLUMNS);
+            ComponentHelper.buildSearchString(lazyLoadEvent, this.componentFields.map(field => field.columnName)), this.SORT_COLUMNS);
     }
 
     fetchPage(firstRowNumber: number, rowsPerPage: number, searchString: string, queryOrderByColumns: string[]) {
@@ -100,7 +152,7 @@ export class ExpandableTableComponent implements OnInit {
                 if (rowResponse._embedded) {
                     this.firstRowOfTable = this.page.number * this.ROWS_PER_PAGE;
                     this.rowArray = rowResponse._embedded[this.TABLE_NAME+'s'];
-                    this.setRowArrayDateFields(this.rowArray, this.componentColumns, this.componentHistoryColumns);
+                    this.setRowArrayDateFields(this.rowArray, this.componentFields, this.componentHistoryFields);
                     this.rowArray = this.transformAttributes(this.rowArray);
                 } else {
                     this.firstRowOfTable = 0;
@@ -142,16 +194,14 @@ export class ExpandableTableComponent implements OnInit {
     onRowSelect(event) {
         console.log(event);
 
-        // this.crudRow = Object.assign({}, this.selectedRow);
-        // this.modifyAndDeleteButtonsDisable = false;
-        // this.formAttributes.associations.forEach(associationAttributes => {
-        //     this.fetchAssosciatedRows(this.crudRow, associationAttributes);
-        // });
-        
+        this.componentRow = Object.assign({}, this.selectedRow);
+        this.modifyAndDeleteButtonsDisable = false;
     }
+
     onRowUnselect(event) {
         console.log(event);
-        // this.modifyAndDeleteButtonsDisable = true;
+        this.modifyAndDeleteButtonsDisable = true;
+        //this.selectedRow = new FlightLog(); // This a hack. If don't init selectedFlightLog, dialog will produce exception
     }
 
     private transformAttributes(rowArray: Array<IGenericEntity>): Array<IGenericEntity> {
