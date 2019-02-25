@@ -13,7 +13,7 @@ import { of as observableOf } from 'rxjs/observable/of'
 import { SessionDataService } from './session-data.service';
 import { s } from '@angular/core/src/render3';
 import { IGenericEntityResponse } from '../response/i-generic-entity-response';
-import { AssociationAttributes } from '../config/crud-component-config';
+import { AssociationAttributes } from "../config/AssociationAttributes";
 
 @Injectable()
 export class GenericEntityService {

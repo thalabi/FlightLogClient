@@ -3,7 +3,8 @@ import { ReplicationService } from "../service/replication.service";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { AbstractControl } from "@angular/forms";
-import { DataTypeEnum, FieldAttributes } from "../config/crud-component-config";
+import { DataTypeEnum } from "../config/DataTypeEnum";
+import { FieldAttributes } from "../config/FieldAttributes";
 import { IGenericEntity } from "../domain/i-gerneric-entity";
 
 export class ComponentHelper {

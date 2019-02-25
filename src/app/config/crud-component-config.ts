@@ -1,44 +1,7 @@
 import { PermissionEnum } from "../security/permission-enum";
-
-export class FormAttributes {
-    formTitle: string;
-    tableName: string;
-    queryOrderByColumns: Array<string>;
-    fields: Array<FieldAttributes>;
-    showReplicationStatus: boolean;
-    associations: Array<AssociationAttributes>;
-}
-export enum DataTypeEnum {
-    STRING,
-    NUMBER,
-    BOOLEAN,
-    DATE, // Holds date
-    DATE_TIME // Holds date & time
-}
-
-export enum UiComponentEnum {
-    TEXT, CALENDAR, TEXT_AREA, BOOLEAN_CHECKBOX, PASSWORD        
-}
-
-export class FieldAttributes {
-    columnName: string;
-    dataType: DataTypeEnum;
-    mandatory: boolean;
-    orderNumber: number;
-    header: string;
-    uiComponentType: UiComponentEnum;
-    pipe?: string;
-    headerStyle?: any;
-    filterStyle?: any;
-    textAreaRows?: number;
-    textAreaColumns?: number;
-}
-
-export class AssociationAttributes {
-    associationTableName: string;
-    associationPropertyName: string;
-    orderByColumns: Array<string>;
-}
+import { UiComponentEnum } from "./UiComponentEnum";
+import { DataTypeEnum } from "./DataTypeEnum";
+import { FormAttributes } from "./FormAttributes";
 
 export class CrudComponentConfig {
 

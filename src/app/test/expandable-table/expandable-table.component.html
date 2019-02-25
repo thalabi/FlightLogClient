@@ -107,7 +107,10 @@
                     <p-checkbox *ngSwitchCase="uiComponentEnum.BOOLEAN_CHECKBOX" [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName" binary="true"></p-checkbox>
 
                     <input *ngSwitchCase="uiComponentEnum.PASSWORD" type="password" [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName" autocomplete="new-password"/>
-    
+                    
+                    <p-dropdown *ngSwitchCase="uiComponentEnum.DROPDOWN" [id]="fieldAttributes.columnName" [options]="fieldAttributes.associationAttributes.optionsArray" [formControlName]="fieldAttributes.columnName" [optionLabel]="fieldAttributes.associationAttributes.propertyAsName" placeholder="Select part" appendTo="body">
+                    </p-dropdown>
+
                     <span *ngSwitchDefault>
                         Unhandled {{fieldAttributes.uiComponentType}} type
                     </span>
