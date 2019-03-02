@@ -1,6 +1,6 @@
 <p-table
     [value]="rowArray"
-    [columns]="componentFields"
+    [columns]="componentDataTableFields"
     [dataKey]="'_links.self.href'"
 	[lazy]="true"
 	[rows]="ROWS_PER_PAGE"
@@ -24,7 +24,7 @@
     <ng-template pTemplate="header" let-columns>
         <tr>
             <th style="width: 3em"></th>
-            <th *ngFor="let column of columns">
+            <th *ngFor="let column of columns" [ngStyle]="column.headerStyle">
                 {{column.header}}
             </th>
         </tr>

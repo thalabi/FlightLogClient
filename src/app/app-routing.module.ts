@@ -23,7 +23,7 @@ const routes: Routes = [
     { path: 'genericCrud/:tableName', component: GenericCrudComponent, canActivate: [AuthGuard] },
     { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
     { path: 'copyUser', component: CopyUserComponent, canActivate: [AuthGuard] },
-    { path: 'expandableTable', component: ExpandableTableComponent },
+    { path: 'expandableTable', component: ExpandableTableComponent, canActivate: [AuthGuard] },
     { path: 'login', component: LoginComponent },
     { path: '**', component: _404Component },
     ];

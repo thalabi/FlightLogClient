@@ -16,6 +16,9 @@ import { MenuComponent } from '../../menu/menu.component';
 import { SessionDataService } from '../../service/session-data.service';
 import { Constant } from '../../constant';
 import { AbstractControl, FormGroup, FormControl, Validators } from '@angular/forms';
+import { AssociationAttributes } from '../../config/AssociationAttributes';
+import { AssociationTypeEnum } from '../../config/AssociationTypeEnum';
+import { ComponentEnum } from '../../config/ComponentEnum';
 
 @Component({
     selector: 'app-expandable-table',
@@ -50,6 +53,7 @@ export class ExpandableTableComponent implements OnInit {
     readonly PART_TABLE_NAME: string = 'part';
     readonly SORT_COLUMNS: Array<string> = ['name'];
     componentFields: Array<FieldAttributes>;
+    componentDataTableFields: Array<FieldAttributes>;
     componentFormFields: Array<FieldAttributes>; // is componentFields minus part field
     componentHistoryFields: Array<FieldAttributes>;
 
@@ -64,25 +68,43 @@ export class ExpandableTableComponent implements OnInit {
         this.messageService.clear();
         this.rowArray = [];
         this.page = new HalResponsePage();
+        let includeInBothComponents: Array<ComponentEnum> = [ComponentEnum.DATA_TABLE, ComponentEnum.TEMPLATE_FORM];
+
+        let partFieldAssocitaion: AssociationAttributes =
+            {associationTableName: 'part', associationPropertyName: 'part', orderByColumns: ['name'],
+                associationTypeEnum: AssociationTypeEnum.MANY_TO_ONE, propertyAsName: 'name', mandatory: true, optionsArray: null};
+        let partField: FieldAttributes = {columnName: 'part', dataType: DataTypeEnum.STRING, mandatory: false, orderNumber: 9,
+            header: 'Part', uiComponentType: UiComponentEnum.DROPDOWN, includeInComponent: [ComponentEnum.TEMPLATE_FORM], associationAttributes: partFieldAssocitaion};
 
         this.componentFields = [
-            {columnName: 'name', dataType: DataTypeEnum.STRING, mandatory: true, orderNumber: 1, header: 'Name', uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}},
-            {columnName: 'description', dataType: DataTypeEnum.STRING, mandatory: false, orderNumber: 2, header: 'Description', uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}},
-            {columnName: 'partName', dataType: DataTypeEnum.STRING, mandatory: false, orderNumber: 3, header: 'Part', uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}},
-            {columnName: 'workPerformed', dataType: DataTypeEnum.STRING, mandatory: true, orderNumber: 4, header: 'Work Performed', uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}},
-            {columnName: 'datePerformed', dataType: DataTypeEnum.DATE, mandatory: true, orderNumber: 5, header: 'Date Performed', headerStyle: {width: '7rem'}, uiComponentType: UiComponentEnum.CALENDAR, pipe: 'date-yyyy-mm-dd', filterStyle: {width: '6rem'}},
-            {columnName: 'hoursPerformed', dataType: DataTypeEnum.NUMBER, mandatory: false, orderNumber: 6, header: 'Hours Performed', uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}},
-            {columnName: 'dateDue', dataType: DataTypeEnum.DATE, mandatory: false, orderNumber: 7, header: 'Date Due', headerStyle: {width: '7rem'}, uiComponentType: UiComponentEnum.CALENDAR, pipe: 'date-yyyy-mm-dd', filterStyle: {width: '6rem'}},
-            {columnName: 'hoursDue', dataType: DataTypeEnum.NUMBER, mandatory: false, orderNumber: 8, header: 'Hours Due', uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}}
+            {columnName: 'name', dataType: DataTypeEnum.STRING, mandatory: true, orderNumber: 1, header: 'Name',
+                uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}, includeInComponent: includeInBothComponents},
+            {columnName: 'description', dataType: DataTypeEnum.STRING, mandatory: false, orderNumber: 2, header: 'Description',
+                uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}, includeInComponent: includeInBothComponents},
+            {columnName: 'partName', dataType: DataTypeEnum.STRING, mandatory: false, orderNumber: 3, header: 'Part',
+                uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}, includeInComponent: [ComponentEnum.DATA_TABLE]},
+            {columnName: 'workPerformed', dataType: DataTypeEnum.STRING, mandatory: true, orderNumber: 4, header: 'Work Prfrmd',
+                uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}, includeInComponent: includeInBothComponents},
+            {columnName: 'datePerformed', dataType: DataTypeEnum.DATE, mandatory: true, orderNumber: 5, header: 'Dt Prfrmd',
+                headerStyle: {width: '7rem'}, uiComponentType: UiComponentEnum.CALENDAR, pipe: 'date-yyyy-mm-dd', filterStyle: {width: '4rem'}, includeInComponent: includeInBothComponents},
+            {columnName: 'hoursPerformed', dataType: DataTypeEnum.NUMBER, mandatory: false, orderNumber: 6, header: 'Hrs Prfrmd',
+                uiComponentType: UiComponentEnum.TEXT, headerStyle: {width: '4.5rem'}, filterStyle: {width: '3rem'}, includeInComponent: includeInBothComponents},
+            {columnName: 'dateDue', dataType: DataTypeEnum.DATE, mandatory: false, orderNumber: 7, header: 'Dt Due',
+                headerStyle: {width: '7rem'}, uiComponentType: UiComponentEnum.CALENDAR, pipe: 'date-yyyy-mm-dd', filterStyle: {width: '4rem'}, includeInComponent: includeInBothComponents},
+            {columnName: 'hoursDue', dataType: DataTypeEnum.NUMBER, mandatory: false, orderNumber: 8, header: 'Hrs Due',
+                uiComponentType: UiComponentEnum.TEXT, headerStyle: {width: '4.5rem'}, filterStyle: {width: '3rem'}, includeInComponent: includeInBothComponents},
+            partField
             ];
 
-        this.componentFormFields = this.componentFields.filter(fieldAttributes => fieldAttributes.columnName != 'partName');
+        this.componentDataTableFields = this.componentFields.filter(fieldAttributes => fieldAttributes.includeInComponent.includes(ComponentEnum.DATA_TABLE));
+    
+        this.componentFormFields = this.componentFields.filter(fieldAttributes => fieldAttributes.includeInComponent.includes(ComponentEnum.TEMPLATE_FORM));
         //this.componentFormFields.push({columnName: 'part', dataType: DataTypeEnum.STRING, mandatory: false, orderNumber: 9, header: 'Part', uiComponentType: UiComponentEnum.DROPDOWN});
 
         this.componentHistoryFields = [
-            {columnName: 'workPerformed', dataType: DataTypeEnum.STRING, mandatory: true, orderNumber: 4, header: 'Work Performed', uiComponentType: UiComponentEnum.TEXT, textAreaRows: 4, textAreaColumns: 30},
-            {columnName: 'datePerformed', dataType: DataTypeEnum.DATE, mandatory: true, orderNumber: 5, header: 'Date Performed', headerStyle: {width: '7rem'}, uiComponentType: UiComponentEnum.CALENDAR, pipe: 'date-yyyy-mm-dd', filterStyle: {width: '6rem'}},
-            {columnName: 'hoursPerformed', dataType: DataTypeEnum.NUMBER, mandatory: true, orderNumber: 6, header: 'Hours Performed', uiComponentType: UiComponentEnum.TEXT}
+            {columnName: 'workPerformed', dataType: DataTypeEnum.STRING, mandatory: true, orderNumber: 4, header: 'Work Performed', uiComponentType: UiComponentEnum.TEXT, textAreaRows: 4, textAreaColumns: 30, includeInComponent: [ComponentEnum.DATA_TABLE]},
+            {columnName: 'datePerformed', dataType: DataTypeEnum.DATE, mandatory: true, orderNumber: 5, header: 'Date Performed', headerStyle: {width: '7rem'}, uiComponentType: UiComponentEnum.CALENDAR, pipe: 'date-yyyy-mm-dd', filterStyle: {width: '6rem'}, includeInComponent: [ComponentEnum.DATA_TABLE]},
+            {columnName: 'hoursPerformed', dataType: DataTypeEnum.NUMBER, mandatory: true, orderNumber: 6, header: 'Hours Performed', uiComponentType: UiComponentEnum.TEXT, includeInComponent: [ComponentEnum.DATA_TABLE]}
             ];
     
         this.createForm();
@@ -111,7 +133,6 @@ export class ExpandableTableComponent implements OnInit {
         case CrudEnum.ADD:
             this.componentFormFields.forEach(fieldAttributes => {
                 let control: AbstractControl = this.componentForm.controls[fieldAttributes.columnName];
-                console.log('fieldAttributes.dataType', fieldAttributes.dataType);
                 ComponentHelper.initControlValues(control, fieldAttributes.dataType, true);
                 control.enable();
             });
@@ -119,6 +140,7 @@ export class ExpandableTableComponent implements OnInit {
         case CrudEnum.UPDATE:
             this.componentFormFields.forEach(fieldAttributes => {
                 let control: AbstractControl = this.componentForm.controls[fieldAttributes.columnName];
+                console.log('control', control);
                 control.patchValue(this.componentRow[fieldAttributes.columnName]);
                 control.enable();
             });
@@ -199,6 +221,11 @@ export class ExpandableTableComponent implements OnInit {
                     this.partRowArray = rowResponse._embedded[this.PART_TABLE_NAME+'s'];
                     ComponentHelper.sortGenericEntity(this.partRowArray, ['name']);
                     console.log('this.partRowArray: ', this.partRowArray);
+                    this.componentFormFields.forEach(componentFormField => {
+                        if (componentFormField.columnName === 'part') {
+                            componentFormField.associationAttributes.optionsArray = this.partRowArray;
+                        }
+                    });
                 } else {
                     this.firstRowOfTable = 0;
                     this.rowArray = [];
