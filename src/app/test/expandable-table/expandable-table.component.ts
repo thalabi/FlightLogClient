@@ -75,13 +75,15 @@ export class ExpandableTableComponent implements OnInit {
             {columnName: 'dateDue', dataType: DataTypeEnum.DATE, mandatory: false, orderNumber: 7, header: 'Date Due', headerStyle: {width: '7rem'}, uiComponentType: UiComponentEnum.CALENDAR, pipe: 'date-yyyy-mm-dd', filterStyle: {width: '6rem'}},
             {columnName: 'hoursDue', dataType: DataTypeEnum.NUMBER, mandatory: false, orderNumber: 8, header: 'Hours Due', uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}}
             ];
+
         this.componentFormFields = this.componentFields.filter(fieldAttributes => fieldAttributes.columnName != 'partName');
+        //this.componentFormFields.push({columnName: 'part', dataType: DataTypeEnum.STRING, mandatory: false, orderNumber: 9, header: 'Part', uiComponentType: UiComponentEnum.DROPDOWN});
+
         this.componentHistoryFields = [
             {columnName: 'workPerformed', dataType: DataTypeEnum.STRING, mandatory: true, orderNumber: 4, header: 'Work Performed', uiComponentType: UiComponentEnum.TEXT, textAreaRows: 4, textAreaColumns: 30},
             {columnName: 'datePerformed', dataType: DataTypeEnum.DATE, mandatory: true, orderNumber: 5, header: 'Date Performed', headerStyle: {width: '7rem'}, uiComponentType: UiComponentEnum.CALENDAR, pipe: 'date-yyyy-mm-dd', filterStyle: {width: '6rem'}},
             {columnName: 'hoursPerformed', dataType: DataTypeEnum.NUMBER, mandatory: true, orderNumber: 6, header: 'Hours Performed', uiComponentType: UiComponentEnum.TEXT}
             ];
-    
     
         this.createForm();
         this.fetchPartTable();
