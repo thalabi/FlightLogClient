@@ -140,10 +140,10 @@ export class ExpandableTableComponent implements OnInit {
         case CrudEnum.UPDATE:
             this.componentFormFields.forEach(fieldAttributes => {
                 let control: AbstractControl = this.componentForm.controls[fieldAttributes.columnName];
-                console.log('control', control);
                 control.patchValue(this.componentRow[fieldAttributes.columnName]);
                 control.enable();
             });
+            console.log('this.componentFormFields: %o', this.componentFormFields);
             break;
         case CrudEnum.DELETE:
             this.componentFormFields.forEach(fieldAttributes => {

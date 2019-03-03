@@ -342,18 +342,18 @@ export class GenericCrudComponent implements OnInit {
         })
     }
 
-        // Get associated rows of this entity
+    // Get associated rows of this entity
     private fetchAssosciatedRows(crudRow: IGenericEntity, associationAttributes: AssociationAttributes) {
         this.genericEntityService.getAssociatedRows(crudRow, associationAttributes, null).subscribe({
             next: rowResponse => {
                 //this.availableStudents = students;
-                console.log('rowResponse: ', rowResponse);
+                console.log('fetchAssosciatedRows() rowResponse: ', rowResponse);
                 if (rowResponse._embedded) {
                     this.selectedAssociationArray = rowResponse._embedded[associationAttributes.associationTableName+'s'];
                     ComponentHelper.setRowArrayDateFields(this.selectedAssociationArray, this.fieldAttributesArray);
                     ComponentHelper.sortGenericEntity(this.selectedAssociationArray, this.formAttributes.associations[0].orderByColumns);
-                    console.log('this.selectedAssociationArray: ', this.selectedAssociationArray);
-                    console.log('this.associationArray: ', this.associationArray);
+                    console.log('fetchAssosciatedRows() this.selectedAssociationArray: ', this.selectedAssociationArray);
+                    console.log('fetchAssosciatedRows() this.associationArray: ', this.associationArray);
                     this.populateAvailableAssociationArray();
                 } else {
                     this.firstRowOfTable = 0;
