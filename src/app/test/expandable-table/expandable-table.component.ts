@@ -238,6 +238,45 @@ export class ExpandableTableComponent implements OnInit {
         });
     }
 
+    // Get associated rows of this entity
+    private fetchAssosciatedRows(crudRow: IGenericEntity, associationAttributes: AssociationAttributes) {
+        // switch (associationAttributes.associationTypeEnum) {
+        //     case AssociationTypeEnum.MANY_TO_MANY:
+        //         this.genericEntityService.getAssociatedRows(crudRow, associationAttributes, null).subscribe({
+        //             next: rowResponse => {
+        //                 console.log('rowResponse of associated rows of %o: %o', crudRow._links.self, rowResponse);
+        //                 this.selectedAssociationArray = rowResponse._embedded[associationAttributes.tableName+'s'];
+        //                 this.setRowArrayDateFields(this.selectedAssociationArray, this.fieldAttributesArray);
+        //                 this.sortAssociation(this.selectedAssociationArray, this.formAttributes.associations[0].orderByColumns);
+        //                 console.log('this.selectedAssociationArray: ', this.selectedAssociationArray);
+        //                 // console.log('this.associationArray: ', this.associationArray);
+        //                 this.populateAvailableAssociationArray();
+        //             },
+        //             error: error => {
+        //                 console.error(error);
+        //                 this.messageService.error(error);
+        //             }
+        //         });
+        //         break;
+        //     case AssociationTypeEnum.MANY_TO_ONE:
+                this.genericEntityService.getAssociatedRow(crudRow, associationAttributes, null).subscribe({
+                    next: rowResponse => {
+                        console.log('rowResponse of associated rows of %o: %o', crudRow._links.self, rowResponse);
+                        this.selectedAssociationArray[0] = rowResponse;
+                        console.log('this.selectedAssociationArray: ', this.selectedAssociationArray);
+                    },
+                    error: error => {
+                        console.error(error);
+                        this.messageService.error(error);
+                    }
+                });
+        //         break;
+        //     default:
+        //         console.error('AssociationTypeEnum %s is not hadled', associationAttributes.associationTypeEnum);
+        // }
+    }
+
+    
     onGoToPage() {
         console.log('this.pageNumber', this.pageNumber);
         // TODO this might be redundant since it is set in fetchPage
@@ -253,6 +292,11 @@ export class ExpandableTableComponent implements OnInit {
 
         this.componentRow = Object.assign({}, this.selectedRow);
         this.modifyAndDeleteButtonsDisable = false;
+        // if (this.formAttributes.associations && this.formAttributes.associations.length > 0) {
+        //     this.formAttributes.associations.forEach(associationAttributes => {
+        //         this.fetchAssosciatedRows(this.crudRow, associationAttributes);
+        //     });
+        // }
     }
 
     onRowUnselect(event) {
