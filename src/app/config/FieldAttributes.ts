@@ -1,12 +1,12 @@
 import { UiComponentEnum } from "./UiComponentEnum";
 import { DataTypeEnum } from "./DataTypeEnum";
 import { AssociationAttributes } from "./AssociationAttributes";
-import { ComponentEnum } from "./ComponentEnum";
+import { FieldAffinityEnum } from "./FieldAffinityEnum";
 export class FieldAttributes {
     columnName: string;
     dataType: DataTypeEnum;
     mandatory: boolean;
-    orderNumber: number;
+    orderNumber?: number; // it appears that this property is not used. TODO remove
     header: string;
     uiComponentType: UiComponentEnum;
     pipe?: string;
@@ -14,7 +14,7 @@ export class FieldAttributes {
     filterStyle?: any;
     textAreaRows?: number;
     textAreaColumns?: number;
-    includeInComponent: Array<ComponentEnum>; // whether to be included in data table or imput form
+    fieldAffinity: Array<FieldAffinityEnum>; // whether to be included in data table, imput form or db entity
     //isPartOfTemplateForm: boolean; // MANY_TO_MANY associations are displayed as pick lists which are not defined in template form
     associationAttributes?: AssociationAttributes;
 }

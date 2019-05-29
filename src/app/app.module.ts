@@ -3,13 +3,13 @@ import { NgModule, APP_INITIALIZER, ErrorHandler } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations'
-import { ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, TooltipModule, ProgressSpinnerModule, ToggleButtonModule, MessagesModule, MessageModule, OverlayPanelModule, CheckboxModule, PickListModule, ProgressBarModule } from 'primeng/primeng';
+import { ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, TooltipModule, ProgressSpinnerModule, ToggleButtonModule, MessagesModule, MessageModule, OverlayPanelModule, CheckboxModule, PickListModule, ProgressBarModule, InputSwitchModule } from 'primeng/primeng';
 import {TableModule} from 'primeng/table';
 
 import { AppComponent } from './app.component';
 import { FlightLogTableComponent } from './flight-log-table/flight-log-table.component';
 import { FlightLogServiceService } from './service/flight-log-service.service';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RegexValidatorDirective } from './regex-validator.directive';
 import { DeviceDetectorModule } from 'ngx-device-detector';
 import { MenuComponent } from './menu/menu.component';
@@ -38,6 +38,10 @@ import { PasswordMaskPipe } from './util/password-mask-pipe';
 import { CopyUserComponent } from './security/copy-user/copy-user.component';
 import { _404Component } from './404.component';
 import { ExpandableTableComponent } from './test/expandable-table/expandable-table.component';
+import { ComponentService } from './service/component.service';
+import { HttpErrorInterceptor } from './http-error-interceptor';
+import { AircraftComponentService } from './service/aircraft-component.service';
+import { AircraftComponentComponent } from './aircraft-maintenance/aircraft-component/aircraft-component.component';
 
 @NgModule({
   declarations: [
@@ -58,7 +62,8 @@ import { ExpandableTableComponent } from './test/expandable-table/expandable-tab
     ChangePasswordComponent,
     PasswordMaskPipe,
     CopyUserComponent,
-    ExpandableTableComponent
+    ExpandableTableComponent,
+    AircraftComponentComponent
   ],
   imports: [
     BrowserModule,
@@ -66,7 +71,7 @@ import { ExpandableTableComponent } from './test/expandable-table/expandable-tab
     ReactiveFormsModule,
     HttpClientModule,
 
-    BrowserAnimationsModule, TableModule, ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, TooltipModule, ProgressSpinnerModule, ToggleButtonModule, MessageModule, MessagesModule, OverlayPanelModule, CheckboxModule, PickListModule, ProgressBarModule,
+    BrowserAnimationsModule, TableModule, ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, TooltipModule, ProgressSpinnerModule, ToggleButtonModule, MessageModule, MessagesModule, OverlayPanelModule, CheckboxModule, PickListModule, ProgressBarModule, InputSwitchModule,
 
     DeviceDetectorModule.forRoot(),
 
@@ -81,9 +86,12 @@ import { ExpandableTableComponent } from './test/expandable-table/expandable-tab
         ConfigService,
         MyMessageService,
         AuthGuard,
+        ComponentService,
+        AircraftComponentService,
         { provide: APP_INITIALIZER, useFactory: configServiceLoadConfig, deps: [ConfigService], multi: true },
         { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy},
         { provide: ErrorHandler, useClass: CustomErrorHandler }, // overrride default error handler
+        { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true }
       ],
   bootstrap: [AppComponent]
 })

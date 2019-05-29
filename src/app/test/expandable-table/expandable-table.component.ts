@@ -7,7 +7,6 @@ import { MyMessageService } from '../../message/mymessage.service';
 import { CustomErrorHandler } from '../../custom-error-handler';
 import { LazyLoadEvent } from 'primeng/primeng';
 import { ComponentHelper } from '../../util/ComponentHelper';
-import { CrudComponentConfig } from '../../config/crud-component-config';
 import { DataTypeEnum } from "../../config/DataTypeEnum";
 import { FieldAttributes } from "../../config/FieldAttributes";
 import { UiComponentEnum } from "../../config/UiComponentEnum";
@@ -18,7 +17,12 @@ import { Constant } from '../../constant';
 import { AbstractControl, FormGroup, FormControl, Validators } from '@angular/forms';
 import { AssociationAttributes } from '../../config/AssociationAttributes';
 import { AssociationTypeEnum } from '../../config/AssociationTypeEnum';
-import { ComponentEnum } from '../../config/ComponentEnum';
+import { FieldAffinityEnum } from '../../config/FieldAffinityEnum';
+import { Observable } from 'rxjs';
+import { IGenericEntityResponse } from '../../response/i-generic-entity-response';
+import { HttpErrorResponse } from '@angular/common/http';
+import { AircraftComponentService } from '../../service/aircraft-component.service';
+import { ComponentRequest } from '../../domain/component-request';
 
 @Component({
     selector: 'app-expandable-table',
@@ -30,6 +34,7 @@ export class ExpandableTableComponent implements OnInit {
     rowArray: Array<IGenericEntity>;
     partRowArray: Array<IGenericEntity>;
     selectedRow: IGenericEntity;
+    selectedAssociatedPartRow: IGenericEntity;
     componentRow: IGenericEntity;
 
     loadingFlag: boolean;
@@ -55,56 +60,64 @@ export class ExpandableTableComponent implements OnInit {
     componentFields: Array<FieldAttributes>;
     componentDataTableFields: Array<FieldAttributes>;
     componentFormFields: Array<FieldAttributes>; // is componentFields minus part field
+    componentEntityFields: Array<FieldAttributes>; // is componentFields minus part and partName fields
     componentHistoryFields: Array<FieldAttributes>;
+
+    partFieldAssocitaion: AssociationAttributes;
+    partField: FieldAttributes;
 
     uiComponentEnum = UiComponentEnum; // Used in html to refere to enum
 
     hasWritePermission: boolean = false;
 
-    constructor(private genericEntityService: GenericEntityService, private messageService: MyMessageService,
+    constructor(private genericEntityService: GenericEntityService, private aircraftComponentService: AircraftComponentService, private messageService: MyMessageService,
         private sessionDataService: SessionDataService) { }
 
     ngOnInit() {
         this.messageService.clear();
         this.rowArray = [];
         this.page = new HalResponsePage();
-        let includeInBothComponents: Array<ComponentEnum> = [ComponentEnum.DATA_TABLE, ComponentEnum.TEMPLATE_FORM];
+        let includeInBothComponents: Array<FieldAffinityEnum> = [FieldAffinityEnum.DATA_TABLE, FieldAffinityEnum.TEMPLATE_FORM];
+        let allFieldAffinities: Array<FieldAffinityEnum> = [FieldAffinityEnum.DATA_TABLE, FieldAffinityEnum.TEMPLATE_FORM, FieldAffinityEnum.ENTITY];
 
-        let partFieldAssocitaion: AssociationAttributes =
+        this.partFieldAssocitaion =
             {associationTableName: 'part', associationPropertyName: 'part', orderByColumns: ['name'],
                 associationTypeEnum: AssociationTypeEnum.MANY_TO_ONE, propertyAsName: 'name', mandatory: true, optionsArray: null};
-        let partField: FieldAttributes = {columnName: 'part', dataType: DataTypeEnum.STRING, mandatory: false, orderNumber: 9,
-            header: 'Part', uiComponentType: UiComponentEnum.DROPDOWN, includeInComponent: [ComponentEnum.TEMPLATE_FORM], associationAttributes: partFieldAssocitaion};
+        this.partField = {columnName: 'part', dataType: DataTypeEnum.STRING, mandatory: false,
+            header: 'Part', uiComponentType: UiComponentEnum.DROPDOWN, fieldAffinity: [FieldAffinityEnum.TEMPLATE_FORM], associationAttributes: this.partFieldAssocitaion};
 
+        // this contains all fields whether in datatable, input form or db entity
         this.componentFields = [
-            {columnName: 'name', dataType: DataTypeEnum.STRING, mandatory: true, orderNumber: 1, header: 'Name',
-                uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}, includeInComponent: includeInBothComponents},
-            {columnName: 'description', dataType: DataTypeEnum.STRING, mandatory: false, orderNumber: 2, header: 'Description',
-                uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}, includeInComponent: includeInBothComponents},
-            {columnName: 'partName', dataType: DataTypeEnum.STRING, mandatory: false, orderNumber: 3, header: 'Part',
-                uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}, includeInComponent: [ComponentEnum.DATA_TABLE]},
-            {columnName: 'workPerformed', dataType: DataTypeEnum.STRING, mandatory: true, orderNumber: 4, header: 'Work Prfrmd',
-                uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}, includeInComponent: includeInBothComponents},
-            {columnName: 'datePerformed', dataType: DataTypeEnum.DATE, mandatory: true, orderNumber: 5, header: 'Dt Prfrmd',
-                headerStyle: {width: '7rem'}, uiComponentType: UiComponentEnum.CALENDAR, pipe: 'date-yyyy-mm-dd', filterStyle: {width: '4rem'}, includeInComponent: includeInBothComponents},
-            {columnName: 'hoursPerformed', dataType: DataTypeEnum.NUMBER, mandatory: false, orderNumber: 6, header: 'Hrs Prfrmd',
-                uiComponentType: UiComponentEnum.TEXT, headerStyle: {width: '4.5rem'}, filterStyle: {width: '3rem'}, includeInComponent: includeInBothComponents},
-            {columnName: 'dateDue', dataType: DataTypeEnum.DATE, mandatory: false, orderNumber: 7, header: 'Dt Due',
-                headerStyle: {width: '7rem'}, uiComponentType: UiComponentEnum.CALENDAR, pipe: 'date-yyyy-mm-dd', filterStyle: {width: '4rem'}, includeInComponent: includeInBothComponents},
-            {columnName: 'hoursDue', dataType: DataTypeEnum.NUMBER, mandatory: false, orderNumber: 8, header: 'Hrs Due',
-                uiComponentType: UiComponentEnum.TEXT, headerStyle: {width: '4.5rem'}, filterStyle: {width: '3rem'}, includeInComponent: includeInBothComponents},
-            partField
+            {columnName: 'name', dataType: DataTypeEnum.STRING, mandatory: true, header: 'Name',
+                uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}, fieldAffinity: allFieldAffinities},
+            {columnName: 'description', dataType: DataTypeEnum.STRING, mandatory: false, header: 'Description',
+                uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}, fieldAffinity: allFieldAffinities},
+            {columnName: 'partName', dataType: DataTypeEnum.STRING, mandatory: false, header: 'Part',
+                uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}, fieldAffinity: [FieldAffinityEnum.DATA_TABLE]},
+            this.partField,
+            {columnName: 'workPerformed', dataType: DataTypeEnum.STRING, mandatory: true, header: 'Work Prfrmd',
+                uiComponentType: UiComponentEnum.TEXT, filterStyle: {width: '6rem'}, fieldAffinity: allFieldAffinities},
+            {columnName: 'datePerformed', dataType: DataTypeEnum.DATE, mandatory: true, header: 'Dt Prfrmd',
+                headerStyle: {width: '7rem'}, uiComponentType: UiComponentEnum.CALENDAR, pipe: 'date-yyyy-mm-dd', filterStyle: {width: '4rem'}, fieldAffinity: allFieldAffinities},
+            {columnName: 'hoursPerformed', dataType: DataTypeEnum.NUMBER, mandatory: false, header: 'Hrs Prfrmd',
+                uiComponentType: UiComponentEnum.TEXT, headerStyle: {width: '4.5rem'}, filterStyle: {width: '3rem'}, fieldAffinity: allFieldAffinities},
+            {columnName: 'dateDue', dataType: DataTypeEnum.DATE, mandatory: false, header: 'Dt Due',
+                headerStyle: {width: '7rem'}, uiComponentType: UiComponentEnum.CALENDAR, pipe: 'date-yyyy-mm-dd', filterStyle: {width: '4rem'}, fieldAffinity: allFieldAffinities},
+            {columnName: 'hoursDue', dataType: DataTypeEnum.NUMBER, mandatory: false, header: 'Hrs Due',
+                uiComponentType: UiComponentEnum.TEXT, headerStyle: {width: '4.5rem'}, filterStyle: {width: '3rem'}, fieldAffinity: allFieldAffinities}
             ];
 
-        this.componentDataTableFields = this.componentFields.filter(fieldAttributes => fieldAttributes.includeInComponent.includes(ComponentEnum.DATA_TABLE));
+        this.componentDataTableFields = this.componentFields.filter(fieldAttributes => fieldAttributes.fieldAffinity.includes(FieldAffinityEnum.DATA_TABLE));
     
-        this.componentFormFields = this.componentFields.filter(fieldAttributes => fieldAttributes.includeInComponent.includes(ComponentEnum.TEMPLATE_FORM));
+        this.componentFormFields = this.componentFields.filter(fieldAttributes => fieldAttributes.fieldAffinity.includes(FieldAffinityEnum.TEMPLATE_FORM));
+        this.componentEntityFields = this.componentFields.filter(fieldAttributes => fieldAttributes.fieldAffinity.includes(FieldAffinityEnum.ENTITY));
+        this.componentEntityFields.forEach(fieldAttribute => console.log('entity column name: %s', fieldAttribute.columnName));
         //this.componentFormFields.push({columnName: 'part', dataType: DataTypeEnum.STRING, mandatory: false, orderNumber: 9, header: 'Part', uiComponentType: UiComponentEnum.DROPDOWN});
 
         this.componentHistoryFields = [
-            {columnName: 'workPerformed', dataType: DataTypeEnum.STRING, mandatory: true, orderNumber: 4, header: 'Work Performed', uiComponentType: UiComponentEnum.TEXT, textAreaRows: 4, textAreaColumns: 30, includeInComponent: [ComponentEnum.DATA_TABLE]},
-            {columnName: 'datePerformed', dataType: DataTypeEnum.DATE, mandatory: true, orderNumber: 5, header: 'Date Performed', headerStyle: {width: '7rem'}, uiComponentType: UiComponentEnum.CALENDAR, pipe: 'date-yyyy-mm-dd', filterStyle: {width: '6rem'}, includeInComponent: [ComponentEnum.DATA_TABLE]},
-            {columnName: 'hoursPerformed', dataType: DataTypeEnum.NUMBER, mandatory: true, orderNumber: 6, header: 'Hours Performed', uiComponentType: UiComponentEnum.TEXT, includeInComponent: [ComponentEnum.DATA_TABLE]}
+            {columnName: 'workPerformed', dataType: DataTypeEnum.STRING, mandatory: true, orderNumber: 4, header: 'Work Performed', uiComponentType: UiComponentEnum.TEXT, textAreaRows: 4, textAreaColumns: 30, fieldAffinity: [FieldAffinityEnum.DATA_TABLE]},
+            {columnName: 'datePerformed', dataType: DataTypeEnum.DATE, mandatory: true, orderNumber: 5, header: 'Date Performed', headerStyle: {width: '7rem'}, uiComponentType: UiComponentEnum.CALENDAR, pipe: 'date-yyyy-mm-dd', filterStyle: {width: '6rem'}, fieldAffinity: [FieldAffinityEnum.DATA_TABLE]},
+            {columnName: 'hoursPerformed', dataType: DataTypeEnum.NUMBER, mandatory: true, orderNumber: 6, header: 'Hours Performed', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: [FieldAffinityEnum.DATA_TABLE]}
             ];
     
         this.createForm();
@@ -140,7 +153,12 @@ export class ExpandableTableComponent implements OnInit {
         case CrudEnum.UPDATE:
             this.componentFormFields.forEach(fieldAttributes => {
                 let control: AbstractControl = this.componentForm.controls[fieldAttributes.columnName];
-                control.patchValue(this.componentRow[fieldAttributes.columnName]);
+                if (fieldAttributes.columnName === 'part') {
+                    control.patchValue(this.selectedAssociatedPartRow);
+                } else {
+                    console.log('his.componentRow[fieldAttributes.columnName]: ', this.componentRow[fieldAttributes.columnName]);
+                    control.patchValue(this.componentRow[fieldAttributes.columnName]);
+                }
                 control.enable();
             });
             console.log('this.componentFormFields: %o', this.componentFormFields);
@@ -182,7 +200,7 @@ export class ExpandableTableComponent implements OnInit {
                 if (rowResponse._embedded) {
                     this.firstRowOfTable = this.page.number * this.ROWS_PER_PAGE;
                     this.rowArray = rowResponse._embedded[this.COMPONENT_TABLE_NAME+'s'];
-                    this.setRowArrayDateFields(this.rowArray, this.componentFields, this.componentHistoryFields);
+                    //this.setRowArrayDateFields(this.rowArray, this.componentFields, this.componentHistoryFields);
                     this.rowArray = this.transformAttributes(this.rowArray);
                 } else {
                     this.firstRowOfTable = 0;
@@ -261,13 +279,18 @@ export class ExpandableTableComponent implements OnInit {
         //     case AssociationTypeEnum.MANY_TO_ONE:
                 this.genericEntityService.getAssociatedRow(crudRow, associationAttributes, null).subscribe({
                     next: rowResponse => {
-                        console.log('rowResponse of associated rows of %o: %o', crudRow._links.self, rowResponse);
-                        this.selectedAssociationArray[0] = rowResponse;
-                        console.log('this.selectedAssociationArray: ', this.selectedAssociationArray);
+                        console.log('fetchAssosciatedRows() rowResponse of associated rows of %o: %o', crudRow._links.self, rowResponse);
+                        this.selectedAssociatedPartRow = rowResponse;
+                        console.log('fetchAssosciatedRows() this.selectedAssociatedPartRow: ', this.selectedAssociatedPartRow);
                     },
                     error: error => {
-                        console.error(error);
-                        this.messageService.error(error);
+                        let httpErrorResponse: HttpErrorResponse = error;
+                        console.error(httpErrorResponse);
+                        if (httpErrorResponse.status == 404) {
+                            this.selectedAssociatedPartRow = null;
+                        } else {
+                            this.messageService.error(httpErrorResponse.error);
+                        }
                     }
                 });
         //         break;
@@ -292,17 +315,151 @@ export class ExpandableTableComponent implements OnInit {
 
         this.componentRow = Object.assign({}, this.selectedRow);
         this.modifyAndDeleteButtonsDisable = false;
-        // if (this.formAttributes.associations && this.formAttributes.associations.length > 0) {
-        //     this.formAttributes.associations.forEach(associationAttributes => {
-        //         this.fetchAssosciatedRows(this.crudRow, associationAttributes);
-        //     });
-        // }
+        console.log('this.componentRow: %o', this.componentRow);
+        this.fetchAssosciatedRows(this.componentRow, this.partFieldAssocitaion);
     }
 
     onRowUnselect(event) {
         console.log(event);
         this.modifyAndDeleteButtonsDisable = true;
         //this.selectedRow = new FlightLog(); // This a hack. If don't init selectedFlightLog, dialog will produce exception
+    }
+
+    onCancel() {
+        this.resetDialoForm();
+        this.modifyAndDeleteButtonsDisable = true;
+    }
+
+    onSubmit() {
+        //const crudFormModel = this.componentForm.value;
+        console.log('this.componentForm.controls', this.componentForm.controls);
+        console.log('this.componentForm.value', this.componentForm.value);
+        //console.log('crudFormModel', crudFormModel);
+        //console.log('column1', this.crudForm.get('column1').value);
+        let componentRequest: ComponentRequest = new ComponentRequest();
+        switch (this.crudMode) {
+            case CrudEnum.ADD:
+                componentRequest.name =this.componentForm.controls['name'].value;
+                componentRequest.partUri = this.componentForm.controls['part'].value._links.part.href;
+                console.log("engineComponent: %o", componentRequest);
+                this.aircraftComponentService.addComponent(componentRequest).subscribe({
+                    next: savedRow => {
+                        console.log('addComponent');
+                    },
+                    error: error => {
+                        console.error('enericEntityService.deleteGenericEntity returned error: ', error);
+                        //this.messageService.error(error);
+                    },
+                    complete: () => {
+                        this.afterCrud();
+                    }
+                });
+                break;
+                // this.componentRow = <IGenericEntity>{};
+                // this.componentEntityFields.forEach(fieldAttributes => {
+                //     this.componentRow[fieldAttributes.columnName] = this.componentForm.controls[fieldAttributes.columnName].value;
+                // });
+                // this.componentRow.deleted = false;
+                // console.log("this.componentRow: %o", this.componentRow);
+                // let addGenericEntityAndAssociation$: Observable<IGenericEntityResponse> = this.genericEntityService.addGenericEntity(this.COMPONENT_TABLE_NAME, this.componentRow)
+                //     .concatMap(savedSingleGenericEntityResponse => {
+                //         if (this.componentForm.controls['part'].value) {
+                //             return this.genericEntityService.updateAssociationGenericEntity(savedSingleGenericEntityResponse, 'part', [this.componentForm.controls['part'].value]);
+                //         } else {
+                //             return Observable.of<IGenericEntityResponse>(savedSingleGenericEntityResponse);
+                //         }
+                //     });
+                // addGenericEntityAndAssociation$.subscribe({
+                //     next: savedTwoColumnEntity => {
+                //         console.log('savedTwoColumnEntity', savedTwoColumnEntity);
+                //     },
+                //     error: error => {
+                //         console.error('genericEntityService.updateAssociationGenericEntity returned error: ', error);
+                //         this.messageService.error(error);
+                //     },
+                //     complete: () => {
+                //         this.afterCrud();
+                //     }
+                // });
+
+                
+                // break;
+            case CrudEnum.UPDATE:
+                // delete properties
+                delete this.componentRow.part;
+                delete this.componentRow.partName;
+                delete this.componentRow.componentHistorySet;
+                // this.componentEntityFields.forEach(fieldAttributes => {
+                //     this.componentRow[fieldAttributes.columnName] = this.componentForm.controls[fieldAttributes.columnName].value;
+                // });
+                // // this.setRowDateFields(this.componentRow, this.fieldAttributesArray);
+                // console.log("this.componentRow: %o", this.componentRow);
+
+                // let updateGenericEntityAndAssociation$: Observable<IGenericEntityResponse> = this.genericEntityService.updateGenericEntity(this.componentRow)
+                //     .concatMap(savedSingleGenericEntityResponse => {
+                //         if (this.componentForm.controls['part'].value) {
+                //             return this.genericEntityService.updateAssociationGenericEntity(savedSingleGenericEntityResponse, 'part', [this.componentForm.controls['part'].value]);
+                //         } else {
+                //             return Observable.of<IGenericEntityResponse>(savedSingleGenericEntityResponse);
+                //         }
+                //     });
+                // updateGenericEntityAndAssociation$.subscribe({
+                //     next: savedRow => {
+                //         console.log('savedRow', savedRow);
+                //     },
+                //     error: error => {
+                //         console.error('enericEntityService.updateAssociationGenericEntity returned error: ', error);
+                //     },
+                //     complete: () => {
+                //         this.afterCrud();
+                //     }
+                // });
+                componentRequest.componentUri = this.selectedRow._links.self.href;
+                componentRequest.name =this.componentForm.controls['name'].value;
+                componentRequest.partUri = this.componentForm.controls['part'].value._links.part.href;
+                componentRequest.createHistoryRecord = false;
+                console.log("engineComponent: %o", componentRequest);
+                this.aircraftComponentService.modifyComponent(componentRequest).subscribe({
+                    next: savedRow => {
+                        console.log('modifyComponent');
+                    },
+                    error: error => {
+                        console.error('enericEntityService.deleteGenericEntity returned error: ', error);
+                        //this.messageService.error(error);
+                    },
+                    complete: () => {
+                        this.afterCrud();
+                    }
+                });
+
+                break;
+            case CrudEnum.DELETE:
+                this.genericEntityService.deleteGenericEntity(this.selectedRow).subscribe({
+                    next: savedRow => {
+                        console.log('deleted row', this.selectedRow);
+                    },
+                    error: error => {
+                        console.error('enericEntityService.deleteGenericEntity returned error: ', error);
+                        //this.messageService.error(error);
+                    },
+                    complete: () => {
+                        this.afterCrud();
+                    }
+                });
+                break;
+            default:
+                console.error('this.crudMode is invalid. this.crudMode: ' + this.crudMode);
+        }
+    }
+    
+    private afterCrud() {
+        this.displayDialog = false;
+        this.modifyAndDeleteButtonsDisable = true;
+        this.fetchPage(this.savedLazyLoadEvent.first, this.savedLazyLoadEvent.rows,
+            ComponentHelper.buildSearchString(this.savedLazyLoadEvent, this.componentFields.map(field => field.columnName)),
+            this.SORT_COLUMNS);
+
+        this.resetDialoForm();
     }
 
     private transformAttributes(rowArray: Array<IGenericEntity>): Array<IGenericEntity> {
@@ -315,6 +472,7 @@ export class ExpandableTableComponent implements OnInit {
     /*
     Change component and componentHistory fields withDataTypeEnum.Date type to date and set time to zero
     */
+   /*  should rename to something like set component and component history date fields */
     private setRowArrayDateFields(rowArray: Array<IGenericEntity>, componentFieldAttributesArray: Array<FieldAttributes>,
         componentHistoryFieldAttributesArray: Array<FieldAttributes>) {
         ComponentHelper.setRowArrayDateFields(rowArray, componentFieldAttributesArray);
@@ -322,4 +480,12 @@ export class ExpandableTableComponent implements OnInit {
             ComponentHelper.setRowArrayDateFields(row.componentHistorySet, componentHistoryFieldAttributesArray);
         });
     }
+
+    private resetDialoForm() {
+        this.componentForm.reset();
+        this.displayDialog = false;
+        this.selectedRow = <IGenericEntity>{};
+    }
+    
+
 }

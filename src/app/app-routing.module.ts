@@ -12,6 +12,7 @@ import { ChangePasswordComponent } from './security/change-password/change-passw
 import { CopyUserComponent } from './security/copy-user/copy-user.component';
 import { _404Component } from './404.component';
 import { ExpandableTableComponent } from './test/expandable-table/expandable-table.component';
+import { AircraftComponentComponent } from './aircraft-maintenance/aircraft-component/aircraft-component.component';
 
 const routes: Routes = [
     { path: '', redirectTo: '/flightLogTable', pathMatch: 'full', canActivate: [AuthGuard] },
@@ -24,6 +25,8 @@ const routes: Routes = [
     { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
     { path: 'copyUser', component: CopyUserComponent, canActivate: [AuthGuard] },
     { path: 'expandableTable', component: ExpandableTableComponent, canActivate: [AuthGuard] },
+    { path: 'aircraftComponent', component: AircraftComponentComponent, canActivate: [AuthGuard] },
+    
     { path: 'login', component: LoginComponent },
     { path: '**', component: _404Component },
     ];

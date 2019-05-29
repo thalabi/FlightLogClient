@@ -180,7 +180,7 @@ export class GenericCrudComponent implements OnInit {
                 let addGenericEntityAndAssociation$: Observable<IGenericEntityResponse> = this.genericEntityService.addGenericEntity(this.tableName, this.crudRow)
                     .concatMap(savedSingleGenericEntityResponse => {
                         if (this.formAttributes.associations && this.formAttributes.associations.length != 0) {
-                            return this.genericEntityService.updateAssociationGenericEntity(savedSingleGenericEntityResponse, this.formAttributes.associations[0], this.selectedAssociationArray);
+                            return this.genericEntityService.updateAssociationGenericEntity(savedSingleGenericEntityResponse, this.formAttributes.associations[0].associationPropertyName, this.selectedAssociationArray);
                         } else {
                             return Observable.of<IGenericEntityResponse>(savedSingleGenericEntityResponse);
                         }
@@ -207,7 +207,7 @@ export class GenericCrudComponent implements OnInit {
                 let updateGenericEntityAndAssociation$: Observable<IGenericEntityResponse> = this.genericEntityService.updateGenericEntity(this.crudRow)
                     .concatMap(savedSingleGenericEntityResponse => {
                         if (this.formAttributes.associations && this.formAttributes.associations.length != 0) {
-                            return this.genericEntityService.updateAssociationGenericEntity(savedSingleGenericEntityResponse, this.formAttributes.associations[0], this.selectedAssociationArray);
+                            return this.genericEntityService.updateAssociationGenericEntity(savedSingleGenericEntityResponse, this.formAttributes.associations[0].associationPropertyName, this.selectedAssociationArray);
                         } else {
                             return Observable.of<IGenericEntityResponse>(savedSingleGenericEntityResponse);
                         }

@@ -37,6 +37,7 @@ export class MenuComponent implements OnInit {
             items: [
                 { id: 'part', label: 'Part', routerLink: 'genericCrud/part', routerLinkActiveOptions: { exact: true }},
                 { id: 'expandableTable', label: 'Component', routerLink: 'expandableTable', routerLinkActiveOptions: { exact: true }},
+                { id: 'aircraftComponent', label: 'Component(new)', routerLink: 'aircraftComponent', routerLinkActiveOptions: { exact: true }},
             ]
         },
         {id: 'security', label: 'Security',
@@ -92,6 +93,8 @@ export class MenuComponent implements OnInit {
             this.findMenuItem(this.menuModel, 'acMaint').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.PART_READ, PermissionEnum.PART_WRITE, PermissionEnum.COMPONENT_READ, PermissionEnum.COMPONENT_WRITE);
             this.findMenuItem(this.menuModel, 'part').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.PART_READ, PermissionEnum.PART_WRITE);
             this.findMenuItem(this.menuModel, 'expandableTable').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.COMPONENT_READ, PermissionEnum.COMPONENT_WRITE);
+            // TODO add AIRCRAFT_COMPONENT_READ & AIRCRAFT_COMPONENT_WRITE
+            this.findMenuItem(this.menuModel, 'aircraftComponent').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.COMPONENT_READ, PermissionEnum.COMPONENT_WRITE);
 
             this.findMenuItem(this.menuModel, 'security').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.USER_READ, PermissionEnum.GROUP_READ);
             this.findMenuItem(this.menuModel, 'user').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.USER_READ);
