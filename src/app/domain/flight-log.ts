@@ -1,5 +1,3 @@
-import { Airport } from "./airport";
-
 export class FlightLog {
     id: number;
     flightDate: Date;

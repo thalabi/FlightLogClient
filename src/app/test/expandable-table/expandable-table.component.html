@@ -1,47 +1,69 @@
 <p-table
-	[value]="rowArray"
-	[dataKey]="'_links.self.href'"
+    [value]="rowArray"
+    [columns]="componentDataTableFields"
+    [dataKey]="'_links.self.href'"
 	[lazy]="true"
 	[rows]="ROWS_PER_PAGE"
 	[paginator]="true"
 	[totalRecords]="page?.totalElements"
 	[rowsPerPageOptions]="[5,10,20]"
 	(onLazyLoad)="onLazyLoad($event)"
-	[selectionMode]="'single'"
-	[(selection)]="selectedRow"
+    [selectionMode]="'single'"
+    [(selection)]="selectedRow"
     (onRowSelect)="onRowSelect($event)"
     [responsive]="true"
     [first]="firstRowOfTable"
     [loading]="loadingFlag"
     #dt
-	>
-    <ng-template *ngIf="formAttributes.formTitle" pTemplate="caption">
-        {{formAttributes.formTitle}}
+    >
+
+    <ng-template pTemplate="caption">
+        Component
     </ng-template>
 
-    <ng-template pTemplate="header">
+    <ng-template pTemplate="header" let-columns>
         <tr>
-            <th *ngFor="let fieldAttributes of fieldAttributesArray" [ngStyle]="fieldAttributes.headerStyle">
-                {{fieldAttributes.header}}
+            <th style="width: 3em"></th>
+            <th *ngFor="let column of columns" [ngStyle]="column.headerStyle">
+                {{column.header}}
             </th>
         </tr>
         <tr>
-            <th *ngFor="let fieldAttributes of fieldAttributesArray">
+            <th style="width: 3em"></th>
+            <th *ngFor="let fieldAttributes of columns">
                 <input pInputText type="text" (input)="dt.filter($event.target.value, fieldAttributes.columnName, fieldAttributes.filterMatchMode)" [ngStyle]="fieldAttributes.filterStyle">
             </th>
         </tr>
     </ng-template>
-
-    <ng-template pTemplate="body" let-row>
-        <tr [pSelectableRow]="row">
-            <td *ngFor="let fieldAttributes of fieldAttributesArray" [ngSwitch]="fieldAttributes.pipe">
-                <span *ngSwitchCase="'date-yyyy-mm-dd'">{{ row[fieldAttributes.columnName] | date:'yyyy-MM-dd' }}</span>
-                <span *ngSwitchCase="'password'">{{ row[fieldAttributes.columnName] | password }}</span>
-                <span *ngSwitchDefault>{{ row[fieldAttributes.columnName] }}</span>
+    <ng-template pTemplate="body" let-rowData let-expanded="expanded" let-columns="columns">
+        <tr [pSelectableRow]="rowData">
+            <td>
+                <a *ngIf="rowData.componentHistorySet.length > 0" href="#" [pRowToggler]="rowData">
+                    <i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+                </a>
             </td>
+            <td *ngFor="let fieldAttributes of columns" [ngSwitch]="fieldAttributes.pipe">
+                <span *ngSwitchCase="'date-yyyy-mm-dd'">{{ rowData[fieldAttributes.columnName] | date:'yyyy-MM-dd' }}</span>
+                <span *ngSwitchCase="'password'">{{ rowData[fieldAttributes.columnName] | password }}</span>
+                <span *ngSwitchDefault>{{ rowData[fieldAttributes.columnName] }}</span>
+            </td>
+
+            <!-- <td *ngFor="let col of columns">
+                {{rowData[col.columnName]}}
+            </td> -->
         </tr>
     </ng-template>
-    
+    <ng-template pTemplate="rowexpansion" let-rowData let-columns="columns">
+        <tr *ngFor="let componentHistory of rowData.componentHistorySet">
+            <td [attr.colspan]="4"></td>
+            <td *ngFor="let fieldAttributes of componentHistoryFields" [ngSwitch]="fieldAttributes.pipe">
+                <span *ngSwitchCase="'date-yyyy-mm-dd'">{{ componentHistory[fieldAttributes.columnName] | date:'yyyy-MM-dd' }}</span>
+                <span *ngSwitchCase="'password'">{{ componentHistory[fieldAttributes.columnName] | password }}</span>
+                <span *ngSwitchDefault>{{ componentHistory[fieldAttributes.columnName] }}</span>
+            </td>
+            <td [attr.colspan]="2"></td>
+        </tr>
+    </ng-template>
     <ng-template pTemplate="summary">
         <div class="p-grid" style="margin-bottom: -0.6em;">
             <div class="p-col-5">
@@ -49,7 +71,6 @@
                     <button type="button" pButton icon="pi pi-plus" style="float:left" (click)="showDialog(crudEnum.ADD)" label="Add"></button>
                     <button type="button" pButton icon="pi pi-pencil" style="float:left; margin-left:0.5rem;" (click)="showDialog(crudEnum.UPDATE)" label="Modify" [disabled]="modifyAndDeleteButtonsDisable"></button>
                     <button type="button" pButton icon="pi pi-minus" style="float:left; margin-left:0.5rem;" (click)="showDialog(crudEnum.DELETE)" label="Delete" [disabled]="modifyAndDeleteButtonsDisable"></button>
-                    <app-sync-button *ngIf="formAttributes.showReplicationStatus" [tableName]="tableName"></app-sync-button>
                 </span>
             </div>
             <div class="p-col-4 p-offset-3">
@@ -63,39 +84,40 @@
         </div>
     </ng-template>
 </p-table>
+<p-dialog header="Component - {{crudMode}}" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
 
-<p-dialog header="{{formAttributes.formTitle}} - {{crudMode}}" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
-
-    <form [formGroup]="crudForm" (ngSubmit)="onSubmit()" novalidate>
+    <form [formGroup]="componentForm" (ngSubmit)="onSubmit()" novalidate>
         <div class="p-grid" style="width: 30em;">
 
-            <ng-template ngFor let-fieldAttributes [ngForOf]="fieldAttributesArray">
+            <ng-template ngFor let-fieldAttributes [ngForOf]="componentFormFields">
                 <div class="p-col-4">
                     <label [for]="fieldAttributes.columnName">{{fieldAttributes.header}}</label>
                 </div>
                 <div class="p-col-8" [ngSwitch]="fieldAttributes.uiComponentType">
 
-                    <p-calendar *ngSwitchCase="uiComponentEnum.CALENDAR" [formControlName]="fieldAttributes.columnName" [id]="fieldAttributes.columnName" [dateFormat]="'yy-mm-dd'" [showIcon]="true" [readonlyInput]="true" [showOnFocus]="false" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2050">
+                    <p-calendar *ngSwitchCase="uiComponentEnum.CALENDAR" [formControlName]="fieldAttributes.columnName" [id]="fieldAttributes.columnName" [dateFormat]="'yy-mm-dd'" [showIcon]="true" [readonlyInput]="true" [showOnFocus]="false" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2050" appendTo="body">
                     </p-calendar>
 
-                    <textarea *ngSwitchCase="uiComponentEnum.TEXT_AREA" pInputTextarea [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName" [rows]="fieldAttributes.textAreaRows" [cols]="fieldAttributes.textAreaColumns">
-                    </textarea>
+                    <!-- <textarea *ngSwitchCase="uiComponentEnum.TEXT_AREA" pInputTextarea [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName" [rows]="fieldAttributes.textAreaRows" [cols]="fieldAttributes.textAreaColumns">
+                    </textarea> -->
 
                     <input *ngSwitchCase="uiComponentEnum.TEXT" pInputText [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName"/>
-                    <!-- <div *ngIf="fieldAttributes.mandatory" [hidden]="fieldAttributes.columnName.valid || fieldAttributes.columnName.pristine" class="red-font">Field is required</div> -->
-                    <div *ngIf="fieldAttributes.mandatory && crudForm.controls[fieldAttributes.columnName].invalid && crudForm.controls[fieldAttributes.columnName].touched" class="red-font">Field is required</div>
+                    <div *ngIf="fieldAttributes.mandatory && componentForm.controls[fieldAttributes.columnName].invalid && componentForm.controls[fieldAttributes.columnName].touched" class="red-font">Field is required</div>
 
                     <p-checkbox *ngSwitchCase="uiComponentEnum.BOOLEAN_CHECKBOX" [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName" binary="true"></p-checkbox>
 
                     <input *ngSwitchCase="uiComponentEnum.PASSWORD" type="password" [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName" autocomplete="new-password"/>
-    
+                    
+                    <p-dropdown *ngSwitchCase="uiComponentEnum.DROPDOWN" [id]="fieldAttributes.columnName" [options]="fieldAttributes.associationAttributes.optionsArray" [formControlName]="fieldAttributes.columnName" [optionLabel]="fieldAttributes.associationAttributes.propertyAsName" placeholder="Select part" appendTo="body">
+                    </p-dropdown>
+
                     <span *ngSwitchDefault>
                         Unhandled {{fieldAttributes.uiComponentType}} type
                     </span>
                 </div>
             </ng-template>
 
-            <ng-template ngFor let-associationAttributes [ngForOf]="associationAttributesArray">
+            <!-- <ng-template ngFor let-associationAttributes [ngForOf]="associationAttributesArray">
                 <div class="p-col-12">
                     <p-pickList [source]="availableAssociationArray" [target]="selectedAssociationArray" sourceHeader="Available {{associationAttributes.associationTableName}}s" targetHeader="{{associationAttributes.associationTableName | titlecase}}s"
                     (onMoveAllToTarget)="onMoveAllToTarget()" (onMoveToTarget)="onMoveToTarget()" (onMoveAllToSource)="onMoveAllToSource()"
@@ -111,12 +133,11 @@
                     </p-pickList>
                 </div>
             </ng-template>
-            
+             -->
             <p-footer class="p-grid">
                 <div class="p-col-6">
-                    <!-- TODO replace disabled logic with a function -->
                     <button pButton type="submit" label="Submit"
-                    [disabled]="crudForm.invalid" icon="pi pi-check"></button>
+                    [disabled]="componentForm.invalid" icon="pi pi-check"></button>
                 </div>
                 <div class="p-col-6">
                     <button pButton type="reset" label="Cancel" (click)="onCancel()"></button>

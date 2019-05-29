@@ -16,7 +16,7 @@ import { IGenericEntityResponse } from '../response/i-generic-entity-response';
 import { AssociationAttributes } from "../config/AssociationAttributes";
 
 @Injectable()
-export class GenericEntityService {
+export class ComponentService {
     readonly serviceUrl: string;
 
     constructor(
@@ -51,8 +51,8 @@ export class GenericEntityService {
         return this.httpClient.get<IGenericEntityListResponse>(url, this.getHttpOptions());
     }
 
-    addGenericEntity(tableName: string, row: IGenericEntity): Observable<IGenericEntityResponse> {
-        let url: string = this.serviceUrl + '/' + tableName + 's';
+    addComponent(tableName: string, row: IGenericEntity): Observable<IGenericEntityResponse> {
+        let url: string = this.serviceUrl + '/' + tableName + 'Controller/add';
         console.log('row: ', row);
         row.created = new Date();
         row.modified = new Date();
