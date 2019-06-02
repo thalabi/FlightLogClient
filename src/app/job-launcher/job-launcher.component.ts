@@ -32,6 +32,7 @@ export class JobLauncherComponent implements OnInit {
             {jobLabel: 'Make & Model Sync Enable', jobName: 'enableMakeModelTriggers'},
             {jobLabel: 'Significant Sync Event Disable', jobName: 'disableSignificantEventTriggers'},
             {jobLabel: 'Significant Sync Event Enable', jobName: 'enableSignificantEventTriggers'},
+            {jobLabel: 'Aircraft Maintenance Refresh', jobName: 'copyAircraftMaintenanceTables'},
         ];
 
     }
