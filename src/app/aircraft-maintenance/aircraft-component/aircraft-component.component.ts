@@ -175,6 +175,10 @@ export class AircraftComponentComponent implements OnInit {
         console.log(event);
         this.componentRow = Object.assign({}, this.selectedRow);
         this.modifyAndDeleteButtonsDisable = false;
+        this.componentRow.datePerformed = new Date(this.componentRow.datePerformed+'T00:00:00');
+        if (this.componentRow.dateDue) {
+            this.componentRow.dateDue = new Date(this.componentRow.dateDue+'T00:00:00');
+        }
         console.log('this.componentRow: %o', this.componentRow);
         this.selectedPartRow = this.partRowArray.find(part => part.name === this.componentRow.part.name);
         console.log('this.selectedPartRow: %o', this.selectedPartRow);
