@@ -109,7 +109,7 @@
 <p-dialog header="Component - {{crudMode}}" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
 
     <form [formGroup]="componentForm" (ngSubmit)="onSubmit()" novalidate>
-        <div class="p-grid" style="width: 30em;">
+        <div class="p-grid" style="width: 26em;">
 
             <div class="p-col-4">
                 <label for="name">Name</label>
@@ -128,7 +128,7 @@
                 <label for="part">Part</label>
             </div>
             <div class="p-col-8">
-                <p-dropdown id="part" [options]="partRowArray" formControlName="part" optionLabel="name" placeholder="Select part" appendTo="body">
+                <p-dropdown id="part" [options]="partRowArray" formControlName="part" optionLabel="name" placeholder="Select part" [style]="{'width':'13rem'}" appendTo="body">
                 </p-dropdown>
             </div>
             <div class="p-col-4">
@@ -169,6 +169,12 @@
             </div>
             <div *ngIf="crudMode === crudEnum.UPDATE" class="p-col-8">
                 <p-inputSwitch id="createHistoryRecord" formControlName="createHistoryRecord"></p-inputSwitch>
+            </div>
+            <div *ngIf="crudMode === crudEnum.DELETE" class="p-col-4">
+                <label for="deleteHistoryRecords">Delete history</label>
+            </div>
+            <div *ngIf="crudMode === crudEnum.DELETE" class="p-col-8">
+                <p-inputSwitch id="deleteHistoryRecords" formControlName="deleteHistoryRecords"></p-inputSwitch>
             </div>
             <p-footer class="p-grid">
                 <div class="p-col-6">

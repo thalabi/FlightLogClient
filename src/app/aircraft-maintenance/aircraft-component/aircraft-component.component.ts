@@ -82,7 +82,8 @@ export class AircraftComponentComponent implements OnInit {
             hoursPerformed: new FormControl('', Validators.required),
             dateDue: new FormControl(),
             hoursDue: new FormControl(),
-            createHistoryRecord: new FormControl()
+            createHistoryRecord: new FormControl(),
+            deleteHistoryRecords: new FormControl()
         });
     }
 
@@ -235,7 +236,7 @@ export class AircraftComponentComponent implements OnInit {
             this.componentForm.controls.hoursPerformed.patchValue(this.componentRow.hoursPerformed);
             this.componentForm.controls.dateDue.patchValue(this.componentRow.dateDue);
             this.componentForm.controls.hoursDue.patchValue(this.componentRow.hoursDue);
-            this.componentForm.controls.createHistoryRecord.patchValue(true);
+            this.componentForm.controls.deleteHistoryRecords.patchValue(false);
             this.enableFormControls(false);
             // this.componentFormFields.forEach(fieldAttributes => {
             //     let control: AbstractControl = this.componentForm.controls[fieldAttributes.columnName];
@@ -313,7 +314,7 @@ export class AircraftComponentComponent implements OnInit {
 
 
             case CrudEnum.DELETE:
-                this.aircraftComponentService.deleteComponent(this.selectedRow._links.component.href).subscribe({
+                this.aircraftComponentService.deleteComponent(this.selectedRow._links.component.href, this.componentForm.controls.deleteHistoryRecords.value).subscribe({
                     next: savedRow => {
                         console.log('deleted row', this.selectedRow);
                     },
@@ -359,7 +360,6 @@ export class AircraftComponentComponent implements OnInit {
             this.componentForm.controls.hoursPerformed.enable();
             this.componentForm.controls.dateDue.enable();
             this.componentForm.controls.hoursDue.enable();
-            this.componentForm.controls.createHistoryRecord.enable();
         } else {
             this.componentForm.controls.name.disable();
             this.componentForm.controls.description.disable();
@@ -369,7 +369,6 @@ export class AircraftComponentComponent implements OnInit {
             this.componentForm.controls.hoursPerformed.disable();
             this.componentForm.controls.dateDue.disable();
             this.componentForm.controls.hoursDue.disable();
-            this.componentForm.controls.createHistoryRecord.disable();
         }
     }
 
