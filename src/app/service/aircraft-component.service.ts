@@ -67,8 +67,8 @@ export class AircraftComponentService {
             }));
     }
 
-    deleteComponent(componentUri: string): Observable<void> {
-        let url: string = this.serviceUrl + '/componentController/delete?componentUri='+componentUri;
+    deleteComponent(componentUri: string, deleteHistoryRecords: boolean): Observable<void> {
+        let url: string = this.serviceUrl + '/componentController/delete?componentUri='+componentUri+'&deleteHistoryRecords='+deleteHistoryRecords;
         console.log('componentUri: ', componentUri);
         return this.httpClient.delete<IGenericEntity>(url, this.getHttpOptions()).pipe(
             map((response: any) => {
