@@ -1,3 +1,9 @@
-.pi-chevron-down:before {
+.ui-state-highlight .pi-chevron-down  {
     color:white;
 }
+.ui-state-highlight .pi-chevron-right {
+    color:white;
+}
+/* .pi-angle-double-right {
+    color: #007ad9;
+} */
