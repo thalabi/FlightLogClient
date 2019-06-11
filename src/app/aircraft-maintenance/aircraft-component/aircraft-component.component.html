@@ -78,12 +78,16 @@
         </tr>
     </ng-template>
     <ng-template pTemplate="rowexpansion" let-rowData>
-        <tr *ngFor="let componentHistory of rowData.componentHistorySet">
-            <td [attr.colspan]="4"></td>
+        <tr *ngFor="let componentHistory of rowData.componentHistorySet" style="background-color: lightgray">
+            <td><i class="pi pi-angle-double-right"></i></td>
+            <td>{{ componentHistory.name }}</td>
+            <td>{{ componentHistory.description }}</td>
+            <td>{{ componentHistory.part.name }}</td>
             <td>{{ componentHistory.workPerformed }}</td>
             <td>{{ componentHistory.datePerformed | date:'yyyy-MM-dd' }}</td>
             <td>{{ componentHistory.hoursPerformed }}</td>
-            <td [attr.colspan]="2"></td>
+            <td>{{ componentHistory.dateDue | date:'yyyy-MM-dd'}}</td>
+            <td>{{ componentHistory.hoursDue }}</td>
         </tr>
     </ng-template>
     <ng-template pTemplate="summary">

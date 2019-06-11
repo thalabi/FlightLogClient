@@ -36,7 +36,7 @@ export class AircraftComponentComponent implements OnInit {
     selectedRow: AircraftComponent;
     componentRow: AircraftComponent;
 
-
+    
     loadingFlag: boolean;
     page: HalResponsePage;
 
@@ -92,7 +92,7 @@ export class AircraftComponentComponent implements OnInit {
         this.genericEntityService.getAssociationGenericEntity(this.PART_TABLE_NAME, null).subscribe({
             next: rowResponse => {
                 //this.availableStudents = students;
-                console.log('rowResponse: ', rowResponse);
+                console.log('part rowResponse: ', rowResponse);
                 if (rowResponse._embedded) {
                     this.partRowArray = rowResponse._embedded[this.PART_TABLE_NAME+'s'];
                     ComponentHelper.sortGenericEntity(this.partRowArray, ['name']);
@@ -129,11 +129,12 @@ export class AircraftComponentComponent implements OnInit {
         this.aircraftComponentService.findAll(this.COMPONENT_TABLE_NAME, firstRowNumber, rowsPerPage, searchString, queryOrderByColumns)
         .subscribe({
             next: rowResponse => {
-                console.log('rowResponse', rowResponse);
+                console.log('component rowResponse', rowResponse);
                 this.page = rowResponse.page;
                 if (rowResponse._embedded) {
                     this.firstRowOfTable = this.page.number * this.ROWS_PER_PAGE;
                     this.componentRowArray = rowResponse._embedded[this.COMPONENT_TABLE_NAME+'s'];
+
                     // this.rowArray = this.transformAttributes(this.rowArray);
                 } else {
                     this.firstRowOfTable = 0;
