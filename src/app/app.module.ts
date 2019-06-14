@@ -3,7 +3,7 @@ import { NgModule, APP_INITIALIZER, ErrorHandler } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations'
-import { ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, TooltipModule, ProgressSpinnerModule, ToggleButtonModule, MessagesModule, MessageModule, OverlayPanelModule, CheckboxModule, PickListModule, ProgressBarModule, InputSwitchModule } from 'primeng/primeng';
+import { ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, TooltipModule, ProgressSpinnerModule, ToggleButtonModule, MessagesModule, MessageModule, OverlayPanelModule, CheckboxModule, PickListModule, ProgressBarModule, InputSwitchModule, RadioButtonModule } from 'primeng/primeng';
 import {TableModule} from 'primeng/table';
 
 import { AppComponent } from './app.component';
@@ -69,7 +69,7 @@ import { AircraftComponentComponent } from './aircraft-maintenance/aircraft-comp
     ReactiveFormsModule,
     HttpClientModule,
 
-    BrowserAnimationsModule, TableModule, ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, TooltipModule, ProgressSpinnerModule, ToggleButtonModule, MessageModule, MessagesModule, OverlayPanelModule, CheckboxModule, PickListModule, ProgressBarModule, InputSwitchModule,
+    BrowserAnimationsModule, TableModule, ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, TooltipModule, ProgressSpinnerModule, ToggleButtonModule, MessageModule, MessagesModule, OverlayPanelModule, CheckboxModule, PickListModule, ProgressBarModule, InputSwitchModule, RadioButtonModule,
 
     DeviceDetectorModule.forRoot(),
 

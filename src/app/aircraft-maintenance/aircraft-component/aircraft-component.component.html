@@ -172,7 +172,10 @@
                 <label for="createHistoryRecord">Save history</label>
             </div>
             <div *ngIf="crudMode === crudEnum.UPDATE" class="p-col-8">
-                <p-inputSwitch id="createHistoryRecord" formControlName="createHistoryRecord"></p-inputSwitch>
+                <div class="p-grid">
+                    <p-radioButton id="createHistoryRecord" name="createHistoryRecordGroup" value="true" label="Yes" formControlName="createHistoryRecord" class="p-col-4"></p-radioButton>
+                    <p-radioButton id="createHistoryRecord" name="createHistoryRecordGroup" value="false" label="No" formControlName="createHistoryRecord" class="p-col-8"></p-radioButton>
+                </div>
             </div>
             <div *ngIf="crudMode === crudEnum.DELETE" class="p-col-4">
                 <label for="deleteHistoryRecords">Delete history</label>
@@ -183,7 +186,7 @@
             <p-footer class="p-grid">
                 <div class="p-col-6">
                     <button pButton type="submit" label="Submit"
-                    [disabled]="componentForm.invalid" icon="pi pi-check"></button>
+                    [disabled]="componentForm.invalid || crudMode === crudEnum.UPDATE && !componentForm.value.createHistoryRecord" icon="pi pi-check"></button>
                 </div>
                 <div class="p-col-6">
                     <button pButton type="reset" label="Cancel" (click)="onCancel()"></button>
