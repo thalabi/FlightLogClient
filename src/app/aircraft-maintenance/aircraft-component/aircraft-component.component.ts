@@ -64,10 +64,6 @@ export class AircraftComponentComponent implements OnInit {
         this.createForm();
         this.fetchPartTable();
 
-        // test
-        //this.fetchPage(this.firstRowOfTable, this.ROWS_PER_PAGE, '', this.SORT_COLUMNS);
-
-
         this.hasWritePermission = MenuComponent.isHolderOfAnyAuthority(
             this.sessionDataService.user, Constant.entityToWritePermissionMap.get(this.COMPONENT_TABLE_NAME));
     }
@@ -91,7 +87,6 @@ export class AircraftComponentComponent implements OnInit {
         // Get all rows of part table
         this.genericEntityService.getAssociationGenericEntity(this.PART_TABLE_NAME, null).subscribe({
             next: rowResponse => {
-                //this.availableStudents = students;
                 console.log('part rowResponse: ', rowResponse);
                 if (rowResponse._embedded) {
                     this.partRowArray = rowResponse._embedded[this.PART_TABLE_NAME+'s'];
@@ -199,11 +194,6 @@ export class AircraftComponentComponent implements OnInit {
         switch (this.crudMode) {
         case CrudEnum.ADD:
             this.enableFormControls(true);
-            // this.componentFormFields.forEach(fieldAttributes => {
-            //     let control: AbstractControl = this.componentForm.controls[fieldAttributes.columnName];
-            //     ComponentHelper.initControlValues(control, fieldAttributes.dataType, true);
-            //     control.enable();
-            // });
             break;
         case CrudEnum.UPDATE:
             this.componentForm.controls.name.patchValue(this.componentRow.name);
@@ -214,19 +204,8 @@ export class AircraftComponentComponent implements OnInit {
             this.componentForm.controls.hoursPerformed.patchValue(this.componentRow.hoursPerformed);
             this.componentForm.controls.dateDue.patchValue(this.componentRow.dateDue);
             this.componentForm.controls.hoursDue.patchValue(this.componentRow.hoursDue);
-            this.componentForm.controls.createHistoryRecord.patchValue(true);
+            this.componentForm.controls.createHistoryRecord.patchValue(null);
             this.enableFormControls(true);
-            // this.componentFormFields.forEach(fieldAttributes => {
-            //     let control: AbstractControl = this.componentForm.controls[fieldAttributes.columnName];
-            //     if (fieldAttributes.columnName === 'part') {
-            //         control.patchValue(this.selectedAssociatedPartRow);
-            //     } else {
-            //         console.log('his.componentRow[fieldAttributes.columnName]: ', this.componentRow[fieldAttributes.columnName]);
-            //         control.patchValue(this.componentRow[fieldAttributes.columnName]);
-            //     }
-            //     control.enable();
-            // });
-            // console.log('this.componentFormFields: %o', this.componentFormFields);
             break;
         case CrudEnum.DELETE:
             this.componentForm.controls.name.patchValue(this.componentRow.name);
@@ -239,11 +218,6 @@ export class AircraftComponentComponent implements OnInit {
             this.componentForm.controls.hoursDue.patchValue(this.componentRow.hoursDue);
             this.componentForm.controls.deleteHistoryRecords.patchValue(false);
             this.enableFormControls(false);
-            // this.componentFormFields.forEach(fieldAttributes => {
-            //     let control: AbstractControl = this.componentForm.controls[fieldAttributes.columnName];
-            //     control.patchValue(this.componentRow[fieldAttributes.columnName]);
-            //     control.disable();
-            // });
             break;
         default:
             console.error('this.crudMode is invalid. this.crudMode: ' + this.crudMode);
@@ -298,7 +272,7 @@ export class AircraftComponentComponent implements OnInit {
                 componentRequest.createHistoryRecord = this.componentForm.controls.createHistoryRecord.value;
                 componentRequest.created = this.selectedRow.created;
                 componentRequest.modified = new Date();
-                console.log("engineComponent: %o", componentRequest);
+                console.log("componentRequest: %o", componentRequest);
                 this.aircraftComponentService.modifyComponent(componentRequest).subscribe({
                     next: savedRow => {
                         console.log('addComponent');
