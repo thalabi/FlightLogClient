@@ -7,3 +7,9 @@
 /* .pi-angle-double-right {
     color: #007ad9;
 } */
+.red-font {
+    color: red;
+}
+:host ::ng-deep .ui-inputtext {
+    padding: 0;
+}
