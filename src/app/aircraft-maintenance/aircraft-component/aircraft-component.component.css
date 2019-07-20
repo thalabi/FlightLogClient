@@ -13,3 +13,8 @@
 :host ::ng-deep .ui-inputtext {
     padding: 0;
 }
+.underline-solid {
+    text-decoration-line: underline;
+    text-decoration-style: solid;
+    text-decoration-color: blue;
+}
