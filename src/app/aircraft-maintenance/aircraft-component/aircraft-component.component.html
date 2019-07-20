@@ -69,7 +69,8 @@
             </td>
             <td>{{ rowData.name }}</td>
             <td>{{ rowData.description }}</td>
-            <td>{{ rowData.part.name }}</td>
+            <td *ngIf="rowData.part.description" [pTooltip]="rowData.part.description" tooltipPosition="top" class="underline-solid">{{ rowData.part.name }}</td>
+            <td *ngIf="!rowData.part.description">{{ rowData.part.name }}</td>
             <td>{{ rowData.workPerformed }}</td>
             <td>{{ rowData.datePerformed | date:'yyyy-MM-dd'}}</td>
             <td>{{ rowData.hoursPerformed }}</td>

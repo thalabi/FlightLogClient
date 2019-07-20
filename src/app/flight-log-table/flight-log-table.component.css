@@ -9,3 +9,8 @@ th {
 .red-font {
     color: red;
 }
+.underline-dotted {
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
+    text-decoration-color: blue;
+}

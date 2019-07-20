@@ -26,8 +26,8 @@
     <ng-template pTemplate="header">
         <tr>
             <th *ngFor="let col of cols" [ngStyle]="col.style">
-                <span *ngIf="col.tooltipText" [pTooltip]="col.tooltipText" tooltipPosition="top">{{col.header}}</span>
-                <span *ngIf="!col.tooltipText" >{{col.header}}</span>
+                <span *ngIf="col.tooltipText" [pTooltip]="col.tooltipText" tooltipPosition="top" class="underline-dotted">{{col.header}}</span>
+                <span *ngIf="!col.tooltipText">{{col.header}}</span>
             </th>
         </tr>
         <tr>
