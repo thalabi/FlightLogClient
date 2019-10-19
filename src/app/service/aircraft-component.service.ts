@@ -1,22 +1,16 @@
 import { Injectable } from '@angular/core';
 
 import { catchError, map } from 'rxjs/operators';
-import { IGenericEntityListResponse } from '../response/i-generic-entity-list-response';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { ConfigService } from '../config/config.service';
 import { ApplicationProperties } from '../config/application.properties';
-import { StringUtils } from '../string-utils';
 import { IGenericEntity } from '../domain/i-gerneric-entity';
 import { FlightLogServiceService } from './flight-log-service.service';
 import { Observable } from 'rxjs';
-import { of as observableOf } from 'rxjs/observable/of'
 import { SessionDataService } from './session-data.service';
-import { s } from '@angular/core/src/render3';
-import { IGenericEntityResponse } from '../response/i-generic-entity-response';
-import { AssociationAttributes } from "../config/AssociationAttributes";
-import { ComponentRequest } from '../domain/component-request';
-import { AircraftComponent } from '../domain/aircraft-component';
+import { ComponentRequestOld } from '../domain/component-request-old';
 import { AircraftComponentListResponse } from '../response/aircraft-component-list-response';
+import { AircraftComponentRequest } from '../domain/aircraft-component-request';
 
 @Injectable()
 export class AircraftComponentService {
@@ -39,7 +33,7 @@ export class AircraftComponentService {
     }
 
 
-    addComponent(row: ComponentRequest): Observable<void> {
+    addComponent(row: ComponentRequestOld): Observable<void> {
         let url: string = this.serviceUrl + '/componentController/add';
         console.log('row: ', row);
         return this.httpClient.post<IGenericEntity>(url, row, this.getHttpOptions()).pipe(
@@ -53,8 +47,25 @@ export class AircraftComponentService {
             }));
     }
 
-    modifyComponent(row: ComponentRequest): Observable<void> {
+    modifyComponent(row: ComponentRequestOld): Observable<void> {
         let url: string = this.serviceUrl + '/componentController/modify';
+        console.log('row: ', row);
+        return this.httpClient.put<IGenericEntity>(url, row, this.getHttpOptions()).pipe(
+            map((response: any) => {
+                console.log('response', response);
+                return response;
+            }),
+            catchError((httpErrorResponse: HttpErrorResponse) => {
+                FlightLogServiceService.handleError(httpErrorResponse);
+                return null;
+            }));
+    }
+
+    modifyComponentAndHistory(row: AircraftComponentRequest.Component): Observable<void> {
+        // console.log('modifyComponentAndHistory');
+        // // return null just to make it compile
+        // return new Observable();
+        let url: string = this.serviceUrl + '/componentController/modifyComponentAndHistory';
         console.log('row: ', row);
         return this.httpClient.put<IGenericEntity>(url, row, this.getHttpOptions()).pipe(
             map((response: any) => {

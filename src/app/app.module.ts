@@ -41,6 +41,7 @@ import { ComponentService } from './service/component.service';
 import { HttpErrorInterceptor } from './http-error-interceptor';
 import { AircraftComponentService } from './service/aircraft-component.service';
 import { AircraftComponentComponent } from './aircraft-maintenance/aircraft-component/aircraft-component.component';
+import { AircraftComponent2Component } from './aircraft-maintenance/aircraft-component2/aircraft-component2.component';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,8 @@ import { AircraftComponentComponent } from './aircraft-maintenance/aircraft-comp
     ChangePasswordComponent,
     PasswordMaskPipe,
     CopyUserComponent,
-    AircraftComponentComponent
+    AircraftComponentComponent,
+    AircraftComponent2Component
   ],
   imports: [
     BrowserModule,

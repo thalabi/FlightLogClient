@@ -14,7 +14,7 @@ import { LazyLoadEvent } from 'primeng/primeng';
 import { HalResponseLinks } from '../../hal/hal-response-links';
 import { CustomErrorHandler } from '../../custom-error-handler';
 import { CrudEnum } from '../../crud-enum';
-import { ComponentRequest } from '../../domain/component-request';
+import { ComponentRequestOld } from '../../domain/component-request-old';
 
 @Component({
     selector: 'app-aircraft-component',
@@ -231,7 +231,7 @@ export class AircraftComponentComponent implements OnInit {
         console.log('this.componentForm.value', this.componentForm.value);
         //console.log('crudFormModel', crudFormModel);
         //console.log('column1', this.crudForm.get('column1').value);
-        let componentRequest: ComponentRequest = new ComponentRequest();
+        let componentRequest: ComponentRequestOld = new ComponentRequestOld();
         switch (this.crudMode) {
             case CrudEnum.ADD:
                 componentRequest.name = this.componentForm.controls.name.value;
@@ -259,7 +259,7 @@ export class AircraftComponentComponent implements OnInit {
                 });
                 break;
             case CrudEnum.UPDATE:
-                componentRequest.componentUri = this.selectedRow._links.component.href;
+                componentRequest.componentUri = this.selectedRow._links.self.href;
                 componentRequest.name = this.componentForm.controls.name.value;
                 componentRequest.description = this.componentForm.controls.description.value;
                 componentRequest.workPerformed = this.componentForm.controls.workPerformed.value;
@@ -289,7 +289,7 @@ export class AircraftComponentComponent implements OnInit {
 
 
             case CrudEnum.DELETE:
-                this.aircraftComponentService.deleteComponent(this.selectedRow._links.component.href, this.componentForm.controls.deleteHistoryRecords.value).subscribe({
+                this.aircraftComponentService.deleteComponent(this.selectedRow._links.self.href, this.componentForm.controls.deleteHistoryRecords.value).subscribe({
                     next: savedRow => {
                         console.log('deleted row', this.selectedRow);
                     },

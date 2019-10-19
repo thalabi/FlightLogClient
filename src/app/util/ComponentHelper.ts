@@ -88,6 +88,7 @@ export class ComponentHelper {
         });
     }
 
+    // TODO sort by the rest of the columns in the array, right now only by first column
     public static sortGenericEntity(genericEntity: IGenericEntity[], orderByColumns: Array<string>): void {
         // TODO allow more than one order column
         genericEntity.sort((n1, n2): number => {
