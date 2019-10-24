@@ -132,12 +132,15 @@
 </p-dialog> -->
 <p-dialog header="Component - {{crudMode}}" [visible]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
 
+    <!-- <span>para</span> -->
+    <span>.</span>
+
     <form [formGroup]="componentForm" (ngSubmit)="onSubmit()" novalidate>
         <div class="p-grid" [ngStyle]="{'width': '35rem'}">
 
             <!-- Table of the component and it history rows -->
             <!-- Only show on Modify and Delete -->
-            <div *ngIf="crudMode !== crudEnum.DELETE" class="p-col-12">
+            <div *ngIf="crudMode === crudEnum.UPDATE" class="p-col-12">
 
                 <p-table *ngIf="componentAndHistoryTableVisible" [value]="componentAndHistoryArray" 
                 dataKey="_links.self.href"
@@ -265,7 +268,7 @@
                     <button pButton type="button" label="Delete" (click)="setComponentHistoryCrudMode(crudEnum.DELETE)" icon="pi pi-minus" style="margin-left: 0.5rem;" [disabled]="componentAndHistoryArray.length === 0"></button>
                 </div>
                 <div style="margin-top: 0.5rem;">
-                    <button pButton type="submit" label="Submit" icon="pi pi-check" style="margin-left: 0.5rem;" [disabled]="componentAndHistoryArray && componentAndHistoryArray.length === 0"></button>
+                    <button pButton type="submit" label="Submit" icon="pi pi-check" style="margin-left: 0.5rem;" [disabled]="(crudMode === crudEnum.ADD && componentForm.invalid) || (crudMode !== crudEnum.ADD && componentAndHistoryArray && componentAndHistoryArray.length === 0)"></button>
                     <button pButton type="reset" label="Cancel" (click)="onCancelAndCloseDialog()" style="margin-left: 0.5rem;"></button>
                 </div>
             </p-footer>
