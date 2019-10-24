@@ -14,7 +14,6 @@ import { LazyLoadEvent } from 'primeng/primeng';
 import { HalResponseLinks } from '../../hal/hal-response-links';
 import { CustomErrorHandler } from '../../custom-error-handler';
 import { CrudEnum } from '../../crud-enum';
-import { ComponentRequestOld } from '../../domain/component-request-old';
 import { AircraftComponentRequest } from '../../domain/aircraft-component-request';
 
 @Component({
@@ -357,22 +356,22 @@ export class AircraftComponent2Component implements OnInit {
         console.log('this.crudMode', this.crudMode);
         console.log('this.componentHistoryCrudMode', this.componentHistoryCrudMode);
 
-        let componentRequest: ComponentRequestOld = new ComponentRequestOld(); // TODO remove and use below
+        // TODO should rename to aircraftComponentRequestComponent
         let aircraftComponentRequest : AircraftComponentRequest.Component = new AircraftComponentRequest.Component();
         switch (this.crudMode) {
             case CrudEnum.ADD:
-                componentRequest.name = this.componentForm.controls.name.value;
-                componentRequest.description = this.componentForm.controls.description.value;
-                componentRequest.workPerformed = this.componentForm.controls.workPerformed.value;
-                componentRequest.datePerformed = this.componentForm.controls.datePerformed.value;
-                componentRequest.hoursPerformed = this.componentForm.controls.hoursPerformed.value;
-                componentRequest.dateDue = this.componentForm.controls.dateDue.value;
-                componentRequest.hoursDue = this.componentForm.controls.hoursDue.value;
-                componentRequest.partUri = this.componentForm.controls.part.value._links.part.href;
-                componentRequest.created = new Date();
-                componentRequest.modified = new Date();
-                console.log("engineComponent: %o", componentRequest);
-                this.aircraftComponentService.addComponent(componentRequest).subscribe({
+                aircraftComponentRequest.name = this.componentForm.controls.name.value;
+                aircraftComponentRequest.description = this.componentForm.controls.description.value;
+                aircraftComponentRequest.workPerformed = this.componentForm.controls.workPerformed.value;
+                aircraftComponentRequest.datePerformed = this.componentForm.controls.datePerformed.value;
+                aircraftComponentRequest.hoursPerformed = this.componentForm.controls.hoursPerformed.value;
+                aircraftComponentRequest.dateDue = this.componentForm.controls.dateDue.value;
+                aircraftComponentRequest.hoursDue = this.componentForm.controls.hoursDue.value;
+                aircraftComponentRequest.partUri = this.componentForm.controls.part.value._links.part.href;
+                aircraftComponentRequest.created = new Date();
+                aircraftComponentRequest.modified = new Date();
+                console.log("aircraftComponentRequest: %o", aircraftComponentRequest);
+                this.aircraftComponentService.addComponent(aircraftComponentRequest).subscribe({
                     next: savedRow => {
                         console.log('addComponent');
                     },
@@ -397,7 +396,6 @@ export class AircraftComponent2Component implements OnInit {
                         component.hoursPerformed = this.componentForm.controls.hoursPerformed.value;
                         component.dateDue = this.componentForm.controls.dateDue.value;
                         component.hoursDue = this.componentForm.controls.hoursDue.value;
-                        //component.partUri = this.componentForm.controls.part.value._links.part.href;
                         component.part = this.componentForm.controls.part.value;
                         component.created = new Date();
                         component.modified = new Date();
@@ -517,90 +515,6 @@ export class AircraftComponent2Component implements OnInit {
             default:
                 console.error('this.crudMode is invalid. this.crudMode: ' + this.crudMode);
         }
-            /* test
-
-        //const crudFormModel = this.componentForm.value;
-        console.log('this.componentForm.controls', this.componentForm.controls);
-        console.log('this.componentForm.value', this.componentForm.value);
-        //console.log('crudFormModel', crudFormModel);
-        //console.log('column1', this.crudForm.get('column1').value);
-        let componentRequest: ComponentRequest = new ComponentRequest();
-        switch (this.crudMode) {
-            case CrudEnum.ADD:
-                componentRequest.name = this.componentForm.controls.name.value;
-                componentRequest.description = this.componentForm.controls.description.value;
-                componentRequest.workPerformed = this.componentForm.controls.workPerformed.value;
-                componentRequest.datePerformed = this.componentForm.controls.datePerformed.value;
-                componentRequest.hoursPerformed = this.componentForm.controls.hoursPerformed.value;
-                componentRequest.dateDue = this.componentForm.controls.dateDue.value;
-                componentRequest.hoursDue = this.componentForm.controls.hoursDue.value;
-                componentRequest.partUri = this.componentForm.controls.part.value._links.part.href;
-                componentRequest.created = new Date();
-                componentRequest.modified = new Date();
-                console.log("engineComponent: %o", componentRequest);
-                this.aircraftComponentService.addComponent(componentRequest).subscribe({
-                    next: savedRow => {
-                        console.log('addComponent');
-                    },
-                    error: error => {
-                        console.error('enericEntityService.deleteGenericEntity returned error: ', error);
-                        //this.messageService.error(error);
-                    },
-                    complete: () => {
-                        this.afterCrud();
-                    }
-                });
-                break;
-            case CrudEnum.UPDATE:
-                componentRequest.componentUri = this.selectedComponentRow._links.component.href;
-                componentRequest.name = this.componentForm.controls.name.value;
-                componentRequest.description = this.componentForm.controls.description.value;
-                componentRequest.workPerformed = this.componentForm.controls.workPerformed.value;
-                componentRequest.datePerformed = this.componentForm.controls.datePerformed.value;
-                componentRequest.hoursPerformed = this.componentForm.controls.hoursPerformed.value;
-                componentRequest.dateDue = this.componentForm.controls.dateDue.value;
-                componentRequest.hoursDue = this.componentForm.controls.hoursDue.value;
-                componentRequest.partUri = this.componentForm.controls.part.value._links.part.href;
-                // console.log('this.componentForm.controls.createHistoryRecord.value', this.componentForm.controls.createHistoryRecord.value);
-                componentRequest.createHistoryRecord = false;//this.componentForm.controls.createHistoryRecord.value;
-                componentRequest.created = this.selectedComponentRow.created;
-                componentRequest.modified = new Date();
-                console.log("componentRequest: %o", componentRequest);
-                this.aircraftComponentService.modifyComponent(componentRequest).subscribe({
-                    next: savedRow => {
-                        console.log('addComponent');
-                    },
-                    error: error => {
-                        console.error('enericEntityService.deleteGenericEntity returned error: ', error);
-                        //this.messageService.error(error);
-                    },
-                    complete: () => {
-                        this.afterCrud();
-                    }
-                });
-                break;
-
-
-            case CrudEnum.DELETE:
-                this.aircraftComponentService.deleteComponent(this.selectedComponentRow._links.component.href, this.componentForm.controls.deleteHistoryRecords.value).subscribe({
-                    next: savedRow => {
-                        console.log('deleted row', this.selectedComponentRow);
-                    },
-                    error: error => {
-                        console.error('enericEntityService.deleteGenericEntity returned error: ', error);
-                        //this.messageService.error(error);
-                    },
-                    complete: () => {
-                        this.afterCrud();
-                    }
-                });
-                break;
-
-            default:
-                console.error('this.crudMode is invalid. this.crudMode: ' + this.crudMode);
-        }
-        test */
-        //this.afterCrud();
     }
 
     onCancelAndCloseDialog() {
