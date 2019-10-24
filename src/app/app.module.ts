@@ -40,7 +40,6 @@ import { _404Component } from './404.component';
 import { ComponentService } from './service/component.service';
 import { HttpErrorInterceptor } from './http-error-interceptor';
 import { AircraftComponentService } from './service/aircraft-component.service';
-import { AircraftComponentComponent } from './aircraft-maintenance/aircraft-component/aircraft-component.component';
 import { AircraftComponent2Component } from './aircraft-maintenance/aircraft-component2/aircraft-component2.component';
 
 @NgModule({
@@ -62,7 +61,6 @@ import { AircraftComponent2Component } from './aircraft-maintenance/aircraft-com
     ChangePasswordComponent,
     PasswordMaskPipe,
     CopyUserComponent,
-    AircraftComponentComponent,
     AircraftComponent2Component
   ],
   imports: [

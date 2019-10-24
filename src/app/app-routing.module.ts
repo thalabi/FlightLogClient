@@ -11,7 +11,6 @@ import { AuthGuard } from './security/auth.guard';
 import { ChangePasswordComponent } from './security/change-password/change-password.component';
 import { CopyUserComponent } from './security/copy-user/copy-user.component';
 import { _404Component } from './404.component';
-import { AircraftComponentComponent } from './aircraft-maintenance/aircraft-component/aircraft-component.component';
 import { AircraftComponent2Component } from './aircraft-maintenance/aircraft-component2/aircraft-component2.component';
 
 const routes: Routes = [
@@ -24,7 +23,6 @@ const routes: Routes = [
     { path: 'genericCrud/:tableName', component: GenericCrudComponent, canActivate: [AuthGuard] },
     { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
     { path: 'copyUser', component: CopyUserComponent, canActivate: [AuthGuard] },
-    { path: 'aircraftComponent', component: AircraftComponentComponent, canActivate: [AuthGuard] },
     { path: 'aircraftComponent2', component: AircraftComponent2Component, canActivate: [AuthGuard] },
     
     { path: 'login', component: LoginComponent },
