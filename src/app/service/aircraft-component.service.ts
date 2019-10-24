@@ -8,7 +8,6 @@ import { IGenericEntity } from '../domain/i-gerneric-entity';
 import { FlightLogServiceService } from './flight-log-service.service';
 import { Observable } from 'rxjs';
 import { SessionDataService } from './session-data.service';
-import { ComponentRequestOld } from '../domain/component-request-old';
 import { AircraftComponentListResponse } from '../response/aircraft-component-list-response';
 import { AircraftComponentRequest } from '../domain/aircraft-component-request';
 
@@ -33,24 +32,10 @@ export class AircraftComponentService {
     }
 
 
-    addComponent(row: ComponentRequestOld): Observable<void> {
+    addComponent(row: AircraftComponentRequest.Component): Observable<void> {
         let url: string = this.serviceUrl + '/componentController/add';
         console.log('row: ', row);
         return this.httpClient.post<IGenericEntity>(url, row, this.getHttpOptions()).pipe(
-            map((response: any) => {
-                console.log('response', response);
-                return response;
-            }),
-            catchError((httpErrorResponse: HttpErrorResponse) => {
-                FlightLogServiceService.handleError(httpErrorResponse);
-                return null;
-            }));
-    }
-
-    modifyComponent(row: ComponentRequestOld): Observable<void> {
-        let url: string = this.serviceUrl + '/componentController/modify';
-        console.log('row: ', row);
-        return this.httpClient.put<IGenericEntity>(url, row, this.getHttpOptions()).pipe(
             map((response: any) => {
                 console.log('response', response);
                 return response;
