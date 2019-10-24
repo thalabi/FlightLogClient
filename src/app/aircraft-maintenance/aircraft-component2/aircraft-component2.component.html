@@ -127,14 +127,10 @@
         </div>
     </ng-template>
 </p-table>
-<!-- <p-dialog header="Test" [visible]="true" [modal]="true" height="auto">
-    Animation Configuration
-</p-dialog> -->
 <p-dialog header="Component - {{crudMode}}" [visible]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
-
-    <!-- <span>para</span> -->
-    <span>.</span>
-
+    <!-- The space below is a hack to prevent horizontal line under the dialog header from showing thick -->
+    &nbsp;
+    
     <form [formGroup]="componentForm" (ngSubmit)="onSubmit()" novalidate>
         <div class="p-grid" [ngStyle]="{'width': '35rem'}">
 
@@ -246,15 +242,6 @@
                 <input pInputText id="hoursDue" formControlName="hoursDue" regexValidator="^\d{0,4}(\.\d{0,1}){0,1}$"/>
                 <div [hidden]="componentForm.controls.hoursDue.valid || componentForm.controls.hoursDue.pristine || componentForm.controls.hoursDue.disabled" class="red-font">Invalid value</div>
             </div>
-            <!-- <div *ngIf="crudMode === crudEnum.UPDATE" class="p-col-4">
-                <label for="createHistoryRecord">Save history</label>
-            </div>
-            <div *ngIf="crudMode === crudEnum.UPDATE" class="p-col-8">
-                <div class="p-grid">
-                    <p-radioButton id="createHistoryRecord" name="createHistoryRecordGroup" value="true" label="Yes" formControlName="createHistoryRecord" class="p-col-4"></p-radioButton>
-                    <p-radioButton id="createHistoryRecord" name="createHistoryRecordGroup" value="false" label="No" formControlName="createHistoryRecord" class="p-col-8"></p-radioButton>
-                </div>
-            </div> -->
             <div *ngIf="crudMode === crudEnum.DELETE" class="p-col-4">
                 <label for="deleteHistoryRecords">Delete history</label>
             </div>
