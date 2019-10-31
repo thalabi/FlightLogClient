@@ -1,5 +1,6 @@
-export class ComponentRequest {
-    componentUri: string;
+import { IGenericEntity } from "./i-gerneric-entity";
+
+export class AircraftComponentHistory {
     name: string;
     description: string;
     workPerformed: string;
@@ -8,10 +9,9 @@ export class ComponentRequest {
     dateDue: Date;
     hoursDue: number;
 
-    partUri: string;
-
-    createHistoryRecord: boolean;
-
+    part: IGenericEntity;
     created: Date;
     modified: Date;
+
+    _links: any;
 }

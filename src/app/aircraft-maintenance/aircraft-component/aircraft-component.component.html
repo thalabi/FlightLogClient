@@ -8,8 +8,9 @@
 	[rowsPerPageOptions]="[5,10,20]"
 	(onLazyLoad)="onLazyLoad($event)"
     [selectionMode]="'single'"
-    [(selection)]="selectedRow"
+    [(selection)]="selectedComponentRow"
     (onRowSelect)="onRowSelect($event)"
+    (onRowUnselect)="onRowUnselect($event)"
     [responsive]="true"
     [first]="firstRowOfTable"
     [loading]="loadingFlag"
@@ -20,17 +21,31 @@
         Component
     </ng-template>
 
+    <ng-template pTemplate="colgroup">
+        <colgroup>
+            <col style="width: 1.8rem">
+            <col style="width: 8rem">
+            <col style="width: 8rem">
+            <col style="width: 8rem">
+            <col style="width: 8rem">
+            <col style="width: 7rem">
+            <col style="width: 4.5rem">
+            <col style="width: 7rem">
+            <col style="width: 4.5rem">
+        </colgroup>
+    </ng-template>
+
     <ng-template pTemplate="header">
         <tr>
-            <th style="width: 3em"></th>
+            <th></th>
             <th>Name</th>
             <th>Description</th>
             <th>Part</th>
             <th>Work Prfrmd</th>
-            <th [ngStyle]="{width: '7rem'}">Dt Prfrmd</th>
-            <th [ngStyle]="{width: '4.5rem'}">Hrs Prfrmd</th>
-            <th [ngStyle]="{width: '7rem'}">Dt Due</th>
-            <th [ngStyle]="{width: '4.5rem'}">Hrs Due</th>
+            <th>Dt Prfrmd</th>
+            <th>Hrs Prfrmd</th>
+            <th>Dt Due</th>
+            <th>Hrs Due</th>
         </tr>
         <tr>
             <th style="width: 3em"></th>
@@ -83,7 +98,8 @@
             <td><i class="pi pi-angle-double-right"></i></td>
             <td>{{ componentHistory.name }}</td>
             <td>{{ componentHistory.description }}</td>
-            <td>{{ componentHistory.part.name }}</td>
+            <td *ngIf="componentHistory.part.description" [pTooltip]="componentHistory.part.description" tooltipPosition="top" class="underline-solid">{{ componentHistory.part.name }}</td>
+            <td *ngIf="!componentHistory.part.description">{{ componentHistory.part.name }}</td>
             <td>{{ componentHistory.workPerformed }}</td>
             <td>{{ componentHistory.datePerformed | date:'yyyy-MM-dd' }}</td>
             <td>{{ componentHistory.hoursPerformed }}</td>
@@ -111,11 +127,66 @@
         </div>
     </ng-template>
 </p-table>
-<p-dialog header="Component - {{crudMode}}" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
-
+<p-dialog header="Component - {{crudMode}}" [visible]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
+    <!-- The space below is a hack to prevent horizontal line under the dialog header from showing thick -->
+    &nbsp;
+    
     <form [formGroup]="componentForm" (ngSubmit)="onSubmit()" novalidate>
-        <div class="p-grid" style="width: 26em;">
+        <div class="p-grid" [ngStyle]="{'width': '35rem'}">
 
+            <!-- Table of the component and it history rows -->
+            <!-- Only show on Modify and Delete -->
+            <div *ngIf="crudMode === crudEnum.UPDATE" class="p-col-12">
+
+                <p-table *ngIf="componentAndHistoryTableVisible" [value]="componentAndHistoryArray" 
+                dataKey="_links.self.href"
+                [selectionMode]="crudMode === crudEnum.UPDATE ? 'single' : ''"
+                [(selection)]="selectedComponentAndHistoryRow"
+                (onRowSelect)="onComponentAndHistoryRowSelect($event)"
+                (onRowUnselect)="onComponentAndHistoryRowUnselect($event)"
+                [scrollable]="true" scrollHeight="10rem"
+                >
+                    <ng-template pTemplate="colgroup">
+                        <colgroup>
+                            <col style="width: 10rem">
+                            <col style="width: 8rem">
+                            <col style="width: 8rem">
+                            <col style="width: 8rem">
+                            <col style="width: 7rem">
+                            <col style="width: 4rem">
+                            <col style="width: 7rem">
+                            <col style="width: 4rem">
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Part</th>
+                            <th>Work Prfrmd</th>
+                            <th>Dt Prfrmd</th>
+                            <th pTooltip="Hours Performed" tooltipPosition="top" class="underline-solid">Hrs P</th>
+                            <th>Dt Due</th>
+                            <th pTooltip="Hours Due" tooltipPosition="top" class="underline-solid">Hrs D</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-componentAndHistory>
+                        <tr [pSelectableRow]="componentAndHistory">
+                            <td>{{componentAndHistory.name}}</td>
+                            <td>{{componentAndHistory.description}}</td>
+                            <td>{{componentAndHistory.part.name}}</td>
+                            <td>{{componentAndHistory.workPerformed}}</td>
+                            <td>{{componentAndHistory.datePerformed | date:'yyyy-MM-dd'}}</td>
+                            <td>{{componentAndHistory.hoursPerformed}}</td>
+                            <td>{{componentAndHistory.dateDue | date:'yyyy-MM-dd'}}</td>
+                            <td>{{componentAndHistory.hoursDue}}</td>
+                                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+
+            <!-- Fields showing empty fields if ADD or selected component or its history -->
+            <!-- Selected component or its history are disabled fields -->
             <div class="p-col-4">
                 <label for="name">Name</label>
             </div>
@@ -155,7 +226,7 @@
             </div>
             <div class="p-col-8">
                 <input pInputText id="hoursPerformed" formControlName="hoursPerformed" regexValidator="^\d{0,4}(\.\d{0,1}){0,1}$"/>
-                <div [hidden]="componentForm.controls.hoursPerformed.valid || componentForm.controls.hoursPerformed.pristine" class="red-font">Invalid value</div>
+                <div [hidden]="componentForm.controls.hoursPerformed.valid || componentForm.controls.hoursPerformed.pristine || componentForm.controls.hoursPerformed.disabled" class="red-font">Invalid value</div>
             </div>
             <div class="p-col-4">
                 <label for="dateDue">Dt Due</label>
@@ -169,16 +240,7 @@
             </div>
             <div class="p-col-8">
                 <input pInputText id="hoursDue" formControlName="hoursDue" regexValidator="^\d{0,4}(\.\d{0,1}){0,1}$"/>
-                <div [hidden]="componentForm.controls.hoursDue.valid || componentForm.controls.hoursDue.pristine" class="red-font">Invalid value</div>
-            </div>
-            <div *ngIf="crudMode === crudEnum.UPDATE" class="p-col-4">
-                <label for="createHistoryRecord">Save history</label>
-            </div>
-            <div *ngIf="crudMode === crudEnum.UPDATE" class="p-col-8">
-                <div class="p-grid">
-                    <p-radioButton id="createHistoryRecord" name="createHistoryRecordGroup" value="true" label="Yes" formControlName="createHistoryRecord" class="p-col-4"></p-radioButton>
-                    <p-radioButton id="createHistoryRecord" name="createHistoryRecordGroup" value="false" label="No" formControlName="createHistoryRecord" class="p-col-8"></p-radioButton>
-                </div>
+                <div [hidden]="componentForm.controls.hoursDue.valid || componentForm.controls.hoursDue.pristine || componentForm.controls.hoursDue.disabled" class="red-font">Invalid value</div>
             </div>
             <div *ngIf="crudMode === crudEnum.DELETE" class="p-col-4">
                 <label for="deleteHistoryRecords">Delete history</label>
@@ -186,15 +248,25 @@
             <div *ngIf="crudMode === crudEnum.DELETE" class="p-col-8">
                 <p-inputSwitch id="deleteHistoryRecords" formControlName="deleteHistoryRecords"></p-inputSwitch>
             </div>
-            <p-footer class="p-grid">
-                <div class="p-col-6">
-                    <button pButton type="submit" label="Submit"
-                    [disabled]="componentForm.invalid || crudMode === crudEnum.UPDATE && !componentForm.value.createHistoryRecord" icon="pi pi-check"></button>
+            <p-footer *ngIf="!componentHistoryCrudMode">
+                <div *ngIf="crudMode === crudEnum.UPDATE">
+                    <button pButton type="button" label="Add" (click)="setComponentHistoryCrudMode(crudEnum.ADD)" icon="pi pi-plus" style="margin-left: 0.5rem;"></button>
+                    <button pButton type="button" label="Modify" (click)="setComponentHistoryCrudMode(crudEnum.UPDATE)" icon="pi pi-pencil" style="margin-left: 0.5rem;" [disabled]="componentAndHistoryArray.length === 0"></button>
+                    <button pButton type="button" label="Delete" (click)="setComponentHistoryCrudMode(crudEnum.DELETE)" icon="pi pi-minus" style="margin-left: 0.5rem;" [disabled]="componentAndHistoryArray.length === 0"></button>
                 </div>
-                <div class="p-col-6">
-                    <button pButton type="reset" label="Cancel" (click)="onCancel()"></button>
+                <div style="margin-top: 0.5rem;">
+                    <button pButton type="submit" label="Submit" icon="pi pi-check" style="margin-left: 0.5rem;" [disabled]="(crudMode === crudEnum.ADD && componentForm.invalid) || (crudMode !== crudEnum.ADD && componentAndHistoryArray && componentAndHistoryArray.length === 0)"></button>
+                    <button pButton type="reset" label="Cancel" (click)="onCancelAndCloseDialog()" style="margin-left: 0.5rem;"></button>
                 </div>
             </p-footer>
-        </div>
+            <p-footer *ngIf="componentHistoryCrudMode">
+                <div style="margin-top: 0.5rem;" [ngSwitch]="componentHistoryCrudMode">
+                    <button pButton type="submit" label="Add" *ngSwitchCase="crudEnum.ADD" icon="pi pi-plus" style="margin-left: 0.5rem;" [disabled]="componentForm.invalid"></button>
+                    <button pButton type="submit" label="Modify" *ngSwitchCase="crudEnum.UPDATE" icon="pi pi-pencil" style="margin-left: 0.5rem;" [disabled]="componentForm.invalid"></button>
+                    <button pButton type="submit" label="Delete" *ngSwitchCase="crudEnum.DELETE" icon="pi pi-minus" style="margin-left: 0.5rem;"></button>
+                    <button pButton type="reset" label="Cancel" (click)="onCancelComponentUpdateCrud()" style="margin-left: 0.5rem;"></button>
+                </div>
+            </p-footer>
+            </div>
     </form>
 </p-dialog>
