@@ -18,10 +18,10 @@ import { AircraftComponentRequest } from '../../domain/aircraft-component-reques
 
 @Component({
     selector: 'app-aircraft-component',
-    templateUrl: './aircraft-component2.component.html',
-    styleUrls: ['./aircraft-component2.component.css']
+    templateUrl: './aircraft-component.component.html',
+    styleUrls: ['./aircraft-component.component.css']
 })
-export class AircraftComponent2Component implements OnInit {
+export class AircraftComponentComponent implements OnInit {
 
     componentForm: FormGroup;
     hasWritePermission: boolean = false;
@@ -39,7 +39,6 @@ export class AircraftComponent2Component implements OnInit {
     selectedComponentAndHistoryRowCopy: AircraftComponent;
 
     componentAndHistoryArray : Array<AircraftComponent>;
-
 
     loadingFlag: boolean;
     page: HalResponsePage;
@@ -59,6 +58,8 @@ export class AircraftComponent2Component implements OnInit {
     pageNumber: number;
     links: HalResponseLinks;
 
+    tempAircraftComponentHistorySelfHrefSeq : number = 0; // temp href used to assign to added aircraftComponentHistory records
+    readonly tempAircraftComponentHistorySelfHrefPrefix : string = 'tempSelfHref';
 
     constructor(private genericEntityService: GenericEntityService, private aircraftComponentService: AircraftComponentService, private messageService: MyMessageService,
     private sessionDataService: SessionDataService) { }
@@ -389,6 +390,8 @@ export class AircraftComponent2Component implements OnInit {
                 let component: AircraftComponent = new AircraftComponent();
                 switch (this.componentHistoryCrudMode) {
                     case CrudEnum.ADD: // Add component history record to history array
+                        let tempHrefValue = this.tempAircraftComponentHistorySelfHrefPrefix + "_" + ++this.tempAircraftComponentHistorySelfHrefSeq;
+                        component._links = {self: {href: tempHrefValue}};
                         component.name = this.componentForm.controls.name.value;
                         component.description = this.componentForm.controls.description.value;
                         component.workPerformed = this.componentForm.controls.workPerformed.value;
@@ -404,6 +407,8 @@ export class AircraftComponent2Component implements OnInit {
                         this.componentAndHistoryArray.push(component);
                         this.sortComponentAndHistoryArray();
                         console.log('this.componentAndHistoryArray', this.componentAndHistoryArray);
+                        // select added record
+                        this.selectedComponentAndHistoryRow = component;
                         this.componentHistoryCrudMode = null;
                         break;
                     case CrudEnum.UPDATE: // Update component history record in history array
@@ -461,10 +466,16 @@ export class AircraftComponent2Component implements OnInit {
                         aircraftComponentRequest.historyRequestSet = new Array<AircraftComponentRequest.Historyrequest>();
                         this.componentAndHistoryArray.forEach(componentAndHistory => {
                             let aircraftComponentHistoryRequest : AircraftComponentRequest.Historyrequest = new AircraftComponentRequest.Historyrequest();
-                            // If the history record has a link and that it is not the same as the actaul component,
-                            // set the historyUri
-                            aircraftComponentHistoryRequest.historyUri =
-                                componentAndHistory._links && componentAndHistory._links.self.href !== aircraftComponentRequest.componentUri ? componentAndHistory._links.self.href : null;
+                            // If the history record has a link and is the same as the actaul component, set it to null
+                            // aircraftComponentHistoryRequest.historyUri =
+                            //     componentAndHistory._links && componentAndHistory._links.self.href === aircraftComponentRequest.componentUri ? null : componentAndHistory._links.self.href;
+                            if (componentAndHistory._links) {
+                                if (componentAndHistory._links.self.href === aircraftComponentRequest.componentUri) {
+                                    aircraftComponentHistoryRequest.historyUri = null;
+                                } else if (componentAndHistory._links.self.href.startsWith(this.tempAircraftComponentHistorySelfHrefPrefix)) {
+                                    aircraftComponentHistoryRequest.historyUri = null;
+                                }
+                            }
                             aircraftComponentHistoryRequest.name = componentAndHistory.name;
                             aircraftComponentHistoryRequest.description = componentAndHistory.description;
                             aircraftComponentHistoryRequest.workPerformed = componentAndHistory.workPerformed;
