@@ -36,7 +36,7 @@ export class MenuComponent implements OnInit {
         {id: 'acMaint', label: 'A/C Maint',
             items: [
                 { id: 'part', label: 'Part', routerLink: 'genericCrud/part', routerLinkActiveOptions: { exact: true }},
-                { id: 'aircraftComponent2', label: 'Component2', routerLink: 'aircraftComponent2', routerLinkActiveOptions: { exact: true }},
+                { id: 'aircraftComponent2', label: 'Component', routerLink: 'aircraftComponent2', routerLinkActiveOptions: { exact: true }},
             ]
         },
         {id: 'security', label: 'Security',
