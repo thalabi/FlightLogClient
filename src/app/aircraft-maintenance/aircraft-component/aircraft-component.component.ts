@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GenericEntityService } from '../../service/generic-entity.service';
-import { AircraftComponentService } from '../../service/aircraft-component.service';
+import { AircraftComponentService } from '../service/aircraft-component.service';
 import { MyMessageService } from '../../message/mymessage.service';
 import { SessionDataService } from '../../service/session-data.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';

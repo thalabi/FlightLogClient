@@ -37,10 +37,8 @@ import { ChangePasswordComponent } from './security/change-password/change-passw
 import { PasswordMaskPipe } from './util/password-mask-pipe';
 import { CopyUserComponent } from './security/copy-user/copy-user.component';
 import { _404Component } from './404.component';
-import { ComponentService } from './service/component.service';
 import { HttpErrorInterceptor } from './http-error-interceptor';
-import { AircraftComponentService } from './service/aircraft-component.service';
-import { AircraftComponentComponent } from './aircraft-maintenance/aircraft-component/aircraft-component.component';
+import { AircraftMaintenanceModule } from './aircraft-maintenance/aircraft-maintenance.module';
 
 @NgModule({
   declarations: [
@@ -61,19 +59,19 @@ import { AircraftComponentComponent } from './aircraft-maintenance/aircraft-comp
     ChangePasswordComponent,
     PasswordMaskPipe,
     CopyUserComponent,
-    AircraftComponentComponent
   ],
   imports: [
     BrowserModule,
-    FormsModule,
-    ReactiveFormsModule,
+    FormsModule, ReactiveFormsModule,
     HttpClientModule,
 
-    BrowserAnimationsModule, TableModule, ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, TooltipModule, ProgressSpinnerModule, ToggleButtonModule, MessageModule, MessagesModule, OverlayPanelModule, CheckboxModule, PickListModule, ProgressBarModule, InputSwitchModule, RadioButtonModule,
+    BrowserAnimationsModule, TableModule, ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, TooltipModule, ProgressSpinnerModule, ToggleButtonModule, MessageModule, OverlayPanelModule, CheckboxModule, PickListModule, ProgressBarModule, InputSwitchModule, RadioButtonModule,
 
     DeviceDetectorModule.forRoot(),
 
-    AppRoutingModule
+    AppRoutingModule,
+
+    AircraftMaintenanceModule
   ],
   providers: [
         AppInfoService,
@@ -84,8 +82,6 @@ import { AircraftComponentComponent } from './aircraft-maintenance/aircraft-comp
         ConfigService,
         MyMessageService,
         AuthGuard,
-        ComponentService,
-        AircraftComponentService,
         { provide: APP_INITIALIZER, useFactory: configServiceLoadConfig, deps: [ConfigService], multi: true },
         { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy},
         { provide: ErrorHandler, useClass: CustomErrorHandler }, // overrride default error handler

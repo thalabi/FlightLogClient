@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 
 import { catchError, map } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { ConfigService } from '../config/config.service';
-import { ApplicationProperties } from '../config/application.properties';
-import { IGenericEntity } from '../domain/i-gerneric-entity';
-import { FlightLogServiceService } from './flight-log-service.service';
+import { ConfigService } from '../../config/config.service';
+import { ApplicationProperties } from '../../config/application.properties';
+import { IGenericEntity } from '../../domain/i-gerneric-entity';
+import { FlightLogServiceService } from '../../service/flight-log-service.service';
 import { Observable } from 'rxjs';
-import { SessionDataService } from './session-data.service';
-import { AircraftComponentListResponse } from '../response/aircraft-component-list-response';
-import { AircraftComponentRequest } from '../domain/aircraft-component-request';
+import { SessionDataService } from '../../service/session-data.service';
+import { AircraftComponentListResponse } from '../../response/aircraft-component-list-response';
+import { AircraftComponentRequest } from '../../domain/aircraft-component-request';
 
 @Injectable()
 export class AircraftComponentService {
