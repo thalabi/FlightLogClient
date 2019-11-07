@@ -19,7 +19,7 @@ import { AircraftComponentService } from './service/aircraft-component.service';
     ],
     declarations: [AircraftComponentComponent, ],
     exports: [
-        AircraftComponentComponent
+        //AircraftComponentComponent
     ]
 })
 export class AircraftMaintenanceModule { }
