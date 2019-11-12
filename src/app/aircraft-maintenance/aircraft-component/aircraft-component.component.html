@@ -204,8 +204,17 @@
                 <label for="part">Part</label>
             </div>
             <div class="p-col-8">
-                <p-dropdown id="part" [options]="partRowArray" formControlName="part" optionLabel="name" placeholder="Select part" [style]="{'width':'13rem'}" appendTo="body">
-                </p-dropdown>
+                <!-- <p-dropdown id="part" [options]="partRowArray" formControlName="part" optionLabel="name" placeholder="Select part" [style]="{'width':'13rem'}" appendTo="body">
+                </p-dropdown> -->
+                <p-autoComplete formControlName="part" [suggestions]="filteredParts" (completeMethod)="filterParts($event)" field="name"
+                    [minLength]="1" placeholder="Select part" [dropdown]="true">
+                    <ng-template let-part pTemplate="item">
+                            {{part.name}}
+                        <!-- <div class="ui-helper-clearfix" style="border-bottom:1px solid #D5D5D5">
+                            <div style="font-size:18px;float:right;margin:10px 10px 0 0">{{part.name}}</div>
+                        </div> -->
+                    </ng-template>
+                </p-autoComplete>
             </div>
             <div class="p-col-4">
                 <label for="workPerformed">Work Prfrmd</label>

@@ -30,6 +30,7 @@ export class AircraftComponentComponent implements OnInit {
     readonly SORT_COLUMNS: Array<string> = ['name'];
 
     partRowArray: Array<IGenericEntity>;
+    filteredParts: Array<IGenericEntity>;
     selectedPartRow: IGenericEntity;
 
     componentRowArray: Array<AircraftComponent>;
@@ -542,6 +543,16 @@ export class AircraftComponentComponent implements OnInit {
         this.enableFormControls(false);
     }
 
+    filterParts(event) {
+        this.filteredParts = [];
+        for (let i = 0; i < this.partRowArray.length; i++) {
+            let name = this.partRowArray[i].name;
+            // if (name.toLowerCase().indexOf(event.query.toLowerCase()) == 0) {
+            if (name.toLowerCase().startsWith(event.query.toLowerCase())) {
+                    this.filteredParts.push(this.partRowArray[i]);
+            }
+        }
+    }
     private afterCrud() {
         this.fetchPage(this.savedLazyLoadEvent.first, this.savedLazyLoadEvent.rows,
             ComponentHelper.buildSearchString(this.savedLazyLoadEvent, ['name', 'description', 'part.name', 'workPerformed', 'datePerformed', 'hoursPerformed', 'dateDue', 'hoursDue']),
