@@ -13,8 +13,16 @@
 :host ::ng-deep .ui-inputtext {
     padding: 0;
 }
+:host ::ng-deep .ui-autocomplete .ui-autocomplete-input {
+    padding: 0;
+}
+:host ::ng-deep .ui-button.ui-button-icon-only .ui-button-text {
+    padding: 0;
+}
+
 .underline-solid {
     text-decoration-line: underline;
     text-decoration-style: solid;
     text-decoration-color: blue;
 }
+
