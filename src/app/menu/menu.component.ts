@@ -4,6 +4,8 @@ import { SessionDataService } from '../service/session-data.service';
 import { User } from '../security/user';
 import { PermissionEnum } from '../security/permission-enum';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import { CustomMenuItem } from './custom-menu-item';
+import { MenuItems } from './menu-items';
 
 @Component({
     selector: 'app-menu',
@@ -14,45 +16,8 @@ export class MenuComponent implements OnInit {
 
     user: User;
 
-    menuModel: MenuItem[] = [
-        {id: 'home', label: 'Log',   routerLink: 'flightLogTable'},
-        {id: 'summary', label: 'Summary',
-            items: [
-                { label: 'Monthly Report', routerLink: 'flightLogMonthlyTotalVTable', routerLinkActiveOptions: { exact: true }},
-                { label: 'Yearly Report', routerLink: 'flightLogYearlyTotalVTable', routerLinkActiveOptions: { exact: true }},
-                { label: 'Last X Days Report', routerLink: 'flightLogLastXDaysTotalVTableComponent', routerLinkActiveOptions: { exact: true }},
-            ]
-        },
-        {id: 'misc', label: 'Misc',
-            items: [
-                { id: 'airport', label: 'Airport', routerLink: 'genericCrud/airport', routerLinkActiveOptions: { exact: true }},
-                { id: 'make_model', label: 'Make & Model', routerLink: 'genericCrud/makeModel', routerLinkActiveOptions: { exact: true }},
-                { id: 'pilot', label: 'Pilot/Passenger', routerLink: 'genericCrud/pilot', routerLinkActiveOptions: { exact: true }},
-                { id: 'registration', label: 'Registration', routerLink: 'genericCrud/registration', routerLinkActiveOptions: { exact: true }},
-                { id: 'significant_event', label: 'Significant Event', routerLink: 'genericCrud/significantEvent', routerLinkActiveOptions: { exact: true }},
-            ]
-        },
-        {id: 'jobs', label: 'Jobs', routerLink: 'jobLauncher'},
-        {id: 'acMaint', label: 'A/C Maint',
-            items: [
-                { id: 'part', label: 'Part', routerLink: 'genericCrud/part', routerLinkActiveOptions: { exact: true }},
-                { id: 'aircraftComponent2', label: 'Component', routerLink: 'aircraftComponent2', routerLinkActiveOptions: { exact: true }},
-            ]
-        },
-        {id: 'security', label: 'Security',
-            items: [
-                { id: 'user', label: 'User', routerLink: 'genericCrud/user', routerLinkActiveOptions: { exact: true }},
-                { id: 'group', label: 'Group', routerLink: 'genericCrud/group', routerLinkActiveOptions: { exact: true }},
-                { id: 'copy_user', label: 'Copy User', routerLink: 'copyUser', routerLinkActiveOptions: { exact: true }},
-            ]
-        },
-        {id: 'logout', icon: 'pi pi-fw pi-cog',
-            items: [
-                { label: 'Change Password', routerLink: 'changePassword', routerLinkActiveOptions: { exact: true }},
-                { label: 'Logout', routerLink: 'login', routerLinkActiveOptions: { exact: true }},
-            ]
-        },
-    ];
+    menuItems: MenuItems = new MenuItems();
+    menuModel: Array<CustomMenuItem> = this.menuItems.menuModel;
 
     isDesktop: boolean;
 
@@ -77,7 +42,7 @@ export class MenuComponent implements OnInit {
     // show the menu item and submenu item depending the user's permissions
     public showMenuItems(show: boolean): void {
         if (show) {
-            this.findMenuItem(this.menuModel, 'home').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.FLIGHT_LOG_READ, PermissionEnum.FLIGHT_LOG_WRITE);
+            this.findMenuItem(this.menuModel, 'flightLogTable').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.FLIGHT_LOG_READ, PermissionEnum.FLIGHT_LOG_WRITE);
             this.findMenuItem(this.menuModel, 'summary').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.SUMMARY);
             
             this.findMenuItem(this.menuModel, 'misc').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.AIRPORT_READ, PermissionEnum.MAKE_MODEL_READ, PermissionEnum.PILOT_READ, PermissionEnum.REGISTRATION_READ, PermissionEnum.SIGNIFICANT_EVENT_READ);
@@ -91,7 +56,7 @@ export class MenuComponent implements OnInit {
 
             this.findMenuItem(this.menuModel, 'acMaint').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.PART_READ, PermissionEnum.PART_WRITE, PermissionEnum.COMPONENT_READ, PermissionEnum.COMPONENT_WRITE);
             this.findMenuItem(this.menuModel, 'part').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.PART_READ, PermissionEnum.PART_WRITE);
-            this.findMenuItem(this.menuModel, 'aircraftComponent2').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.COMPONENT_READ, PermissionEnum.COMPONENT_WRITE);
+            this.findMenuItem(this.menuModel, 'aircraftComponent').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.COMPONENT_READ, PermissionEnum.COMPONENT_WRITE);
 
             this.findMenuItem(this.menuModel, 'security').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.USER_READ, PermissionEnum.GROUP_READ);
             this.findMenuItem(this.menuModel, 'user').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.USER_READ);
@@ -101,7 +66,7 @@ export class MenuComponent implements OnInit {
             
             this.findMenuItem(this.menuModel, 'logout').visible = true;
         } else {
-            this.findMenuItem(this.menuModel, 'home').visible = false;
+            this.findMenuItem(this.menuModel, 'flightLogTable').visible = false;
             this.findMenuItem(this.menuModel, PermissionEnum.SUMMARY).visible = false;
             this.findMenuItem(this.menuModel, 'misc').visible = false;
             this.findMenuItem(this.menuModel, 'jobs').visible = false;

@@ -13,7 +13,6 @@ import { SessionDataService } from '../service/session-data.service';
 })
 export class AuthenticationService {
 
-    user: User;
     isAuthenticated: boolean = false;
 
     serviceUrl: string;
@@ -33,6 +32,7 @@ export class AuthenticationService {
         return this.httpClient.post<User>(this.serviceUrl + '/authenticationController/authenticate', loginRequest,this.httpOptions)
             .pipe(
                 map((user: User) => {
+                    console.log('user', user);
                     this.isAuthenticated = true;
                     console.log('this.isAuthenticated', this.isAuthenticated);
                     return user;

@@ -12,9 +12,11 @@ import { ChangePasswordComponent } from './security/change-password/change-passw
 import { CopyUserComponent } from './security/copy-user/copy-user.component';
 import { _404Component } from './404.component';
 import { AircraftComponentComponent } from './aircraft-maintenance/aircraft-component/aircraft-component.component';
+import { HomeComponent } from './home/home.component';
 
 const routes: Routes = [
-    { path: '', redirectTo: '/flightLogTable', pathMatch: 'full', canActivate: [AuthGuard] },
+    { path: '', redirectTo: 'home', pathMatch: 'full', canActivate: [AuthGuard] },
+    { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
     { path: 'flightLogTable', component: FlightLogTableComponent, canActivate: [AuthGuard] },
     { path: 'flightLogMonthlyTotalVTable', component: FlightLogMonthlyTotalVTableComponent, canActivate: [AuthGuard] },
     { path: 'flightLogYearlyTotalVTable', component: FlightLogYearlyTotalVTableComponent, canActivate: [AuthGuard] },
@@ -23,7 +25,7 @@ const routes: Routes = [
     { path: 'genericCrud/:tableName', component: GenericCrudComponent, canActivate: [AuthGuard] },
     { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
     { path: 'copyUser', component: CopyUserComponent, canActivate: [AuthGuard] },
-    { path: 'aircraftComponent2', component: AircraftComponentComponent, canActivate: [AuthGuard] },
+    { path: 'aircraftComponent', component: AircraftComponentComponent, canActivate: [AuthGuard] },
     
     { path: 'login', component: LoginComponent },
     { path: '**', component: _404Component },
