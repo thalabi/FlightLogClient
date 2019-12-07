@@ -33,13 +33,13 @@ import { MessageComponent } from './message/message.component';
 import { SyncButtonComponent } from './sync-button/sync-button.component';
 import { LoginComponent } from './security/login/login.component';
 import { AuthGuard } from './security/auth.guard';
-//import { ChangePasswordComponent } from './security/change-password/change-password.component';
 import { PasswordMaskPipe } from './util/password-mask-pipe';
 import { CopyUserComponent } from './security/copy-user/copy-user.component';
 import { _404Component } from './404.component';
 import { HttpErrorInterceptor } from './http-error-interceptor';
 import { AircraftMaintenanceModule } from './aircraft-maintenance/aircraft-maintenance.module';
 import { SecurityModule } from './security/security.module';
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
@@ -56,10 +56,8 @@ import { SecurityModule } from './security/security.module';
     GenericCrudComponent,
     MessageComponent,
     SyncButtonComponent,
-    //LoginComponent,
-    //ChangePasswordComponent,
     PasswordMaskPipe,
-    //CopyUserComponent,
+    HomeComponent,
   ],
   imports: [
     BrowserModule,
@@ -84,7 +82,6 @@ import { SecurityModule } from './security/security.module';
         ReplicationService,
         ConfigService,
         MyMessageService,
-        //AuthGuard,
         { provide: APP_INITIALIZER, useFactory: configServiceLoadConfig, deps: [ConfigService], multi: true },
         { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy},
         { provide: ErrorHandler, useClass: CustomErrorHandler }, // overrride default error handler
