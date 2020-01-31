@@ -9,7 +9,6 @@ export class RegexValidatorDirective implements Validator {
     @Input('regexValidator') regexValidator: string;
 
     constructor() {
-        // console.log('RegexValidatorDirective')
     }
 
     validate(control: AbstractControl): {[key: string]: any} {
