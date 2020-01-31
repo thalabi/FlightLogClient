@@ -10,7 +10,6 @@ import { AppComponent } from './app.component';
 import { FlightLogTableComponent } from './flight-log-table/flight-log-table.component';
 import { FlightLogServiceService } from './service/flight-log-service.service';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { RegexValidatorDirective } from './regex-validator.directive';
 import { DeviceDetectorModule } from 'ngx-device-detector';
 import { MenuComponent } from './menu/menu.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -40,13 +39,13 @@ import { HttpErrorInterceptor } from './http-error-interceptor';
 import { AircraftMaintenanceModule } from './aircraft-maintenance/aircraft-maintenance.module';
 import { SecurityModule } from './security/security.module';
 import { HomeComponent } from './home/home.component';
+import { ValidatorModule } from './validator/validator.module';
 
 @NgModule({
   declarations: [
     AppComponent,
     _404Component,
     FlightLogTableComponent,
-    RegexValidatorDirective,
     MenuComponent,
     AbbreviateComponent,
     FlightLogMonthlyTotalVTableComponent,
@@ -70,6 +69,7 @@ import { HomeComponent } from './home/home.component';
 
     AppRoutingModule,
 
+    ValidatorModule,
     AircraftMaintenanceModule,
 
     SecurityModule
