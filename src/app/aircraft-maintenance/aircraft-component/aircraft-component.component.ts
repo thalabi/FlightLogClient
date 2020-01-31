@@ -362,7 +362,7 @@ export class AircraftComponentComponent implements OnInit {
         let aircraftComponentRequest : AircraftComponentRequest.Component = new AircraftComponentRequest.Component();
         switch (this.crudMode) {
             case CrudEnum.ADD:
-                aircraftComponentRequest.name = this.componentForm.controls.name.value;
+                aircraftComponentRequest.name = this.componentForm.controls.name.value.trim();
                 aircraftComponentRequest.description = this.componentForm.controls.description.value;
                 aircraftComponentRequest.workPerformed = this.componentForm.controls.workPerformed.value;
                 aircraftComponentRequest.datePerformed = this.componentForm.controls.datePerformed.value;
@@ -393,7 +393,7 @@ export class AircraftComponentComponent implements OnInit {
                     case CrudEnum.ADD: // Add component history record to history array
                         let tempHrefValue = this.tempAircraftComponentHistorySelfHrefPrefix + "_" + ++this.tempAircraftComponentHistorySelfHrefSeq;
                         component._links = {self: {href: tempHrefValue}};
-                        component.name = this.componentForm.controls.name.value;
+                        component.name = this.componentForm.controls.name.value.trim();
                         component.description = this.componentForm.controls.description.value;
                         component.workPerformed = this.componentForm.controls.workPerformed.value;
                         component.datePerformed = this.componentForm.controls.datePerformed.value;
@@ -417,7 +417,7 @@ export class AircraftComponentComponent implements OnInit {
                         let aircraftComponentToUpdate = this.componentAndHistoryArray.find(aircraftComponent =>
                             aircraftComponent._links.self.href === this.selectedComponentAndHistoryRow._links.self.href);
                         console.log(aircraftComponentToUpdate);
-                        aircraftComponentToUpdate.name = this.componentForm.controls.name.value;
+                        aircraftComponentToUpdate.name = this.componentForm.controls.name.value.trim();
                         aircraftComponentToUpdate.description = this.componentForm.controls.description.value;
                         aircraftComponentToUpdate.workPerformed = this.componentForm.controls.workPerformed.value;
                         aircraftComponentToUpdate.datePerformed = this.componentForm.controls.datePerformed.value;
