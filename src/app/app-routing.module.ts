@@ -13,6 +13,7 @@ import { CopyUserComponent } from './security/copy-user/copy-user.component';
 import { _404Component } from './404.component';
 import { AircraftComponentComponent } from './aircraft-maintenance/aircraft-component/aircraft-component.component';
 import { HomeComponent } from './home/home.component';
+import { AircraftHistoryPrintComponentComponent } from './aircraft-maintenance/aircraft-history-print-component/aircraft-history-print-component.component';
 
 const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full', canActivate: [AuthGuard] },
@@ -26,6 +27,7 @@ const routes: Routes = [
     { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
     { path: 'copyUser', component: CopyUserComponent, canActivate: [AuthGuard] },
     { path: 'aircraftComponent', component: AircraftComponentComponent, canActivate: [AuthGuard] },
+    { path: 'aircraftHistoryPrintComponentComponent', component: AircraftHistoryPrintComponentComponent, canActivate: [AuthGuard] },
     
     { path: 'login', component: LoginComponent },
     { path: '**', component: _404Component },
