@@ -21,6 +21,6 @@
                 <div [hidden]="password.valid || password.pristine" class="red-font">Password is required</div>
             </div>
         </div>
-        <button pButton type="submit" label="Login" *ngIf="!isPprocessingRequest"></button>
+        <button pButton type="submit" label="Login" [disabled]="!loginForm.valid" *ngIf="!isPprocessingRequest"></button>
         <p-progressSpinner *ngIf="isPprocessingRequest"></p-progressSpinner>
     </form>
