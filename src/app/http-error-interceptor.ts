@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpResponse, HttpErrorResponse } from "@angular/common/http";
-import { Observable, throwError, empty } from "rxjs";
+import { Observable, throwError } from "rxjs";
 import { catchError, map } from "rxjs/operators";
 import { MyMessageService } from "./message/mymessage.service";
 
@@ -22,20 +22,24 @@ export class HttpErrorInterceptor implements HttpInterceptor {
                 return httpEvent;
             }),
             catchError((httpErrorResponse: HttpErrorResponse) => {
-                // let data = {};
-                // data = {
-                //     reason: error && error.error.reason ? error.error.reason : '',
-                //     status: error.status
-                // };
-                // //this.errorDialogService.openDialog(data);
-                console.error(httpErrorResponse);
-                this.messageService.error('From HttpErrorInterceptor: '+httpErrorResponse.error.error, 'From HttpErrorInterceptor: '+JSON.stringify(httpErrorResponse.error));
-                // if (httpErrorResponse.status !== 200) {
-
-                // }
-                return empty();
-                //return throwError(httpErrorResponse);
+                console.error('httpErrorResponse: %o', httpErrorResponse);
+                let errorMessage: string;
+                if (httpErrorResponse.error instanceof ErrorEvent) {
+                    // client-side error
+                    errorMessage = httpErrorResponse.error.message;
+                    console.error('Client error: [%s]', errorMessage);
+                } else {
+                    // server-side error
+                    if (httpErrorResponse.status === 0) { // status = 0, is net::ERR_CONNECTION_REFUSED
+                        errorMessage = 'Error status code: ' + httpErrorResponse.status + ', message: Connection problem';
+                    } else {
+                        errorMessage = 'Error status code: ' + httpErrorResponse.status + ', message: ' + httpErrorResponse.error.error;
+                    }
+                    console.error('Server error', errorMessage);
+                }
+                this.messageService.error(errorMessage);
+                return throwError(httpErrorResponse);
             })
-            );
-        }
+        );
+    }
 }
