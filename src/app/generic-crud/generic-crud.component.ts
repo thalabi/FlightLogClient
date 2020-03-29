@@ -299,22 +299,11 @@ export class GenericCrudComponent implements OnInit {
                 // this.rowArray = page.totalElements ? rowResponse._embedded[this.tableName+'s'] : [];
                 // console.log('this.rowArray', this.rowArray);
                 this.links = rowResponse._links;
-        },
-        complete: () => {
-            this.loadingFlag = false;
-        },
-        error: error => {
-            this.loadingFlag = false;
-            this.messageService.error('summary', error);
-            console.error(error);
-            let message: {summaryMessage: string, detailMessage: string} = CustomErrorHandler.getHttpErrorResponseMessages(error);
-            console.log(message.summaryMessage, message.detailMessage);
-            this.messageService.error(message.summaryMessage, message.detailMessage);
-            this.messageService.error('summary', 'detail');
-            // TODO uncomment later
-            //this.messageService.clear();
-            //this.messageService.error(error);
-        }});
+            },
+            complete: () => {
+                this.loadingFlag = false;
+            }
+        });
     }
 
     fetchAssociations() {
@@ -415,6 +404,7 @@ export class GenericCrudComponent implements OnInit {
         this.onMoveToTarget();
     }
     onMoveToTarget() {
+        console.log('this.selectedAssociationArray', this.selectedAssociationArray);
         ComponentHelper.sortGenericEntity(this.selectedAssociationArray, this.formAttributes.associations[0].orderByColumns);
     }
     onMoveAllToSource() {
