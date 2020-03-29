@@ -26,7 +26,7 @@ import { CustomRouteReuseStrategy } from './util/CustomRouteReuseStrategy';
 import { RouteReuseStrategy } from '@angular/router';
 import { AppInfoService } from './service/appInfo.service';
 import { ReplicationService } from './service/replication.service';
-import { CustomErrorHandler } from './custom-error-handler';
+//import { CustomErrorHandler } from './custom-error-handler';
 import { MyMessageService } from './message/mymessage.service';
 import { MessageComponent } from './message/message.component';
 import { SyncButtonComponent } from './sync-button/sync-button.component';
@@ -84,7 +84,7 @@ import { ValidatorModule } from './validator/validator.module';
         MyMessageService,
         { provide: APP_INITIALIZER, useFactory: configServiceLoadConfig, deps: [ConfigService], multi: true },
         { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy},
-        { provide: ErrorHandler, useClass: CustomErrorHandler }, // overrride default error handler
+        //{ provide: ErrorHandler, useClass: CustomErrorHandler }, // overrride default error handler
         { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true }
       ],
   bootstrap: [AppComponent]

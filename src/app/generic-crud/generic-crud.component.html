@@ -103,8 +103,9 @@
                     [targetStyle]="{'height':'20em'}">
                     <ng-template let-association pTemplate="item">
                         <div class="ui-helper-clearfix">
-                            <div style="font-size:14px;float:left;margin:0 0 0 0">
-                                <span [pTooltip]="association.description" tooltipPosition="top">{{association.name}}</span>
+                            <!-- <div style="font-size:14px;float:left;margin:0 0 0 0"> -->
+                            <div>
+                                    <span [pTooltip]="association.description" tooltipPosition="top">{{association.name}}</span>
                             </div>
                         </div>
                     </ng-template>

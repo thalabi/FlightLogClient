@@ -11,7 +11,8 @@ import { Abbreviate } from '../abbreviate/abbreviate';
     template: `
         <div *ngFor="let message of messageArray" style="margin-top: 0.3rem;">
             <p-message [severity]="message.severity" [text]="abbreviateMessage(message.summary)" [pTooltip]="message.detail" tooltipPosition="right"></p-message>
-        </div><button *ngIf="messageArray && messageArray.length > 0" pButton type="button" (click)="onClearMessages($event)" icon="pi pi-times"></button>
+        </div>
+        <button *ngIf="messageArray && messageArray.length > 0" pButton type="button" label="Clear message(s)" (click)="onClearMessages($event)"></button>
     `,
     styles: ['::ng-deep .ui-tooltip {max-width: 50rem;}']
 })

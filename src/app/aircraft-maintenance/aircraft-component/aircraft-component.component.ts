@@ -165,7 +165,8 @@ export class AircraftComponentComponent implements OnInit {
         },
         complete: () => {
             this.loadingFlag = false;
-        },
+        }
+        /*,
         error: error => {
             this.loadingFlag = false;
             this.messageService.error('summary', error);
@@ -177,7 +178,10 @@ export class AircraftComponentComponent implements OnInit {
             // TODO uncomment later
             //this.messageService.clear();
             //this.messageService.error(error);
-        }});
+        }
+        */
+        });
+        
     }
 
     onGoToPage() {
