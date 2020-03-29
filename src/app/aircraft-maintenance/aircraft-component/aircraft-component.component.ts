@@ -12,7 +12,6 @@ import { AircraftComponent } from '../../domain/aircraft-component';
 import { HalResponsePage } from '../../hal/hal-response-page';
 import { LazyLoadEvent } from 'primeng/primeng';
 import { HalResponseLinks } from '../../hal/hal-response-links';
-import { CustomErrorHandler } from '../../custom-error-handler';
 import { CrudEnum } from '../../crud-enum';
 import { AircraftComponentRequest } from '../../domain/aircraft-component-request';
 
