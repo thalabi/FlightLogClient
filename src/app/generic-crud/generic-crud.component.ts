@@ -16,7 +16,6 @@ import { HalResponsePage } from '../hal/hal-response-page';
 import { ComponentHelper } from '../util/ComponentHelper';
 import { GenericEntityService } from '../service/generic-entity.service';
 import { MyMessageService } from '../message/mymessage.service';
-import { CustomErrorHandler } from '../custom-error-handler';
 import { Observable } from 'rxjs';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/concatMap';
