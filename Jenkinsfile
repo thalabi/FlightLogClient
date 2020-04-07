@@ -67,7 +67,7 @@ pipeline {
                 fi
                 echo "REPOSITORY = ${REPOSITORY}"
 
-                mvn deploy:deploy-file -DgroupId=com.kerneldc -DartifactId=FlightLogClient -Dversion=${BRANCH_NAME} -DgeneratePom=true -Dpackaging=jar -DrepositoryId=kerneldc-nexus -Durl=http://localhost:8081/repository/maven-${REPOSITORY} -Dfile=FlightLogClient-${BRANCH_NAME}.jar
+                mvn deploy:deploy-file -DgroupId=com.kerneldc -DartifactId=FlightLogClient -Dversion=${BRANCH_NAME} -DgeneratePom=true -Dpackaging=jar -DrepositoryId=kerneldc-nexus -Durl=http://localhost:8081/repository/${REPOSITORY} -Dfile=FlightLogClient-${BRANCH_NAME}.jar
                 '''
             }
         }
