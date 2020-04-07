@@ -36,23 +36,30 @@ pipeline {
                 cd ../..
                 pwd
                 npm install && ng build --prod --base-href=/FlightLog/
-                jar -cvf FlightLogClient.gar dist
+                jar -cvf FlightLogClient.jar dist
                 '''
             }
 		}
 		
-        // stage ('Deploy') {
-		// 	when {
-		// 	    not {
-		// 	        branch 'master'
-		// 	    }
-		// 	}
-		// 	steps {
-        //         sh '''
-        //         cd FlightLogServer
-        //         mvn deploy -Dmaven.test.skip=true
-        //         '''
-        //     }
-        // }
+        stage ('Package') {
+            steps {
+                sh '''
+                jar -cvf FlightLogClient-1.2.0-SNAPSHOT.jar dist
+                '''
+            }
+		}
+
+        stage ('Deploy') {
+			when {
+			    not {
+			        branch 'master'
+			    }
+			}
+			steps {
+                sh '''
+                mvn deploy:deploy-file -DgroupId=com.kerneldc -DartifactId=FlightLogClient -Dversion=1.2.0-SNAPSHOT -DgeneratePom=true -Dpackaging=jar -DrepositoryId=kerneldc-nexus -Durl=http://kerneldc.com:8081/repository/maven-snapshots -Dfile=FlightLogClient-1.2.0-SNAPSHOT.jar
+                '''
+            }
+        }
     }
 }
