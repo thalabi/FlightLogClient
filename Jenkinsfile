@@ -32,6 +32,7 @@ pipeline {
                 sed -i "s/@buildTimestamp@/$DATE/" environment.prod.ts
                 ls -l
                 cat *
+                npm install && ng build --prod --base-href=/FlightLog/
                 '''
             }
 		}
