@@ -10,7 +10,6 @@ pipeline {
                 echo "Branch is ${BRANCH_NAME} ..."
                 sh '''
                 echo "PATH = ${PATH}"
-                echo "M2_HOME = ${M2_HOME}"
                 echo "BRANCH_NAME = ${BRANCH_NAME}"
                 java -version
                 '''
@@ -42,6 +41,11 @@ pipeline {
 		}
 		
         stage ('Package') {
+			when {
+			    not {
+			        branch 'master'
+			    }
+			}
             steps {
                 sh '''
                 jar -cvf FlightLogClient-${BRANCH_NAME}.jar dist
@@ -57,7 +61,13 @@ pipeline {
 			}
 			steps {
                 sh '''
-                mvn deploy:deploy-file -DgroupId=com.kerneldc -DartifactId=FlightLogClient -Dversion=${BRANCH_NAME} -DgeneratePom=true -Dpackaging=jar -DrepositoryId=kerneldc-nexus -Durl=http://localhost:8081/repository/maven-snapshots -Dfile=FlightLogClient-${BRANCH_NAME}.jar
+                REPOSITORY="maven-releases"
+                if [[ $BRANCH_NAME == *"SNAPSHOT"* ]]; then
+                    REPOSITORY="maven-snapshots"
+                fi
+                echo "REPOSITORY = ${REPOSITORY}"
+
+                mvn deploy:deploy-file -DgroupId=com.kerneldc -DartifactId=FlightLogClient -Dversion=${BRANCH_NAME} -DgeneratePom=true -Dpackaging=jar -DrepositoryId=kerneldc-nexus -Durl=http://localhost:8081/repository/maven-${REPOSITORY} -Dfile=FlightLogClient-${BRANCH_NAME}.jar
                 '''
             }
         }
