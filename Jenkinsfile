@@ -26,8 +26,8 @@ pipeline {
                 cd src/environments
                 ls -l
                 cat *
-                #DATE=`date -u '+%Y-%m-%d %H:%M UTC'`
-                #echo $DATE
+                DATE=`date -u '+%Y-%m-%d %H:%M UTC'`
+                echo $DATE
                 #sed -i "s/@buildTimestamp@/$DATE/" environment.prod.ts
                 sed -i "s/@buildTimestamp@/${BRANCH_NAME}_${DATE}/" environment.prod.ts
                 ls -l
