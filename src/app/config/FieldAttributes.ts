@@ -6,7 +6,7 @@ export class FieldAttributes {
     columnName: string;
     dataType: DataTypeEnum;
     mandatory: boolean;
-    orderNumber?: number; // it appears that this property is not used. TODO remove
+    //orderNumber?: number; // it appears that this property is not used. TODO remove
     header: string;
     uiComponentType: UiComponentEnum;
     pipe?: string;
