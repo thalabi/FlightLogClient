@@ -3,7 +3,8 @@
     <p-tabView (onChange)="onTabChange($event)">
         <p-tabPanel header="Date Performed" [selected]="true">
             <p-fieldset legend="All Components">
-                <button pButton type="button" class="print-button" (click)="onDownloadAllPdf()" label="Print all ordered by date performed"></button>
+                <button pButton type="button" class="print-button" (click)="onDownloadAllPdf()"
+                    label="Print all ordered by date performed"></button>
             </p-fieldset>
             <p-fieldset legend="Components Between Dates Performed">
                 <form (ngSubmit)="onDownloadByDatePerformedFilterDateRangePdf()" #printDatePerformedRangeForm="ngForm">
@@ -15,10 +16,9 @@
                         </div>
                         <div class="p-col-2">
                             <p-calendar [(ngModel)]="fromDatePerformed" name="fromDatePerformed" id="fromDatePerformed"
-                            #fromDatePerformedField="ngModel"
-                            [monthNavigator]="true" showButtonBar="true"
-                            [yearNavigator]="true" yearRange="2000:2050" [dateFormat]="'yy-mm-dd'" [showIcon]="true"
-                            [readonlyInput]="true" [showOnFocus]="false"></p-calendar>
+                                #fromDatePerformedField="ngModel" [monthNavigator]="true" showButtonBar="true"
+                                [yearNavigator]="true" yearRange="1977:2050" [dateFormat]="'yy-mm-dd'" [showIcon]="true"
+                                [readonlyInput]="true" [showOnFocus]="false"></p-calendar>
                         </div>
 
                         <div class="p-col-1">
@@ -26,15 +26,13 @@
                         </div>
                         <div class="p-col-8">
                             <p-calendar [(ngModel)]="toDatePerformed" name="toDatePerformed" id="toDatePerformed"
-                            #toDatePerformedField="ngModel"
-                            [monthNavigator]="true" showButtonBar="true"
-                            [yearNavigator]="true" yearRange="2000:2050" [dateFormat]="'yy-mm-dd'" [showIcon]="true"
-                            [readonlyInput]="true" [showOnFocus]="false"></p-calendar>
+                                #toDatePerformedField="ngModel" [monthNavigator]="true" showButtonBar="true"
+                                [yearNavigator]="true" yearRange="1977:2050" [dateFormat]="'yy-mm-dd'" [showIcon]="true"
+                                [readonlyInput]="true" [showOnFocus]="false"></p-calendar>
                         </div>
 
                         <button pButton type="submit" class="print-button"
-                            label="Print filtered between date performed ordered by date performed"
-                            [disabled]="fromDatePerformedField.pristine || toDatePerformedField.pristine || 
+                            label="Print filtered between date performed ordered by date performed" [disabled]="fromDatePerformedField.pristine || toDatePerformedField.pristine || 
                             fromDatePerformedField.value > toDatePerformedField.value"></button>
 
                     </div>
@@ -44,56 +42,62 @@
 
         <p-tabPanel header="Component">
             <p-fieldset legend="All Components">
-                <button pButton type="button" class="print-button" (click)="onDownloadByComponentNamePdf()" label="Print all ordered by component"></button>
+                <button pButton type="button" class="print-button" (click)="onDownloadByComponentNamePdf()"
+                    label="Print all ordered by component"></button>
             </p-fieldset>
 
             <!-- filterBy="name" -->
             <p-fieldset legend="Selected Components">
                 <div style="width: 50rem;">
-                    <p-pickList [source]="componentNameArray" [target]="selectedComponentNameArray"
-                        [responsive]="true"
-                        filterBy="name"
-                        sourceHeader="Component" targetHeader="Selected Component"
+                    <p-pickList [source]="componentNameArray" [target]="selectedComponentNameArray" [responsive]="true"
+                        filterBy="name" sourceHeader="Component" targetHeader="Selected Component"
                         (onMoveAllToTarget)="onMoveAllToTarget()" (onMoveToTarget)="onMoveToTarget()"
                         (onMoveAllToSource)="onMoveAllToSource()" (onMoveToSource)="onMoveToSource()"
-                        [showSourceControls]="false" [showTargetControls]="false"
-                        [sourceStyle]="{'height':'20em'}" [targetStyle]="{'height':'20em'}">
+                        [showSourceControls]="false" [showTargetControls]="false" [sourceStyle]="{'height':'20em'}"
+                        [targetStyle]="{'height':'20em'}">
                         <ng-template let-componentName pTemplate="item">
                             <!-- <div class="ui-helper-clearfix">
                                 <div style="font-size:14px;float:left;margin:0 0 0 0"> -->
-                                    {{componentName.name}}
-                                <!-- </div>
+                            {{componentName.name}}
+                            <!-- </div>
                             </div> -->
                         </ng-template>
                     </p-pickList>
                 </div>
-        
-                <button pButton type="button" class="print-button" style="margin-top: 0.3rem;" (click)="onDownloadBySelectedComponentNamePdf()" label="Print selected component(s) ordered by component"></button>
+
+                <button pButton type="button" class="print-button" style="margin-top: 0.3rem;"
+                    (click)="onDownloadBySelectedComponentNamePdf()"
+                    label="Print selected component(s) ordered by component"></button>
             </p-fieldset>
         </p-tabPanel>
         <p-tabPanel header="Date Due">
             <p-fieldset legend="All Components">
-                <button pButton type="button" class="print-button" (click)="onDownloadByDateDuePdf()" label="Print all ordered by due date"></button>
+                <button pButton type="button" class="print-button" (click)="onDownloadByDateDuePdf()"
+                    label="Print all ordered by due date"></button>
             </p-fieldset>
             <p-fieldset legend="Components With Upcoming Due Date">
-                <button pButton type="button" class="print-button" (click)="onDownloadByUpcomingDateDue()" label="Print ordered by due date"></button>
+                <button pButton type="button" class="print-button" (click)="onDownloadByUpcomingDateDue()"
+                    label="Print ordered by due date"></button>
             </p-fieldset>
         </p-tabPanel>
         <p-tabPanel header="Hours Due">
             <p-fieldset legend="All Components">
-                <button pButton type="button" class="print-button" (click)="onDownloadByHoursDuePdf()" label="Print all ordered by hours due"></button>
+                <button pButton type="button" class="print-button" (click)="onDownloadByHoursDuePdf()"
+                    label="Print all ordered by hours due"></button>
             </p-fieldset>
             <p-fieldset legend="Components With Hours Due After Latest Hours Performed">
-                <button pButton type="button" class="print-button" (click)="onDownloadByHoursDueAfterLatestHoursPerformedPdf()" label="Print selected ordered by hours due"></button>
+                <button pButton type="button" class="print-button"
+                    (click)="onDownloadByHoursDueAfterLatestHoursPerformedPdf()"
+                    label="Print selected ordered by hours due"></button>
             </p-fieldset>
             <p-fieldset legend="Components With Hours Due After ...">
                 <form (ngSubmit)="onDownloadByHoursDueAfterHoursDuePdf()" #printByHoursDueForm="ngForm">
-                    <input type="text" pInputText name="hoursDue" id="hoursDue" [(ngModel)]="hoursDue" #hoursDueFormValue="ngModel"
-                        regexValidator="^\d*(\.\d{0,1}){0,1}$" required size="8"/>
+                    <input type="text" pInputText name="hoursDue" id="hoursDue" [(ngModel)]="hoursDue"
+                        #hoursDueFormValue="ngModel" regexValidator="^\d*(\.\d{0,1}){0,1}$" required size="8" />
                     <span [hidden]="hoursDueFormValue.valid || hoursDueFormValue.pristine" class="red-font"
                         style="margin-left: 0.3rem;">Invalid value</span>
-                    <button pButton type="submit" class="print-button" label="Print ordered by hours due" style="margin-left: 0.7rem;" 
-                        [disabled]="printByHoursDueForm.invalid"></button>
+                    <button pButton type="submit" class="print-button" label="Print ordered by hours due"
+                        style="margin-left: 0.7rem;" [disabled]="printByHoursDueForm.invalid"></button>
 
                 </form>
             </p-fieldset>
