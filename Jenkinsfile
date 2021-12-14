@@ -35,7 +35,8 @@ pipeline {
                 pwd
                 cd ../..
                 pwd
-                npm install && ng build --prod --base-href=/FlightLog/
+                #npm install && ng build --prod --base-href=/FlightLog/
+                npm install && ng build --prod
                 #jar -cvf FlightLogClient.jar dist
                 '''
             }
