@@ -1,8 +1,8 @@
 pipeline {
     agent any
      tools { 
-    //     maven 'Maven 3.5.2' 
-         jdk 'jdk-17' 
+        maven 'Maven-3.8.4' 
+        jdk 'jdk-17' 
     }
     stages {
         stage ('Initialize') {
@@ -35,8 +35,8 @@ pipeline {
                 pwd
                 cd ../..
                 pwd
-                #npm install && ng build --prod --base-href=/FlightLog/
-                npm install && ng build --prod
+                export PATH=/usr/local/node-v16.13.1-linux-x64/bin/:$PATH
+                npm install && node_modules/.bin/ng build
                 #jar -cvf FlightLogClient.jar dist
                 '''
             }
