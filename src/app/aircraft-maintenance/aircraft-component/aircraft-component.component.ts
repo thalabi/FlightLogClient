@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { GenericEntityService } from '../../service/generic-entity.service';
 import { AircraftComponentService } from '../service/aircraft-component.service';
 import { MyMessageService } from '../../message/mymessage.service';
-import { SessionDataService } from '../../service/session-data.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { MenuComponent } from '../../menu/menu.component';
 import { Constant } from '../../constant';
@@ -14,7 +13,8 @@ import { LazyLoadEvent } from 'primeng/api/lazyloadevent';
 import { HalResponseLinks } from '../../hal/hal-response-links';
 import { CrudEnum } from '../../crud-enum';
 import { AircraftComponentRequest } from '../../domain/aircraft-component-request';
-import { User } from '../../security-old/user';
+import { SessionService } from '../../service/session.service';
+import { PermissionEnum } from '../../menu/permission-enum';
 
 @Component({
     selector: 'app-aircraft-component',
@@ -63,7 +63,7 @@ export class AircraftComponentComponent implements OnInit {
     readonly tempAircraftComponentHistorySelfHrefPrefix: string = 'tempSelfHref';
 
     constructor(private genericEntityService: GenericEntityService, private aircraftComponentService: AircraftComponentService, private messageService: MyMessageService,
-        private sessionDataService: SessionDataService) { }
+        private sessionService: SessionService) { }
 
     ngOnInit() {
         this.messageService.clear();
@@ -72,8 +72,12 @@ export class AircraftComponentComponent implements OnInit {
         this.createForm();
         this.fetchPartTable();
 
-        this.hasWritePermission = MenuComponent.isHolderOfAnyAuthority(
-            this.sessionDataService.user || {} as User, Constant.entityToWritePermissionMap.get(this.COMPONENT_TABLE_NAME) || '');
+        console.log('Constant.entityToWritePermissionMap.get(this.COMPONENT_TABLE_NAME)', Constant.entityToWritePermissionMap.get(this.COMPONENT_TABLE_NAME))
+
+        this.sessionService.userInfo$.subscribe(userInfo => {
+            console.log('userInfo', userInfo)
+            this.hasWritePermission = MenuComponent.isHolderOfAnyRole(userInfo, PermissionEnum.COMPONENT_WRITE);
+        });
     }
 
     createForm() {

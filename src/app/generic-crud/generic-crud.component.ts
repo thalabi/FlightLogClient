@@ -17,14 +17,10 @@ import { ComponentHelper } from '../util/ComponentHelper';
 import { GenericEntityService } from '../service/generic-entity.service';
 import { MyMessageService } from '../message/mymessage.service';
 import { Observable, of } from 'rxjs';
-//import 'rxjs/add/observable/of';
-//import 'rxjs/add/operator/concatMap';
 import { concatMap } from 'rxjs/operators';
 import { IGenericEntityResponse } from '../response/i-generic-entity-response';
-import { SessionDataService } from '../service/session-data.service';
 import { MenuComponent } from '../menu/menu.component';
 import { Constant } from '../constant';
-import { User } from '../security-old/user';
 import { SessionService } from '../service/session.service';
 
 @Component({

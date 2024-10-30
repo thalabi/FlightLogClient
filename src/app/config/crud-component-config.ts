@@ -1,4 +1,3 @@
-import { PermissionEnum } from "../security-old/permission-enum";
 import { UiComponentEnum } from "./UiComponentEnum";
 import { DataTypeEnum } from "./DataTypeEnum";
 import { FormAttributes } from "./FormAttributes";

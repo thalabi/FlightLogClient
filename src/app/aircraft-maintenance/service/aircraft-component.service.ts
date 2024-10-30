@@ -5,21 +5,17 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { IGenericEntity } from '../../domain/i-gerneric-entity';
 import { FlightLogServiceService } from '../../service/flight-log-service.service';
 import { Observable, throwError } from 'rxjs';
-import { SessionDataService } from '../../service/session-data.service';
 import { AircraftComponentListResponse } from '../../response/aircraft-component-list-response';
 import { AircraftComponentRequest } from '../../domain/aircraft-component-request';
-//import { ResponseType } from '@angular/http';
 import { AircraftComponentName } from '../../domain/aircraft-component-name';
 import { environment } from '../../../environments/environment';
-//import { stringify } from 'querystring';
 
 @Injectable()
 export class AircraftComponentService {
     readonly serviceUrl: string;
 
     constructor(
-        private httpClient: HttpClient,
-        private sessionDataService: SessionDataService
+        private httpClient: HttpClient
     ) {
         this.serviceUrl = environment.beRestServiceUrl;
     }
@@ -28,14 +24,14 @@ export class AircraftComponentService {
         console.log('first, size, search', first, size, search)
         let url: string = this.serviceUrl + '/protected/' + tableName + 'Controller/findAll/?page=' + first / size + '&size=' + size + '&search=' + search + '&sort=' + queryOrderByColumns;
         console.log('url', url);
-        return this.httpClient.get<AircraftComponentListResponse>(url, this.getHttpOptions());
+        return this.httpClient.get<AircraftComponentListResponse>(url);
     }
 
 
     addComponent(row: AircraftComponentRequest.Component): Observable<void> {
         let url: string = this.serviceUrl + '/componentController/add';
         console.log('row: ', row);
-        return this.httpClient.post<IGenericEntity>(url, row, this.getHttpOptions()).pipe(
+        return this.httpClient.post<IGenericEntity>(url, row).pipe(
             map((response: any) => {
                 console.log('response', response);
                 return response;
@@ -52,7 +48,7 @@ export class AircraftComponentService {
         // return new Observable();
         let url: string = this.serviceUrl + '/componentController/modifyComponentAndHistory';
         console.log('row: ', row);
-        return this.httpClient.put<IGenericEntity>(url, row, this.getHttpOptions()).pipe(
+        return this.httpClient.put<IGenericEntity>(url, row).pipe(
             map((response: any) => {
                 console.log('response', response);
                 return response;
@@ -66,7 +62,7 @@ export class AircraftComponentService {
     deleteComponent(componentUri: string, deleteHistoryRecords: boolean): Observable<void> {
         let url: string = this.serviceUrl + '/componentController/delete?componentUri=' + componentUri + '&deleteHistoryRecords=' + deleteHistoryRecords;
         console.log('componentUri: ', componentUri);
-        return this.httpClient.delete<IGenericEntity>(url, this.getHttpOptions()).pipe(
+        return this.httpClient.delete<IGenericEntity>(url).pipe(
             map((response: any) => {
                 console.log('response', response);
                 return response;
@@ -178,7 +174,7 @@ export class AircraftComponentService {
         console.log('getComponentNames2');
         let url: string = this.serviceUrl + '/protected/aircraftMaintenancePrintController/getComponentNames';
         console.log('url', url);
-        return this.httpClient.get<Array<AircraftComponentName.ComponentName>>(url, this.getHttpOptions());
+        return this.httpClient.get<Array<AircraftComponentName.ComponentName>>(url);
     }
 
     downloadComponentNameInListPdf(componentNameArray: Array<AircraftComponentName.ComponentName>): Observable<Blob> {
@@ -208,15 +204,13 @@ export class AircraftComponentService {
             return {
                 responseType: 'blob' as 'json',
                 headers: new HttpHeaders({
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + this.sessionDataService.user?.token
+                    'Content-Type': 'application/json'
                 })
             }
         } else {
             return {
                 headers: new HttpHeaders({
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + this.sessionDataService.user?.token
+                    'Content-Type': 'application/json'
                 })
             }
         }

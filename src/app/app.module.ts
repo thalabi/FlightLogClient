@@ -39,7 +39,6 @@ import { SyncButtonComponent } from './sync-button/sync-button.component';
 import { PasswordMaskPipe } from './util/password-mask-pipe';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AircraftMaintenanceModule } from './aircraft-maintenance/aircraft-maintenance.module';
-import { SecurityModule } from './security-old/security.module';
 import { ValidatorModule } from './validator/validator.module';
 import { RouteReuseStrategy } from '@angular/router';
 import { HttpErrorInterceptor } from './http-error-interceptor';
@@ -92,7 +91,6 @@ import { Httpstatus404Component } from './httpstatus404/httpstatus404.component'
         ValidatorModule,
         AircraftMaintenanceModule,
 
-        SecurityModule
 
     ],
     providers: [

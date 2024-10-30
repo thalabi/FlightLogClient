@@ -1,8 +1,8 @@
 import { CustomMenuItem } from "./custom-menu-item";
-import { PermissionEnum } from "../security-old/permission-enum";
 import { AuthService } from "../auth/auth.service";
 import { Injectable } from "@angular/core";
 import { environment } from "../../environments/environment";
+import { PermissionEnum } from "./permission-enum";
 
 @Injectable({
     providedIn: 'root'

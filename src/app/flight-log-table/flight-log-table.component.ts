@@ -18,10 +18,9 @@ import { MyMessageService } from '../message/mymessage.service';
 import { ReplicationService } from '../service/replication.service';
 import { IGenericEntityResponse } from '../response/i-generic-entity-response';
 import { GenericEntityService } from '../service/generic-entity.service';
-import { SessionDataService } from '../service/session-data.service';
-import { PermissionEnum } from '../security-old/permission-enum';
 import { MenuComponent } from '../menu/menu.component';
 import { SessionService } from '../service/session.service';
+import { PermissionEnum } from '../menu/permission-enum';
 
 @Component({
     selector: 'app-flight-log-table',

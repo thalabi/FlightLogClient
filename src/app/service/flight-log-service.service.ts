@@ -12,7 +12,6 @@ import { FlightLogMonthlyTotalVResponse } from '../response/flight-log-monthly-t
 import { FlightLogYearlyTotalVResponse } from '../response/flight-log-yearly-total-v-response';
 import { FlightLogLastXDaysTotalVResponse } from '../response/flight-log-last-x-days-total-v-response';
 import { Observable, throwError } from 'rxjs';
-import { SessionDataService } from './session-data.service';
 import { environment } from '../../environments/environment';
 
 @Injectable()
@@ -24,8 +23,7 @@ export class FlightLogServiceService {
     //URL: string = 'http://localhost:8080/flightLogs/?sort=' + this.SORT_COLUMN + '&size=' + this.PAGE_SIZE;
 
     constructor(
-        private httpClient: HttpClient,
-        private sessionDataService: SessionDataService
+        private httpClient: HttpClient
     ) {
         this.serviceUrl = environment.beRestServiceUrl;
 
@@ -88,7 +86,7 @@ export class FlightLogServiceService {
     }
 
     addFlightLog(flightLog: FlightLog): Observable<FlightLogResponse> {
-        let url: string = this.serviceUrl + '/flightLogs';
+        let url: string = this.serviceUrl + '/protected/data-rest/flightLogs';
         console.log('flightLog: ', flightLog);
         flightLog.created = new Date();
         flightLog.modified = new Date();
@@ -141,7 +139,7 @@ export class FlightLogServiceService {
     }
 
     getAirportByIdentifierOrName(identifier: string, name: string): Observable<Array<Airport>> {
-        let url: string = this.serviceUrl + '/airports/search/findByIdentifierContainingIgnoreCaseOrNameContainingIgnoreCase?identifier=' + identifier + '&name=' + name;
+        let url: string = this.serviceUrl + '/protected/data-rest/airports/search/findByIdentifierContainingIgnoreCaseOrNameContainingIgnoreCase?identifier=' + identifier + '&name=' + name;
         return this.httpClient.get<AirportResponse>(url/*, this.getHttpOptions()*/).pipe(
             map((response: any) => {
                 let airportResponse = response;

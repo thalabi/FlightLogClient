@@ -1,5 +1,5 @@
 import { FlightLog } from "../domain/flight-log";
-import { FormGroup, Validators, FormBuilder, AbstractControl } from "@angular/forms";
+import { FormGroup, Validators, FormBuilder, AbstractControl, ValidatorFn, ValidationErrors } from "@angular/forms";
 import { Airport } from "../domain/airport";
 
 const controlNames: Array<string> = ['flightDate', 'makeModel', 'registration', 'pic', 'coPilot', 'fromAirport', 'toAirport', 'remarks', 'dayDual', 'daySolo', 'nightDual', 'nightSolo', 'instrumentSimulated', 'instrumentFlightSim', 'xcountryDay', 'xcountryNight', 'instrumentImc', 'instrumentNoIfrAppr', 'tosLdgsDay', 'tosLdgsNight'];
@@ -7,17 +7,20 @@ const controlNames: Array<string> = ['flightDate', 'makeModel', 'registration', 
 function fieldNullOrZero(control: AbstractControl, controlName: string): boolean {
     return ! /* not */ control.get(controlName)?.value || control.get(controlName)?.value == 0;
 }
-function validateForm(control: AbstractControl): { invalid: boolean } {
-    if (fieldNullOrZero(control, 'dayDual') && fieldNullOrZero(control, 'daySolo') &&
-        fieldNullOrZero(control, 'nightDual') && fieldNullOrZero(control, 'nightSolo')) {
-        return { invalid: true };
+
+function createDayOrNightValueValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+        if (fieldNullOrZero(control, 'dayDual') && fieldNullOrZero(control, 'daySolo') &&
+            fieldNullOrZero(control, 'nightDual') && fieldNullOrZero(control, 'nightSolo')) {
+            return { noDayOrNightValue: true };
+        }
+        return null;
     }
-    return { invalid: false };
 }
 
 export const FlightLogHelper = {
     createForm(formBuilder: FormBuilder): FormGroup {
-        return formBuilder.group({
+        return formBuilder.nonNullable.group({
             flightDate: ['', Validators.required],
             makeModel: ['', Validators.required],
             registration: [''],
@@ -40,7 +43,7 @@ export const FlightLogHelper = {
             instrumentNoIfrAppr: [''],
             tosLdgsDay: [''],
             tosLdgsNight: ['']
-        }, { validator: validateForm });
+        }, { validators: [createDayOrNightValueValidator()] });
     },
     copyToForm(flightLog: FlightLog, flightLogForm: FormGroup) {
         flightLogForm.patchValue({ flightDate: flightLog.flightDate });

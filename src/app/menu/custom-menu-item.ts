@@ -1,6 +1,6 @@
 //import { MenuItem } from "primeng/primeng";
 import { MenuItem } from "primeng/api";
-import { PermissionEnum } from "../security-old/permission-enum";
+import { PermissionEnum } from "./permission-enum";
 
 export interface CustomMenuItem extends MenuItem {
     // @Override

@@ -7,9 +7,6 @@ import { StringUtils } from '../string-utils';
 import { IGenericEntity } from '../domain/i-gerneric-entity';
 import { FlightLogServiceService } from './flight-log-service.service';
 import { Observable, throwError } from 'rxjs';
-//import { of as observableOf } from 'rxjs/observable/of'
-import { SessionDataService } from './session-data.service';
-//import { s } from '@angular/core/src/render3';
 import { IGenericEntityResponse } from '../response/i-generic-entity-response';
 import { AssociationAttributes } from "../config/AssociationAttributes";
 import { environment } from '../../environments/environment';
@@ -19,8 +16,7 @@ export class GenericEntityService {
     readonly serviceUrl: string;
 
     constructor(
-        private httpClient: HttpClient,
-        private sessionDataService: SessionDataService
+        private httpClient: HttpClient
     ) {
         this.serviceUrl = environment.beRestServiceUrl;
     }
@@ -38,14 +34,14 @@ export class GenericEntityService {
         }
         let url: string = this.serviceUrl + '/protected/data-rest/' + tableName + 's/search/findAllByOrderBy' + StringUtils.capitalize(orderColumnName);
         console.log(url);
-        return this.httpClient.get<IGenericEntityResponse>(url, this.getHttpOptions());
+        return this.httpClient.get<IGenericEntityResponse>(url);
     }
 
     getGenericEntityPage(tableName: string, first: number, size: number, search: string, queryOrderByColumns: string[]): Observable<IGenericEntityListResponse> {
         console.log('first, size, search', first, size, search)
         let url: string = this.serviceUrl + '/protected/' + tableName + 'Controller/findAll/?page=' + first / size + '&size=' + size + '&search=' + search + '&sort=' + queryOrderByColumns;
         console.log('url', url);
-        return this.httpClient.get<IGenericEntityListResponse>(url, this.getHttpOptions());
+        return this.httpClient.get<IGenericEntityListResponse>(url);
     }
 
     addGenericEntity(tableName: string, row: IGenericEntity): Observable<IGenericEntityResponse> {
@@ -54,7 +50,7 @@ export class GenericEntityService {
         row.created = new Date();
         row.modified = new Date();
         console.log('row: ', row);
-        return this.httpClient.post<IGenericEntity>(url, row, this.getHttpOptions()).pipe(
+        return this.httpClient.post<IGenericEntity>(url, row).pipe(
             map((response: any) => {
                 console.log('response', response);
                 return response;
@@ -72,7 +68,7 @@ export class GenericEntityService {
 
         let url: string = row._links.self.href;
         console.log('url: ', url);
-        return this.httpClient.put<IGenericEntity>(url, row, this.getHttpOptions()).pipe(
+        return this.httpClient.put<IGenericEntity>(url, row).pipe(
             map((response: any) => {
                 console.log('response', response);
                 return response;
@@ -86,7 +82,7 @@ export class GenericEntityService {
     deleteGenericEntity(row: IGenericEntity): Observable<IGenericEntityListResponse> {
         let url: string = row._links.self.href;
         console.log('url: ', url);
-        return this.httpClient.delete<void>(url, this.getHttpOptions()).pipe(
+        return this.httpClient.delete<void>(url).pipe(
             map((response: any) => {
                 console.log('response', response);
                 return response;
@@ -101,7 +97,7 @@ export class GenericEntityService {
         // TODO use queryOrderByColumns and call the controller instead of the resource repository directly
         let url: string = this.serviceUrl + '/protected/data-rest/' + tableName + 's?size=10000';
         console.log('url', url);
-        return this.httpClient.get<IGenericEntityListResponse>(url, this.getHttpOptions());
+        return this.httpClient.get<IGenericEntityListResponse>(url);
     }
 
     getAssociatedRows(crudRow: IGenericEntity, associationAttributes: AssociationAttributes, queryOrderByColumns: string[]): Observable<IGenericEntityListResponse> {
@@ -109,7 +105,7 @@ export class GenericEntityService {
         //let associationLink: string = crudRow._links[associationAttributes.associationPropertyName].href;
         let associationLink: string = crudRow._links.self.href;
         console.log('associationLink', associationLink);
-        return this.httpClient.get<IGenericEntityListResponse>(associationLink, this.getHttpOptions());
+        return this.httpClient.get<IGenericEntityListResponse>(associationLink);
     }
 
     getAssociatedRow(crudRow: IGenericEntity, associationAttributes: AssociationAttributes, queryOrderByColumns: string[]): Observable<IGenericEntity> {
@@ -117,7 +113,7 @@ export class GenericEntityService {
         //let associationLink: string = crudRow._links[associationAttributes.associationPropertyName].href;
         let associationLink: string = crudRow._links.self.href;
         console.log('associationLink', associationLink);
-        return this.httpClient.get<IGenericEntity>(associationLink, this.getHttpOptions());
+        return this.httpClient.get<IGenericEntity>(associationLink);
     }
 
     updateAssociationGenericEntity(row: IGenericEntityResponse, associationPropertyName: string, associationArray: Array<IGenericEntity>): Observable<IGenericEntityResponse> {
@@ -140,21 +136,10 @@ export class GenericEntityService {
             }));
     }
 
-    private getHttpOptions() {
-        console.log('this.sessionDataService.user.token', this.sessionDataService.user?.token);
-        return {
-            headers: new HttpHeaders({
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + this.sessionDataService.user?.token
-            })
-        }
-    };
     private getUriListHttpOptions() {
-        console.log('this.sessionDataService.user.token', this.sessionDataService.user?.token);
         return {
             headers: new HttpHeaders({
                 'Content-Type': 'text/uri-list',
-                'Authorization': 'Bearer ' + this.sessionDataService.user?.token
             })
         }
     };

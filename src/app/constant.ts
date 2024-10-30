@@ -1,4 +1,4 @@
-import { PermissionEnum } from "./security-old/permission-enum";
+import { PermissionEnum } from "./menu/permission-enum";
 
 export class Constant {
     static TIMESTAMP_PATTERN = /^\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\s*(\d{1,2})\s*,?\s*(\d{4})\s*(\d{1,2})\s*:?\s*(\d{1,2})\s*(am|pm)\s*$/i;

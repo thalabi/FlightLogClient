@@ -6,12 +6,8 @@ import { FlightLogYearlyTotalVTableComponent } from './flight-log-yearly-total-v
 import { FlightLogLastXDaysTotalVTableComponent } from './flight-log-last-x-days-total-v-table/flight-log-last-x-days-total-v-table.component';
 import { JobLauncherComponent } from './job-launcher/job-launcher.component';
 import { GenericCrudComponent } from './generic-crud/generic-crud.component';
-import { LoginComponent } from './security-old/login/login.component';
-//import { AuthGuard } from './security-old/auth.guard';
 import { AuthGuard } from './auth/auth-guard.service';
 
-import { ChangePasswordComponent } from './security-old/change-password/change-password.component';
-import { CopyUserComponent } from './security-old/copy-user/copy-user.component';
 import { AircraftComponentComponent } from './aircraft-maintenance/aircraft-component/aircraft-component.component';
 import { AircraftHistoryPrintComponentComponent } from './aircraft-maintenance/aircraft-history-print-component/aircraft-history-print-component.component';
 import { WelcomeComponent } from './welcome/welcome.component';
@@ -26,8 +22,6 @@ const routes: Routes = [
     { path: 'flightLogLastXDaysTotalVTableComponent', component: FlightLogLastXDaysTotalVTableComponent, canActivate: [AuthGuard] },
     { path: 'jobLauncher', component: JobLauncherComponent, canActivate: [AuthGuard] },
     { path: 'genericCrud/:tableName', component: GenericCrudComponent, canActivate: [AuthGuard] },
-    { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
-    { path: 'copyUser', component: CopyUserComponent, canActivate: [AuthGuard] },
     { path: 'aircraftComponent', component: AircraftComponentComponent, canActivate: [AuthGuard] },
     { path: 'aircraftHistoryPrintComponentComponent', component: AircraftHistoryPrintComponentComponent, canActivate: [AuthGuard] },
 
