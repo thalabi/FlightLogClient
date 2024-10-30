@@ -1,6 +1,6 @@
 export namespace AircraftComponentRequest {
 
-    export class Component {
+    export interface Component {
         componentUri: string;
 
         name: string;
@@ -14,14 +14,14 @@ export namespace AircraftComponentRequest {
         partUri: string;
 
         historyRequestSet: Array<Historyrequest>;
-        
+
         createHistoryRecord: boolean;
 
         created: Date;
         modified: Date;
     }
-    
-    export class Historyrequest {
+
+    export interface Historyrequest {
         historyUri: string;
 
         name: string;
@@ -31,10 +31,10 @@ export namespace AircraftComponentRequest {
         hoursPerformed: number;
         dateDue: Date;
         hoursDue: number;
-    
+
         partUri: string;
 
         created: Date;
-        modified: Date;    
+        modified: Date;
     }
 }

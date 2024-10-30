@@ -3,17 +3,16 @@ import { Injectable } from '@angular/core';
 import { catchError, map } from 'rxjs/operators';
 import { IGenericEntityListResponse } from '../response/i-generic-entity-list-response';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { ConfigService } from '../config/config.service';
-import { ApplicationProperties } from '../config/application.properties';
 import { StringUtils } from '../string-utils';
 import { IGenericEntity } from '../domain/i-gerneric-entity';
 import { FlightLogServiceService } from './flight-log-service.service';
-import { Observable } from 'rxjs';
-import { of as observableOf } from 'rxjs/observable/of'
+import { Observable, throwError } from 'rxjs';
+//import { of as observableOf } from 'rxjs/observable/of'
 import { SessionDataService } from './session-data.service';
-import { s } from '@angular/core/src/render3';
+//import { s } from '@angular/core/src/render3';
 import { IGenericEntityResponse } from '../response/i-generic-entity-response';
 import { AssociationAttributes } from "../config/AssociationAttributes";
+import { environment } from '../../environments/environment';
 
 @Injectable()
 export class GenericEntityService {
@@ -21,11 +20,9 @@ export class GenericEntityService {
 
     constructor(
         private httpClient: HttpClient,
-        private configService: ConfigService,
         private sessionDataService: SessionDataService
     ) {
-        const applicationProperties: ApplicationProperties = this.configService.getApplicationProperties();
-        this.serviceUrl = applicationProperties.serviceUrl;
+        this.serviceUrl = environment.beRestServiceUrl;
     }
 
     // getAllGenericEntity(tableName: string): Observable<IGenericEntityResponse> {
@@ -39,20 +36,20 @@ export class GenericEntityService {
         if (! /* not */ orderColumnName) {
             orderColumnName = tableName;
         }
-        let url: string = this.serviceUrl + '/' + tableName + 's/search/findAllByOrderBy' + StringUtils.capitalize(orderColumnName);
+        let url: string = this.serviceUrl + '/protected/data-rest/' + tableName + 's/search/findAllByOrderBy' + StringUtils.capitalize(orderColumnName);
         console.log(url);
         return this.httpClient.get<IGenericEntityResponse>(url, this.getHttpOptions());
     }
-    
+
     getGenericEntityPage(tableName: string, first: number, size: number, search: string, queryOrderByColumns: string[]): Observable<IGenericEntityListResponse> {
         console.log('first, size, search', first, size, search)
-        let url: string = this.serviceUrl + '/' + tableName + 'Controller/findAll/?page=' + first / size + '&size=' + size + '&search=' + search + '&sort=' + queryOrderByColumns;
+        let url: string = this.serviceUrl + '/protected/' + tableName + 'Controller/findAll/?page=' + first / size + '&size=' + size + '&search=' + search + '&sort=' + queryOrderByColumns;
         console.log('url', url);
         return this.httpClient.get<IGenericEntityListResponse>(url, this.getHttpOptions());
     }
 
     addGenericEntity(tableName: string, row: IGenericEntity): Observable<IGenericEntityResponse> {
-        let url: string = this.serviceUrl + '/' + tableName + 's';
+        let url: string = this.serviceUrl + '/protected/data-rest/' + tableName + 's';
         console.log('row: ', row);
         row.created = new Date();
         row.modified = new Date();
@@ -64,7 +61,7 @@ export class GenericEntityService {
             }),
             catchError((httpErrorResponse: HttpErrorResponse) => {
                 FlightLogServiceService.handleError(httpErrorResponse);
-                return null;
+                return throwError(() => new Error());
             }));
     }
 
@@ -82,7 +79,7 @@ export class GenericEntityService {
             }),
             catchError((httpErrorResponse: HttpErrorResponse) => {
                 FlightLogServiceService.handleError(httpErrorResponse);
-                return null;
+                return throwError(() => new Error());
             }));
     }
 
@@ -96,64 +93,68 @@ export class GenericEntityService {
             }),
             catchError((httpErrorResponse: HttpErrorResponse) => {
                 FlightLogServiceService.handleError(httpErrorResponse);
-                return null;
+                return throwError(() => new Error());
             }));
     }
 
     getAssociationGenericEntity(tableName: string, queryOrderByColumns: string[]): Observable<IGenericEntityListResponse> {
         // TODO use queryOrderByColumns and call the controller instead of the resource repository directly
-        let url: string = this.serviceUrl + '/' + tableName + 's?size=10000';
+        let url: string = this.serviceUrl + '/protected/data-rest/' + tableName + 's?size=10000';
         console.log('url', url);
         return this.httpClient.get<IGenericEntityListResponse>(url, this.getHttpOptions());
     }
 
     getAssociatedRows(crudRow: IGenericEntity, associationAttributes: AssociationAttributes, queryOrderByColumns: string[]): Observable<IGenericEntityListResponse> {
         // TODO fix
-        let associationLink: string = crudRow._links[associationAttributes.associationPropertyName].href;
+        //let associationLink: string = crudRow._links[associationAttributes.associationPropertyName].href;
+        let associationLink: string = crudRow._links.self.href;
         console.log('associationLink', associationLink);
         return this.httpClient.get<IGenericEntityListResponse>(associationLink, this.getHttpOptions());
     }
 
     getAssociatedRow(crudRow: IGenericEntity, associationAttributes: AssociationAttributes, queryOrderByColumns: string[]): Observable<IGenericEntity> {
         // TODO fix
-        let associationLink: string = crudRow._links[associationAttributes.associationPropertyName].href;
+        //let associationLink: string = crudRow._links[associationAttributes.associationPropertyName].href;
+        let associationLink: string = crudRow._links.self.href;
         console.log('associationLink', associationLink);
         return this.httpClient.get<IGenericEntity>(associationLink, this.getHttpOptions());
     }
-    
+
     updateAssociationGenericEntity(row: IGenericEntityResponse, associationPropertyName: string, associationArray: Array<IGenericEntity>): Observable<IGenericEntityResponse> {
         console.log('row._links.self', row._links.self);
-        associationArray.forEach(association=> console.log('association._links.self', association._links.self));
+        associationArray.forEach(association => console.log('association._links.self', association._links.self));
         let associationUriList: string = '';
-        associationArray.forEach(association=> associationUriList += association._links.self.href + '\n');
+        associationArray.forEach(association => associationUriList += association._links.self.href + '\n');
         associationUriList = associationUriList.substring(0, associationUriList.length);
         console.log('associationUriList', associationUriList);
         // TODO fix
-        return this.httpClient.put<IGenericEntity>(row._links[associationPropertyName].href, associationUriList, this.getUriListHttpOptions()).pipe(
+        //return this.httpClient.put<IGenericEntity>(row._links[associationPropertyName].href, associationUriList, this.getUriListHttpOptions()).pipe(
+        return this.httpClient.put<IGenericEntity>(row._links.self.href, associationUriList, this.getUriListHttpOptions()).pipe(
             map((response: any) => {
                 console.log('response', response);
                 return response;
             }),
             catchError((httpErrorResponse: HttpErrorResponse) => {
                 FlightLogServiceService.handleError(httpErrorResponse);
-                return null;
+                return throwError(() => new Error());
             }));
-        return null;
     }
 
     private getHttpOptions() {
-        console.log('this.sessionDataService.user.token', this.sessionDataService.user.token);
-        return {headers: new HttpHeaders({
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + this.sessionDataService.user.token
+        console.log('this.sessionDataService.user.token', this.sessionDataService.user?.token);
+        return {
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + this.sessionDataService.user?.token
             })
         }
     };
     private getUriListHttpOptions() {
-        console.log('this.sessionDataService.user.token', this.sessionDataService.user.token);
-        return {headers: new HttpHeaders({
-            'Content-Type': 'text/uri-list',
-            'Authorization': 'Bearer ' + this.sessionDataService.user.token
+        console.log('this.sessionDataService.user.token', this.sessionDataService.user?.token);
+        return {
+            headers: new HttpHeaders({
+                'Content-Type': 'text/uri-list',
+                'Authorization': 'Bearer ' + this.sessionDataService.user?.token
             })
         }
     };

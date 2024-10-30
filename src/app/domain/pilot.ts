@@ -1,12 +1,12 @@
 import { ISingleColumnEntity } from "./i-single-column-entity";
 
 export class Pilot implements ISingleColumnEntity {
-    id: number;
+    id!: number;
 
-    pilot: string;
+    pilot!: string;
 
-    created: Date;
-    modified: Date;
-    
-    _links: {self: {href: string}};
+    created!: Date;
+    modified!: Date;
+
+    _links!: { self: { href: string; }; };
 }

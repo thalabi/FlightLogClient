@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { MenuItem } from 'primeng/primeng';
-import { SessionDataService } from '../service/session-data.service';
-import { User } from '../security/user';
-import { PermissionEnum } from '../security/permission-enum';
-import { DeviceDetectorService } from 'ngx-device-detector';
+import { User } from '../security-old/user';
+import { PermissionEnum } from '../security-old/permission-enum';
 import { CustomMenuItem } from './custom-menu-item';
 import { MenuItems } from './menu-items';
+import { MenuItem } from 'primeng/api/menuitem';
+import { AuthService, UserInfo } from '../auth/auth.service';
+import { SessionService } from '../service/session.service';
+
+import { distinctUntilChanged } from 'rxjs';
 
 @Component({
     selector: 'app-menu',
@@ -14,37 +16,65 @@ import { MenuItems } from './menu-items';
 })
 export class MenuComponent implements OnInit {
 
-    user: User;
+    user: User = {} as User;
 
-    menuItems: MenuItems = new MenuItems();
-    menuModel: Array<CustomMenuItem> = this.menuItems.menuModel;
+    menuModel!: Array<CustomMenuItem>;
 
-    isDesktop: boolean;
+    //isDesktop!: boolean;
 
-    constructor(private sessionDataService: SessionDataService, private deviceDetectorService: DeviceDetectorService) { }
+    constructor(private authService: AuthService, private sessionService: SessionService
+        , private menuItems: MenuItems) { }
 
     ngOnInit() {
-        this.isDesktop = this.deviceDetectorService.isDesktop();
-        this.showMenuItems(false);
-        this.sessionDataService.userSubject
-            //.map((data:User)=>{console.log(data})
-            .subscribe(
-                data => {
-                    this.user = data;
-                    console.log('user: ', this.user);
-                    this.showMenuItems(this.user != undefined && this.user != null);
-                },
-                error => console.error(error),
-                () => console.log('completed, this.user: ', this.user)
-            );
+        console.log('menu component')
+
+
+        //this.isDesktop = this.deviceDetectorService.isDesktop();
+        //this.showMenuItems(false);
+        // this.sessionDataService.userSubject
+        //     //.map((data:User)=>{console.log(data})
+        //     .subscribe(
+        //         data => {
+        //             this.user = data;
+        //             console.log('user: ', this.user);
+        //             this.showMenuItems(this.user != undefined && this.user != null);
+        //         },
+        //         error => console.error(error),
+        //         () => console.log('completed, this.user: ', this.user)
+        //     );
+
+
+        this.authService.isAuthenticated$
+            .pipe(distinctUntilChanged())
+            .subscribe(authenticated => {
+                console.log('authenticated', authenticated)
+                if (authenticated) {
+                    // this.items = userMenuItems
+                    this.menuModel = this.menuItems.menuModel;
+                    this.sessionService.userInfo$.subscribe(userInfo => {
+                        console.log('userInfo', userInfo)
+                        console.log('userInfo.backEndAuthorities', userInfo.backEndAuthorities)
+                        if (userInfo.backEndAuthorities?.includes('ROLE_realm_ipm-admin-role')) {
+                            //this.items = adminMenuItems
+                        }
+                    })
+                    this.menuModel = this.menuItems.menuModel;
+                } else {
+                    this.menuModel = [
+                        { label: 'Login', command: () => this.authService.login() }
+                    ];
+                }
+            })
+
     }
 
     // show the menu item and submenu item depending the user's permissions
     public showMenuItems(show: boolean): void {
+        console.log('showMenuItems begin')
         if (show) {
             this.findMenuItem(this.menuModel, 'flightLogTable').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.FLIGHT_LOG_READ, PermissionEnum.FLIGHT_LOG_WRITE);
             this.findMenuItem(this.menuModel, 'summary').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.SUMMARY);
-            
+
             this.findMenuItem(this.menuModel, 'misc').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.AIRPORT_READ, PermissionEnum.MAKE_MODEL_READ, PermissionEnum.PILOT_READ, PermissionEnum.REGISTRATION_READ, PermissionEnum.SIGNIFICANT_EVENT_READ);
             this.findMenuItem(this.menuModel, 'airport').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.AIRPORT_READ);
             this.findMenuItem(this.menuModel, 'make_model').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.MAKE_MODEL_READ);
@@ -63,7 +93,7 @@ export class MenuComponent implements OnInit {
             this.findMenuItem(this.menuModel, 'group').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.GROUP_READ);
             // TODO change to correct permission enum
             this.findMenuItem(this.menuModel, 'copy_user').visible = MenuComponent.isHolderOfAnyAuthority(this.user, PermissionEnum.GROUP_READ);
-            
+
             this.findMenuItem(this.menuModel, 'logout').visible = true;
         } else {
             this.findMenuItem(this.menuModel, 'flightLogTable').visible = false;
@@ -74,6 +104,7 @@ export class MenuComponent implements OnInit {
             this.findMenuItem(this.menuModel, 'security').visible = false;
             this.findMenuItem(this.menuModel, 'logout').visible = false;
         }
+        console.log('showMenuItems end')
     }
 
     // Look for the id of the menu item or submenu item
@@ -83,7 +114,7 @@ export class MenuComponent implements OnInit {
                 return item;
             } else {
                 if (item.items) {
-                    const subItems: Array<MenuItem> = <Array<MenuItem>> item.items;
+                    const subItems: Array<MenuItem> = <Array<MenuItem>>item.items;
                     for (const subItem of subItems) {
                         if (subItem.id === id) {
                             return subItem;
@@ -100,4 +131,18 @@ export class MenuComponent implements OnInit {
             return givenAuthorities.find(givenAuthority => givenAuthority === authority.authority) !== undefined
         }) !== undefined;
     }
+    public static isHolderOfAnyRole(userInfo: UserInfo, ...givenRoles: string[]): boolean {
+        return userInfo.roles.find(role => {
+            return givenRoles.find(givenRole => givenRole === role) !== undefined
+        }) !== undefined;
+    }
+
+    login() {
+        this.authService.login()
+    }
+
+    logout() {
+        this.authService.logout();
+    }
+
 }

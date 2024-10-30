@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { ConfigService } from '../config/config.service';
-import { ApplicationProperties } from '../config/application.properties';
 import { catchError, map } from 'rxjs/operators';
 import { FlightLogServiceService } from './flight-log-service.service';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { SessionDataService } from './session-data.service';
+import { environment } from '../../environments/environment';
 
 @Injectable()
 export class JobLauncherService {
@@ -13,15 +12,13 @@ export class JobLauncherService {
 
     constructor(
         private http: HttpClient,
-        private configService: ConfigService,
         private sessionDataService: SessionDataService
     ) {
-        const applicationProperties: ApplicationProperties = this.configService.getApplicationProperties();
-        this.serviceUrl = applicationProperties.serviceUrl;
+        this.serviceUrl = environment.beRestServiceUrl;
     }
 
     startJob(jobName: string): Observable<any> {
-        let url: string = this.serviceUrl + '/jobLauncherController/' + jobName;
+        let url: string = this.serviceUrl + '/protected/jobLauncherController/' + jobName;
         return this.http.get<any>(url, this.getHttpOptions()).pipe(
             map((response: any) => {
                 let jobLauncherResponse = response;
@@ -30,15 +27,16 @@ export class JobLauncherService {
             }),
             catchError((httpErrorResponse: HttpErrorResponse) => {
                 FlightLogServiceService.handleError(httpErrorResponse);
-                return null;
-              }));
+                return throwError(() => { });
+            }));
     }
 
     private getHttpOptions() {
-        console.log('this.sessionDataService.user.token', this.sessionDataService.user.token);
-        return {headers: new HttpHeaders({
-            'Authorization': 'Bearer ' + this.sessionDataService.user.token,
-            'Content-Type': 'application/json'
+        console.log('this.sessionDataService.user.token', this.sessionDataService.user?.token);
+        return {
+            headers: new HttpHeaders({
+                'Authorization': 'Bearer ' + this.sessionDataService.user?.token,
+                'Content-Type': 'application/json'
             })
         }
     };

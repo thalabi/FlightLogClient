@@ -1,12 +1,12 @@
 import { ISingleColumnEntity } from "./i-single-column-entity";
 
 export class Registration implements ISingleColumnEntity {
-    id: number;
+    id!: number;
 
-    registration: string;
+    registration!: string;
 
-    created: Date;
-    modified: Date;
-    
-    _links: {self: {href: string}};
+    created!: Date;
+    modified!: Date;
+
+    _links!: { self: { href: string; }; };
 }

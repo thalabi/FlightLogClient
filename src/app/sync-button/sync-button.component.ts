@@ -8,12 +8,12 @@ import { ReplicationService } from '../service/replication.service';
     styleUrls: ['./sync-button.component.css']
 })
 export class SyncButtonComponent implements OnInit {
-    @Input() tableName: string;
+    @Input() tableName!: string;
 
-    replicationStatusPending: boolean;
-    replicationSupported: boolean;
-    replicationStatus: boolean;
-    replicationStatusLabel: string;
+    replicationStatusPending!: boolean;
+    replicationSupported!: boolean;
+    replicationStatus!: boolean;
+    replicationStatusLabel!: string;
     replicationStatusControlDisabled: boolean = true;
 
     constructor(private replicationService: ReplicationService) { }
@@ -36,12 +36,12 @@ export class SyncButtonComponent implements OnInit {
         })
     }
 
-    onChangeReplicationStatus(event) {
+    onChangeReplicationStatus(event: { checked: boolean; }) {
         this.replicationStatusLabel = "Updating";
         console.log('onChangeReplicationStatus', event);
         console.log('checked: ', event.checked);
         this.replicationStatusControlDisabled = true;
-        this.replicationService.setTableReplicationStatus(this.tableName, event.checked).subscribe(params => 
+        this.replicationService.setTableReplicationStatus(this.tableName, event.checked).subscribe(params =>
             this.getTableReplicationStatus()
         );
     }

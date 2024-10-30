@@ -3,7 +3,20 @@ import { CommonModule } from '@angular/common';
 import { AircraftComponentComponent } from './aircraft-component/aircraft-component.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TableModule } from 'primeng/table';
-import { ButtonModule, MultiSelectModule, DialogModule, MessageModule, TooltipModule, DropdownModule, CalendarModule, InputSwitchModule, AutoCompleteModule, TabViewModule, PickListModule, FieldsetModule } from 'primeng/primeng';
+
+import { ButtonModule } from 'primeng/button';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { DialogModule } from 'primeng/dialog';
+import { MessageModule } from 'primeng/message';
+import { TooltipModule } from 'primeng/tooltip';
+import { DropdownModule } from 'primeng/dropdown';
+import { CalendarModule } from 'primeng/calendar';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { TabViewModule } from 'primeng/tabview';
+import { PickListModule } from 'primeng/picklist';
+import { FieldsetModule } from 'primeng/fieldset';
+
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AircraftComponentService } from './service/aircraft-component.service';
 import { AircraftHistoryPrintComponentComponent } from './aircraft-history-print-component/aircraft-history-print-component.component';
@@ -19,6 +32,6 @@ import { ValidatorModule } from '../validator/validator.module';
     providers: [
         AircraftComponentService
     ],
-    declarations: [AircraftComponentComponent, AircraftHistoryPrintComponentComponent, ],
+    declarations: [AircraftComponentComponent, AircraftHistoryPrintComponentComponent,],
 })
 export class AircraftMaintenanceModule { }

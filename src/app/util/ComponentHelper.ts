@@ -1,4 +1,3 @@
-import { LazyLoadEvent } from "primeng/primeng";
 import { ReplicationService } from "../service/replication.service";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
@@ -6,19 +5,21 @@ import { AbstractControl } from "@angular/forms";
 import { DataTypeEnum } from "../config/DataTypeEnum";
 import { FieldAttributes } from "../config/FieldAttributes";
 import { IGenericEntity } from "../domain/i-gerneric-entity";
+import { LazyLoadEvent } from "primeng/api/lazyloadevent";
+//import 'rxjs/add/observable/of';
 
 export class ComponentHelper {
 
-    public static buildSearchString (event: LazyLoadEvent, columnNameArray: string[]): string {
+    public static buildSearchString(event: LazyLoadEvent, columnNameArray: string[]): string {
         let search: string = '';
         console.log('columnNameArray', columnNameArray);
         for (let columnName of columnNameArray) {
-            if (event.filters[columnName]) {
+            if (event.filters![columnName]) {
                 // if filter does not start with = < or > then prefix with =
-                if (event.filters[columnName].value[0] == '=' || event.filters[columnName].value[0] == '<' || event.filters[columnName].value[0] == '>') {
-                    search = search + columnName + event.filters[columnName].value + ',';
+                if (event.filters![columnName].value[0] == '=' || event.filters![columnName].value[0] == '<' || event.filters![columnName].value[0] == '>') {
+                    search = search + columnName + event.filters![columnName].value + ',';
                 } else {
-                    search = search + columnName + encodeURIComponent('=') + event.filters[columnName].value + ',';
+                    search = search + columnName + encodeURIComponent('=') + event.filters![columnName].value + ',';
                 }
             }
         }
@@ -44,13 +45,13 @@ export class ComponentHelper {
                 break;
             case DataTypeEnum.BOOLEAN:
                 control.patchValue(false);
-            break;
-        default:
-            control.patchValue(null);
+                break;
+            default:
+                control.patchValue(null);
         }
     }
 
-    public static getTableReplicationStatusAndLabel(replicationService: ReplicationService, tableName: string): Observable<{"replicationSupported": boolean, "replicationStatus": boolean, "replicationStatusLabel": string}> {
+    public static getTableReplicationStatusAndLabel(replicationService: ReplicationService, tableName: string): Observable<{ "replicationSupported": boolean, "replicationStatus": boolean, "replicationStatusLabel": string }> {
 
         return replicationService.getTableReplicationStatus(tableName).pipe(
             map(params => {
@@ -58,19 +59,22 @@ export class ComponentHelper {
                 console.log('triggerStatusCode', triggerStatusCode);
                 switch (triggerStatusCode) {
                     case -1: {
-                        return {"replicationSupported": false, "replicationStatus": false, "replicationStatusLabel": "Not Supported"};
-                        }
+                        return { "replicationSupported": false, "replicationStatus": false, "replicationStatusLabel": "Not Supported" };
+                    }
                     case 0: {
-                        return {"replicationSupported": true, "replicationStatus": false, "replicationStatusLabel": "Sync Off"};
-                        }
+                        return { "replicationSupported": true, "replicationStatus": false, "replicationStatusLabel": "Sync Off" };
+                    }
                     case 1: {
-                        return {"replicationSupported": true, "replicationStatus": false, "replicationStatusLabel": "Sync Partial"};
-                        }
+                        return { "replicationSupported": true, "replicationStatus": false, "replicationStatusLabel": "Sync Partial" };
+                    }
                     case 2: {
-                        return {"replicationSupported": true, "replicationStatus": true, "replicationStatusLabel": "Sync On"};
-                        }
+                        return { "replicationSupported": true, "replicationStatus": true, "replicationStatusLabel": "Sync On" };
+                    }
+                    default: {
+                        throw new RangeError(`triggerStatusCode returned ${triggerStatusCode}`);
                     }
                 }
+            }
             )
         );
     }
@@ -82,7 +86,7 @@ export class ComponentHelper {
         rowArray && rowArray.forEach(row => {
             fieldAttributesArray.forEach(fieldAttributes => {
                 if (fieldAttributes.dataType === DataTypeEnum.DATE && row[fieldAttributes.columnName]) {
-                    row[fieldAttributes.columnName] = new Date(row[fieldAttributes.columnName]+'T00:00:00');
+                    row[fieldAttributes.columnName] = new Date(row[fieldAttributes.columnName] + 'T00:00:00');
                 }
             });
         });

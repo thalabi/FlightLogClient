@@ -4,7 +4,8 @@ import { FlightLog } from '../domain/flight-log';
 import { FlightLogResponse } from '../response/flight-log-response';
 import { HalResponsePage } from '../hal/hal-response-page';
 import { HalResponseLinks } from '../hal/hal-response-links';
-import { LazyLoadEvent, SelectItem } from 'primeng/primeng';
+import { LazyLoadEvent } from 'primeng/api/lazyloadevent';
+import { SelectItem } from 'primeng/api/selectitem';
 import { Airport } from '../domain/airport';
 import { MakeModel } from '../domain/make-model';
 import { Registration } from '../domain/registration';
@@ -18,8 +19,9 @@ import { ReplicationService } from '../service/replication.service';
 import { IGenericEntityResponse } from '../response/i-generic-entity-response';
 import { GenericEntityService } from '../service/generic-entity.service';
 import { SessionDataService } from '../service/session-data.service';
-import { PermissionEnum } from '../security/permission-enum';
+import { PermissionEnum } from '../security-old/permission-enum';
 import { MenuComponent } from '../menu/menu.component';
+import { SessionService } from '../service/session.service';
 
 @Component({
     selector: 'app-flight-log-table',
@@ -32,91 +34,91 @@ export class FlightLogTableComponent implements OnInit {
 
     flightLogForm: FormGroup;
 
-    flightLogResponse: FlightLogResponse;
-    flightLogArray: Array<FlightLog>;
-    selectedFlightLog: FlightLog;
-    crudFlightLog: FlightLog;
-    page: HalResponsePage;
-    links: HalResponseLinks;
+    flightLogResponse: FlightLogResponse = {} as FlightLogResponse;
+    flightLogArray: Array<FlightLog> = [];
+    selectedFlightLog: FlightLog = {} as FlightLog;
+    crudFlightLog: FlightLog = {} as FlightLog;
+    page: HalResponsePage = {} as HalResponsePage;
+    links: HalResponseLinks = {} as HalResponseLinks;
 
-    cols: any[];
-    colsPart2: any[];
-    columnOptions: SelectItem[];
-    
+    cols: any[] = [];
+    colsPart2: any[] = [];
+    columnOptions: SelectItem[] = [];
+
     modifyAndDeleteButtonsDisable: boolean = true;
-    crudMode: CrudEnum;
+    crudMode: CrudEnum = CrudEnum.ADD;// "Add";
     crudEnum = CrudEnum; // Used in html to refere to enum
     displayDialog: boolean = false;
 
-    makeModelSelectItemArray: Array<SelectItem>;
-    registrationSelectItemArray: Array<SelectItem>;
-    pilotSelectItemArray: Array<SelectItem>;
+    makeModelSelectItemArray: Array<SelectItem> = [];
+    registrationSelectItemArray: Array<SelectItem> = [];
+    pilotSelectItemArray: Array<SelectItem> = [];
 
-    filteredAirportArray: Array<Airport>;
-    fromAirport: Airport;
-    toAirport: Airport;
+    filteredAirportArray: Array<Airport> = [];
+    fromAirport: Airport = {} as Airport;
+    toAirport: Airport = {} as Airport;
 
     // used to pass as argument to getTableRowsLazy() when refreshing page after add/update/delete
-    savedLazyLoadEvent: LazyLoadEvent;
+    savedLazyLoadEvent: LazyLoadEvent = {} as LazyLoadEvent;
 
     readonly ROWS_PER_PAGE: number = 10; // default rows per page
-    firstRowOfTable: number; // triggers a page change, zero based. 0 -> first page, 1 -> second page, ...
+    firstRowOfTable!: number; // triggers a page change, zero based. 0 -> first page, 1 -> second page, ...
 
-    pageNumber: number;
+    pageNumber!: number;
 
-    loadingFlag: boolean;
+    loadingFlag: boolean = false;
 
-    replicationStatus: boolean;
-    replicationStatusLabel: string;
+    replicationStatus: boolean = false;
+    replicationStatusLabel!: string;
     replicationStatusControlDisabled: boolean = true;
 
     readonly tableName: string = 'flightLog';
 
     hasWritePermission: boolean = false;
 
-    constructor(private formBuilder: FormBuilder, private flightLogService: FlightLogServiceService, private genericEntityService: GenericEntityService, private replicationService: ReplicationService, private messageService: MyMessageService, private sessionDataService: SessionDataService) {
+    constructor(private formBuilder: FormBuilder, private flightLogService: FlightLogServiceService, private genericEntityService: GenericEntityService, private replicationService: ReplicationService, private messageService: MyMessageService, private sessionService: SessionService) {
         this.flightLogForm = FlightLogHelper.createForm(formBuilder);
     }
 
     ngOnInit() {
         this.messageService.clear();
-        this.page = new HalResponsePage();
+        this.page = {} as HalResponsePage;
         this.cols = [
-            {field: 'flightDate', header: 'Date', style: {'width': '6em', 'white-space': 'nowrap'}},
-            {field: 'makeModel', header: 'Mk Mdl', style: {'width': '6em'}},
-            {field: 'registration', header: 'Reg', style: {'width': '4em'}},
-            {field: 'pic', header: 'PIC', style: {'width': '8em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis'}},
-            {field: 'coPilot', header: 'Co Pilot', style: {'width': '8em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis'}},
-            {field: 'routeFrom', header: 'From', style: {'width': '4em'}},
-            {field: 'routeTo', header: 'To', style: {'width': '4em'}},
+            { field: 'flightDate', header: 'Date', style: { 'width': '6em', 'white-space': 'nowrap' } },
+            { field: 'makeModel', header: 'Mk Mdl', style: { 'width': '6em' } },
+            { field: 'registration', header: 'Reg', style: { 'width': '4em' } },
+            { field: 'pic', header: 'PIC', style: { 'width': '8em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis' } },
+            { field: 'coPilot', header: 'Co Pilot', style: { 'width': '8em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis' } },
+            { field: 'routeFrom', header: 'From', style: { 'width': '4em' } },
+            { field: 'routeTo', header: 'To', style: { 'width': '4em' } },
             // {field: 'remarks', header: 'Remarks', style: {'width': '30em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis'}},
-            {field: 'remarks', header: 'Remarks', style: {'width': '10em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis'}},
-            {field: 'dayDual', header: 'D D', tooltipText: 'Day Dual', style: {'width': '3em'}},
-            {field: 'daySolo', header: 'D S', tooltipText: 'Day Solo', style: {'width': '3em'}},
-            {field: 'nightDual', header: 'N D', tooltipText: 'Night Dual', style: {'width': '3em'}},
-            {field: 'nightSolo', header: 'N S', tooltipText: 'Night Solo', style: {'width': '3em'}},
+            { field: 'remarks', header: 'Remarks', style: { 'width': '10em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis' } },
+            { field: 'dayDual', header: 'D D', tooltipText: 'Day Dual', style: { 'width': '3em' } },
+            { field: 'daySolo', header: 'D S', tooltipText: 'Day Solo', style: { 'width': '3em' } },
+            { field: 'nightDual', header: 'N D', tooltipText: 'Night Dual', style: { 'width': '3em' } },
+            { field: 'nightSolo', header: 'N S', tooltipText: 'Night Solo', style: { 'width': '3em' } },
 
-            {field: 'xcountryDay', header: 'X D', tooltipText: 'Cross Country Day', style: {'width': '3em'}},
-            {field: 'xcountryNight', header: 'X N', tooltipText: 'Cross Country Night', style: {'width': '3em'}},
-            {field: 'tosLdgsDay', header: 'L D', tooltipText: 'Total Landings Day', style: {'width': '3em'}},
-            {field: 'tosLdgsNight', header: 'L N', tooltipText: 'Total Landings Night', style: {'width': '3em'}},            
+            { field: 'xcountryDay', header: 'X D', tooltipText: 'Cross Country Day', style: { 'width': '3em' } },
+            { field: 'xcountryNight', header: 'X N', tooltipText: 'Cross Country Night', style: { 'width': '3em' } },
+            { field: 'tosLdgsDay', header: 'L D', tooltipText: 'Total Landings Day', style: { 'width': '3em' } },
+            { field: 'tosLdgsNight', header: 'L N', tooltipText: 'Total Landings Night', style: { 'width': '3em' } },
         ];
         this.colsPart2 = [
-            {field: 'instrumentSimulated', header: 'Inst Sim', style: {'width': '3em'}},
-            {field: 'instrumentFlightSim', header: 'Inst Flt Sim', style: {'width': '3em'}},
+            { field: 'instrumentSimulated', header: 'Inst Sim', style: { 'width': '3em' } },
+            { field: 'instrumentFlightSim', header: 'Inst Flt Sim', style: { 'width': '3em' } },
             // {field: 'xcountryDay', header: 'X D', style: {'width': '3em'}},
             // {field: 'xcountryNight', header: 'X N', style: {'width': '3em'}},
-            {field: 'instrumentImc', header: 'Inst IMC', style: {'width': '3em'}},
-            {field: 'instrumentNoIfrAppr', header: '# IFR Apr', style: {'width': '3em'}},
+            { field: 'instrumentImc', header: 'Inst IMC', style: { 'width': '3em' } },
+            { field: 'instrumentNoIfrAppr', header: '# IFR Apr', style: { 'width': '3em' } },
             // {field: 'tosLdgsDay', header: 'L D', style: {'width': '3em'}},
             // {field: 'tosLdgsNight', header: 'L N', style: {'width': '3em'}},            
         ];
         this.columnOptions = [];
-        for(let i = 0; i < this.cols.length; i++) {
-            this.columnOptions.push({label: this.cols[i].header, value: this.cols[i]});
+        for (let i = 0; i < this.cols.length; i++) {
+            this.columnOptions.push({ label: this.cols[i].header, value: this.cols[i] });
         }
-        for(let i = 0; i < this.colsPart2.length; i++) {
-            this.columnOptions.push({label: this.colsPart2[i].header, value: this.colsPart2[i]});
+        for (let i = 0; i < this.colsPart2.length; i++) {
+            this.columnOptions.push({ label: this.colsPart2[i].header, value: this.colsPart2[i] });
         }
 
         this.getMakeModels();
@@ -127,14 +129,18 @@ export class FlightLogTableComponent implements OnInit {
             next: data => {
                 let rowCount: number = data.count;
                 console.log('rowCount', rowCount);
-                let pageNumber: number = Math.floor(rowCount/this.ROWS_PER_PAGE);
+                let pageNumber: number = Math.floor(rowCount / this.ROWS_PER_PAGE);
                 if (rowCount % this.ROWS_PER_PAGE != 0) pageNumber++;
                 this.firstRowOfTable = (pageNumber - 1) * this.ROWS_PER_PAGE;
                 console.log('this.firstRowOfTable', this.firstRowOfTable);
             }
         });
 
-        this.hasWritePermission = MenuComponent.isHolderOfAnyAuthority(this.sessionDataService.user, PermissionEnum.FLIGHT_LOG_WRITE);
+        //this.hasWritePermission = MenuComponent.isHolderOfAnyAuthority(this.sessionDataService.user || {} as User, PermissionEnum.FLIGHT_LOG_WRITE);
+        this.sessionService.userInfo$.subscribe(userInfo => {
+            console.log('userInfo', userInfo)
+            this.hasWritePermission = MenuComponent.isHolderOfAnyRole(userInfo, PermissionEnum.FLIGHT_LOG_WRITE);
+        });
     }
 
     private getMakeModels() {
@@ -142,7 +148,7 @@ export class FlightLogTableComponent implements OnInit {
             next: data => {
                 let makeModelResponse: IGenericEntityResponse = data;
                 this.makeModelSelectItemArray = new Array<SelectItem>();
-                makeModelResponse._embedded['makeModels'].forEach((makeModel: MakeModel) => {
+                makeModelResponse['_embedded']['makeModels'].forEach((makeModel: MakeModel) => {
                     this.makeModelSelectItemArray.push({ label: makeModel.makeModel, value: makeModel.makeModel });
                 });
             }
@@ -155,24 +161,24 @@ export class FlightLogTableComponent implements OnInit {
             let registrationResponse: IGenericEntityResponse = data;
             console.log('registrationResponse', registrationResponse);
             this.registrationSelectItemArray = new Array<SelectItem>();
-            registrationResponse._embedded['registrations'].forEach((registration: Registration) => {
+            registrationResponse['_embedded']['registrations'].forEach((registration: Registration) => {
                 this.registrationSelectItemArray.push({ label: registration.registration, value: registration.registration });
             });
         });
     }
-    
+
     private getPilots() {
         this.genericEntityService.getAllGenericEntity('pilot').subscribe(data => {
             console.log('data', data);
             let pilotResponse: IGenericEntityResponse = data;
             console.log('pilotResponse', pilotResponse);
             this.pilotSelectItemArray = new Array<SelectItem>();
-            pilotResponse._embedded['pilots'].forEach((pilot: Pilot) => {
+            pilotResponse['_embedded']['pilots'].forEach((pilot: Pilot) => {
                 this.pilotSelectItemArray.push({ label: pilot.pilot, value: pilot.pilot });
             });
         });
     }
-    
+
     onLazyLoad(lazyLoadEvent: LazyLoadEvent) {
         this.savedLazyLoadEvent = lazyLoadEvent;
         console.log('event', lazyLoadEvent);
@@ -182,8 +188,7 @@ export class FlightLogTableComponent implements OnInit {
         // console.log('event.first', lazyLoadEvent.first);
         console.log('event.rows', lazyLoadEvent.rows);
         console.log('event.filters', lazyLoadEvent.filters);
-        this.fetchPage(lazyLoadEvent.first,
-            lazyLoadEvent.rows, ComponentHelper.buildSearchString(lazyLoadEvent, this.fieldNames));
+        this.fetchPage(lazyLoadEvent.first || 0, lazyLoadEvent.rows || 0, ComponentHelper.buildSearchString(lazyLoadEvent, this.fieldNames));
     }
 
     fetchPage(firstRowNumber: number, rowsPerPage: number, searchString: string) {
@@ -211,24 +216,25 @@ export class FlightLogTableComponent implements OnInit {
                 // TODO uncomment later
                 //this.messageService.clear();
                 //this.messageService.error(error);
-            }});
+            }
+        });
     }
 
-    onRowSelect(event) {
+    onRowSelect(event: any) {
         console.log(event);
 
         this.crudFlightLog = Object.assign({}, this.selectedFlightLog);
 
         this.modifyAndDeleteButtonsDisable = false;
-        this.fromAirport = new Airport();
+        this.fromAirport = {} as Airport;
         this.fromAirport.identifier = this.crudFlightLog.routeFrom;
-        this.toAirport = new Airport();
+        this.toAirport = {} as Airport;
         this.toAirport.identifier = this.crudFlightLog.routeTo;
     }
-    onRowUnselect(event) {
+    onRowUnselect(event: any) {
         console.log(event);
         this.modifyAndDeleteButtonsDisable = true;
-        this.selectedFlightLog = new FlightLog(); // This a hack. If don't init selectedFlightLog, dialog will produce exception
+        this.selectedFlightLog = {} as FlightLog; // This a hack. If don't init selectedFlightLog, dialog will produce exception
     }
     showDialog(crudMode: CrudEnum) {
         this.crudMode = crudMode;
@@ -238,17 +244,17 @@ export class FlightLogTableComponent implements OnInit {
         switch (this.crudMode) {
             case CrudEnum.ADD:
                 this.flightLogForm.reset();
-                this.flightLogForm.get('flightDate').setValue(new Date());
-                this.flightLogForm.get('makeModel').setValue('PA28-181');
-                this.flightLogForm.get('registration').setValue('GQGD');
-                this.flightLogForm.get('pic').setValue('Self');
-                let cyooAirport: Airport = new Airport();
+                this.flightLogForm.get('flightDate')?.setValue(new Date());
+                this.flightLogForm.get('makeModel')?.setValue('PA28-181');
+                this.flightLogForm.get('registration')?.setValue('GQGD');
+                this.flightLogForm.get('pic')?.setValue('Self');
+                let cyooAirport: Airport = {} as Airport
                 cyooAirport.identifier = 'CYOO';
-                this.flightLogForm.get('fromAirport').setValue(cyooAirport);
-                this.flightLogForm.get('toAirport').setValue(cyooAirport);
-                this.flightLogForm.get('remarks').setValue('VFR - ');
+                this.flightLogForm.get('fromAirport')?.setValue(cyooAirport);
+                this.flightLogForm.get('toAirport')?.setValue(cyooAirport);
+                this.flightLogForm.get('remarks')?.setValue('VFR - ');
                 FlightLogHelper.enableForm(this.flightLogForm);
-                this.crudFlightLog = new FlightLog();
+                this.crudFlightLog = {} as FlightLog;
                 break;
             case CrudEnum.UPDATE:
                 FlightLogHelper.copyToForm(this.crudFlightLog, this.flightLogForm);
@@ -284,8 +290,8 @@ export class FlightLogTableComponent implements OnInit {
                 });
                 break;
             case CrudEnum.UPDATE:
-            this.clearTime(this.crudFlightLog);
-            this.flightLogService.updateFlightLog(this.crudFlightLog).subscribe({
+                this.clearTime(this.crudFlightLog);
+                this.flightLogService.updateFlightLog(this.crudFlightLog).subscribe({
                     next: savedFlightLog => {
                         console.log('updatedFlightLog', savedFlightLog);
                     },
@@ -325,20 +331,21 @@ export class FlightLogTableComponent implements OnInit {
     }
     private resetDialoForm() {
         this.flightLogForm.reset();
-        this.selectedFlightLog = new FlightLog();
-        this.fromAirport = new Airport();
-        this.toAirport = new Airport();
+        this.selectedFlightLog = {} as FlightLog;
+        this.fromAirport = {} as Airport;
+        this.toAirport = {} as Airport;
     }
     onCancel() {
         this.resetDialoForm();
         this.displayDialog = false;
     }
 
-    searchAirport(event) {
+    searchAirport(event: { query: string; }) {
         this.flightLogService.getAirportByIdentifierOrName(event.query, event.query).subscribe({
             next: airportArray => {
                 this.filteredAirportArray = airportArray;
-            }});
+            }
+        });
     }
 
     onGoToPage() {
@@ -347,7 +354,7 @@ export class FlightLogTableComponent implements OnInit {
         this.savedLazyLoadEvent.first = this.firstRowOfTable;
         this.onLazyLoad(this.savedLazyLoadEvent);
         this.fetchPage(this.firstRowOfTable, this.ROWS_PER_PAGE, '');
-        this.pageNumber = null;
+        this.pageNumber = 0;
     }
 
     private clearTime(flightLog: FlightLog) {
@@ -359,7 +366,7 @@ export class FlightLogTableComponent implements OnInit {
 
     private clearTimes(flightLogArray: Array<FlightLog>) {
         flightLogArray.forEach(flightLog => {
-            flightLog.flightDate = new Date(flightLog.flightDate+'T00:00:00');
+            flightLog.flightDate = new Date(flightLog.flightDate + 'T00:00:00');
         });
     }
 
@@ -372,12 +379,12 @@ export class FlightLogTableComponent implements OnInit {
         })
     }
 
-    onChangeReplicationStatus(event) {
+    onChangeReplicationStatus(event: { checked: boolean; }) {
         this.replicationStatusLabel = "Updating";
         console.log('onChangeReplicationStatus', event);
         console.log('checked: ', event.checked);
         this.replicationStatusControlDisabled = true;
-        this.replicationService.setTableReplicationStatus(this.tableName, event.checked).subscribe(params => 
+        this.replicationService.setTableReplicationStatus(this.tableName, event.checked).subscribe(params =>
             this.getTableReplicationStatus()
         );
     }

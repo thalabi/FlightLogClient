@@ -1,5 +1,5 @@
 export namespace AircraftComponentName {
-    export class ComponentName {
+    export interface ComponentName {
         "name": string
     }
 }

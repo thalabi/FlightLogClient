@@ -1,6 +1,6 @@
 import { IGenericEntity } from "./i-gerneric-entity";
 
-export class AircraftComponentHistory {
+export interface AircraftComponentHistory {
     name: string;
     description: string;
     workPerformed: string;

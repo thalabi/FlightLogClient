@@ -3,7 +3,7 @@ import { HalResponseLinks } from "../hal/hal-response-links";
 import { HalResponsePage } from "../hal/hal-response-page";
 //import { FlightLogs } from "./flight-logs";
 
-export class FlightLogResponse {
+export interface FlightLogResponse {
     //_embedded: FlightLogs;
     _embedded: Embedded;
     _links: HalResponseLinks;
@@ -13,6 +13,6 @@ export class FlightLogResponse {
 // class FlightLogs {
 //     flightLogArray: Array<FlightLog>;
 // }
-class Embedded {
+interface Embedded {
     flightLogs: Array<FlightLog>;
 }

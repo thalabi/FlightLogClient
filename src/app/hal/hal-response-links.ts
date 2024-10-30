@@ -1,6 +1,6 @@
 import { HalHref } from "./hal-href";
 
-export class HalResponseLinks {
+export interface HalResponseLinks {
     first: HalHref;
     prev: HalHref;
     self: HalHref;

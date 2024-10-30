@@ -1,80 +1,80 @@
-<p-table
-    *ngIf="firstRowOfTable >= 0"
-    [value]="flightLogArray"
-    [dataKey]="'_links.flightLog.href'"
-    [lazy]="true"
-    [rows]="ROWS_PER_PAGE"
-    [paginator]="true"
-    [totalRecords]="page.totalElements"
-    [rowsPerPageOptions]="[5,10,20]"
-    (onLazyLoad)="onLazyLoad($event)"
-    [selectionMode]="'single'"
-    [(selection)]="selectedFlightLog"
-    (onRowSelect)="onRowSelect($event)"
-    (onRowUnselect)="onRowUnselect($event)"
-    [responsive]="true"
-    [first]="firstRowOfTable"
-    [loading]="loadingFlag"
-    #dt>
+<p-table *ngIf="firstRowOfTable >= 0" [value]="flightLogArray" [dataKey]="'_links.flightLog.href'" [lazy]="true"
+    [rows]="ROWS_PER_PAGE" [paginator]="true" [totalRecords]="page.totalElements" [rowsPerPageOptions]="[5,10,20]"
+    (onLazyLoad)="onLazyLoad($event)" [selectionMode]="'single'" [(selection)]="selectedFlightLog"
+    (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [responsive]="true"
+    [first]="firstRowOfTable" [loading]="loadingFlag" #dt>
 
     <ng-template pTemplate="caption">
         <div style="text-align:right">
-            <p-multiSelect [options]="columnOptions" [(ngModel)]="cols" maxSelectedLabels="99"></p-multiSelect>
+            <p-multiSelect [options]="columnOptions" [(ngModel)]="cols" [maxSelectedLabels]="99"></p-multiSelect>
         </div>
     </ng-template>
 
     <ng-template pTemplate="header">
         <tr>
             <th *ngFor="let col of cols" [ngStyle]="col.style">
-                <span *ngIf="col.tooltipText" [pTooltip]="col.tooltipText" tooltipPosition="top" class="underline-dotted">{{col.header}}</span>
+                <span *ngIf="col.tooltipText" [pTooltip]="col.tooltipText" tooltipPosition="top"
+                    class="underline-dotted">{{col.header}}</span>
                 <span *ngIf="!col.tooltipText">{{col.header}}</span>
             </th>
         </tr>
         <tr>
             <th *ngFor="let col of cols" [ngSwitch]="col.field">
-                <input *ngSwitchCase="'flightDate'" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [ngStyle]="col.style">
-                <input *ngSwitchDefault pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [ngStyle]="col.style">
+                <!-- <input *ngSwitchCase="'flightDate'" pInputText type="text"
+                    (input)="dt.filter($event.target, col.field, col.filterMatchMode)" [ngStyle]="col.style">
+                <input *ngSwitchDefault #filterInput pInputText type="text"
+                    (input)="dt.filter(filterInput.value, col.field, col.filterMatchMode)" [ngStyle]="col.style"> -->
+                <input #filterInput pInputText type="text"
+                    (input)="dt.filter(filterInput.value, col.field, col.filterMatchMode)" [ngStyle]="col.style">
             </th>
         </tr>
     </ng-template>
-    
+
     <ng-template pTemplate="body" let-rowData>
         <tr [pSelectableRow]="rowData">
             <td *ngFor="let col of cols">
-                    <span *ngIf="col.field === 'flightDate'">{{rowData[col.field] | date:'yyyy-MM-dd'}}</span>
-                    <span *ngIf="col.field === 'remarks'"><app-abbreviate [text]="rowData[col.field]" [maxLength]="20"></app-abbreviate></span>
-                    <span *ngIf="col.field !== 'flightDate' && col.field !== 'remarks'">{{rowData[col.field]}}</span>
+                <span *ngIf="col.field === 'flightDate'">{{rowData[col.field] | date:'yyyy-MM-dd'}}</span>
+                <span *ngIf="col.field === 'remarks'"><app-abbreviate [text]="rowData[col.field]"
+                        [maxLength]="20"></app-abbreviate></span>
+                <span *ngIf="col.field !== 'flightDate' && col.field !== 'remarks'">{{rowData[col.field]}}</span>
             </td>
         </tr>
     </ng-template>
 
     <ng-template pTemplate="summary">
-        <div class="p-grid" style="margin-bottom: -0.6em;">
+        <div class="p-grid">
             <div class="p-col-5">
                 <span *ngIf="hasWritePermission">
-                    <button type="button" pButton icon="pi pi-plus" style="float:left" (click)="showDialog(crudEnum.ADD)" label="Add"></button>
-                    <button type="button" pButton icon="pi pi-pencil" style="float:left; margin-left:0.5rem;" (click)="showDialog(crudEnum.UPDATE)" label="Modify" [disabled]="modifyAndDeleteButtonsDisable"></button>
-                    <button type="button" pButton icon="pi pi-minus" style="float:left; margin-left:0.5rem;" (click)="showDialog(crudEnum.DELETE)" label="Delete" [disabled]="modifyAndDeleteButtonsDisable"></button>
+                    <button type="button" pButton icon="pi pi-plus" style="float:left"
+                        (click)="showDialog(crudEnum.ADD)" label="Add"></button>
+                    <button type="button" pButton icon="pi pi-pencil" style="float:left; margin-left:0.5rem;"
+                        (click)="showDialog(crudEnum.UPDATE)" label="Modify"
+                        [disabled]="modifyAndDeleteButtonsDisable"></button>
+                    <button type="button" pButton icon="pi pi-minus" style="float:left; margin-left:0.5rem;"
+                        (click)="showDialog(crudEnum.DELETE)" label="Delete"
+                        [disabled]="modifyAndDeleteButtonsDisable"></button>
                     <app-sync-button [tableName]="tableName"></app-sync-button>
                 </span>
             </div>
             <div class="p-col-4 p-offset-3">
                 <div style="float:right;">
-                <span style="margin-right: 1rem;">Rows: {{page.totalElements}}</span>
-                <span style="margin-right: 1rem;">Pages: {{page.totalPages}}</span>
-                <span style="margin-right: 0.5rem;">Page: <input type="text" id="pageNumber" [(ngModel)]="pageNumber" maxlength="4" size="3"/></span>
-                <button pButton type="button" label="Go" (click)="onGoToPage()"></button>
+                    <span style="margin-right: 1rem;">Rows: {{page.totalElements}}</span>
+                    <span style="margin-right: 1rem;">Pages: {{page.totalPages}}</span>
+                    <span style="margin-right: 0.5rem;">Page: <input type="text" id="pageNumber"
+                            [(ngModel)]="pageNumber" maxlength="4" size="3" /></span>
+                    <button pButton type="button" label="Go" (click)="onGoToPage()"></button>
                 </div>
             </div>
         </div>
     </ng-template>
 </p-table>
 
-<p-dialog header="Flight Log - {{crudMode}}" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
-        <!-- TODO set the width on the p-dialog not on the div -->
-        <!-- <form (ngSubmit)="onSubmit()" #flightLogForm="ngForm"> -->
+<p-dialog header="Flight Log - {{crudMode}}" [(visible)]="displayDialog" [responsive]="true" showEffect="fade"
+    [modal]="true">
+    <!-- TODO set the width on the p-dialog not on the div -->
+    <!-- <form (ngSubmit)="onSubmit()" #flightLogForm="ngForm"> -->
     <form [formGroup]="flightLogForm" (ngSubmit)="onSubmit()" novalidate>
-            
+
 
         <div class="p-grid" style="width: 50rem;">
             <!-- line 1 -->
@@ -82,9 +82,9 @@
                 <label for="flightDate">Flight date</label>
             </div>
             <div class="p-col-9">
-                <p-calendar formControlName="flightDate" id="flightDate" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2050"
-                    [dateFormat]="'yy-mm-dd'" [showIcon]="true" [readonlyInput]="true" [showOnFocus]="false"
-                    >
+                <p-calendar formControlName="flightDate" id="flightDate" [monthNavigator]="true" [yearNavigator]="true"
+                    yearRange="2000:2050" [dateFormat]="'yy-mm-dd'" [showIcon]="true" [readonlyInput]="true"
+                    [showOnFocus]="false">
                 </p-calendar>
             </div>
             <!-- line 2 -->
@@ -92,33 +92,39 @@
                 <label for="makeModel">Make and model</label>
             </div>
             <div class="p-col-3">
-                <p-dropdown formControlName="makeModel" [options]="makeModelSelectItemArray" id="makeModel" [placeholder]="' '" [style]="{'width': '12rem', 'min-height': '1.8rem'}"></p-dropdown>
+                <p-dropdown formControlName="makeModel" [options]="makeModelSelectItemArray" id="makeModel"
+                    [placeholder]="' '" [style]="{'width': '12rem', 'min-height': '1.8rem'}"></p-dropdown>
             </div>
             <div class="p-col-3">
                 <label for="registration">Registration</label>
             </div>
             <div class="p-col-3">
-                <p-dropdown formControlName="registration" [options]="registrationSelectItemArray" id="registration" [placeholder]="' '" [style]="{'width': '12rem', 'min-height': '1.8rem'}"></p-dropdown>
+                <p-dropdown formControlName="registration" [options]="registrationSelectItemArray" id="registration"
+                    [placeholder]="' '" [style]="{'width': '12rem', 'min-height': '1.8rem'}"></p-dropdown>
             </div>
             <!-- line 3 -->
             <div class="p-col-3">
                 <label for="pic">Pilot-in-command</label>
             </div>
             <div class="p-col-3">
-                <p-dropdown formControlName="pic" [options]="pilotSelectItemArray" id="pic" [placeholder]="' '" [style]="{'width': '12rem', 'min-height': '1.8rem'}"></p-dropdown>
+                <p-dropdown formControlName="pic" [options]="pilotSelectItemArray" id="pic" [placeholder]="' '"
+                    [style]="{'width': '12rem', 'min-height': '1.8rem'}"></p-dropdown>
             </div>
             <div class="p-col-3">
                 <label for="coPilot">Co-pilot</label>
             </div>
             <div class="p-col-3">
-                <p-dropdown formControlName="coPilot" [options]="pilotSelectItemArray" id="coPilot" [placeholder]="' '" [style]="{'width': '12rem', 'min-height': '1.8rem'}"></p-dropdown>
+                <p-dropdown formControlName="coPilot" [options]="pilotSelectItemArray" id="coPilot" [placeholder]="' '"
+                    [style]="{'width': '12rem', 'min-height': '1.8rem'}"></p-dropdown>
             </div>
             <!-- line 4 -->
             <div class="p-col-3">
                 <label for="routeFrom">From</label>
             </div>
             <div class="p-col-3">
-                <p-autoComplete formControlName="fromAirport" id="fromAirport" [suggestions]="filteredAirportArray" (completeMethod)="searchAirport($event)" [field]="'identifier'" size="17" [forceSelection]="true" [readonly]="crudMode == 'Delete'">
+                <p-autoComplete formControlName="fromAirport" id="fromAirport" [suggestions]="filteredAirportArray"
+                    (completeMethod)="searchAirport($event)" [field]="'identifier'" [size]="17" [forceSelection]="true"
+                    [readonly]="crudMode == 'Delete'">
                     <ng-template let-airport pTemplate="item">
                         {{airport.identifier}} - {{airport.name}}
                     </ng-template>
@@ -128,7 +134,9 @@
                 <label for="routeTo">To</label>
             </div>
             <div class="p-col-3">
-                <p-autoComplete formControlName="toAirport" id="toAirport" [suggestions]="filteredAirportArray" (completeMethod)="searchAirport($event)" [field]="'identifier'" size="17" [forceSelection]="true" [readonly]="crudMode == 'Delete'">
+                <p-autoComplete formControlName="toAirport" id="toAirport" [suggestions]="filteredAirportArray"
+                    (completeMethod)="searchAirport($event)" [field]="'identifier'" [size]="17" [forceSelection]="true"
+                    [readonly]="crudMode == 'Delete'">
                     <ng-template let-airport pTemplate="item">
                         {{airport.identifier}} - {{airport.name}}
                     </ng-template>
@@ -139,22 +147,25 @@
                 <label for="remarks">Remarks</label>
             </div>
             <div class="p-col-9">
-                <textarea pInputTextarea formControlName="remarks" [rows]="3" [maxLength]="128"autoResize="autoResize" style="width: 100%;" id="remarks" class="form-control"></textarea>
+                <textarea pInputTextarea formControlName="remarks" [rows]="3" [maxLength]="128" autoResize="autoResize"
+                    style="width: 100%;" id="remarks" class="form-control"></textarea>
             </div>
             <!-- line 6 -->
             <div class="p-col-3">
                 <label for="dayDual">Day dual</label>
             </div>
             <div class="p-col-3">
-                <input type="text" id="dayDual" formControlName="dayDual" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
-                <div [hidden]="flightLogForm.controls.dayDual.valid || flightLogForm.controls.dayDual.pristine" class="red-font">Invalid value</div>
+                <input type="text" id="dayDual" formControlName="dayDual" regexValidator="^\d*(\.\d{0,1}){0,1}$" />
+                <div [hidden]="flightLogForm.controls['dayDual'].valid || flightLogForm.controls['dayDual'].pristine"
+                    class="red-font">Invalid value</div>
             </div>
             <div class="p-col-3">
                 <label for="daySolo">Day solo</label>
             </div>
             <div class="p-col-3">
-                <input pInputText id="daySolo" formControlName="daySolo" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
-                <div [hidden]="flightLogForm.controls.daySolo.valid || flightLogForm.controls.daySolo.pristine" class="red-font">Invalid value</div>
+                <input pInputText id="daySolo" formControlName="daySolo" regexValidator="^\d*(\.\d{0,1}){0,1}$" />
+                <div [hidden]="flightLogForm.controls['daySolo'].valid || flightLogForm.controls['daySolo'].pristine"
+                    class="red-font">Invalid value</div>
             </div>
 
             <!-- line 7 -->
@@ -162,15 +173,17 @@
                 <label for="nightDual">Night dual</label>
             </div>
             <div class="p-col-3">
-                <input pInputText id="nightDual" formControlName="nightDual" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
-                <div [hidden]="flightLogForm.controls.nightDual.valid || flightLogForm.controls.nightDual.pristine" class="red-font">Invalid value</div>
+                <input pInputText id="nightDual" formControlName="nightDual" regexValidator="^\d*(\.\d{0,1}){0,1}$" />
+                <div [hidden]="flightLogForm.controls['nightDual'].valid || flightLogForm.controls['nightDual'].pristine"
+                    class="red-font">Invalid value</div>
             </div>
             <div class="p-col-3">
                 <label for="nightSolo">Night solo</label>
             </div>
             <div class="p-col-3">
-                <input pInputText id="nightSolo" formControlName="nightSolo" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
-                <div [hidden]="flightLogForm.controls.nightSolo.valid || flightLogForm.controls.nightSolo.pristine" class="red-font">Invalid value</div>
+                <input pInputText id="nightSolo" formControlName="nightSolo" regexValidator="^\d*(\.\d{0,1}){0,1}$" />
+                <div [hidden]="flightLogForm.controls['nightSolo'].valid || flightLogForm.controls['nightSolo'].pristine"
+                    class="red-font">Invalid value</div>
             </div>
 
             <!-- line 8 -->
@@ -178,67 +191,80 @@
                 <label for="instrumentImc">Inst IMC</label>
             </div>
             <div class="p-col-3">
-                <input pInputText id="instrumentImc" formControlName="instrumentImc" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
-                <div [hidden]="flightLogForm.controls.instrumentImc.valid || flightLogForm.controls.instrumentImc.pristine" class="red-font">Invalid value</div>            
+                <input pInputText id="instrumentImc" formControlName="instrumentImc"
+                    regexValidator="^\d*(\.\d{0,1}){0,1}$" />
+                <div [hidden]="flightLogForm.controls['instrumentImc'].valid || flightLogForm.controls['instrumentImc'].pristine"
+                    class="red-font">Invalid value</div>
             </div>
             <div class="p-col-3">
                 <label for="instrumentFlightSim">Inst simulated</label>
             </div>
             <div class="p-col-3">
-                <input pInputText id="instrumentFlightSim" formControlName="instrumentFlightSim" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
-                <div [hidden]="flightLogForm.controls.instrumentFlightSim.valid || flightLogForm.controls.instrumentFlightSim.pristine" class="red-font">Invalid value</div>            
+                <input pInputText id="instrumentFlightSim" formControlName="instrumentFlightSim"
+                    regexValidator="^\d*(\.\d{0,1}){0,1}$" />
+                <div [hidden]="flightLogForm.controls['instrumentFlightSim'].valid || flightLogForm.controls['instrumentFlightSim'].pristine"
+                    class="red-font">Invalid value</div>
             </div>
             <!-- line 9 -->
             <div class="p-col-3">
                 <label for="instrumentSimulated">Inst flight sim</label>
             </div>
             <div class="p-col-3">
-                <input pInputText id="instrumentSimulated" formControlName="instrumentSimulated" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
-                <div [hidden]="flightLogForm.controls.instrumentSimulated.valid || flightLogForm.controls.instrumentSimulated.pristine" class="red-font">Invalid value</div>            
+                <input pInputText id="instrumentSimulated" formControlName="instrumentSimulated"
+                    regexValidator="^\d*(\.\d{0,1}){0,1}$" />
+                <div [hidden]="flightLogForm.controls['instrumentSimulated'].valid || flightLogForm.controls['instrumentSimulated'].pristine"
+                    class="red-font">Invalid value</div>
             </div>
             <div class="p-col-3">
                 <label for="instrumentNoIfrAppr">Inst # IFR appr</label>
             </div>
             <div class="p-col-3">
-                <input pInputText id="instrumentNoIfrAppr" formControlName="instrumentNoIfrAppr" regexValidator="^\d*$"/>
-                <div [hidden]="flightLogForm.controls.instrumentNoIfrAppr.valid || flightLogForm.controls.instrumentNoIfrAppr.pristine" class="red-font">Invalid value</div>            
+                <input pInputText id="instrumentNoIfrAppr" formControlName="instrumentNoIfrAppr"
+                    regexValidator="^\d*$" />
+                <div [hidden]="flightLogForm.controls['instrumentNoIfrAppr'].valid || flightLogForm.controls['instrumentNoIfrAppr'].pristine"
+                    class="red-font">Invalid value</div>
             </div>
             <!-- line 10 -->
             <div class="p-col-3">
                 <label for="xcountryDay">X-cty day</label>
             </div>
             <div class="p-col-3">
-                <input pInputText id="xcountryDay" formControlName="xcountryDay" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
-                <div [hidden]="flightLogForm.controls.xcountryDay.valid || flightLogForm.controls.xcountryDay.pristine" class="red-font">Invalid value</div>            
+                <input pInputText id="xcountryDay" formControlName="xcountryDay"
+                    regexValidator="^\d*(\.\d{0,1}){0,1}$" />
+                <div [hidden]="flightLogForm.controls['xcountryDay'].valid || flightLogForm.controls['xcountryDay'].pristine"
+                    class="red-font">Invalid value</div>
             </div>
             <div class="p-col-3">
                 <label for="xcountryNight">X-cty night</label>
             </div>
             <div class="p-col-3">
-                <input pInputText id="xcountryNight" formControlName="xcountryNight" regexValidator="^\d*(\.\d{0,1}){0,1}$"/>
-                <div [hidden]="flightLogForm.controls.xcountryNight.valid || flightLogForm.controls.xcountryNight.pristine" class="red-font">Invalid value</div>            
+                <input pInputText id="xcountryNight" formControlName="xcountryNight"
+                    regexValidator="^\d*(\.\d{0,1}){0,1}$" />
+                <div [hidden]="flightLogForm.controls['xcountryNight'].valid || flightLogForm.controls['xcountryNight'].pristine"
+                    class="red-font">Invalid value</div>
             </div>
             <!-- line 11 -->
             <div class="p-col-3">
                 <label for="tosLdgsDay">T/Os & ldgs day</label>
             </div>
             <div class="p-col-3">
-                <input pInputText id="tosLdgsDay" formControlName="tosLdgsDay" regexValidator="^\d*$"/>
-                <div [hidden]="flightLogForm.controls.tosLdgsDay.valid || flightLogForm.controls.tosLdgsDay.pristine" class="red-font">Invalid value</div>            
+                <input pInputText id="tosLdgsDay" formControlName="tosLdgsDay" regexValidator="^\d*$" />
+                <div [hidden]="flightLogForm.controls['tosLdgsDay'].valid || flightLogForm.controls['tosLdgsDay'].pristine"
+                    class="red-font">Invalid value</div>
             </div>
             <div class="p-col-3">
                 <label for="tosLdgsNight">T/Os & ldgs night</label>
             </div>
             <div class="p-col-3">
-                <input pInputText id="tosLdgsNight" formControlName="tosLdgsNight" regexValidator="^\d*$"/>
-                <div [hidden]="flightLogForm.controls.tosLdgsNight.valid || flightLogForm.controls.tosLdgsNight.pristine" class="red-font">Invalid value</div>            
+                <input pInputText id="tosLdgsNight" formControlName="tosLdgsNight" regexValidator="^\d*$" />
+                <div [hidden]="flightLogForm.controls['tosLdgsNight'].valid || flightLogForm.controls['tosLdgsNight'].pristine"
+                    class="red-font">Invalid value</div>
             </div>
             <!-- <div>{{flightLogForm.status}}</div> -->
             <p-footer class="p-grid">
                 <div class="p-col-6">
                     <!-- TODO replace disabled logic with a function -->
-                    <button pButton type="submit" label="Submit"
-                    [disabled]="flightLogForm.invalid"></button>
+                    <button pButton type="submit" label="Submit" [disabled]="flightLogForm.invalid"></button>
                 </div>
                 <div class="p-col-6">
                     <button pButton type="reset" label="Cancel" (click)="onCancel()"></button>

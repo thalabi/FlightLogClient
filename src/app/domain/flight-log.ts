@@ -1,17 +1,17 @@
-export class FlightLog {
+export interface FlightLog {
     id: number;
     flightDate: Date;
     makeModel: string;
-	registration: string;
-	pic: string;
-	coPilot: string;
+    registration: string;
+    pic: string;
+    coPilot: string;
     routeFrom: string;
     routeTo: string;
     remarks: string;
     dayDual: number;
-	daySolo: number;
-	nightDual: number;
-	nightSolo: number;
+    daySolo: number;
+    nightDual: number;
+    nightSolo: number;
 
     instrumentSimulated: number;
     instrumentFlightSim: number;
@@ -25,7 +25,7 @@ export class FlightLog {
 
     created: Date;
     modified: Date;
-    
-    _links: {flightLog: {href: string}};
+
+    _links: { flightLog: { href: string } };
     //created: Date;
 }

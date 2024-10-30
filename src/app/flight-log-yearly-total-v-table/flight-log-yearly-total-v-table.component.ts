@@ -5,15 +5,15 @@ import { FlightLogYearlyTotalVResponse } from '../response/flight-log-yearly-tot
 import { MyMessageService } from '../message/mymessage.service';
 
 @Component({
-  selector: 'app-flight-log-yearly-total-v-table',
-  templateUrl: './flight-log-yearly-total-v-table.component.html',
-  styleUrls: ['./flight-log-yearly-total-v-table.component.css']
+    selector: 'app-flight-log-yearly-total-v-table',
+    templateUrl: './flight-log-yearly-total-v-table.component.html',
+    styleUrls: ['./flight-log-yearly-total-v-table.component.css']
 })
 export class FlightLogYearlyTotalVTableComponent implements OnInit {
 
-    flightLogYearlyTotalVArray: Array<FlightLogYearlyTotalV>;
+    flightLogYearlyTotalVArray!: Array<FlightLogYearlyTotalV>;
 
-    loadingFlag: boolean;
+    loadingFlag!: boolean;
 
     constructor(private flightLogService: FlightLogServiceService, private messageService: MyMessageService) { }
 

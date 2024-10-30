@@ -10,19 +10,22 @@ import { DataTypeEnum } from "../config/DataTypeEnum";
 import { FieldAttributes } from "../config/FieldAttributes";
 import { UiComponentEnum } from "../config/UiComponentEnum";
 import { StringUtils } from '../string-utils';
-import { LazyLoadEvent, Message } from 'primeng/primeng';
+import { LazyLoadEvent } from 'primeng/api/lazyloadevent';
 import { HalResponseLinks } from '../hal/hal-response-links';
 import { HalResponsePage } from '../hal/hal-response-page';
 import { ComponentHelper } from '../util/ComponentHelper';
 import { GenericEntityService } from '../service/generic-entity.service';
 import { MyMessageService } from '../message/mymessage.service';
-import { Observable } from 'rxjs';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/concatMap';
+import { Observable, of } from 'rxjs';
+//import 'rxjs/add/observable/of';
+//import 'rxjs/add/operator/concatMap';
+import { concatMap } from 'rxjs/operators';
 import { IGenericEntityResponse } from '../response/i-generic-entity-response';
 import { SessionDataService } from '../service/session-data.service';
 import { MenuComponent } from '../menu/menu.component';
 import { Constant } from '../constant';
+import { User } from '../security-old/user';
+import { SessionService } from '../service/session.service';
 
 @Component({
     selector: 'app-generic-crud',
@@ -32,66 +35,66 @@ import { Constant } from '../constant';
 export class GenericCrudComponent implements OnInit {
     //[x: string]: any;
 
-    rowArray: Array<IGenericEntity>;
+    rowArray: Array<IGenericEntity> = [];
     // Holds all rows of the associated table
-    associationArray: Array<IGenericEntity>;
+    associationArray: Array<IGenericEntity> = [];
     // Holds rows of the associated table ['associationArray - selectedAssociationArray'
-    availableAssociationArray: Array<IGenericEntity>;
-    selectedRow: IGenericEntity;
+    availableAssociationArray: Array<IGenericEntity> = [];
+    selectedRow!: IGenericEntity;
     // Holds rows associated with the selected rows
     selectedAssociationArray: Array<IGenericEntity> = [];
-    crudRow: IGenericEntity;
+    crudRow!: IGenericEntity;
     //rowResponse: IGenericEntityResponse;
-    row: IGenericEntity;
-    page: HalResponsePage;
-    links: HalResponseLinks;
+    row!: IGenericEntity;
+    page: HalResponsePage = {} as HalResponsePage;
+    links: HalResponseLinks = {} as HalResponseLinks;
 
-    crudForm: FormGroup;
-    
-    displayDialog: boolean;
+    crudForm!: FormGroup;
 
-    crudMode: CrudEnum;
+    displayDialog!: boolean;
+
+    crudMode!: CrudEnum;
     crudEnum = CrudEnum; // Used in html to refere to enum
     modifyAndDeleteButtonsDisable: boolean = true;
 
-    formAttributes: FormAttributes;
-    fieldAttributesArray: Array<FieldAttributes>;
-    associationAttributesArray: Array<AssociationAttributes>;
-    tableName: string;
+    formAttributes: FormAttributes = {} as FormAttributes;
+    fieldAttributesArray: Array<FieldAttributes> = [];
+    associationAttributesArray: Array<AssociationAttributes> = [];
+    tableName!: string;
     // sortColumnName: string;
-    tableNameCapitalized: string;
+    tableNameCapitalized!: string;
     //columnName1: string;
 
     // used to pass as argument to getTableRowsLazy() when refreshing page after add/update/delete
-    savedLazyLoadEvent: LazyLoadEvent;
+    savedLazyLoadEvent!: LazyLoadEvent;
 
     readonly ROWS_PER_PAGE: number = 10; // default rows per page
-    firstRowOfTable: number; // triggers a page change, zero based. 0 -> first page, 1 -> second page, ...
-    
-    pageNumber: number;
+    firstRowOfTable!: number; // triggers a page change, zero based. 0 -> first page, 1 -> second page, ...
+
+    pageNumber!: number;
 
     counter: number = 0;
 
-    loadingFlag: boolean;
+    loadingFlag!: boolean;
 
     uiComponentEnum = UiComponentEnum; // Used in html to refere to enum
 
     hasWritePermission: boolean = false;
 
-    constructor(private formBuilder: FormBuilder, private genericEntityService: GenericEntityService, private route: ActivatedRoute, private messageService: MyMessageService, private sessionDataService: SessionDataService) {
+    constructor(private formBuilder: FormBuilder, private genericEntityService: GenericEntityService, private route: ActivatedRoute, private messageService: MyMessageService, private sessionService: SessionService) {
         console.log("constructor() ===============================");
     }
 
     ngOnInit() {
         this.messageService.clear();
         this.rowArray = [];
-        this.page = new HalResponsePage();
+        this.page = {} as HalResponsePage;
         this.counter++;
         console.log("this.counter: ", this.counter);
         this.route.params.subscribe(params => {
             this.tableName = params['tableName'];
 
-            this.formAttributes = CrudComponentConfig.formConfig.get(this.tableName);
+            this.formAttributes = CrudComponentConfig.formConfig.get(this.tableName) || {} as FormAttributes;
             this.fieldAttributesArray = this.formAttributes.fields;
             this.associationAttributesArray = this.formAttributes.associations;
             console.log('this.formAttributes', this.formAttributes, 'this.associationAttributesArray', this.associationAttributesArray);
@@ -104,11 +107,15 @@ export class GenericCrudComponent implements OnInit {
             this.row = <IGenericEntity>{};
             // console.log("before fetchPage");
             // this.fetchPage(0, this.ROWS_PER_PAGE, '', this.formAttributes.queryOrderByColumns);
-            
+
             this.fetchAssociations();
 
-            this.hasWritePermission = MenuComponent.isHolderOfAnyAuthority(
-                this.sessionDataService.user, Constant.entityToWritePermissionMap.get(this.tableName));
+            // this.hasWritePermission = MenuComponent.isHolderOfAnyAuthority(
+            //     this.sessionDataService.user || {} as User, Constant.entityToWritePermissionMap.get(this.tableName) || '')
+            this.sessionService.userInfo$.subscribe(userInfo => {
+                console.log('userInfo', userInfo)
+                this.hasWritePermission = MenuComponent.isHolderOfAnyRole(userInfo, Constant.entityToWritePermissionMap.get(this.tableName) || '');
+            });
 
         });
         // this.row = <IGenericEntity>{};
@@ -134,32 +141,32 @@ export class GenericCrudComponent implements OnInit {
         this.crudMode = crudMode;
         console.log('this.crudMode', this.crudMode);
         switch (this.crudMode) {
-        case CrudEnum.ADD:
-            this.fieldAttributesArray.forEach(fieldAttributes => {
-                let control: AbstractControl = this.crudForm.controls[fieldAttributes.columnName];
-                console.log('fieldAttributes.dataType', fieldAttributes.dataType);
-                ComponentHelper.initControlValues(control, fieldAttributes.dataType);
-                control.enable();
-            });
-            this.selectedAssociationArray = [];
-            this.populateAvailableAssociationArray();
-            break;
-        case CrudEnum.UPDATE:
-            this.fieldAttributesArray.forEach(fieldAttributes => {
-                let control: AbstractControl = this.crudForm.controls[fieldAttributes.columnName];
-                control.patchValue(this.crudRow[fieldAttributes.columnName]);
-                control.enable();
-            });
-            break;
-        case CrudEnum.DELETE:
-            this.fieldAttributesArray.forEach(fieldAttributes => {
-                let control: AbstractControl = this.crudForm.controls[fieldAttributes.columnName];
-                control.patchValue(this.crudRow[fieldAttributes.columnName]);
-                control.disable();
-            });
-            break;
-        default:
-            console.error('this.crudMode is invalid. this.crudMode: ' + this.crudMode);
+            case CrudEnum.ADD:
+                this.fieldAttributesArray.forEach(fieldAttributes => {
+                    let control: AbstractControl = this.crudForm.controls[fieldAttributes.columnName];
+                    console.log('fieldAttributes.dataType', fieldAttributes.dataType);
+                    ComponentHelper.initControlValues(control, fieldAttributes.dataType);
+                    control.enable();
+                });
+                this.selectedAssociationArray = [];
+                this.populateAvailableAssociationArray();
+                break;
+            case CrudEnum.UPDATE:
+                this.fieldAttributesArray.forEach(fieldAttributes => {
+                    let control: AbstractControl = this.crudForm.controls[fieldAttributes.columnName];
+                    control.patchValue(this.crudRow[fieldAttributes.columnName]);
+                    control.enable();
+                });
+                break;
+            case CrudEnum.DELETE:
+                this.fieldAttributesArray.forEach(fieldAttributes => {
+                    let control: AbstractControl = this.crudForm.controls[fieldAttributes.columnName];
+                    control.patchValue(this.crudRow[fieldAttributes.columnName]);
+                    control.disable();
+                });
+                break;
+            default:
+                console.error('this.crudMode is invalid. this.crudMode: ' + this.crudMode);
         }
         console.log('this.crudForm', this.crudForm);
     }
@@ -176,14 +183,14 @@ export class GenericCrudComponent implements OnInit {
                     this.crudRow[fieldAttributes.columnName] = this.crudForm.controls[fieldAttributes.columnName].value;
                 });
                 this.setRowDateFields(this.crudRow, this.fieldAttributesArray);
-                let addGenericEntityAndAssociation$: Observable<IGenericEntityResponse> = this.genericEntityService.addGenericEntity(this.tableName, this.crudRow)
-                    .concatMap(savedSingleGenericEntityResponse => {
+                let addGenericEntityAndAssociation$: Observable<IGenericEntityResponse> = this.genericEntityService.addGenericEntity(this.tableName, this.crudRow).pipe(
+                    concatMap((savedSingleGenericEntityResponse: IGenericEntityResponse) => {
                         if (this.formAttributes.associations && this.formAttributes.associations.length != 0) {
                             return this.genericEntityService.updateAssociationGenericEntity(savedSingleGenericEntityResponse, this.formAttributes.associations[0].associationPropertyName, this.selectedAssociationArray);
                         } else {
-                            return Observable.of<IGenericEntityResponse>(savedSingleGenericEntityResponse);
+                            return of<IGenericEntityResponse>(savedSingleGenericEntityResponse);
                         }
-                    });
+                    }));
                 addGenericEntityAndAssociation$.subscribe({
                     next: savedTwoColumnEntity => {
                         console.log('savedTwoColumnEntity', savedTwoColumnEntity);
@@ -203,14 +210,14 @@ export class GenericCrudComponent implements OnInit {
                 });
                 this.setRowDateFields(this.crudRow, this.fieldAttributesArray);
 
-                let updateGenericEntityAndAssociation$: Observable<IGenericEntityResponse> = this.genericEntityService.updateGenericEntity(this.crudRow)
-                    .concatMap(savedSingleGenericEntityResponse => {
+                let updateGenericEntityAndAssociation$: Observable<IGenericEntityResponse> = this.genericEntityService.updateGenericEntity(this.crudRow).pipe(
+                    concatMap((savedSingleGenericEntityResponse: IGenericEntityResponse) => {
                         if (this.formAttributes.associations && this.formAttributes.associations.length != 0) {
                             return this.genericEntityService.updateAssociationGenericEntity(savedSingleGenericEntityResponse, this.formAttributes.associations[0].associationPropertyName, this.selectedAssociationArray);
                         } else {
-                            return Observable.of<IGenericEntityResponse>(savedSingleGenericEntityResponse);
+                            return of<IGenericEntityResponse>(savedSingleGenericEntityResponse);
                         }
-                    });
+                    }));
                 updateGenericEntityAndAssociation$.subscribe({
                     next: savedRow => {
                         console.log('savedRow', savedRow);
@@ -245,19 +252,19 @@ export class GenericCrudComponent implements OnInit {
     private afterCrud() {
         this.displayDialog = false;
         this.modifyAndDeleteButtonsDisable = true;
-        this.fetchPage(this.savedLazyLoadEvent.first, this.savedLazyLoadEvent.rows,
+        this.fetchPage(this.savedLazyLoadEvent.first || 0, this.savedLazyLoadEvent.rows || 0,
             ComponentHelper.buildSearchString(this.savedLazyLoadEvent, this.formAttributes.fields.map(field => field.columnName)),
             this.formAttributes.queryOrderByColumns);
 
         this.resetDialoForm();
     }
-    
+
     private resetDialoForm() {
         this.crudForm.reset();
         this.displayDialog = false;
         this.selectedRow = <IGenericEntity>{};
     }
-    
+
     onCancel() {
         this.resetDialoForm();
         this.modifyAndDeleteButtonsDisable = true;
@@ -272,7 +279,7 @@ export class GenericCrudComponent implements OnInit {
         // console.log('event.first', lazyLoadEvent.first);
         console.log('event.rows', lazyLoadEvent.rows);
         console.log('event.filters', lazyLoadEvent.filters);
-        this.fetchPage(lazyLoadEvent.first, lazyLoadEvent.rows,
+        this.fetchPage(lazyLoadEvent.first || 0, lazyLoadEvent.rows || 0,
             ComponentHelper.buildSearchString(lazyLoadEvent, this.formAttributes.fields.map(field => field.columnName)),
             this.formAttributes.queryOrderByColumns);
     }
@@ -281,39 +288,39 @@ export class GenericCrudComponent implements OnInit {
         console.log("in fetchPage");
         this.loadingFlag = true;
         this.genericEntityService.getGenericEntityPage(this.tableName, firstRowNumber, rowsPerPage, searchString, queryOrderByColumns)
-        .subscribe({
-            next: rowResponse => {
-                console.log('rowResponse', rowResponse);
-                this.page = rowResponse.page;
-                if (rowResponse._embedded) {
-                    this.firstRowOfTable = this.page.number * this.ROWS_PER_PAGE;
-                    this.rowArray = rowResponse._embedded[this.tableName+'s'];
-                    ComponentHelper.setRowArrayDateFields(this.rowArray, this.fieldAttributesArray);
-                } else {
-                    this.firstRowOfTable = 0;
-                    this.rowArray = [];
+            .subscribe({
+                next: rowResponse => {
+                    console.log('rowResponse', rowResponse);
+                    this.page = rowResponse.page;
+                    if (rowResponse._embedded) {
+                        this.firstRowOfTable = this.page.number * this.ROWS_PER_PAGE;
+                        this.rowArray = rowResponse._embedded[this.tableName + 's'];
+                        ComponentHelper.setRowArrayDateFields(this.rowArray, this.fieldAttributesArray);
+                    } else {
+                        this.firstRowOfTable = 0;
+                        this.rowArray = [];
+                    }
+
+                    // this.firstRowOfTable = page.number * this.ROWS_PER_PAGE;
+                    // this.rowArray = page.totalElements ? rowResponse._embedded[this.tableName+'s'] : [];
+                    // console.log('this.rowArray', this.rowArray);
+                    this.links = rowResponse._links;
+                },
+                complete: () => {
+                    this.loadingFlag = false;
                 }
-                
-                // this.firstRowOfTable = page.number * this.ROWS_PER_PAGE;
-                // this.rowArray = page.totalElements ? rowResponse._embedded[this.tableName+'s'] : [];
-                // console.log('this.rowArray', this.rowArray);
-                this.links = rowResponse._links;
-            },
-            complete: () => {
-                this.loadingFlag = false;
-            }
-        });
+            });
     }
 
     fetchAssociations() {
         // Get all rows of association table
         this.formAttributes.associations.forEach(associationAttributes => {
-            this.genericEntityService.getAssociationGenericEntity(associationAttributes.associationTableName, null).subscribe({
+            this.genericEntityService.getAssociationGenericEntity(associationAttributes.associationTableName, ['']).subscribe({
                 next: rowResponse => {
                     //this.availableStudents = students;
                     console.log('rowResponse: ', rowResponse);
                     if (rowResponse._embedded) {
-                        this.associationArray = rowResponse._embedded[associationAttributes.associationTableName+'s'];
+                        this.associationArray = rowResponse._embedded[associationAttributes.associationTableName + 's'];
                         ComponentHelper.setRowArrayDateFields(this.associationArray, this.fieldAttributesArray);
                         ComponentHelper.sortGenericEntity(this.associationArray, this.formAttributes.associations[0].orderByColumns);
                         console.log('this.associationArray: ', this.associationArray);
@@ -332,12 +339,12 @@ export class GenericCrudComponent implements OnInit {
 
     // Get associated rows of this entity
     private fetchAssosciatedRows(crudRow: IGenericEntity, associationAttributes: AssociationAttributes) {
-        this.genericEntityService.getAssociatedRows(crudRow, associationAttributes, null).subscribe({
+        this.genericEntityService.getAssociatedRows(crudRow, associationAttributes, ['']).subscribe({
             next: rowResponse => {
                 //this.availableStudents = students;
                 console.log('fetchAssosciatedRows() rowResponse: ', rowResponse);
                 if (rowResponse._embedded) {
-                    this.selectedAssociationArray = rowResponse._embedded[associationAttributes.associationTableName+'s'];
+                    this.selectedAssociationArray = rowResponse._embedded[associationAttributes.associationTableName + 's'];
                     ComponentHelper.setRowArrayDateFields(this.selectedAssociationArray, this.fieldAttributesArray);
                     ComponentHelper.sortGenericEntity(this.selectedAssociationArray, this.formAttributes.associations[0].orderByColumns);
                     console.log('fetchAssosciatedRows() this.selectedAssociationArray: ', this.selectedAssociationArray);
@@ -358,7 +365,7 @@ export class GenericCrudComponent implements OnInit {
     private populateAvailableAssociationArray() {
         // compute availableAssociationArray = associationArray - selectedAssociationArray
         this.availableAssociationArray = [];
-        this.associationArray && this.associationArray.forEach(row=> {
+        this.associationArray && this.associationArray.forEach(row => {
             let found: boolean = false;
             for (let selectedRow of this.selectedAssociationArray) {
                 if (row._links.self.href === selectedRow._links.self.href) {
@@ -380,10 +387,10 @@ export class GenericCrudComponent implements OnInit {
         this.savedLazyLoadEvent.first = this.firstRowOfTable;
         this.onLazyLoad(this.savedLazyLoadEvent);
         this.fetchPage(this.firstRowOfTable, this.ROWS_PER_PAGE, '', this.formAttributes.queryOrderByColumns);
-        this.pageNumber = null;
+        this.pageNumber = 0;
     }
- 
-    onRowSelect(event) {
+
+    onRowSelect(event: any) {
         console.log(event);
 
         this.crudRow = Object.assign({}, this.selectedRow);
@@ -391,9 +398,9 @@ export class GenericCrudComponent implements OnInit {
         this.formAttributes.associations.forEach(associationAttributes => {
             this.fetchAssosciatedRows(this.crudRow, associationAttributes);
         });
-        
+
     }
-    onRowUnselect(event) {
+    onRowUnselect(event: any) {
         console.log(event);
         this.modifyAndDeleteButtonsDisable = true;
         //this.selectedRow = new FlightLog(); // This a hack. If don't init selectedFlightLog, dialog will produce exception

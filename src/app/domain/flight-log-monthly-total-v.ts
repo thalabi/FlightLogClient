@@ -1,10 +1,10 @@
-export class FlightLogMonthlyTotalV {
+export interface FlightLogMonthlyTotalV {
     id: number;
     yearMonth: string;
     dayDual: number;
-	daySolo: number;
-	nightDual: number;
-	nightSolo: number;
+    daySolo: number;
+    nightDual: number;
+    nightSolo: number;
 
     instrumentSimulated: number;
     instrumentFlightSim: number;
@@ -15,6 +15,6 @@ export class FlightLogMonthlyTotalV {
     instrumentNoIfrAppr: number;
     tosLdgsDay: number;
     tosLdgsNight: number;
-    
-    _links: {self: {href: string}};
+
+    _links: { self: { href: string } };
 }

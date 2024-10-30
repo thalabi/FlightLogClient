@@ -1,6 +1,6 @@
 import { FieldAttributes } from "./FieldAttributes";
 import { AssociationAttributes } from "./AssociationAttributes";
-export class FormAttributes {
+export interface FormAttributes {
     formTitle: string;
     tableName: string;
     queryOrderByColumns: Array<string>;

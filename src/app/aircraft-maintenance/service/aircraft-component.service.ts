@@ -2,17 +2,16 @@ import { Injectable } from '@angular/core';
 
 import { catchError, map } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { ConfigService } from '../../config/config.service';
-import { ApplicationProperties } from '../../config/application.properties';
 import { IGenericEntity } from '../../domain/i-gerneric-entity';
 import { FlightLogServiceService } from '../../service/flight-log-service.service';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { SessionDataService } from '../../service/session-data.service';
 import { AircraftComponentListResponse } from '../../response/aircraft-component-list-response';
 import { AircraftComponentRequest } from '../../domain/aircraft-component-request';
-import { ResponseType } from '@angular/http';
+//import { ResponseType } from '@angular/http';
 import { AircraftComponentName } from '../../domain/aircraft-component-name';
-import { stringify } from 'querystring';
+import { environment } from '../../../environments/environment';
+//import { stringify } from 'querystring';
 
 @Injectable()
 export class AircraftComponentService {
@@ -20,16 +19,14 @@ export class AircraftComponentService {
 
     constructor(
         private httpClient: HttpClient,
-        private configService: ConfigService,
         private sessionDataService: SessionDataService
     ) {
-        const applicationProperties: ApplicationProperties = this.configService.getApplicationProperties();
-        this.serviceUrl = applicationProperties.serviceUrl;
+        this.serviceUrl = environment.beRestServiceUrl;
     }
 
     findAll(tableName: string, first: number, size: number, search: string, queryOrderByColumns: string[]): Observable<AircraftComponentListResponse> {
         console.log('first, size, search', first, size, search)
-        let url: string = this.serviceUrl + '/' + tableName + 'Controller/findAll/?page=' + first / size + '&size=' + size + '&search=' + search + '&sort=' + queryOrderByColumns;
+        let url: string = this.serviceUrl + '/protected/' + tableName + 'Controller/findAll/?page=' + first / size + '&size=' + size + '&search=' + search + '&sort=' + queryOrderByColumns;
         console.log('url', url);
         return this.httpClient.get<AircraftComponentListResponse>(url, this.getHttpOptions());
     }
@@ -45,7 +42,7 @@ export class AircraftComponentService {
             }),
             catchError((httpErrorResponse: HttpErrorResponse) => {
                 FlightLogServiceService.handleError(httpErrorResponse);
-                return null;
+                return throwError(() => { });
             }));
     }
 
@@ -62,12 +59,12 @@ export class AircraftComponentService {
             }),
             catchError((httpErrorResponse: HttpErrorResponse) => {
                 FlightLogServiceService.handleError(httpErrorResponse);
-                return null;
+                return throwError(() => { });
             }));
     }
 
     deleteComponent(componentUri: string, deleteHistoryRecords: boolean): Observable<void> {
-        let url: string = this.serviceUrl + '/componentController/delete?componentUri='+componentUri+'&deleteHistoryRecords='+deleteHistoryRecords;
+        let url: string = this.serviceUrl + '/componentController/delete?componentUri=' + componentUri + '&deleteHistoryRecords=' + deleteHistoryRecords;
         console.log('componentUri: ', componentUri);
         return this.httpClient.delete<IGenericEntity>(url, this.getHttpOptions()).pipe(
             map((response: any) => {
@@ -76,7 +73,7 @@ export class AircraftComponentService {
             }),
             catchError((httpErrorResponse: HttpErrorResponse) => {
                 FlightLogServiceService.handleError(httpErrorResponse);
-                return null;
+                return throwError(() => { });
             }));
     }
 
@@ -128,7 +125,7 @@ export class AircraftComponentService {
                 return new Blob([response], { type: 'application/pdf' })
             }));
     }
-    
+
     downloadByUpcomingDateDue(): Observable<Blob> {
         console.log('downloadByUpcomingDateDue');
         let url: string = this.serviceUrl + '/aircraftMaintenancePrintController/printComponentHistoryByUpcomingDateDue';
@@ -179,7 +176,7 @@ export class AircraftComponentService {
 
     getComponentNames(): Observable<Array<AircraftComponentName.ComponentName>> {
         console.log('getComponentNames2');
-        let url: string = this.serviceUrl + '/aircraftMaintenancePrintController/getComponentNames';
+        let url: string = this.serviceUrl + '/protected/aircraftMaintenancePrintController/getComponentNames';
         console.log('url', url);
         return this.httpClient.get<Array<AircraftComponentName.ComponentName>>(url, this.getHttpOptions());
     }
@@ -212,13 +209,14 @@ export class AircraftComponentService {
                 responseType: 'blob' as 'json',
                 headers: new HttpHeaders({
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + this.sessionDataService.user.token
-                    })
+                    'Authorization': 'Bearer ' + this.sessionDataService.user?.token
+                })
             }
         } else {
-            return {headers: new HttpHeaders({
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + this.sessionDataService.user.token
+            return {
+                headers: new HttpHeaders({
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + this.sessionDataService.user?.token
                 })
             }
         }

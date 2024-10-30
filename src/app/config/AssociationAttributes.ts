@@ -1,7 +1,7 @@
 import { IGenericEntity } from "../domain/i-gerneric-entity";
 import { AssociationTypeEnum } from "./AssociationTypeEnum";
 
-export class AssociationAttributes {
+export interface AssociationAttributes {
     associationTableName: string;
     associationPropertyName: string;
     orderByColumns: Array<string>;

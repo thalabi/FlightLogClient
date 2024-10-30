@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { User } from '../security/user';
+import { User } from '../security-old/user';
 import { Subject } from 'rxjs';
 
 @Injectable({
@@ -7,7 +7,7 @@ import { Subject } from 'rxjs';
 })
 export class SessionDataService {
 
-    public user: User;
+    public user: User | undefined;
     public userSubject: Subject<User>;
 
     constructor() {

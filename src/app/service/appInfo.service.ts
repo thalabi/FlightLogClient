@@ -1,24 +1,21 @@
 import { Injectable } from '@angular/core';
-import { ConfigService } from '../config/config.service';
-import { ApplicationProperties } from '../config/application.properties';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class AppInfoService {
     readonly serviceUrl: string;
 
     constructor(
         private http: HttpClient,
-        private configService: ConfigService
     ) {
-        const applicationProperties: ApplicationProperties = this.configService.getApplicationProperties();
-        this.serviceUrl = applicationProperties.serviceUrl;
+        this.serviceUrl = environment.beRestServiceUrl;
     }
 
-    getServerBuildTimestamp(): Observable<string> {
-        return this.http.get(this.serviceUrl + '/appInfoController/getBuildTimestamp', {responseType: "text"});
+    getBuildInfo(): Observable<string> {
+        return this.http.get(this.serviceUrl + '/appInfoController/getBuildInfo', { responseType: "text" });
     }
 }

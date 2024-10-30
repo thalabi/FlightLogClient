@@ -5,5 +5,23 @@
 
 export const environment = {
     production: false,
-    buildTimestamp: "@buildTimestamp@"
+
+    buildVersion: "@buildVersion@",
+    buildTimestamp: "@buildTimestamp@",
+    beRestServiceUrl: "https://localhost:8441",
+    // when adding or changing keycloak json, update auth-config.ts and auth-module-config.ts as well
+    keycloak: {
+        issuer: 'https://localhost:8083/realms/flight-log',
+        clientId: 'flight-log',
+        requireHttps: true,
+
+        // prefixes of urls to send with Bearer token
+        // prefixes have to be in lowerr case
+        urlPrefixesWithBearerToken: ['https://localhost:8441/protected']
+    },
+    idle: {
+        // times are in seconds
+        inactivityTimer: '299',
+        timeoutTimer: '1'
+    }
 };

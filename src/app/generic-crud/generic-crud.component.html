@@ -1,20 +1,7 @@
-<p-table
-	[value]="rowArray"
-	[dataKey]="'_links.self.href'"
-	[lazy]="true"
-	[rows]="ROWS_PER_PAGE"
-	[paginator]="true"
-	[totalRecords]="page?.totalElements"
-	[rowsPerPageOptions]="[5,10,20]"
-	(onLazyLoad)="onLazyLoad($event)"
-	[selectionMode]="'single'"
-	[(selection)]="selectedRow"
-    (onRowSelect)="onRowSelect($event)"
-    [responsive]="true"
-    [first]="firstRowOfTable"
-    [loading]="loadingFlag"
-    #dt
-	>
+<p-table [value]="rowArray" [dataKey]="'_links.self.href'" [lazy]="true" [rows]="ROWS_PER_PAGE" [paginator]="true"
+    [totalRecords]="page.totalElements" [rowsPerPageOptions]="[5,10,20]" (onLazyLoad)="onLazyLoad($event)"
+    [selectionMode]="'single'" [(selection)]="selectedRow" (onRowSelect)="onRowSelect($event)" [responsive]="true"
+    [first]="firstRowOfTable" [loading]="loadingFlag" #dt>
     <ng-template *ngIf="formAttributes.formTitle" pTemplate="caption">
         {{formAttributes.formTitle}}
     </ng-template>
@@ -27,7 +14,9 @@
         </tr>
         <tr>
             <th *ngFor="let fieldAttributes of fieldAttributesArray">
-                <input pInputText type="text" (input)="dt.filter($event.target.value, fieldAttributes.columnName, fieldAttributes.filterMatchMode)" [ngStyle]="fieldAttributes.filterStyle">
+                <input pInputText #filterInput type="text"
+                    (input)="dt.filter(filterInput.value, fieldAttributes.columnName, 'contains')"
+                    [ngStyle]="fieldAttributes.filterStyle">
             </th>
         </tr>
     </ng-template>
@@ -41,30 +30,38 @@
             </td>
         </tr>
     </ng-template>
-    
+
     <ng-template pTemplate="summary">
         <div class="p-grid" style="margin-bottom: -0.6em;">
             <div class="p-col-5">
                 <span *ngIf="hasWritePermission">
-                    <button type="button" pButton icon="pi pi-plus" style="float:left" (click)="showDialog(crudEnum.ADD)" label="Add"></button>
-                    <button type="button" pButton icon="pi pi-pencil" style="float:left; margin-left:0.5rem;" (click)="showDialog(crudEnum.UPDATE)" label="Modify" [disabled]="modifyAndDeleteButtonsDisable"></button>
-                    <button type="button" pButton icon="pi pi-minus" style="float:left; margin-left:0.5rem;" (click)="showDialog(crudEnum.DELETE)" label="Delete" [disabled]="modifyAndDeleteButtonsDisable"></button>
-                    <app-sync-button *ngIf="formAttributes.showReplicationStatus" [tableName]="tableName"></app-sync-button>
+                    <button type="button" pButton icon="pi pi-plus" style="float:left"
+                        (click)="showDialog(crudEnum.ADD)" label="Add"></button>
+                    <button type="button" pButton icon="pi pi-pencil" style="float:left; margin-left:0.5rem;"
+                        (click)="showDialog(crudEnum.UPDATE)" label="Modify"
+                        [disabled]="modifyAndDeleteButtonsDisable"></button>
+                    <button type="button" pButton icon="pi pi-minus" style="float:left; margin-left:0.5rem;"
+                        (click)="showDialog(crudEnum.DELETE)" label="Delete"
+                        [disabled]="modifyAndDeleteButtonsDisable"></button>
+                    <app-sync-button *ngIf="formAttributes.showReplicationStatus"
+                        [tableName]="tableName"></app-sync-button>
                 </span>
             </div>
             <div class="p-col-4 p-offset-3">
                 <div style="float:right;">
-                <span style="margin-right: 1rem;">Rows: {{page.totalElements}}</span>
-                <span style="margin-right: 1rem;">Pages: {{page.totalPages}}</span>
-                <span style="margin-right: 0.5rem;">Page: <input type="text" id="pageNumber" [(ngModel)]="pageNumber" maxlength="4" size="3"/></span>
-                <button pButton type="button" label="Go" (click)="onGoToPage()"></button>
+                    <span style="margin-right: 1rem;">Rows: {{page.totalElements}}</span>
+                    <span style="margin-right: 1rem;">Pages: {{page.totalPages}}</span>
+                    <span style="margin-right: 0.5rem;">Page: <input type="text" id="pageNumber"
+                            [(ngModel)]="pageNumber" maxlength="4" size="3" /></span>
+                    <button pButton type="button" label="Go" (click)="onGoToPage()"></button>
                 </div>
             </div>
         </div>
     </ng-template>
 </p-table>
 
-<p-dialog header="{{formAttributes.formTitle}} - {{crudMode}}" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
+<p-dialog header="{{formAttributes.formTitle}} - {{crudMode}}" [(visible)]="displayDialog" [responsive]="true"
+    showEffect="fade" [modal]="true">
 
     <form [formGroup]="crudForm" (ngSubmit)="onSubmit()" novalidate>
         <div class="p-grid" style="width: 30em;">
@@ -75,20 +72,29 @@
                 </div>
                 <div class="p-col-8" [ngSwitch]="fieldAttributes.uiComponentType">
 
-                    <p-calendar *ngSwitchCase="uiComponentEnum.CALENDAR" [formControlName]="fieldAttributes.columnName" [id]="fieldAttributes.columnName" [dateFormat]="'yy-mm-dd'" [showIcon]="true" [readonlyInput]="true" [showOnFocus]="false" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2050">
+                    <p-calendar *ngSwitchCase="uiComponentEnum.CALENDAR" [formControlName]="fieldAttributes.columnName"
+                        [id]="fieldAttributes.columnName" [dateFormat]="'yy-mm-dd'" [showIcon]="true"
+                        [readonlyInput]="true" [showOnFocus]="false" [monthNavigator]="true" [yearNavigator]="true"
+                        yearRange="2000:2050">
                     </p-calendar>
 
-                    <textarea *ngSwitchCase="uiComponentEnum.TEXT_AREA" pInputTextarea [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName" [rows]="fieldAttributes.textAreaRows" [cols]="fieldAttributes.textAreaColumns">
+                    <textarea *ngSwitchCase="uiComponentEnum.TEXT_AREA" pInputTextarea [id]="fieldAttributes.columnName"
+                        [formControlName]="fieldAttributes.columnName" [rows]="fieldAttributes.textAreaRows"
+                        [cols]="fieldAttributes.textAreaColumns">
                     </textarea>
 
-                    <input *ngSwitchCase="uiComponentEnum.TEXT" pInputText [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName"/>
+                    <input *ngSwitchCase="uiComponentEnum.TEXT" pInputText [id]="fieldAttributes.columnName"
+                        [formControlName]="fieldAttributes.columnName" />
                     <!-- <div *ngIf="fieldAttributes.mandatory" [hidden]="fieldAttributes.columnName.valid || fieldAttributes.columnName.pristine" class="red-font">Field is required</div> -->
-                    <div *ngIf="fieldAttributes.mandatory && crudForm.controls[fieldAttributes.columnName].invalid && crudForm.controls[fieldAttributes.columnName].touched" class="red-font">Field is required</div>
+                    <div *ngIf="fieldAttributes.mandatory && crudForm.controls[fieldAttributes.columnName].invalid && crudForm.controls[fieldAttributes.columnName].touched"
+                        class="red-font">Field is required</div>
 
-                    <p-checkbox *ngSwitchCase="uiComponentEnum.BOOLEAN_CHECKBOX" [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName" binary="true"></p-checkbox>
+                    <p-checkbox *ngSwitchCase="uiComponentEnum.BOOLEAN_CHECKBOX" [id]="fieldAttributes.columnName"
+                        [formControlName]="fieldAttributes.columnName" [binary]="true"></p-checkbox>
 
-                    <input *ngSwitchCase="uiComponentEnum.PASSWORD" type="password" [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName" autocomplete="new-password"/>
-    
+                    <input *ngSwitchCase="uiComponentEnum.PASSWORD" type="password" [id]="fieldAttributes.columnName"
+                        [formControlName]="fieldAttributes.columnName" autocomplete="new-password" />
+
                     <span *ngSwitchDefault>
                         Unhandled {{fieldAttributes.uiComponentType}} type
                     </span>
@@ -97,27 +103,31 @@
 
             <ng-template ngFor let-associationAttributes [ngForOf]="associationAttributesArray">
                 <div class="p-col-12">
-                    <p-pickList [source]="availableAssociationArray" [target]="selectedAssociationArray" sourceHeader="Available {{associationAttributes.associationTableName}}s" targetHeader="{{associationAttributes.associationTableName | titlecase}}s"
-                    (onMoveAllToTarget)="onMoveAllToTarget()" (onMoveToTarget)="onMoveToTarget()" (onMoveAllToSource)="onMoveAllToSource()"
-                    (onMoveToSource)="onMoveToSource()" [showSourceControls]="false" [showTargetControls]="false" [sourceStyle]="{'height':'20em'}"
-                    [targetStyle]="{'height':'20em'}">
-                    <ng-template let-association pTemplate="item">
-                        <div class="ui-helper-clearfix">
-                            <!-- <div style="font-size:14px;float:left;margin:0 0 0 0"> -->
-                            <div>
-                                    <span [pTooltip]="association.description" tooltipPosition="top">{{association.name}}</span>
+                    <p-pickList [source]="availableAssociationArray" [target]="selectedAssociationArray"
+                        sourceHeader="Available {{associationAttributes.associationTableName}}s"
+                        targetHeader="{{associationAttributes.associationTableName | titlecase}}s"
+                        (onMoveAllToTarget)="onMoveAllToTarget()" (onMoveToTarget)="onMoveToTarget()"
+                        (onMoveAllToSource)="onMoveAllToSource()" (onMoveToSource)="onMoveToSource()"
+                        [showSourceControls]="false" [showTargetControls]="false" [sourceStyle]="{'height':'20em'}"
+                        [targetStyle]="{'height':'20em'}">
+                        <ng-template let-association pTemplate="item">
+                            <div class="ui-helper-clearfix">
+                                <!-- <div style="font-size:14px;float:left;margin:0 0 0 0"> -->
+                                <div>
+                                    <span [pTooltip]="association.description"
+                                        tooltipPosition="top">{{association.name}}</span>
+                                </div>
                             </div>
-                        </div>
-                    </ng-template>
+                        </ng-template>
                     </p-pickList>
                 </div>
             </ng-template>
-            
+
             <p-footer class="p-grid">
                 <div class="p-col-6">
                     <!-- TODO replace disabled logic with a function -->
-                    <button pButton type="submit" label="Submit"
-                    [disabled]="crudForm.invalid" icon="pi pi-check"></button>
+                    <button pButton type="submit" label="Submit" [disabled]="crudForm.invalid"
+                        icon="pi pi-check"></button>
                 </div>
                 <div class="p-col-6">
                     <button pButton type="reset" label="Cancel" (click)="onCancel()"></button>

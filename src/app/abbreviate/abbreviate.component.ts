@@ -7,11 +7,11 @@ import { Abbreviate } from './abbreviate';
     styleUrls: ['./abbreviate.component.css']
 })
 export class AbbreviateComponent implements OnInit {
-    @Input('text') inputText: string;
-    @Input() maxLength: number;
+    @Input('text') inputText!: string;
+    @Input() maxLength!: number;
 
-    abbreviatedText: string;
-    textAbbreviated: boolean;
+    abbreviatedText!: string;
+    textAbbreviated!: boolean;
 
     constructor() { }
 

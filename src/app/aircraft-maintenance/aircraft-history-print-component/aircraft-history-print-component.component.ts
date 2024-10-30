@@ -10,20 +10,20 @@ import { MyMessageService } from '../../message/mymessage.service';
 })
 export class AircraftHistoryPrintComponentComponent implements OnInit {
 
-    hoursDue: number;
-    fromDatePerformed: Date;
-    toDatePerformed: Date;
-    
+    hoursDue!: number;
+    fromDatePerformed!: Date;
+    toDatePerformed!: Date;
+
     // componentNameJsonArray: Array<AircraftComponentName.ComponentName>;
     // selectedComponentNameJsonArray: Array<AircraftComponentName.ComponentName>;
-    componentNameArray: Array<AircraftComponentName.ComponentName>;
-    selectedComponentNameArray: Array<AircraftComponentName.ComponentName>;
+    componentNameArray!: Array<AircraftComponentName.ComponentName>;
+    selectedComponentNameArray!: Array<AircraftComponentName.ComponentName>;
     constructor(private aircraftComponentService: AircraftComponentService, private messageService: MyMessageService) { }
 
     ngOnInit() {
     }
 
-    onTabChange(event) {
+    onTabChange(event: { index: any; }) {
         console.log(event.index);
         let tabIndex = event.index;
         switch (tabIndex) {
@@ -167,7 +167,7 @@ export class AircraftHistoryPrintComponentComponent implements OnInit {
     onMoveToSource(): void {
         this.sortComponentNames(this.componentNameArray);
     }
-    
+
     onDownloadBySelectedComponentNamePdf(): void {
         console.log('this.selectedComponentNameArray', this.selectedComponentNameArray);
         this.aircraftComponentService.downloadComponentNameInListPdf(this.selectedComponentNameArray).subscribe(

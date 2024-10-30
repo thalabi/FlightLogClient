@@ -1,5 +1,5 @@
 <p-table [value]="componentRowArray" [dataKey]="'_links.self.href'" [lazy]="true" [rows]="ROWS_PER_PAGE"
-    [paginator]="true" [totalRecords]="page?.totalElements" [rowsPerPageOptions]="[5,10,20]"
+    [paginator]="true" [totalRecords]="page.totalElements" [rowsPerPageOptions]="[5,10,20]"
     (onLazyLoad)="onLazyLoad($event)" [selectionMode]="'single'" [(selection)]="selectedComponentRow"
     (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [responsive]="true"
     [first]="firstRowOfTable" [loading]="loadingFlag" #dt>
@@ -37,36 +37,39 @@
         <tr>
             <th style="width: 3em"></th>
             <th>
-                <input pInputText type="text" (input)="dt.filter($event.target.value, 'name', 'contains')"
+                <input pInputText #nameFilter type="text" (input)="dt.filter(nameFilter.value, 'name', 'contains')"
                     [ngStyle]="{width: '6rem'}">
             </th>
             <th>
-                <input pInputText type="text" (input)="dt.filter($event.target.value, 'description', 'contains')"
+                <input pInputText #descriptionFilter type="text"
+                    (input)="dt.filter(descriptionFilter.value, 'description', 'contains')" [ngStyle]="{width: '6rem'}">
+            </th>
+            <th>
+                <input pInputText #partNameFilter type="text"
+                    (input)="dt.filter(partNameFilter.value, 'part.name', 'contains')" [ngStyle]="{width: '6rem'}">
+            </th>
+            <th>
+                <input pInputText #workPerformedFilter type="text"
+                    (input)="dt.filter(workPerformedFilter.value, 'workPerformed', 'contains')"
                     [ngStyle]="{width: '6rem'}">
             </th>
             <th>
-                <input pInputText type="text" (input)="dt.filter($event.target.value, 'part.name', 'contains')"
-                    [ngStyle]="{width: '6rem'}">
-            </th>
-            <th>
-                <input pInputText type="text" (input)="dt.filter($event.target.value, 'workPerformed', 'contains')"
-                    [ngStyle]="{width: '6rem'}">
-            </th>
-            <th>
-                <input pInputText type="text" (input)="dt.filter($event.target.value, 'datePerformed', 'contains')"
+                <input pInputText #datePerformedFilter type="text"
+                    (input)="dt.filter(datePerformedFilter.value, 'datePerformed', 'contains')"
                     [ngStyle]="{width: '4rem'}">
             </th>
             <th>
-                <input pInputText type="text" (input)="dt.filter($event.target.value, 'hoursPerformed', 'contains')"
+                <input pInputText #hoursPerformedFilter type="text"
+                    (input)="dt.filter(hoursPerformedFilter.value, 'hoursPerformed', 'contains')"
                     [ngStyle]="{width: '3rem'}">
             </th>
             <th>
-                <input pInputText type="text" (input)="dt.filter($event.target.value, 'dateDue', 'contains')"
-                    [ngStyle]="{width: '4rem'}">
+                <input pInputText #dateDueFilter type="text"
+                    (input)="dt.filter(dateDueFilter.value, 'dateDue', 'contains')" [ngStyle]="{width: '4rem'}">
             </th>
             <th>
-                <input pInputText type="text" (input)="dt.filter($event.target.value, 'hoursDue', 'contains')"
-                    [ngStyle]="{width: '3rem'}">
+                <input pInputText #hoursDueFilter type="text"
+                    (input)="dt.filter(hoursDueFilter.value, 'hoursDue', 'contains')" [ngStyle]="{width: '3rem'}">
             </th>
         </tr>
     </ng-template>
@@ -193,7 +196,7 @@
             </div>
             <div class="p-col-8">
                 <input pInputText id="name" formControlName="name" />
-                <div *ngIf="componentForm.controls.name.invalid && componentForm.controls.name.touched"
+                <div *ngIf="componentForm.controls['name'].invalid && componentForm.controls['name'].touched"
                     class="red-font">Field is required</div>
             </div>
             <div class="p-col-4">
@@ -224,7 +227,7 @@
             </div>
             <div class="p-col-8">
                 <input pInputText id="workPerformed" formControlName="workPerformed" />
-                <div *ngIf="componentForm.controls.workPerformed.invalid && componentForm.controls.workPerformed.touched"
+                <div *ngIf="componentForm.controls['workPerformed'].invalid && componentForm.controls['workPerformed'].touched"
                     class="red-font">Field is required</div>
             </div>
             <div class="p-col-4">
@@ -233,7 +236,7 @@
             <div class="p-col-8">
                 <p-calendar formControlName="datePerformed" id="datePerformed" [dateFormat]="'yy-mm-dd'"
                     [showIcon]="true" [readonlyInput]="true" [showOnFocus]="false" [monthNavigator]="true"
-                    [yearNavigator]="true" yearRange="1977:2050" showButtonBar="true" appendTo="body">
+                    [yearNavigator]="true" yearRange="1977:2050" [showButtonBar]="true" appendTo="body">
                 </p-calendar>
             </div>
             <div class="p-col-4">
@@ -242,7 +245,7 @@
             <div class="p-col-8">
                 <input pInputText id="hoursPerformed" formControlName="hoursPerformed"
                     regexValidator="^\d{0,4}(\.\d{0,1}){0,1}$" />
-                <div [hidden]="componentForm.controls.hoursPerformed.valid || componentForm.controls.hoursPerformed.pristine || componentForm.controls.hoursPerformed.disabled"
+                <div [hidden]="componentForm.controls['hoursPerformed'].valid || componentForm.controls['hoursPerformed'].pristine || componentForm.controls['hoursPerformed'].disabled"
                     class="red-font">Invalid value</div>
             </div>
             <div class="p-col-4">
@@ -251,7 +254,7 @@
             <div class="p-col-8">
                 <p-calendar formControlName="dateDue" id="dateDue" [dateFormat]="'yy-mm-dd'" [showIcon]="true"
                     [readonlyInput]="true" [showOnFocus]="false" [monthNavigator]="true" [yearNavigator]="true"
-                    yearRange="1977:2050" showButtonBar="true" appendTo="body">
+                    yearRange="1977:2050" [showButtonBar]="true" appendTo="body">
                 </p-calendar>
             </div>
             <div class="p-col-4">
@@ -259,7 +262,7 @@
             </div>
             <div class="p-col-8">
                 <input pInputText id="hoursDue" formControlName="hoursDue" regexValidator="^\d{0,4}(\.\d{0,1}){0,1}$" />
-                <div [hidden]="componentForm.controls.hoursDue.valid || componentForm.controls.hoursDue.pristine || componentForm.controls.hoursDue.disabled"
+                <div [hidden]="componentForm.controls['hoursDue'].valid || componentForm.controls['hoursDue'].pristine || componentForm.controls['hoursDue'].disabled"
                     class="red-font">Invalid value</div>
             </div>
             <div *ngIf="crudMode === crudEnum.DELETE" class="p-col-4">

@@ -1,5 +1,5 @@
 export interface MyMessage {
-    severity?: string;
-    summary?: string;
-    detail?: string;
+    severity: string;
+    summary: string;
+    detail: string;
 }

@@ -2,7 +2,7 @@ import { UiComponentEnum } from "./UiComponentEnum";
 import { DataTypeEnum } from "./DataTypeEnum";
 import { AssociationAttributes } from "./AssociationAttributes";
 import { FieldAffinityEnum } from "./FieldAffinityEnum";
-export class FieldAttributes {
+export interface FieldAttributes {
     columnName: string;
     dataType: DataTypeEnum;
     mandatory: boolean;
@@ -17,4 +17,6 @@ export class FieldAttributes {
     fieldAffinity: Array<FieldAffinityEnum>; // whether to be included in data table, imput form or db entity
     //isPartOfTemplateForm: boolean; // MANY_TO_MANY associations are displayed as pick lists which are not defined in template form
     associationAttributes?: AssociationAttributes;
+    // TODO declare right type
+    //filterMatchMode: any
 }

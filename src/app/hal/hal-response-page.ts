@@ -1,4 +1,4 @@
-export class HalResponsePage {
+export interface HalResponsePage {
     size: number;
     totalElements: number;
     totalPages: number;

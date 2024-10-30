@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders  } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { catchError, map } from 'rxjs/operators';
 import { FlightLog } from '../domain/flight-log';
 
@@ -11,10 +11,9 @@ import { StringUtils } from '../string-utils';
 import { FlightLogMonthlyTotalVResponse } from '../response/flight-log-monthly-total-v-response';
 import { FlightLogYearlyTotalVResponse } from '../response/flight-log-yearly-total-v-response';
 import { FlightLogLastXDaysTotalVResponse } from '../response/flight-log-last-x-days-total-v-response';
-import { ConfigService } from '../config/config.service';
-import { ApplicationProperties } from '../config/application.properties';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { SessionDataService } from './session-data.service';
+import { environment } from '../../environments/environment';
 
 @Injectable()
 export class FlightLogServiceService {
@@ -26,12 +25,10 @@ export class FlightLogServiceService {
 
     constructor(
         private httpClient: HttpClient,
-        private configService: ConfigService,
         private sessionDataService: SessionDataService
     ) {
-        const applicationProperties: ApplicationProperties = this.configService.getApplicationProperties();
-        this.serviceUrl = applicationProperties.serviceUrl;
-        
+        this.serviceUrl = environment.beRestServiceUrl;
+
     }
 
     // getAll(url?: string): Observable<FlightLogResponse> {
@@ -47,8 +44,8 @@ export class FlightLogServiceService {
     // }
 
     getFlightLogCount(): Observable<any> {
-        let url: string = this.serviceUrl + '/flightLogController/count';
-        return this.httpClient.get<FlightLogResponse>(url, this.getHttpOptions());
+        let url: string = this.serviceUrl + '/protected/flightLogController/count';
+        return this.httpClient.get<FlightLogResponse>(url/*, this.getHttpOptions()*/);
     }
     /*
     * first: first row, zero based
@@ -57,7 +54,7 @@ export class FlightLogServiceService {
     */
     getPage(first: number, size: number, search: string): Observable<FlightLogResponse> {
         console.log('first, size, search', first, size, search)
-        let url: string = this.serviceUrl + '/flightLogController/findAll/?page=' + first/size + '&size=' + size + '&search=' + search + '&sort=flightDate';
+        let url: string = this.serviceUrl + '/protected/flightLogController/findAll/?page=' + first / size + '&size=' + size + '&search=' + search + '&sort=flightDate';
         // let url: string = 'http://localhost:8080/flightLogController/findAll/';
         // if ((first || first == 0) && size) {
         //     if (first == 999999) { // 999999 is indictaor of last page
@@ -87,7 +84,7 @@ export class FlightLogServiceService {
         //     }))
         //     ;
         //     //.catch(this.handleError);
-        return this.httpClient.get<FlightLogResponse>(url, this.getHttpOptions());
+        return this.httpClient.get<FlightLogResponse>(url/*, this.getHttpOptions()*/);
     }
 
     addFlightLog(flightLog: FlightLog): Observable<FlightLogResponse> {
@@ -96,7 +93,7 @@ export class FlightLogServiceService {
         flightLog.created = new Date();
         flightLog.modified = new Date();
         console.log('flightLog: ', flightLog);
-        return this.httpClient.post<FlightLog>(url, flightLog, this.getHttpOptions()).pipe(
+        return this.httpClient.post<FlightLog>(url, flightLog/*, this.getHttpOptions()*/).pipe(
             map((response: any) => {
                 let flightLogResponse = response;
                 console.log('flightLogResponse', flightLogResponse);
@@ -104,18 +101,18 @@ export class FlightLogServiceService {
             }),
             catchError((httpErrorResponse: HttpErrorResponse) => {
                 FlightLogServiceService.handleError(httpErrorResponse);
-                return null;
-              }));
+                return throwError(() => { });;
+            }));
     }
-    
+
     updateFlightLog(flightLog: FlightLog): Observable<FlightLogResponse> {
         console.log('flightLog: ', flightLog);
         flightLog.modified = new Date();
         console.log('flightLog: ', flightLog);
-        
+
         let url: string = flightLog._links.flightLog.href;
         console.log('url: ', url);
-        return this.httpClient.put<FlightLog>(url, flightLog, this.getHttpOptions()).pipe(
+        return this.httpClient.put<FlightLog>(url, flightLog/*, this.getHttpOptions()*/).pipe(
             map((response: any) => {
                 let flightLogResponse = response;
                 console.log('flightLogResponse', flightLogResponse);
@@ -123,15 +120,15 @@ export class FlightLogServiceService {
             }),
             catchError((httpErrorResponse: HttpErrorResponse) => {
                 FlightLogServiceService.handleError(httpErrorResponse);
-                return null;
-              }));
+                return throwError(() => { });;
+            }));
     }
 
     deleteFlightLog(flightLog: FlightLog): Observable<FlightLogResponse> {
-        
+
         let url: string = flightLog._links.flightLog.href;
         console.log('url: ', url);
-        return this.httpClient.delete<void>(url, this.getHttpOptions()).pipe(
+        return this.httpClient.delete<void>(url/*, this.getHttpOptions()*/).pipe(
             map((response: any) => {
                 let flightLogResponse = response;
                 console.log('flightLogResponse', flightLogResponse);
@@ -139,45 +136,46 @@ export class FlightLogServiceService {
             }),
             catchError((httpErrorResponse: HttpErrorResponse) => {
                 FlightLogServiceService.handleError(httpErrorResponse);
-                return null;
-              }));
+                return throwError(() => { });
+            }));
     }
 
     getAirportByIdentifierOrName(identifier: string, name: string): Observable<Array<Airport>> {
         let url: string = this.serviceUrl + '/airports/search/findByIdentifierContainingIgnoreCaseOrNameContainingIgnoreCase?identifier=' + identifier + '&name=' + name;
-        return this.httpClient.get<AirportResponse>(url, this.getHttpOptions()).pipe(
+        return this.httpClient.get<AirportResponse>(url/*, this.getHttpOptions()*/).pipe(
             map((response: any) => {
                 let airportResponse = response;
                 //console.log('makeModelArray', makeModelArray);
                 return airportResponse._embedded.airports;
             }));
-            //.catch(this.handleError);
+        //.catch(this.handleError);
     }
 
-    getFlightLogMonthlyTotalV(): Observable<FlightLogMonthlyTotalVResponse>  {
-        let url: string = this.serviceUrl + '/flightLogMonthlyTotalVs/search/findAllByOrderById';
+    getFlightLogMonthlyTotalV(): Observable<FlightLogMonthlyTotalVResponse> {
+        let url: string = this.serviceUrl + '/protected/data-rest/flightLogMonthlyTotalVs/search/findAllByOrderById';
         console.log(url);
-        return this.httpClient.get<FlightLogMonthlyTotalVResponse>(url, this.getHttpOptions());
+        return this.httpClient.get<FlightLogMonthlyTotalVResponse>(url/*, this.getHttpOptions()*/);
     }
-    getFlightLogYearlyTotalV(): Observable<FlightLogYearlyTotalVResponse>  {
-        let url: string = this.serviceUrl + '/flightLogYearlyTotalVs/search/findAllByOrderById';
+    getFlightLogYearlyTotalV(): Observable<FlightLogYearlyTotalVResponse> {
+        let url: string = this.serviceUrl + '/protected/data-rest/flightLogYearlyTotalVs/search/findAllByOrderById';
         console.log(url);
-        return this.httpClient.get<FlightLogYearlyTotalVResponse>(url, this.getHttpOptions());
+        return this.httpClient.get<FlightLogYearlyTotalVResponse>(url/*, this.getHttpOptions()*/);
     }
-    getFlightLogLastXDaysTotalV(): Observable<FlightLogLastXDaysTotalVResponse>  {
-        let url: string = this.serviceUrl + '/flightLogLastXDaysTotalVs/search/findAllByOrderById';
+    getFlightLogLastXDaysTotalV(): Observable<FlightLogLastXDaysTotalVResponse> {
+        let url: string = this.serviceUrl + '/protected/data-rest/flightLogLastXDaysTotalVs/search/findAllByOrderById';
         console.log(url);
-        return this.httpClient.get<FlightLogLastXDaysTotalVResponse>(url, this.getHttpOptions());
+        return this.httpClient.get<FlightLogLastXDaysTotalVResponse>(url/*, this.getHttpOptions()*/);
     }
 
-    private getHttpOptions() {
-        console.log('this.sessionDataService.user.token', this.sessionDataService.user.token);
-        return {headers: new HttpHeaders({
-            'Authorization': 'Bearer ' + this.sessionDataService.user.token,
-            'Content-Type': 'application/json'
-            })
-        }
-    };
+    // private getHttpOptions() {
+    //     console.log('this.sessionDataService.user.token', this.sessionDataService.user?.token);
+    //     return {
+    //         headers: new HttpHeaders({
+    //             'Authorization': 'Bearer ' + this.sessionDataService.user?.token,
+    //             'Content-Type': 'application/json'
+    //         })
+    //     }
+    // };
 
     // TODO needs rewrite
     public static handleError(httpErrorResponse: HttpErrorResponse) {

@@ -5,15 +5,15 @@ import { FlightLogLastXDaysTotalVResponse } from '../response/flight-log-last-x-
 import { MyMessageService } from '../message/mymessage.service';
 
 @Component({
-  selector: 'app-flight-log-last-x-days-total-v-table',
-  templateUrl: './flight-log-last-x-days-total-v-table.component.html',
-  styleUrls: ['./flight-log-last-x-days-total-v-table.component.css']
+    selector: 'app-flight-log-last-x-days-total-v-table',
+    templateUrl: './flight-log-last-x-days-total-v-table.component.html',
+    styleUrls: ['./flight-log-last-x-days-total-v-table.component.css']
 })
 export class FlightLogLastXDaysTotalVTableComponent implements OnInit {
 
-    flightLogLastXDaysTotalVArray: Array<FlightLogLastXDaysTotalV>;
+    flightLogLastXDaysTotalVArray!: Array<FlightLogLastXDaysTotalV>;
 
-    loadingFlag: boolean;
+    loadingFlag!: boolean;
 
     constructor(private flightLogService: FlightLogServiceService, private messageService: MyMessageService) { }
 

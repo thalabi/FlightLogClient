@@ -1,4 +1,4 @@
-export class Airport {
+export interface Airport {
     id: number;
     identifier: string;
     name: string;
@@ -11,6 +11,6 @@ export class Airport {
 
     created: Date;
     modified: Date;
-    
-    _links: {airport: {href: string}};
+
+    _links: { airport: { href: string } };
 }

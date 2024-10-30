@@ -10,10 +10,11 @@ import { IGenericEntity } from '../../domain/i-gerneric-entity';
 import { ComponentHelper } from '../../util/ComponentHelper';
 import { AircraftComponent } from '../../domain/aircraft-component';
 import { HalResponsePage } from '../../hal/hal-response-page';
-import { LazyLoadEvent } from 'primeng/primeng';
+import { LazyLoadEvent } from 'primeng/api/lazyloadevent';
 import { HalResponseLinks } from '../../hal/hal-response-links';
 import { CrudEnum } from '../../crud-enum';
 import { AircraftComponentRequest } from '../../domain/aircraft-component-request';
+import { User } from '../../security-old/user';
 
 @Component({
     selector: 'app-aircraft-component',
@@ -22,57 +23,57 @@ import { AircraftComponentRequest } from '../../domain/aircraft-component-reques
 })
 export class AircraftComponentComponent implements OnInit {
 
-    componentForm: FormGroup;
+    componentForm!: FormGroup;
     hasWritePermission: boolean = false;
     readonly COMPONENT_TABLE_NAME: string = 'component';
     readonly PART_TABLE_NAME: string = 'part';
     readonly SORT_COLUMNS: Array<string> = ['name'];
 
-    partRowArray: Array<IGenericEntity>;
-    filteredParts: Array<IGenericEntity>;
-    selectedPartRow: IGenericEntity;
+    partRowArray!: Array<IGenericEntity>;
+    filteredParts!: Array<IGenericEntity>;
+    selectedPartRow!: IGenericEntity;
 
-    componentRowArray: Array<AircraftComponent>;
-    selectedComponentRow: AircraftComponent;
-    selectedComponentRowCopy: AircraftComponent;
-    selectedComponentAndHistoryRow: AircraftComponent;
-    selectedComponentAndHistoryRowCopy: AircraftComponent;
+    componentRowArray!: Array<AircraftComponent>;
+    selectedComponentRow!: AircraftComponent;
+    selectedComponentRowCopy!: AircraftComponent;
+    selectedComponentAndHistoryRow!: AircraftComponent;
+    selectedComponentAndHistoryRowCopy!: AircraftComponent;
 
-    componentAndHistoryArray : Array<AircraftComponent>;
+    componentAndHistoryArray!: Array<AircraftComponent>;
 
-    loadingFlag: boolean;
-    page: HalResponsePage;
+    loadingFlag!: boolean;
+    page!: HalResponsePage;
 
-    displayDialog: boolean;
+    displayDialog!: boolean;
 
-    crudMode: CrudEnum;
-    componentHistoryCrudMode: CrudEnum;
-    historyCrudMode: CrudEnum;
+    crudMode!: CrudEnum;
+    componentHistoryCrudMode!: CrudEnum;
+    historyCrudMode!: CrudEnum;
     crudEnum = CrudEnum; // Used in html to refere to enum
     modifyAndDeleteButtonsDisable: boolean = true;
 
     // used to pass as argument to getTableRowsLazy() when refreshing page after add/update/delete
-    savedLazyLoadEvent: LazyLoadEvent;
+    savedLazyLoadEvent!: LazyLoadEvent;
     readonly ROWS_PER_PAGE: number = 10; // default rows per page
-    firstRowOfTable: number; // triggers a page change, zero based. 0 -> first page, 1 -> second page, ...
-    pageNumber: number;
-    links: HalResponseLinks;
+    firstRowOfTable!: number; // triggers a page change, zero based. 0 -> first page, 1 -> second page, ...
+    pageNumber!: number;
+    links!: HalResponseLinks;
 
-    tempAircraftComponentHistorySelfHrefSeq : number = 0; // temp href used to assign to added aircraftComponentHistory records
-    readonly tempAircraftComponentHistorySelfHrefPrefix : string = 'tempSelfHref';
+    tempAircraftComponentHistorySelfHrefSeq: number = 0; // temp href used to assign to added aircraftComponentHistory records
+    readonly tempAircraftComponentHistorySelfHrefPrefix: string = 'tempSelfHref';
 
     constructor(private genericEntityService: GenericEntityService, private aircraftComponentService: AircraftComponentService, private messageService: MyMessageService,
-    private sessionDataService: SessionDataService) { }
+        private sessionDataService: SessionDataService) { }
 
     ngOnInit() {
         this.messageService.clear();
         this.componentRowArray = [];
-        this.page = new HalResponsePage();
+        this.page = {} as HalResponsePage;
         this.createForm();
         this.fetchPartTable();
 
         this.hasWritePermission = MenuComponent.isHolderOfAnyAuthority(
-            this.sessionDataService.user, Constant.entityToWritePermissionMap.get(this.COMPONENT_TABLE_NAME));
+            this.sessionDataService.user || {} as User, Constant.entityToWritePermissionMap.get(this.COMPONENT_TABLE_NAME) || '');
     }
 
     createForm() {
@@ -92,11 +93,11 @@ export class AircraftComponentComponent implements OnInit {
 
     private fetchPartTable() {
         // Get all rows of part table
-        this.genericEntityService.getAssociationGenericEntity(this.PART_TABLE_NAME, null).subscribe({
+        this.genericEntityService.getAssociationGenericEntity(this.PART_TABLE_NAME, []).subscribe({
             next: rowResponse => {
                 console.log('part rowResponse: ', rowResponse);
                 if (rowResponse._embedded) {
-                    this.partRowArray = rowResponse._embedded[this.PART_TABLE_NAME+'s'];
+                    this.partRowArray = rowResponse._embedded[this.PART_TABLE_NAME + 's'];
                     ComponentHelper.sortGenericEntity(this.partRowArray, ['name']);
                     console.log('this.partRowArray: ', this.partRowArray);
                 } else {
@@ -116,7 +117,7 @@ export class AircraftComponentComponent implements OnInit {
         console.log('event.first', lazyLoadEvent.first);
         console.log('event.rows', lazyLoadEvent.rows);
         console.log('event.filters', lazyLoadEvent.filters);
-        this.fetchPage(lazyLoadEvent.first, lazyLoadEvent.rows,
+        this.fetchPage(lazyLoadEvent.first || 0, lazyLoadEvent.rows || 0,
             ComponentHelper.buildSearchString(lazyLoadEvent, ['name', 'description', 'part.name', 'workPerformed', 'datePerformed', 'hoursPerformed', 'dateDue', 'hoursDue']), this.SORT_COLUMNS);
     }
 
@@ -125,62 +126,71 @@ export class AircraftComponentComponent implements OnInit {
         console.log("in fetchPage");
         this.loadingFlag = true;
         this.modifyAndDeleteButtonsDisable = true;
-        this.selectedComponentRow = null; // unselect row
+        this.selectedComponentRow = {} as AircraftComponent; // unselect row
         this.resetDialoForm();
 
         this.aircraftComponentService.findAll(this.COMPONENT_TABLE_NAME, firstRowNumber, rowsPerPage, searchString, queryOrderByColumns)
-        .subscribe({
-            next: rowResponse => {
-                console.log('component rowResponse', rowResponse);
-                this.page = rowResponse.page;
-                if (rowResponse._embedded) {
-                    this.firstRowOfTable = this.page.number * this.ROWS_PER_PAGE;
-                    this.componentRowArray = rowResponse._embedded[this.COMPONENT_TABLE_NAME+'s'];
-                    // convert date strings to date objects
+            .subscribe({
+                next: rowResponse => {
+                    console.log('component rowResponse', rowResponse);
+                    this.page = rowResponse.page;
+                    if (rowResponse._embedded) {
+                        this.firstRowOfTable = this.page.number * this.ROWS_PER_PAGE;
 
-                    this.componentRowArray.forEach(componentRow => {
-                        componentRow.datePerformed = componentRow.datePerformed ? new Date(componentRow.datePerformed) : null;
-                        componentRow.dateDue = componentRow.dateDue ? new Date(componentRow.dateDue) :  null;
-                        componentRow.created = componentRow.created ? new Date(componentRow.created) :  null;
-                        componentRow.modified = componentRow.modified ? new Date(componentRow.modified) :  null;
-                        componentRow.componentHistorySet.forEach(componentHistory => {
-                            componentHistory.datePerformed = componentHistory.datePerformed ? new Date(componentHistory.datePerformed) : null;
-                            componentHistory.dateDue = componentHistory.dateDue ? new Date(componentHistory.dateDue) :  null;
-                            componentHistory.created = componentHistory.created ? new Date(componentHistory.created) :  null;
-                            componentHistory.modified = componentHistory.modified ? new Date(componentHistory.modified) :  null;
+                        this.componentRowArray = rowResponse._embedded.components;
+                        // convert date strings to date objects
+
+                        this.componentRowArray.forEach(componentRow => {
+                            //componentRow.datePerformed = componentRow.datePerformed ? new Date(componentRow.datePerformed) : null;
+                            componentRow.datePerformed = new Date(componentRow.datePerformed);
+                            //componentRow.dateDue = componentRow.dateDue ? new Date(componentRow.dateDue) : null;
+                            componentRow.dateDue = new Date(componentRow.dateDue);
+                            //componentRow.created = componentRow.created ? new Date(componentRow.created) : null;
+                            componentRow.created = new Date(componentRow.created);
+                            //componentRow.modified = componentRow.modified ? new Date(componentRow.modified) : null;
+                            componentRow.modified = new Date(componentRow.modified);
+                            componentRow.componentHistorySet.forEach(componentHistory => {
+                                // componentHistory.datePerformed = componentHistory.datePerformed ? new Date(componentHistory.datePerformed) : null;
+                                // componentHistory.dateDue = componentHistory.dateDue ? new Date(componentHistory.dateDue) : null;
+                                // componentHistory.created = componentHistory.created ? new Date(componentHistory.created) : null;
+                                // componentHistory.modified = componentHistory.modified ? new Date(componentHistory.modified) : null;
+                                componentHistory.datePerformed = new Date(componentHistory.datePerformed);
+                                componentHistory.dateDue = new Date(componentHistory.dateDue);
+                                componentHistory.created = new Date(componentHistory.created);
+                                componentHistory.modified = new Date(componentHistory.modified);
                             });
-                    });
-                    
-                    // this.rowArray = this.transformAttributes(this.rowArray);
-                } else {
-                    this.firstRowOfTable = 0;
-                    this.componentRowArray = [];
+                        });
+
+                        // this.rowArray = this.transformAttributes(this.rowArray);
+                    } else {
+                        this.firstRowOfTable = 0;
+                        this.componentRowArray = [];
+                    }
+
+                    // this.firstRowOfTable = page.number * this.ROWS_PER_PAGE;
+                    // this.rowArray = page.totalElements ? rowResponse._embedded[this.tableName+'s'] : [];
+                    // console.log('this.rowArray', this.rowArray);
+                    this.links = rowResponse._links;
+                },
+                complete: () => {
+                    this.loadingFlag = false;
                 }
-                
-                // this.firstRowOfTable = page.number * this.ROWS_PER_PAGE;
-                // this.rowArray = page.totalElements ? rowResponse._embedded[this.tableName+'s'] : [];
-                // console.log('this.rowArray', this.rowArray);
-                this.links = rowResponse._links;
-        },
-        complete: () => {
-            this.loadingFlag = false;
-        }
-        /*,
-        error: error => {
-            this.loadingFlag = false;
-            this.messageService.error('summary', error);
-            console.error(error);
-            let message: {summaryMessage: string, detailMessage: string} = CustomErrorHandler.getHttpErrorResponseMessages(error);
-            console.log(message.summaryMessage, message.detailMessage);
-            this.messageService.error(message.summaryMessage, message.detailMessage);
-            this.messageService.error('summary', 'detail');
-            // TODO uncomment later
-            //this.messageService.clear();
-            //this.messageService.error(error);
-        }
-        */
-        });
-        
+                /*,
+                error: error => {
+                    this.loadingFlag = false;
+                    this.messageService.error('summary', error);
+                    console.error(error);
+                    let message: {summaryMessage: string, detailMessage: string} = CustomErrorHandler.getHttpErrorResponseMessages(error);
+                    console.log(message.summaryMessage, message.detailMessage);
+                    this.messageService.error(message.summaryMessage, message.detailMessage);
+                    this.messageService.error('summary', 'detail');
+                    // TODO uncomment later
+                    //this.messageService.clear();
+                    //this.messageService.error(error);
+                }
+                */
+            });
+
     }
 
     onGoToPage() {
@@ -190,10 +200,10 @@ export class AircraftComponentComponent implements OnInit {
         this.savedLazyLoadEvent.first = this.firstRowOfTable;
         this.onLazyLoad(this.savedLazyLoadEvent);
         this.fetchPage(this.firstRowOfTable, this.ROWS_PER_PAGE, '', this.SORT_COLUMNS);
-        this.pageNumber = null;
+        this.pageNumber = 0;
     }
 
-    onRowSelect(event) {
+    onRowSelect(event: any) {
         console.log('onRowSelect, event', event);
         // Make a copy of selectedComponentRow
         this.selectedComponentRowCopy = Object.assign({}, this.selectedComponentRow);
@@ -203,8 +213,8 @@ export class AircraftComponentComponent implements OnInit {
 
         // Create componentAndHistoryArray which contains the selected component and its history
         this.componentAndHistoryArray = [];
-        let selectedComponent : AircraftComponent = new AircraftComponent();
-        
+        let selectedComponent: AircraftComponent = {} as AircraftComponent;
+
         selectedComponent._links = this.selectedComponentRowCopy._links;
         selectedComponent.name = this.selectedComponentRowCopy.name;
         selectedComponent.description = this.selectedComponentRowCopy.description;
@@ -218,9 +228,9 @@ export class AircraftComponentComponent implements OnInit {
         selectedComponent.modified = this.selectedComponentRowCopy.modified;
         console.log('pushing selectedComponent', selectedComponent);
         this.componentAndHistoryArray.push(selectedComponent);
-        
+
         this.selectedComponentRowCopy.componentHistorySet.forEach(componentHistory => {
-            let selectedComponentHistory : AircraftComponent = new AircraftComponent();
+            let selectedComponentHistory: AircraftComponent = {} as AircraftComponent;
             selectedComponentHistory._links = componentHistory._links;
             selectedComponentHistory.name = componentHistory.name;
             selectedComponentHistory.description = componentHistory.description;
@@ -243,13 +253,13 @@ export class AircraftComponentComponent implements OnInit {
         this.selectedComponentAndHistoryRowCopy = Object.assign({}, this.selectedComponentAndHistoryRow);
     }
 
-    onRowUnselect(event) {
+    onRowUnselect(event: any) {
         console.log('onRowUnselect, event', event);
         this.modifyAndDeleteButtonsDisable = true;
         //this.selectedRow = new FlightLog(); // This a hack. If don't init selectedFlightLog, dialog will produce exception
     }
 
-    onComponentAndHistoryRowSelect(event) {
+    onComponentAndHistoryRowSelect(event: any) {
         console.log('onComponentAndHistoryRowSelect', event);
         console.log('selectedComponentAndHistoryRow', this.selectedComponentAndHistoryRow);
         this.selectedComponentAndHistoryRowCopy = Object.assign({}, this.selectedComponentAndHistoryRow);
@@ -262,54 +272,54 @@ export class AircraftComponentComponent implements OnInit {
 
     }
     // Used as a hack to make componentAndHistory table refresh after setting the selected row
-    componentAndHistoryTableVisible : boolean = true;
-    onComponentAndHistoryRowUnselect(event) {
+    componentAndHistoryTableVisible: boolean = true;
+    onComponentAndHistoryRowUnselect(event: any) {
         console.log('onComponentAndHistoryRowUnselect', event);
         // Set onComponentAndHistoryRowSelect back to its value to prevent Row Unselect
         this.selectedComponentAndHistoryRow = event.data;
         // Turn off and on componentAndHistoryTableVisible to make componentAndHistory refresh showing the selected row
         this.componentAndHistoryTableVisible = false;
         setTimeout(() => this.componentAndHistoryTableVisible = true, 0);
-        
+
     }
 
     showDialog(crudMode: CrudEnum) {
         this.displayDialog = true;
         this.crudMode = crudMode;
-        this.componentHistoryCrudMode = null;
+        this.componentHistoryCrudMode = {} as CrudEnum;
         console.log('this.crudMode', this.crudMode);
         switch (this.crudMode) {
-        case CrudEnum.ADD:
-            this.enableFormControls(true);
-            break;
-        case CrudEnum.UPDATE:
-            // this.componentForm.controls.name.patchValue(this.selectedComponentRowCopy.name);
-            // this.componentForm.controls.description.patchValue(this.selectedComponentRowCopy.description);
-            // this.componentForm.controls.part.patchValue(this.selectedPartRow);
-            // this.componentForm.controls.workPerformed.patchValue(this.selectedComponentRowCopy.workPerformed);
-            // this.componentForm.controls.datePerformed.patchValue(this.selectedComponentRowCopy.datePerformed);
-            // this.componentForm.controls.hoursPerformed.patchValue(this.selectedComponentRowCopy.hoursPerformed);
-            // this.componentForm.controls.dateDue.patchValue(this.selectedComponentRowCopy.dateDue);
-            // this.componentForm.controls.hoursDue.patchValue(this.selectedComponentRowCopy.hoursDue);
-            this.updateDialogComponent(this.selectedComponentRowCopy);
-            //this.componentForm.controls.createHistoryRecord.patchValue(null);
-            this.enableFormControls(false);
-            break;
-        case CrudEnum.DELETE:
-            // this.componentForm.controls.name.patchValue(this.selectedComponentRowCopy.name);
-            // this.componentForm.controls.description.patchValue(this.selectedComponentRowCopy.description);
-            // this.componentForm.controls.part.patchValue(this.selectedPartRow);
-            // this.componentForm.controls.workPerformed.patchValue(this.selectedComponentRowCopy.workPerformed);
-            // this.componentForm.controls.datePerformed.patchValue(this.selectedComponentRowCopy.datePerformed);
-            // this.componentForm.controls.hoursPerformed.patchValue(this.selectedComponentRowCopy.hoursPerformed);
-            // this.componentForm.controls.dateDue.patchValue(this.selectedComponentRowCopy.dateDue);
-            // this.componentForm.controls.hoursDue.patchValue(this.selectedComponentRowCopy.hoursDue);
-            this.updateDialogComponent(this.selectedComponentRowCopy);
-            this.componentForm.controls.deleteHistoryRecords.patchValue(false);
-            this.enableFormControls(false);
-            break;
-        default:
-            console.error('this.crudMode is invalid. this.crudMode: ' + this.crudMode);
+            case CrudEnum.ADD:
+                this.enableFormControls(true);
+                break;
+            case CrudEnum.UPDATE:
+                // this.componentForm.controls.name.patchValue(this.selectedComponentRowCopy.name);
+                // this.componentForm.controls.description.patchValue(this.selectedComponentRowCopy.description);
+                // this.componentForm.controls.part.patchValue(this.selectedPartRow);
+                // this.componentForm.controls.workPerformed.patchValue(this.selectedComponentRowCopy.workPerformed);
+                // this.componentForm.controls.datePerformed.patchValue(this.selectedComponentRowCopy.datePerformed);
+                // this.componentForm.controls.hoursPerformed.patchValue(this.selectedComponentRowCopy.hoursPerformed);
+                // this.componentForm.controls.dateDue.patchValue(this.selectedComponentRowCopy.dateDue);
+                // this.componentForm.controls.hoursDue.patchValue(this.selectedComponentRowCopy.hoursDue);
+                this.updateDialogComponent(this.selectedComponentRowCopy);
+                //this.componentForm.controls.createHistoryRecord.patchValue(null);
+                this.enableFormControls(false);
+                break;
+            case CrudEnum.DELETE:
+                // this.componentForm.controls.name.patchValue(this.selectedComponentRowCopy.name);
+                // this.componentForm.controls.description.patchValue(this.selectedComponentRowCopy.description);
+                // this.componentForm.controls.part.patchValue(this.selectedPartRow);
+                // this.componentForm.controls.workPerformed.patchValue(this.selectedComponentRowCopy.workPerformed);
+                // this.componentForm.controls.datePerformed.patchValue(this.selectedComponentRowCopy.datePerformed);
+                // this.componentForm.controls.hoursPerformed.patchValue(this.selectedComponentRowCopy.hoursPerformed);
+                // this.componentForm.controls.dateDue.patchValue(this.selectedComponentRowCopy.dateDue);
+                // this.componentForm.controls.hoursDue.patchValue(this.selectedComponentRowCopy.hoursDue);
+                this.updateDialogComponent(this.selectedComponentRowCopy);
+                this.componentForm.controls['deleteHistoryRecords'].patchValue(false);
+                this.enableFormControls(false);
+                break;
+            default:
+                console.error('this.crudMode is invalid. this.crudMode: ' + this.crudMode);
         }
         console.log('this.crudForm', this.componentForm);
     }
@@ -319,42 +329,42 @@ export class AircraftComponentComponent implements OnInit {
         this.componentHistoryCrudMode = componentHistoryCrudMode;
         console.log('this.componentHistoryCrudMode', this.componentHistoryCrudMode);
         switch (this.componentHistoryCrudMode) {
-        case CrudEnum.ADD:
-            this.componentForm.reset();
-            this.enableFormControls(true);
-            break;
-        case CrudEnum.UPDATE:
-            this.enableFormControls(true);
-            break;
-        case CrudEnum.DELETE:
-            break;
-        default:
-            console.error('this.componentHistoryCrudMode is invalid. this.componentHistoryCrudMode: ' + this.componentHistoryCrudMode);
+            case CrudEnum.ADD:
+                this.componentForm.reset();
+                this.enableFormControls(true);
+                break;
+            case CrudEnum.UPDATE:
+                this.enableFormControls(true);
+                break;
+            case CrudEnum.DELETE:
+                break;
+            default:
+                console.error('this.componentHistoryCrudMode is invalid. this.componentHistoryCrudMode: ' + this.componentHistoryCrudMode);
         }
     }
 
-    private updateDialogComponent(selectedComponent : AircraftComponent) {
+    private updateDialogComponent(selectedComponent: AircraftComponent) {
         console.log('begin updateDialogComponent');
-        this.componentForm.controls.name.patchValue(selectedComponent.name);
-        this.componentForm.controls.description.patchValue(selectedComponent.description);
-        this.componentForm.controls.part.patchValue(this.partRowArray.find(part => part.name === selectedComponent.part.name));
-        this.componentForm.controls.workPerformed.patchValue(selectedComponent.workPerformed);
-        this.componentForm.controls.datePerformed.patchValue(selectedComponent.datePerformed);
-        this.componentForm.controls.hoursPerformed.patchValue(selectedComponent.hoursPerformed);
-        this.componentForm.controls.dateDue.patchValue(selectedComponent.dateDue);
-        this.componentForm.controls.hoursDue.patchValue(selectedComponent.hoursDue);
+        this.componentForm.controls['name'].patchValue(selectedComponent.name);
+        this.componentForm.controls['description'].patchValue(selectedComponent.description);
+        this.componentForm.controls['part'].patchValue(this.partRowArray.find(part => part['name'] === selectedComponent.part['name']));
+        this.componentForm.controls['workPerformed'].patchValue(selectedComponent.workPerformed);
+        this.componentForm.controls['datePerformed'].patchValue(selectedComponent.datePerformed);
+        this.componentForm.controls['hoursPerformed'].patchValue(selectedComponent.hoursPerformed);
+        this.componentForm.controls['dateDue'].patchValue(selectedComponent.dateDue);
+        this.componentForm.controls['hoursDue'].patchValue(selectedComponent.hoursDue);
         //this.componentForm.controls.deleteHistoryRecords.patchValue(false);
         console.log('end updateDialogComponent');
     }
     private clearDialogComponent() {
-        this.componentForm.controls.name.reset();
-        this.componentForm.controls.description.reset();
-        this.componentForm.controls.part.reset();
-        this.componentForm.controls.workPerformed.reset();
-        this.componentForm.controls.datePerformed.reset();
-        this.componentForm.controls.hoursPerformed.reset();
-        this.componentForm.controls.dateDue.reset();
-        this.componentForm.controls.hoursDue.reset();
+        this.componentForm.controls['name'].reset();
+        this.componentForm.controls['description'].reset();
+        this.componentForm.controls['part'].reset();
+        this.componentForm.controls['workPerformed'].reset();
+        this.componentForm.controls['datePerformed'].reset();
+        this.componentForm.controls['hoursPerformed'].reset();
+        this.componentForm.controls['dateDue'].reset();
+        this.componentForm.controls['hoursDue'].reset();
     }
 
     onSubmit() {
@@ -362,17 +372,17 @@ export class AircraftComponentComponent implements OnInit {
         console.log('this.componentHistoryCrudMode', this.componentHistoryCrudMode);
 
         // TODO should rename to aircraftComponentRequestComponent
-        let aircraftComponentRequest : AircraftComponentRequest.Component = new AircraftComponentRequest.Component();
+        let aircraftComponentRequest: AircraftComponentRequest.Component = {} as AircraftComponentRequest.Component;
         switch (this.crudMode) {
             case CrudEnum.ADD:
-                aircraftComponentRequest.name = this.componentForm.controls.name.value.trim();
-                aircraftComponentRequest.description = this.componentForm.controls.description.value;
-                aircraftComponentRequest.workPerformed = this.componentForm.controls.workPerformed.value;
-                aircraftComponentRequest.datePerformed = this.componentForm.controls.datePerformed.value;
-                aircraftComponentRequest.hoursPerformed = this.componentForm.controls.hoursPerformed.value;
-                aircraftComponentRequest.dateDue = this.componentForm.controls.dateDue.value;
-                aircraftComponentRequest.hoursDue = this.componentForm.controls.hoursDue.value;
-                aircraftComponentRequest.partUri = this.componentForm.controls.part.value._links.part.href;
+                aircraftComponentRequest.name = this.componentForm.controls['name'].value.trim();
+                aircraftComponentRequest.description = this.componentForm.controls['description'].value;
+                aircraftComponentRequest.workPerformed = this.componentForm.controls['workPerformed'].value;
+                aircraftComponentRequest.datePerformed = this.componentForm.controls['datePerformed'].value;
+                aircraftComponentRequest.hoursPerformed = this.componentForm.controls['hoursPerformed'].value;
+                aircraftComponentRequest.dateDue = this.componentForm.controls['dateDue'].value;
+                aircraftComponentRequest.hoursDue = this.componentForm.controls['hoursDue'].value;
+                aircraftComponentRequest.partUri = this.componentForm.controls['part'].value._links.part.href;
                 aircraftComponentRequest.created = new Date();
                 aircraftComponentRequest.modified = new Date();
                 console.log("aircraftComponentRequest: %o", aircraftComponentRequest);
@@ -391,19 +401,19 @@ export class AircraftComponentComponent implements OnInit {
                 break;
             case CrudEnum.UPDATE:
                 // Handle Add, Update and Delete history records
-                let component: AircraftComponent = new AircraftComponent();
+                let component: AircraftComponent = {} as AircraftComponent;
                 switch (this.componentHistoryCrudMode) {
                     case CrudEnum.ADD: // Add component history record to history array
                         let tempHrefValue = this.tempAircraftComponentHistorySelfHrefPrefix + "_" + ++this.tempAircraftComponentHistorySelfHrefSeq;
-                        component._links = {self: {href: tempHrefValue}};
-                        component.name = this.componentForm.controls.name.value.trim();
-                        component.description = this.componentForm.controls.description.value;
-                        component.workPerformed = this.componentForm.controls.workPerformed.value;
-                        component.datePerformed = this.componentForm.controls.datePerformed.value;
-                        component.hoursPerformed = this.componentForm.controls.hoursPerformed.value;
-                        component.dateDue = this.componentForm.controls.dateDue.value;
-                        component.hoursDue = this.componentForm.controls.hoursDue.value;
-                        component.part = this.componentForm.controls.part.value;
+                        component._links = { self: { href: tempHrefValue } };
+                        component.name = this.componentForm.controls['name'].value.trim();
+                        component.description = this.componentForm.controls['description'].value;
+                        component.workPerformed = this.componentForm.controls['workPerformed'].value;
+                        component.datePerformed = this.componentForm.controls['datePerformed'].value;
+                        component.hoursPerformed = this.componentForm.controls['hoursPerformed'].value;
+                        component.dateDue = this.componentForm.controls['dateDue'].value;
+                        component.hoursDue = this.componentForm.controls['hoursDue'].value;
+                        component.part = this.componentForm.controls['part'].value;
                         component.created = new Date();
                         component.modified = new Date();
                         console.log("component: %o", component);
@@ -413,29 +423,30 @@ export class AircraftComponentComponent implements OnInit {
                         console.log('this.componentAndHistoryArray', this.componentAndHistoryArray);
                         // select added record
                         this.selectedComponentAndHistoryRow = component;
-                        this.componentHistoryCrudMode = null;
+                        this.componentHistoryCrudMode = {} as CrudEnum;
                         break;
                     case CrudEnum.UPDATE: // Update component history record in history array
                         // Find the selected component in the componentAndHistoryArray and update it
                         let aircraftComponentToUpdate = this.componentAndHistoryArray.find(aircraftComponent =>
                             aircraftComponent._links.self.href === this.selectedComponentAndHistoryRow._links.self.href);
+                        aircraftComponentToUpdate = aircraftComponentToUpdate || {} as AircraftComponent;
                         console.log(aircraftComponentToUpdate);
-                        aircraftComponentToUpdate.name = this.componentForm.controls.name.value.trim();
-                        aircraftComponentToUpdate.description = this.componentForm.controls.description.value;
-                        aircraftComponentToUpdate.workPerformed = this.componentForm.controls.workPerformed.value;
-                        aircraftComponentToUpdate.datePerformed = this.componentForm.controls.datePerformed.value;
-                        aircraftComponentToUpdate.hoursPerformed = this.componentForm.controls.hoursPerformed.value;
-                        aircraftComponentToUpdate.dateDue = this.componentForm.controls.dateDue.value;
-                        aircraftComponentToUpdate.hoursDue = this.componentForm.controls.hoursDue.value;
-                        aircraftComponentToUpdate.part = this.componentForm.controls.part.value;
+                        aircraftComponentToUpdate.name = this.componentForm.controls['name'].value.trim();
+                        aircraftComponentToUpdate.description = this.componentForm.controls['description'].value;
+                        aircraftComponentToUpdate.workPerformed = this.componentForm.controls['workPerformed'].value;
+                        aircraftComponentToUpdate.datePerformed = this.componentForm.controls['datePerformed'].value;
+                        aircraftComponentToUpdate.hoursPerformed = this.componentForm.controls['hoursPerformed'].value;
+                        aircraftComponentToUpdate.dateDue = this.componentForm.controls['dateDue'].value;
+                        aircraftComponentToUpdate.hoursDue = this.componentForm.controls['hoursDue'].value;
+                        aircraftComponentToUpdate.part = this.componentForm.controls['part'].value;
                         aircraftComponentToUpdate.modified = component.modified = new Date();
                         console.log('aircraftComponentToUpdate', aircraftComponentToUpdate);
                         this.sortComponentAndHistoryArray();
-                        this.componentHistoryCrudMode = null;
+                        this.componentHistoryCrudMode = {} as CrudEnum;
                         break;
                     case CrudEnum.DELETE: // Delete component history record from history array
                         // Find the selected component in the componentAndHistoryArray and delete it
-                        let indexOfAircraftComponentToDelete : number = this.componentAndHistoryArray
+                        let indexOfAircraftComponentToDelete: number = this.componentAndHistoryArray
                             .indexOf(this.selectedComponentAndHistoryRow);
                         this.componentAndHistoryArray.splice(indexOfAircraftComponentToDelete, 1);
                         // Select the first row
@@ -445,7 +456,7 @@ export class AircraftComponentComponent implements OnInit {
                         } else {
                             this.clearDialogComponent();
                         }
-                        this.componentHistoryCrudMode = null;
+                        this.componentHistoryCrudMode = {} as CrudEnum;
                         break;
                     case null: // Save the history array
                         console.log('About to save updated component and history');
@@ -459,7 +470,11 @@ export class AircraftComponentComponent implements OnInit {
                             aircraftComponentRequest.hoursPerformed = this.componentAndHistoryArray[0].hoursPerformed;
                             aircraftComponentRequest.dateDue = this.componentAndHistoryArray[0].dateDue;
                             aircraftComponentRequest.hoursDue = this.componentAndHistoryArray[0].hoursDue;
-                            aircraftComponentRequest.partUri = this.partRowArray.find(part => part.name === this.componentAndHistoryArray[0].part.name)._links.self.href;
+
+                            //aircraftComponentRequest.partUri = this.partRowArray.find(part => part['name'] === this.componentAndHistoryArray[0].part['name'])._links.self.href;
+                            const part = this.partRowArray.find(part => part['name'] === this.componentAndHistoryArray[0].part['name']) || {} as IGenericEntity;
+                            aircraftComponentRequest.partUri = part._links.self.href;
+
                             aircraftComponentRequest.created = this.componentAndHistoryArray[0].created;
                             aircraftComponentRequest.modified = this.componentAndHistoryArray[0].modified;
                         }
@@ -469,15 +484,15 @@ export class AircraftComponentComponent implements OnInit {
                         console.log('this.componentAndHistoryArray', this.componentAndHistoryArray);
                         aircraftComponentRequest.historyRequestSet = new Array<AircraftComponentRequest.Historyrequest>();
                         this.componentAndHistoryArray.forEach(componentAndHistory => {
-                            let aircraftComponentHistoryRequest : AircraftComponentRequest.Historyrequest = new AircraftComponentRequest.Historyrequest();
+                            let aircraftComponentHistoryRequest: AircraftComponentRequest.Historyrequest = {} as AircraftComponentRequest.Historyrequest;
                             // If the history record has a link and is the same as the actaul component, set it to null
                             // aircraftComponentHistoryRequest.historyUri =
                             //     componentAndHistory._links && componentAndHistory._links.self.href === aircraftComponentRequest.componentUri ? null : componentAndHistory._links.self.href;
                             if (componentAndHistory._links) {
                                 if (componentAndHistory._links.self.href === aircraftComponentRequest.componentUri) {
-                                    aircraftComponentHistoryRequest.historyUri = null;
+                                    aircraftComponentHistoryRequest.historyUri = '';
                                 } else if (componentAndHistory._links.self.href.startsWith(this.tempAircraftComponentHistorySelfHrefPrefix)) {
-                                    aircraftComponentHistoryRequest.historyUri = null;
+                                    aircraftComponentHistoryRequest.historyUri = '';
                                 }
                             }
                             aircraftComponentHistoryRequest.name = componentAndHistory.name;
@@ -487,11 +502,14 @@ export class AircraftComponentComponent implements OnInit {
                             aircraftComponentHistoryRequest.hoursPerformed = componentAndHistory.hoursPerformed;
                             aircraftComponentHistoryRequest.dateDue = componentAndHistory.dateDue;
                             aircraftComponentHistoryRequest.hoursDue = componentAndHistory.hoursDue;
-                            aircraftComponentHistoryRequest.partUri =
-                                this.partRowArray.find(part => part.name === componentAndHistory.part.name)._links.self.href;
+
+                            //aircraftComponentHistoryRequest.partUri = this.partRowArray.find(part => part['name'] === componentAndHistory.part['name'])._links.self.href;
+                            const part = this.partRowArray.find(part => part['name'] === componentAndHistory.part['name']) || {} as IGenericEntity;
+                            aircraftComponentHistoryRequest.partUri = part._links.self.href;
+
                             aircraftComponentHistoryRequest.created = componentAndHistory.created;
                             aircraftComponentHistoryRequest.modified = componentAndHistory.modified;
-                            
+
                             aircraftComponentRequest.historyRequestSet.push(aircraftComponentHistoryRequest);
                         });
                         console.log('aircraftComponentRequest', aircraftComponentRequest);
@@ -514,7 +532,7 @@ export class AircraftComponentComponent implements OnInit {
                 this.enableFormControls(false);
                 break;
             case CrudEnum.DELETE:
-                this.aircraftComponentService.deleteComponent(this.selectedComponentRow._links.self.href, this.componentForm.controls.deleteHistoryRecords.value).subscribe({
+                this.aircraftComponentService.deleteComponent(this.selectedComponentRow._links.self.href, this.componentForm.controls['deleteHistoryRecords'].value).subscribe({
                     next: savedRow => {
                         console.log('deleted row', this.selectedComponentRow);
                     },
@@ -542,22 +560,22 @@ export class AircraftComponentComponent implements OnInit {
         // Restore original copy
         console.log('selectedComponentAndHistoryRowCopy', this.selectedComponentAndHistoryRowCopy);
         this.updateDialogComponent(this.selectedComponentAndHistoryRowCopy);
-        this.componentHistoryCrudMode = null;
+        this.componentHistoryCrudMode = {} as CrudEnum;
         this.enableFormControls(false);
     }
 
-    filterParts(event) {
+    filterParts(event: { query: string; }) {
         this.filteredParts = [];
         for (let i = 0; i < this.partRowArray.length; i++) {
-            let name = this.partRowArray[i].name;
+            let name = this.partRowArray[i]['name'];
             // if (name.toLowerCase().indexOf(event.query.toLowerCase()) == 0) {
             if (name.toLowerCase().startsWith(event.query.toLowerCase())) {
-                    this.filteredParts.push(this.partRowArray[i]);
+                this.filteredParts.push(this.partRowArray[i]);
             }
         }
     }
     private afterCrud() {
-        this.fetchPage(this.savedLazyLoadEvent.first, this.savedLazyLoadEvent.rows,
+        this.fetchPage(this.savedLazyLoadEvent.first || 0, this.savedLazyLoadEvent.rows || 0,
             ComponentHelper.buildSearchString(this.savedLazyLoadEvent, ['name', 'description', 'part.name', 'workPerformed', 'datePerformed', 'hoursPerformed', 'dateDue', 'hoursDue']),
             this.SORT_COLUMNS);
     }
@@ -570,23 +588,23 @@ export class AircraftComponentComponent implements OnInit {
 
     private enableFormControls(enable: boolean) {
         if (enable) {
-            this.componentForm.controls.name.enable();
-            this.componentForm.controls.description.enable();
-            this.componentForm.controls.part.enable();
-            this.componentForm.controls.workPerformed.enable();
-            this.componentForm.controls.datePerformed.enable();
-            this.componentForm.controls.hoursPerformed.enable();
-            this.componentForm.controls.dateDue.enable();
-            this.componentForm.controls.hoursDue.enable();
+            this.componentForm.controls['name'].enable();
+            this.componentForm.controls['description'].enable();
+            this.componentForm.controls['part'].enable();
+            this.componentForm.controls['workPerformed'].enable();
+            this.componentForm.controls['datePerformed'].enable();
+            this.componentForm.controls['hoursPerformed'].enable();
+            this.componentForm.controls['dateDue'].enable();
+            this.componentForm.controls['hoursDue'].enable();
         } else {
-            this.componentForm.controls.name.disable();
-            this.componentForm.controls.description.disable();
-            this.componentForm.controls.part.disable();
-            this.componentForm.controls.workPerformed.disable();
-            this.componentForm.controls.datePerformed.disable();
-            this.componentForm.controls.hoursPerformed.disable();
-            this.componentForm.controls.dateDue.disable();
-            this.componentForm.controls.hoursDue.disable();
+            this.componentForm.controls['name'].disable();
+            this.componentForm.controls['description'].disable();
+            this.componentForm.controls['part'].disable();
+            this.componentForm.controls['workPerformed'].disable();
+            this.componentForm.controls['datePerformed'].disable();
+            this.componentForm.controls['hoursPerformed'].disable();
+            this.componentForm.controls['dateDue'].disable();
+            this.componentForm.controls['hoursDue'].disable();
         }
     }
 

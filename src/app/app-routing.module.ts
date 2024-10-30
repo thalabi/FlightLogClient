@@ -6,18 +6,20 @@ import { FlightLogYearlyTotalVTableComponent } from './flight-log-yearly-total-v
 import { FlightLogLastXDaysTotalVTableComponent } from './flight-log-last-x-days-total-v-table/flight-log-last-x-days-total-v-table.component';
 import { JobLauncherComponent } from './job-launcher/job-launcher.component';
 import { GenericCrudComponent } from './generic-crud/generic-crud.component';
-import { LoginComponent } from './security/login/login.component';
-import { AuthGuard } from './security/auth.guard';
-import { ChangePasswordComponent } from './security/change-password/change-password.component';
-import { CopyUserComponent } from './security/copy-user/copy-user.component';
-import { _404Component } from './404.component';
+import { LoginComponent } from './security-old/login/login.component';
+//import { AuthGuard } from './security-old/auth.guard';
+import { AuthGuard } from './auth/auth-guard.service';
+
+import { ChangePasswordComponent } from './security-old/change-password/change-password.component';
+import { CopyUserComponent } from './security-old/copy-user/copy-user.component';
 import { AircraftComponentComponent } from './aircraft-maintenance/aircraft-component/aircraft-component.component';
-import { HomeComponent } from './home/home.component';
 import { AircraftHistoryPrintComponentComponent } from './aircraft-maintenance/aircraft-history-print-component/aircraft-history-print-component.component';
+import { WelcomeComponent } from './welcome/welcome.component';
+import { Httpstatus404Component } from './httpstatus404/httpstatus404.component';
 
 const routes: Routes = [
-    { path: '', redirectTo: 'home', pathMatch: 'full', canActivate: [AuthGuard] },
-    { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
+    { path: 'welcome', component: WelcomeComponent },
+    //    { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
     { path: 'flightLogTable', component: FlightLogTableComponent, canActivate: [AuthGuard] },
     { path: 'flightLogMonthlyTotalVTable', component: FlightLogMonthlyTotalVTableComponent, canActivate: [AuthGuard] },
     { path: 'flightLogYearlyTotalVTable', component: FlightLogYearlyTotalVTableComponent, canActivate: [AuthGuard] },
@@ -28,14 +30,14 @@ const routes: Routes = [
     { path: 'copyUser', component: CopyUserComponent, canActivate: [AuthGuard] },
     { path: 'aircraftComponent', component: AircraftComponentComponent, canActivate: [AuthGuard] },
     { path: 'aircraftHistoryPrintComponentComponent', component: AircraftHistoryPrintComponentComponent, canActivate: [AuthGuard] },
-    
-    { path: 'login', component: LoginComponent },
-    { path: '**', component: _404Component },
-    ];
+
+    { path: '', redirectTo: 'welcome', pathMatch: 'full' },
+    //{ path: 'login', component: LoginComponent },
+    { path: '**', component: Httpstatus404Component },
+];
 
 @NgModule({
-    imports: [ RouterModule.forRoot(routes) ],
-    exports: [ RouterModule ]
+    imports: [RouterModule.forRoot(routes)],
+    exports: [RouterModule]
 })
-
 export class AppRoutingModule { }
