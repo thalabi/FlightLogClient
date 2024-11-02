@@ -29,7 +29,7 @@ export class AircraftComponentService {
 
 
     addComponent(row: AircraftComponentRequest.Component): Observable<void> {
-        let url: string = this.serviceUrl + '/componentController/add';
+        let url: string = this.serviceUrl + '/protected/componentController/add';
         console.log('row: ', row);
         return this.httpClient.post<IGenericEntity>(url, row).pipe(
             map((response: any) => {
@@ -46,7 +46,7 @@ export class AircraftComponentService {
         // console.log('modifyComponentAndHistory');
         // // return null just to make it compile
         // return new Observable();
-        let url: string = this.serviceUrl + '/componentController/modifyComponentAndHistory';
+        let url: string = this.serviceUrl + '/protected/componentController/modifyComponentAndHistory';
         console.log('row: ', row);
         return this.httpClient.put<IGenericEntity>(url, row).pipe(
             map((response: any) => {
@@ -60,7 +60,7 @@ export class AircraftComponentService {
     }
 
     deleteComponent(componentUri: string, deleteHistoryRecords: boolean): Observable<void> {
-        let url: string = this.serviceUrl + '/componentController/delete?componentUri=' + componentUri + '&deleteHistoryRecords=' + deleteHistoryRecords;
+        let url: string = this.serviceUrl + '/protected/componentController/delete?componentUri=' + componentUri + '&deleteHistoryRecords=' + deleteHistoryRecords;
         console.log('componentUri: ', componentUri);
         return this.httpClient.delete<IGenericEntity>(url).pipe(
             map((response: any) => {
@@ -75,7 +75,7 @@ export class AircraftComponentService {
 
     downloadAllPdf(): Observable<Blob> {
         console.log('downloadAllPdf');
-        let url: string = this.serviceUrl + '/aircraftMaintenancePrintController/printComponentHistoryByDatePerformedDesc';
+        let url: string = this.serviceUrl + '/protected/aircraftMaintenancePrintController/printComponentHistoryByDatePerformedDesc';
         console.log('url', url);
         return this.httpClient.get<Blob>(url, this.getHttpOptions('blobAsJson')).pipe(
             map((response: any) => {
@@ -88,7 +88,7 @@ export class AircraftComponentService {
     downloadByDatePerformedFilterDateRangePdf(fromDatePerformed: Date, toDatePerformed: Date): Observable<Blob> {
         console.log('downloadByDatePerformedFilterDateRangePdf', fromDatePerformed.toISOString.toString());
         let url: string = this.serviceUrl
-            + '/aircraftMaintenancePrintController/printComponentHistoryBetweenDatesPerformedByDatePerformedDesc' + '?' + 'fromDatePerformed=' + fromDatePerformed.toISOString() + '&' + 'toDatePerformed=' + toDatePerformed.toISOString();
+            + '/protected/aircraftMaintenancePrintController/printComponentHistoryBetweenDatesPerformedByDatePerformedDesc' + '?' + 'fromDatePerformed=' + fromDatePerformed.toISOString() + '&' + 'toDatePerformed=' + toDatePerformed.toISOString();
         console.log('url', url);
         return this.httpClient.get<Blob>(url, this.getHttpOptions('blobAsJson')).pipe(
             map((response: any) => {
@@ -100,7 +100,7 @@ export class AircraftComponentService {
 
     downloadByComponentNamePdf(): Observable<Blob> {
         console.log('downloadByComponentNamePdf');
-        let url: string = this.serviceUrl + '/aircraftMaintenancePrintController/printComponentHistoryByComponentName';
+        let url: string = this.serviceUrl + '/protected/aircraftMaintenancePrintController/printComponentHistoryByComponentName';
         console.log('url', url);
         return this.httpClient.get<Blob>(url, this.getHttpOptions('blobAsJson')).pipe(
             map((response: any) => {
@@ -112,7 +112,7 @@ export class AircraftComponentService {
 
     downloadByDateDuePdf(): Observable<Blob> {
         console.log('downloadByDateDuePdf');
-        let url: string = this.serviceUrl + '/aircraftMaintenancePrintController/printComponentHistoryByDateDueDesc';
+        let url: string = this.serviceUrl + '/protected/aircraftMaintenancePrintController/printComponentHistoryByDateDueDesc';
         console.log('url', url);
         return this.httpClient.get<Blob>(url, this.getHttpOptions('blobAsJson')).pipe(
             map((response: any) => {
@@ -124,7 +124,7 @@ export class AircraftComponentService {
 
     downloadByUpcomingDateDue(): Observable<Blob> {
         console.log('downloadByUpcomingDateDue');
-        let url: string = this.serviceUrl + '/aircraftMaintenancePrintController/printComponentHistoryByUpcomingDateDue';
+        let url: string = this.serviceUrl + '/protected/aircraftMaintenancePrintController/printComponentHistoryByUpcomingDateDue';
         console.log('url', url);
         return this.httpClient.get<Blob>(url, this.getHttpOptions('blobAsJson')).pipe(
             map((response: any) => {
@@ -136,7 +136,7 @@ export class AircraftComponentService {
 
     downloadByHoursDuePdf(): Observable<Blob> {
         console.log('downloadByHoursDuePdf');
-        let url: string = this.serviceUrl + '/aircraftMaintenancePrintController/printComponentHistoryByHoursDueDesc';
+        let url: string = this.serviceUrl + '/protected/aircraftMaintenancePrintController/printComponentHistoryByHoursDueDesc';
         console.log('url', url);
         return this.httpClient.get<Blob>(url, this.getHttpOptions('blobAsJson')).pipe(
             map((response: any) => {
@@ -148,7 +148,7 @@ export class AircraftComponentService {
 
     downloadAfterLatestHoursPerformedByHoursDuePdf(): Observable<Blob> {
         console.log('downloadAfterHoursByHoursDuePdf');
-        let url: string = this.serviceUrl + '/aircraftMaintenancePrintController/printComponentHistoryAfterLatestHoursPerformedByHoursDueDesc';
+        let url: string = this.serviceUrl + '/protected/aircraftMaintenancePrintController/printComponentHistoryAfterLatestHoursPerformedByHoursDueDesc';
         console.log('url', url);
         return this.httpClient.get<Blob>(url, this.getHttpOptions('blobAsJson')).pipe(
             map((response: any) => {
@@ -160,7 +160,7 @@ export class AircraftComponentService {
 
     downloadAfterHoursByHoursDuePdf(hoursDue: number): Observable<Blob> {
         console.log('downloadAfterHoursByHoursDuePdf');
-        let url: string = this.serviceUrl + '/aircraftMaintenancePrintController/printComponentHistoryAfterHoursByHoursDueDesc' + '?hoursDue=' + hoursDue;
+        let url: string = this.serviceUrl + '/protected/aircraftMaintenancePrintController/printComponentHistoryAfterHoursByHoursDueDesc' + '?hoursDue=' + hoursDue;
         console.log('url', url);
         return this.httpClient.get<Blob>(url, this.getHttpOptions('blobAsJson')).pipe(
             map((response: any) => {
@@ -179,7 +179,7 @@ export class AircraftComponentService {
 
     downloadComponentNameInListPdf(componentNameArray: Array<AircraftComponentName.ComponentName>): Observable<Blob> {
         console.log('downloadComponentNameInListPdf');
-        let url: string = this.serviceUrl + '/aircraftMaintenancePrintController/printComponentHistoryByComponentNameInList' + '?componentNameList=' + encodeURIComponent(componentNameArray.map(componentName => componentName.name).toString());
+        let url: string = this.serviceUrl + '/protected/aircraftMaintenancePrintController/printComponentHistoryByComponentNameInList' + '?componentNameList=' + encodeURIComponent(componentNameArray.map(componentName => componentName.name).toString());
         console.log('url', url);
         return this.httpClient.get<Blob>(url, this.getHttpOptions('blobAsJson')).pipe(
             map((response: any) => {
