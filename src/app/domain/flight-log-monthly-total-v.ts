@@ -16,5 +16,7 @@ export interface FlightLogMonthlyTotalV {
     tosLdgsDay: number;
     tosLdgsNight: number;
 
+    totalMonth: number;
+
     _links: { self: { href: string } };
 }

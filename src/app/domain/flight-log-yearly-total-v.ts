@@ -16,5 +16,7 @@ export interface FlightLogYearlyTotalV {
     tosLdgsDay: number;
     tosLdgsNight: number;
 
+    totalYear: number;
+
     _links: { self: { href: string } };
 }
