@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FlightLogServiceService } from '../service/flight-log-service.service';
 import { FlightLog } from '../domain/flight-log';
 import { FlightLogResponse } from '../response/flight-log-response';
@@ -21,6 +21,9 @@ import { GenericEntityService } from '../service/generic-entity.service';
 import { MenuComponent } from '../menu/menu.component';
 import { SessionService } from '../service/session.service';
 import { PermissionEnum } from '../menu/permission-enum';
+import { HttpErrorResponse } from '@angular/common/http';
+import { IFlightLogTotalsVResponse } from '../response/IFlightLogTotalsVResponse';
+import { IFlightLogTotalsV } from '../response/IFlightLogTotalsV';
 
 @Component({
     selector: 'app-flight-log-table',
@@ -33,21 +36,30 @@ export class FlightLogTableComponent implements OnInit {
 
     flightLogForm: FormGroup;
 
-    flightLogResponse: FlightLogResponse = {} as FlightLogResponse;
-    flightLogArray: Array<FlightLog> = [];
-    selectedFlightLog: FlightLog = {} as FlightLog;
+    //flightLogResponse: FlightLogResponse = {} as FlightLogResponse;
+    flightLogTotalsVResponse: IFlightLogTotalsVResponse = {} as IFlightLogTotalsVResponse;
+    //flightLogArray: Array<FlightLog> = [];
+    flightLogTotalsVs: Array<IFlightLogTotalsV> = [];
+    //selectedFlightLog: FlightLog = {} as FlightLog;
+    selectedFlightLogTotalsV: IFlightLogTotalsV = {} as IFlightLogTotalsV;
+    overPanelFlightLogTotalsV: IFlightLogTotalsV = {} as IFlightLogTotalsV;
     crudFlightLog: FlightLog = {} as FlightLog;
+    //crudFlightLogTotalsV: IFlightLogTotalsV = {} as IFlightLogTotalsV;
     page: HalResponsePage = {} as HalResponsePage;
-    links: HalResponseLinks = {} as HalResponseLinks;
+    //links: HalResponseLinks = {} as HalResponseLinks;
 
     cols: any[] = [];
     colsPart2: any[] = [];
     columnOptions: SelectItem[] = [];
 
+    toDateCols: any[] = [];
+
     modifyAndDeleteButtonsDisable: boolean = true;
     crudMode: CrudEnum = CrudEnum.ADD;// "Add";
     crudEnum = CrudEnum; // Used in html to refere to enum
     displayDialog: boolean = false;
+
+    displayTotalsDialog: boolean = false;
 
     makeModelSelectItemArray: Array<SelectItem> = [];
     registrationSelectItemArray: Array<SelectItem> = [];
@@ -61,11 +73,11 @@ export class FlightLogTableComponent implements OnInit {
     savedLazyLoadEvent: LazyLoadEvent = {} as LazyLoadEvent;
 
     readonly ROWS_PER_PAGE: number = 10; // default rows per page
-    firstRowOfTable!: number; // triggers a page change, zero based. 0 -> first page, 1 -> second page, ...
+    firstRowOfTable!: number; // triggers a page change, zero based. 0 -> first row, 1 -> second row, ...
 
     pageNumber!: number;
 
-    loadingFlag: boolean = false;
+    loadingStatus: boolean = false;
 
     replicationStatus: boolean = false;
     replicationStatusLabel!: string;
@@ -74,6 +86,21 @@ export class FlightLogTableComponent implements OnInit {
     readonly tableName: string = 'flightLog';
 
     hasWritePermission: boolean = false;
+
+    pageRowKey: string = ''
+    pageDayDual: number = 0;
+    pageDaySolo: number = 0;
+    pageNightDual: number = 0;
+    pageNightSolo: number = 0;
+    pageInstrumentImc: number = 0;
+    pageInstrumentSimulated: number = 0;
+    pageInstrumentFlightSim: number = 0;
+    pageInstrumentNoIfrAppr: number = 0;
+    pageXCountryDay: number = 0;
+    pageXCountryNight: number = 0;
+    pageTosLdgsDay: number = 0;
+    pageTosLdgsNight: number = 0;
+    pageTotal: number = 0;
 
     constructor(private formBuilder: FormBuilder, private flightLogService: FlightLogServiceService, private genericEntityService: GenericEntityService, private replicationService: ReplicationService, private messageService: MyMessageService, private sessionService: SessionService) {
         this.flightLogForm = FlightLogHelper.createForm(formBuilder);
@@ -119,6 +146,23 @@ export class FlightLogTableComponent implements OnInit {
         for (let i = 0; i < this.colsPart2.length; i++) {
             this.columnOptions.push({ label: this.colsPart2[i].header, value: this.colsPart2[i] });
         }
+
+        this.toDateCols = [
+            { field: 'toDateDayDual', header: 'D D', tooltipText: 'Day Dual', style: { 'width': '3em' } },
+            { field: 'toDateDaySolo', header: 'D S', tooltipText: 'Day Solo', style: { 'width': '3em' } },
+            { field: 'toDateNightDual', header: 'N D', tooltipText: 'Night Dual', style: { 'width': '3em' } },
+            { field: 'toDateNightSolo', header: 'N S', tooltipText: 'Night Solo', style: { 'width': '3em' } },
+
+            { field: 'toDateXCountryDay', header: 'X D', tooltipText: 'Cross Country Day', style: { 'width': '3em' } },
+            { field: 'toDateXCountryNight', header: 'X N', tooltipText: 'Cross Country Night', style: { 'width': '3em' } },
+            { field: 'toDateTosLdgsDay', header: 'L D', tooltipText: 'Total Landings Day', style: { 'width': '3em' } },
+            { field: 'toDateTosLdgsNight', header: 'L N', tooltipText: 'Total Landings Night', style: { 'width': '3em' } },
+            { field: 'toDateInstrumentSimulated', header: 'Inst Sim', style: { 'width': '3em' } },
+            { field: 'toDateInstrumentFlightSim', header: 'Inst Flt Sim', style: { 'width': '3em' } },
+
+            { field: 'toDateInstrumentImc', header: 'Inst IMC', style: { 'width': '3em' } },
+            { field: 'toDateInstrumentNoIfrAppr', header: '# IFR Apr', style: { 'width': '3em' } },
+        ]
 
         this.getMakeModels();
         this.getRegistrations();
@@ -187,43 +231,132 @@ export class FlightLogTableComponent implements OnInit {
         // console.log('event.first', lazyLoadEvent.first);
         console.log('event.rows', lazyLoadEvent.rows);
         console.log('event.filters', lazyLoadEvent.filters);
-        this.fetchPage(lazyLoadEvent.first || 0, lazyLoadEvent.rows || 0, ComponentHelper.buildSearchString(lazyLoadEvent, this.fieldNames));
+        //this.fetchPage(lazyLoadEvent.first || 0, lazyLoadEvent.rows || 0, ComponentHelper.buildSearchString(lazyLoadEvent, this.fieldNames));
+        this.fetchPage(lazyLoadEvent);
     }
 
-    fetchPage(firstRowNumber: number, rowsPerPage: number, searchString: string) {
-        this.loadingFlag = true;
-        this.flightLogService.getPage(firstRowNumber, rowsPerPage, searchString).subscribe({
-            next: flightLogResponse => {
-                console.log('flightLogResponse', flightLogResponse);
-                this.flightLogResponse = flightLogResponse;
-                this.page = this.flightLogResponse.page;
-                this.flightLogArray = this.page.totalElements ? this.flightLogResponse._embedded.flightLogs : [];
-                // this.flightLogArray.forEach(flightLog => {
-                //     flightLog.airportFrom = new Airport();
-                //     flightLog.airportFrom.identifier = flightLog.routeFrom;
-                // })
-                this.clearTimes(this.flightLogArray);
-                console.log('this.flightLogArray', this.flightLogArray);
-                this.links = this.flightLogResponse._links;
-            },
-            complete: () => {
-                this.loadingFlag = false;
-            },
-            error: error => {
-                this.loadingFlag = false;
-                console.error(error);
-                // TODO uncomment later
-                //this.messageService.clear();
-                //this.messageService.error(error);
+    // fetchPage(firstRowNumber: number, rowsPerPage: number, searchString: string) {
+    //     this.loadingStatus = true;
+    //     this.flightLogService.getPage(firstRowNumber, rowsPerPage, searchString).subscribe({
+    //         next: flightLogResponse => {
+    //             console.log('flightLogResponse', flightLogResponse);
+    //             this.flightLogResponse = flightLogResponse;
+    //             this.page = this.flightLogResponse.page;
+    //             this.flightLogArray = this.page.totalElements ? this.flightLogResponse._embedded.flightLogs : [];
+    //             // this.flightLogArray.forEach(flightLog => {
+    //             //     flightLog.airportFrom = new Airport();
+    //             //     flightLog.airportFrom.identifier = flightLog.routeFrom;
+    //             // })
+    //             this.clearTimes(this.flightLogArray);
+    //             console.log('this.flightLogArray', this.flightLogArray);
+    //             this.links = this.flightLogResponse._links;
+    //         },
+    //         complete: () => {
+    //             this.loadingStatus = false;
+    //         },
+    //         error: error => {
+    //             this.loadingStatus = false;
+    //             console.error(error);
+    //             // TODO uncomment later
+    //             //this.messageService.clear();
+    //             //this.messageService.error(error);
+    //         }
+    //     });
+    // }
+
+    fetchPage(lazyLoadEvent: LazyLoadEvent) {
+        console.log(lazyLoadEvent)
+        this.loadingStatus = true
+        const pageSize = lazyLoadEvent.rows ?? 20
+        const pageNumber = (lazyLoadEvent.first ?? 0) / pageSize;
+        //const filters: { [s: string]: FilterMetadata[] } | undefined = lazyLoadEvent.filters
+        const filters: any = lazyLoadEvent.filters
+        console.log('filters', filters)
+        console.log('pageNumber', pageNumber, 'pageSize', pageSize, 'filters', filters)
+        let searchCriteria: string = ''
+        if (filters) {
+            console.log('Object.keys(filters)', Object.keys(filters))
+            Object.keys(filters).forEach(columnName => {
+                console.log('columeName', columnName, 'matchMode', filters[columnName][0].matchMode, 'value', filters[columnName][0].value)
+                //searchCriteria += columnName + filters[columnName][0].matchMode + filters[columnName][0].value + ","
+                if (filters[columnName][0].value) {
+                    if (filters[columnName][0].value instanceof Date) {
+                        searchCriteria += columnName + '|' + filters[columnName][0].matchMode + '|' + new Date(filters[columnName][0].value).toISOString() + ","
+                    } else {
+                        searchCriteria += columnName + '|' + filters[columnName][0].matchMode + '|' + filters[columnName][0].value + ","
+                    }
+                }
+            })
+            if (searchCriteria.length > 0) {
+                searchCriteria = searchCriteria.slice(0, searchCriteria.length - 1)
             }
-        });
+            console.log('searchCriteria', searchCriteria)
+        }
+        const entityNameResource = FlightLogServiceService.toPlural(FlightLogServiceService.toCamelCase('flight_log_totals_v'))
+        console.log('entityNameResource 2', entityNameResource)
+        this.flightLogService.getTableData2('flight_log_totals_v', searchCriteria, pageNumber, pageSize, ['flightDate', 'id'])
+            .subscribe(
+                {
+                    next: (flightLogTotalsVResponse: IFlightLogTotalsVResponse) => {
+
+                        this.loadingStatus = false
+
+                        console.log('flightLogTotalsVResponse', flightLogTotalsVResponse);
+                        this.flightLogTotalsVResponse = flightLogTotalsVResponse;
+                        this.page = this.flightLogTotalsVResponse.page;
+                        this.flightLogTotalsVs = this.page.totalElements ? this.flightLogTotalsVResponse._embedded.flightLogTotalsVs : [];
+                        // this.flightLogArray.forEach(flightLog => {
+                        //     flightLog.airportFrom = new Airport();
+                        //     flightLog.airportFrom.identifier = flightLog.routeFrom;
+                        // })
+                        this.clearTimes(this.flightLogTotalsVs);
+                        console.log('this.flightLogTotalsVs', this.flightLogTotalsVs);
+                        //this.links = this.flightLogTotalsVResponse._links;
+
+                        this.calculatePageTotals(this.flightLogTotalsVs)
+                        this.pageRowKey = this.flightLogTotalsVs[this.flightLogTotalsVs.length - 1]._links.flightLogTotalsV.href
+                    },
+                    complete: () => {
+                        // this.messageService.clear()
+                        // this.uploadProgressMessage = '';
+                        // this.uploadResponse = {} as UploadResponse;
+                        // this.messageService.add({ severity: 'info', summary: '200', detail: this.tableFileDownloadProgressMessage })
+                    }
+                    ,
+                    error: (httpErrorResponse: HttpErrorResponse): void => {
+                        //this.messageService.add({ severity: 'error', summary: httpErrorResponse.status.toString(), detail: 'Server error. Please contact support.' })
+                    }
+                });
     }
+
+    private calculatePageTotals(flightLogTotalsVs: IFlightLogTotalsV[]) {
+        this.pageDayDual = this.pageDaySolo = this.pageNightDual = this.pageNightSolo = this.pageInstrumentImc = this.pageInstrumentSimulated = this.pageInstrumentFlightSim = this.pageInstrumentNoIfrAppr = this.pageXCountryDay = this.pageXCountryNight = this.pageTosLdgsDay = this.pageTosLdgsNight = this.pageTotal = 0
+
+        flightLogTotalsVs.forEach(flightLogTotalsV => {
+            this.pageDayDual += flightLogTotalsV.dayDual
+            this.pageDaySolo += flightLogTotalsV.daySolo
+            this.pageNightDual += flightLogTotalsV.nightDual
+            this.pageNightSolo += flightLogTotalsV.nightSolo
+            this.pageInstrumentImc += flightLogTotalsV.instrumentImc
+            this.pageInstrumentSimulated += flightLogTotalsV.instrumentSimulated
+            this.pageInstrumentFlightSim += flightLogTotalsV.instrumentFlightSim
+            this.pageInstrumentNoIfrAppr += flightLogTotalsV.instrumentNoIfrAppr
+            this.pageXCountryDay += flightLogTotalsV.xcountryDay
+            this.pageXCountryNight += flightLogTotalsV.xcountryNight
+            this.pageTosLdgsDay += flightLogTotalsV.tosLdgsDay
+            this.pageTosLdgsNight += flightLogTotalsV.tosLdgsNight
+            this.pageTotal += flightLogTotalsV.dayDual + flightLogTotalsV.daySolo + flightLogTotalsV.nightDual + flightLogTotalsV.nightSolo
+        })
+        console.log(this.pageDayDual, this.pageDaySolo)
+    }
+
 
     onRowSelect(event: any) {
         console.log(event);
 
-        this.crudFlightLog = Object.assign({}, this.selectedFlightLog);
-
+        this.crudFlightLog = FlightLogHelper.copyFlogLogProperties(this.selectedFlightLogTotalsV);
+        console.log('this.selectedFlightLogTotalsV', this.selectedFlightLogTotalsV)
+        console.log('this.crudFlightLog', this.crudFlightLog)
         this.modifyAndDeleteButtonsDisable = false;
         this.fromAirport = {} as Airport;
         this.fromAirport.identifier = this.crudFlightLog.routeFrom;
@@ -233,7 +366,8 @@ export class FlightLogTableComponent implements OnInit {
     onRowUnselect(event: any) {
         console.log(event);
         this.modifyAndDeleteButtonsDisable = true;
-        this.selectedFlightLog = {} as FlightLog; // This a hack. If don't init selectedFlightLog, dialog will produce exception
+        //this.selectedFlightLog = {} as FlightLog; // This a hack. If don't init selectedFlightLog, dialog will produce exception
+        this.selectedFlightLogTotalsV = {} as IFlightLogTotalsV; // This a hack. If don't init selectedFlightLogTotalsV, dialog will produce exception
     }
     showDialog(crudMode: CrudEnum) {
         this.crudMode = crudMode;
@@ -304,6 +438,7 @@ export class FlightLogTableComponent implements OnInit {
                 });
                 break;
             case CrudEnum.DELETE:
+                console.log('this.crudFlightLog: ', this.crudFlightLog);
                 this.flightLogService.deleteFlightLog(this.crudFlightLog).subscribe({
                     next: savedFlightLog => {
                         console.log('deleted flightLog', this.crudFlightLog);
@@ -330,7 +465,8 @@ export class FlightLogTableComponent implements OnInit {
     }
     private resetDialoForm() {
         this.flightLogForm.reset();
-        this.selectedFlightLog = {} as FlightLog;
+        //this.selectedFlightLog = {} as FlightLog;
+        this.selectedFlightLogTotalsV = {} as IFlightLogTotalsV;
         this.fromAirport = {} as Airport;
         this.toAirport = {} as Airport;
     }
@@ -352,7 +488,8 @@ export class FlightLogTableComponent implements OnInit {
         this.firstRowOfTable = (this.pageNumber - 1) * this.ROWS_PER_PAGE;
         this.savedLazyLoadEvent.first = this.firstRowOfTable;
         this.onLazyLoad(this.savedLazyLoadEvent);
-        this.fetchPage(this.firstRowOfTable, this.ROWS_PER_PAGE, '');
+        //this.fetchPage(this.firstRowOfTable, this.ROWS_PER_PAGE, '');
+        this.fetchPage(this.savedLazyLoadEvent);
         this.pageNumber = 0;
     }
 
@@ -363,9 +500,9 @@ export class FlightLogTableComponent implements OnInit {
         flightLog.flightDate.setMilliseconds(0);
     }
 
-    private clearTimes(flightLogArray: Array<FlightLog>) {
-        flightLogArray.forEach(flightLog => {
-            flightLog.flightDate = new Date(flightLog.flightDate + 'T00:00:00');
+    private clearTimes(flightLogTotalsVs: Array<IFlightLogTotalsV>) {
+        flightLogTotalsVs.forEach(flightLogTotalsV => {
+            flightLogTotalsV.flightDate = new Date(flightLogTotalsV.flightDate + 'T00:00:00');
         });
     }
 
@@ -388,4 +525,13 @@ export class FlightLogTableComponent implements OnInit {
         );
     }
 
+    displayTotals(event: MouseEvent, key: string) {
+        console.log('displayTotals, event:', event, ', event type:', event.type, ', key:', key)
+        //this.totalsOverlayPanel?.show()
+        this.overPanelFlightLogTotalsV = this.flightLogTotalsVs.find(flightLogTotalsV => flightLogTotalsV._links.flightLogTotalsV.href === key) || {} as IFlightLogTotalsV
+
+    }
+    hideTotals(event: MouseEvent, key: string) {
+        console.log('hideTotals, event:', event, ', event type:', event.type, ', key:', key)
+    }
 }

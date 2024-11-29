@@ -1,8 +1,8 @@
-<p-table *ngIf="firstRowOfTable >= 0" [value]="flightLogArray" [dataKey]="'_links.flightLog.href'" [lazy]="true"
-    [rows]="ROWS_PER_PAGE" [paginator]="true" [totalRecords]="page.totalElements" [rowsPerPageOptions]="[5,10,20]"
-    (onLazyLoad)="onLazyLoad($event)" [selectionMode]="'single'" [(selection)]="selectedFlightLog"
-    (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [responsive]="true"
-    [first]="firstRowOfTable" [loading]="loadingFlag" #dt>
+<p-table *ngIf="firstRowOfTable >= 0" [value]="flightLogTotalsVs" [dataKey]="'_links.flightLogTotalsV.href'"
+    [lazy]="true" [rows]="ROWS_PER_PAGE" [paginator]="true" [totalRecords]="page.totalElements"
+    [rowsPerPageOptions]="[5,10,15,20]" (onLazyLoad)="onLazyLoad($event)" [selectionMode]="'single'"
+    [(selection)]="selectedFlightLogTotalsV" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)"
+    [responsive]="true" [first]="firstRowOfTable" [loading]="loadingStatus" #dt>
 
     <ng-template pTemplate="caption">
         <div style="text-align:right">
@@ -27,13 +27,20 @@
                 <input #filterInput pInputText type="text"
                     (input)="dt.filter(filterInput.value, col.field, col.filterMatchMode)" [ngStyle]="col.style">
             </th>
+            <!-- <th></th> -->
         </tr>
     </ng-template>
 
+    <!-- <ng-template pTemplate="body" let-rowData let-expanded="expanded"> -->
+    <!-- (mouseover)="displayTotals($event, rowData._links.flightLogTotalsV.href)" -->
+    <!-- (mouseleave)="totalsOverlayPanel.hide()" -->
     <ng-template pTemplate="body" let-rowData>
         <tr [pSelectableRow]="rowData">
             <td *ngFor="let col of cols">
-                <span *ngIf="col.field === 'flightDate'">{{rowData[col.field] | date:'yyyy-MM-dd'}}</span>
+                <span *ngIf="col.field === 'flightDate'" (mouseover)="
+                            displayTotals($event, rowData._links.flightLogTotalsV.href);
+                            totalsOverlayPanel.show($event)">
+                    {{rowData[col.field] | date:'yyyy-MM-dd'}}</span>
                 <span *ngIf="col.field === 'remarks'"><app-abbreviate [text]="rowData[col.field]"
                         [maxLength]="20"></app-abbreviate></span>
                 <span *ngIf="col.field !== 'flightDate' && col.field !== 'remarks'">{{rowData[col.field]}}</span>
@@ -274,3 +281,369 @@
         </div>
     </form>
 </p-dialog>
+
+<p-overlayPanel #totalsOverlayPanel [showCloseIcon]="true">
+    <ng-template pTemplate="content">
+        <p-tabView>
+            <p-tabPanel header="To-date Totals">
+                <div class="grid" style="width: 30rem;">
+                    <!-- line 1 -->
+                    <div class="col-4">
+                        <span>Day dual:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.toDateDayDual}}</span>
+                    </div>
+                    <div class="col-4">
+                        <span>Day solo:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.toDateDaySolo}}</span>
+                    </div>
+                    <!-- line 2 -->
+                    <div class="col-4">
+                        <span>Night dual:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.toDateNightDual}}</span>
+                    </div>
+                    <div class="col-4">
+                        <span>Night solo:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.toDateNightSolo}}</span>
+                    </div>
+                    <!-- line 3 -->
+                    <div class="col-4">
+                        <span>X-cty day:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.toDateXCountryDay}}</span>
+                    </div>
+                    <div class="col-4">
+                        <span>X-cty night:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.toDateXCountryNight}}</span>
+                    </div>
+                    <!-- line 4 -->
+                    <div class="col-4">
+                        <span>Inst IMC:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.toDateInstrumentImc}}</span>
+                    </div>
+                    <div class="col-4">
+                        <span>Inst Sim:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.toDateInstrumentSimulated}}</span>
+                    </div>
+                    <!-- line 5 -->
+                    <div class="col-4">
+                        <span>Inst flt sim:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.toDateInstrumentFlightSim}}</span>
+                    </div>
+                    <div class="col-4">
+                        <span>Inst # IFR appr:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.toDateInstrumentNoIfrAppr}}</span>
+                    </div>
+                    <!-- line 6 -->
+                    <div class="col-4">
+                        <span>T/Os & ldgs day:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.toDateTosLdgsDay}}</span>
+                    </div>
+                    <div class="col-4">
+                        <span>T/Os & ldgs night:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.toDateTosLdgsNight}}</span>
+                    </div>
+                    <!-- line 7 -->
+                    <div class="col-4">
+                        <span>Total:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.toDateTotal}}</span>
+                    </div>
+                </div>
+            </p-tabPanel>
+            <p-tabPanel *ngIf="overPanelFlightLogTotalsV.monthTotal"
+                header="Month {{overPanelFlightLogTotalsV.flightDate | date:'yyyy-MM'}}">
+                <div class="grid" style="width: 30rem;">
+                    <!-- line 1 -->
+                    <div class="col-4">
+                        <span>Day dual:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.monthDayDual}}</span>
+                    </div>
+                    <div class="col-4">
+                        <span>Day solo:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.monthDaySolo}}</span>
+                    </div>
+                    <!-- line 2 -->
+                    <div class="col-4">
+                        <span>Night dual:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.monthNightDual}}</span>
+                    </div>
+                    <div class="col-4">
+                        <span>Night solo:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.monthNightSolo}}</span>
+                    </div>
+                    <!-- line 3 -->
+                    <div class="col-4">
+                        <span>X-cty day:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.monthXCountryDay}}</span>
+                    </div>
+                    <div class="col-4">
+                        <span>X-cty night:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.monthXCountryNight}}</span>
+                    </div>
+                    <!-- line 4 -->
+                    <div class="col-4">
+                        <span>Inst IMC:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.monthInstrumentImc}}</span>
+                    </div>
+                    <div class="col-4">
+                        <span>Inst Sim:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.monthInstrumentSimulated}}</span>
+                    </div>
+                    <!-- line 5 -->
+                    <div class="col-4">
+                        <span>Inst flt sim:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.monthInstrumentFlightSim}}</span>
+                    </div>
+                    <div class="col-4">
+                        <span>Inst # IFR appr:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.monthInstrumentNoIfrAppr}}</span>
+                    </div>
+                    <!-- line 6 -->
+                    <div class="col-4">
+                        <span>T/Os & ldgs day:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.monthTosLdgsDay}}</span>
+                    </div>
+                    <div class="col-4">
+                        <span>T/Os & ldgs night:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.monthTosLdgsNight}}</span>
+                    </div>
+                    <!-- line 7 -->
+                    <div class="col-4">
+                        <span>Total:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.monthTotal}}</span>
+                    </div>
+                </div>
+            </p-tabPanel>
+            <p-tabPanel *ngIf="overPanelFlightLogTotalsV.yearTotal"
+                header="Year {{overPanelFlightLogTotalsV.flightDate | date:'yyyy'}}">
+                <div class="grid" style="width: 30rem;">
+                    <!-- line 1 -->
+                    <div class="col-4">
+                        <span>Day dual:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.yearDayDual}}</span>
+                    </div>
+                    <div class="col-4">
+                        <span>Day solo:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.yearDaySolo}}</span>
+                    </div>
+                    <!-- line 2 -->
+                    <div class="col-4">
+                        <span>Night dual:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.yearNightDual}}</span>
+                    </div>
+                    <div class="col-4">
+                        <span>Night solo:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.yearNightSolo}}</span>
+                    </div>
+                    <!-- line 3 -->
+                    <div class="col-4">
+                        <span>X-cty day:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.yearXCountryDay}}</span>
+                    </div>
+                    <div class="col-4">
+                        <span>X-cty night:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.yearXCountryNight}}</span>
+                    </div>
+                    <!-- line 4 -->
+                    <div class="col-4">
+                        <span>Inst IMC:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.yearInstrumentImc}}</span>
+                    </div>
+                    <div class="col-4">
+                        <span>Inst Sim:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.yearInstrumentSimulated}}</span>
+                    </div>
+                    <!-- line 5 -->
+                    <div class="col-4">
+                        <span>Inst flt sim:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.yearInstrumentFlightSim}}</span>
+                    </div>
+                    <div class="col-4">
+                        <span>Inst # IFR appr:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.yearInstrumentNoIfrAppr}}</span>
+                    </div>
+                    <!-- line 6 -->
+                    <div class="col-4">
+                        <span>T/Os & ldgs day:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.yearTosLdgsDay}}</span>
+                    </div>
+                    <div class="col-4">
+                        <span>T/Os & ldgs night:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.yearTosLdgsNight}}</span>
+                    </div>
+                    <!-- line 7 -->
+                    <div class="col-4">
+                        <span>Total:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{overPanelFlightLogTotalsV.yearTotal}}</span>
+                    </div>
+                </div>
+            </p-tabPanel>
+            <p-tabPanel *ngIf="overPanelFlightLogTotalsV._links.flightLogTotalsV.href === pageRowKey" header="Page">
+                <div class="grid" style="width: 30rem;">
+                    <!-- line 1 -->
+                    <div class="col-4">
+                        <span>Day dual:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{pageDayDual | number: '1.1-1'}}</span>
+                    </div>
+                    <div class="col-4">
+                        <span>Day solo:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{pageDaySolo | number: '1.1-1'}}</span>
+                    </div>
+                    <!-- line 2 -->
+                    <div class="col-4">
+                        <span>Night dual:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{pageNightDual | number: '1.1-1'}}</span>
+                    </div>
+                    <div class="col-4">
+                        <span>Night solo:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{pageNightSolo | number: '1.1-1'}}</span>
+                    </div>
+                    <!-- line 3 -->
+                    <div class="col-4">
+                        <span>X-cty day:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{pageXCountryDay | number: '1.1-1'}}</span>
+                    </div>
+                    <div class="col-4">
+                        <span>X-cty night:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{pageXCountryNight | number: '1.1-1'}}</span>
+                    </div>
+                    <!-- line 4 -->
+                    <div class="col-4">
+                        <span>Inst IMC:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{pageInstrumentImc | number: '1.1-1'}}</span>
+                    </div>
+                    <div class="col-4">
+                        <span>Inst Sim:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{pageInstrumentSimulated | number: '1.1-1'}}</span>
+                    </div>
+                    <!-- line 5 -->
+                    <div class="col-4">
+                        <span>Inst flt sim:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{pageInstrumentFlightSim | number: '1.1-1'}}</span>
+                    </div>
+                    <div class="col-4">
+                        <span>Inst # IFR appr:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{pageInstrumentNoIfrAppr}}</span>
+                    </div>
+                    <!-- line 6 -->
+                    <div class="col-4">
+                        <span>T/Os & ldgs day:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{pageTosLdgsDay}}</span>
+                    </div>
+                    <div class="col-4">
+                        <span>T/Os & ldgs night:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{pageTosLdgsNight}}</span>
+                    </div>
+                    <!-- line 7 -->
+                    <div class="col-4">
+                        <span>Total:</span>
+                    </div>
+                    <div class="col-2">
+                        <span>{{pageTotal | number: '1.1-1'}}</span>
+                    </div>
+                </div>
+            </p-tabPanel>
+        </p-tabView>
+        As of {{overPanelFlightLogTotalsV.flightDate | date:'yyyy-MM-dd'}}
+    </ng-template>
+</p-overlayPanel>

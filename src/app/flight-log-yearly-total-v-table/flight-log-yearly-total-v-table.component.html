@@ -25,7 +25,7 @@
     </ng-template>
     <ng-template pTemplate="body" let-flightLogYearlyTotalV>
         <tr>
-            <td>{{flightLogYearlyTotalV.year}}</td>
+            <td>{{flightLogYearlyTotalV.year| date:'yyyy'}}</td>
             <td>{{flightLogYearlyTotalV.dayDual}}</td>
             <td>{{flightLogYearlyTotalV.daySolo}}</td>
             <td>{{flightLogYearlyTotalV.nightDual}}</td>

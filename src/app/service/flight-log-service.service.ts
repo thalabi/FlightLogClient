@@ -84,6 +84,28 @@ export class FlightLogServiceService {
         //     //.catch(this.handleError);
         return this.httpClient.get<FlightLogResponse>(url/*, this.getHttpOptions()*/);
     }
+    getTableData2(tableName: string, searchCriteria: string, pageNumber: number, pageSize: number, sortColumns?: Array<string>, projection?: string): Observable<any> {
+        searchCriteria = encodeURIComponent(searchCriteria)
+        let sortQueryParams: string = ''
+        if (sortColumns) {
+            console.log('sortColumns', sortColumns)
+            sortColumns.forEach(sortColumnAndDirection => {
+                sortQueryParams = sortQueryParams + "&sort=" + sortColumnAndDirection
+            })
+            console.log('sortQueryParams', sortQueryParams)
+        }
+        const projectionParam: string = projection ? `&projection=${projection}` : ''
+
+        const entityNameResource = FlightLogServiceService.toPlural(FlightLogServiceService.toCamelCase(tableName))
+        console.log('entityNameResource', entityNameResource)
+        return this.httpClient.get(this.serviceUrl + '/protected/genericEntityController/findAll?' + 'tableName=' + tableName + '&search=' + searchCriteria + '&page=' + pageNumber + '&size=' + pageSize + sortQueryParams + projectionParam)
+    }
+    public static toCamelCase(tableName: string): string {
+        return tableName.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase()); // convert to camel case
+    }
+    public static toPlural(entityName: string): string {
+        return entityName.endsWith('s') ? entityName + 'es' : entityName + 's'
+    }
 
     addFlightLog(flightLog: FlightLog): Observable<FlightLogResponse> {
         let url: string = this.serviceUrl + '/protected/data-rest/flightLogs';
@@ -108,7 +130,8 @@ export class FlightLogServiceService {
         flightLog.modified = new Date();
         console.log('flightLog: ', flightLog);
 
-        let url: string = flightLog._links.flightLog.href;
+        //let url: string = flightLog._links.flightLog.href;
+        let url: string = this.serviceUrl + '/protected/data-rest/flightLogs/' + flightLog.id;
         console.log('url: ', url);
         return this.httpClient.put<FlightLog>(url, flightLog/*, this.getHttpOptions()*/).pipe(
             map((response: any) => {
@@ -124,7 +147,8 @@ export class FlightLogServiceService {
 
     deleteFlightLog(flightLog: FlightLog): Observable<FlightLogResponse> {
 
-        let url: string = flightLog._links.flightLog.href;
+        //let url: string = flightLog._links.flightLog.href;
+        let url: string = this.serviceUrl + '/protected/data-rest/flightLogs/' + flightLog.id;
         console.log('url: ', url);
         return this.httpClient.delete<void>(url/*, this.getHttpOptions()*/).pipe(
             map((response: any) => {

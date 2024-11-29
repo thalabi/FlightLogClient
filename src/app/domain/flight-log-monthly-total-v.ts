@@ -1,6 +1,6 @@
 export interface FlightLogMonthlyTotalV {
     id: number;
-    yearMonth: string;
+    month: Date;
     dayDual: number;
     daySolo: number;
     nightDual: number;

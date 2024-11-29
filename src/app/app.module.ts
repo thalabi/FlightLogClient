@@ -55,6 +55,7 @@ import { MenuItems } from './menu/menu-items';
 import { MessagesModule } from 'primeng/messages';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { Httpstatus404Component } from './httpstatus404/httpstatus404.component';
+import { TabViewModule } from 'primeng/tabview';
 
 @NgModule({
     declarations: [
@@ -82,7 +83,7 @@ import { Httpstatus404Component } from './httpstatus404/httpstatus404.component'
         NgIdleModule.forRoot(),
 
 
-        BrowserAnimationsModule, TableModule, ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, TooltipModule, ProgressSpinnerModule, ToggleButtonModule, MessageModule, OverlayPanelModule, CheckboxModule, PickListModule, ProgressBarModule, InputSwitchModule, RadioButtonModule, MessagesModule,
+        BrowserAnimationsModule, TableModule, ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, TooltipModule, ProgressSpinnerModule, ToggleButtonModule, MessageModule, OverlayPanelModule, CheckboxModule, PickListModule, ProgressBarModule, InputSwitchModule, RadioButtonModule, MessagesModule, OverlayPanelModule, TabViewModule,
 
         //DeviceDetectorModule.forRoot(),
 

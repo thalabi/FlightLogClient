@@ -1,6 +1,7 @@
 import { FlightLog } from "../domain/flight-log";
 import { FormGroup, Validators, FormBuilder, AbstractControl, ValidatorFn, ValidationErrors } from "@angular/forms";
 import { Airport } from "../domain/airport";
+import { IFlightLogTotalsV } from "../response/IFlightLogTotalsV";
 
 const controlNames: Array<string> = ['flightDate', 'makeModel', 'registration', 'pic', 'coPilot', 'fromAirport', 'toAirport', 'remarks', 'dayDual', 'daySolo', 'nightDual', 'nightSolo', 'instrumentSimulated', 'instrumentFlightSim', 'xcountryDay', 'xcountryNight', 'instrumentImc', 'instrumentNoIfrAppr', 'tosLdgsDay', 'tosLdgsNight'];
 
@@ -45,6 +46,36 @@ export const FlightLogHelper = {
             tosLdgsNight: ['']
         }, { validators: [createDayOrNightValueValidator()] });
     },
+    copyFlogLogProperties(flightLogTotalsV: IFlightLogTotalsV) {
+        let flightLog: FlightLog = {} as FlightLog
+        const href = flightLogTotalsV._links.flightLogTotalsV.href;
+        flightLog.id = + href.substring(href.lastIndexOf('/') + 1)
+        flightLog.flightDate = flightLogTotalsV.flightDate
+        flightLog.makeModel = flightLogTotalsV.makeModel
+        flightLog.registration = flightLogTotalsV.registration
+        flightLog.pic = flightLogTotalsV.pic
+        flightLog.coPilot = flightLogTotalsV.coPilot
+        flightLog.routeFrom = flightLogTotalsV.routeFrom
+        flightLog.routeTo = flightLogTotalsV.routeTo
+        flightLog.remarks = flightLogTotalsV.remarks
+        flightLog.dayDual = flightLogTotalsV.dayDual
+        flightLog.daySolo = flightLogTotalsV.daySolo
+        flightLog.nightDual = flightLogTotalsV.nightDual
+        flightLog.nightSolo = flightLogTotalsV.nightSolo
+        flightLog.instrumentSimulated = flightLogTotalsV.instrumentSimulated
+        flightLog.instrumentFlightSim = flightLogTotalsV.instrumentFlightSim
+
+        flightLog.xcountryDay = flightLogTotalsV.xcountryDay
+        flightLog.xcountryNight = flightLogTotalsV.xcountryNight
+
+        flightLog.instrumentImc = flightLogTotalsV.instrumentImc
+        flightLog.instrumentNoIfrAppr = flightLogTotalsV.instrumentNoIfrAppr
+        flightLog.tosLdgsDay = flightLogTotalsV.tosLdgsDay
+        flightLog.tosLdgsNight = flightLogTotalsV.tosLdgsNight
+
+        return flightLog
+    },
+
     copyToForm(flightLog: FlightLog, flightLogForm: FormGroup) {
         flightLogForm.patchValue({ flightDate: flightLog.flightDate });
         flightLogForm.patchValue({ makeModel: flightLog.makeModel });
