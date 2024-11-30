@@ -47,7 +47,7 @@ export class AircraftComponentComponent implements OnInit {
     displayDialog!: boolean;
 
     crudMode!: CrudEnum;
-    componentHistoryCrudMode!: CrudEnum;
+    componentHistoryCrudMode!: CrudEnum | null;
     historyCrudMode!: CrudEnum;
     crudEnum = CrudEnum; // Used in html to refere to enum
     modifyAndDeleteButtonsDisable: boolean = true;
@@ -290,7 +290,7 @@ export class AircraftComponentComponent implements OnInit {
     showDialog(crudMode: CrudEnum) {
         this.displayDialog = true;
         this.crudMode = crudMode;
-        this.componentHistoryCrudMode = {} as CrudEnum;
+        this.componentHistoryCrudMode = null;
         console.log('this.crudMode', this.crudMode);
         switch (this.crudMode) {
             case CrudEnum.ADD:
@@ -325,7 +325,7 @@ export class AircraftComponentComponent implements OnInit {
             default:
                 console.error('this.crudMode is invalid. this.crudMode: ' + this.crudMode);
         }
-        console.log('this.crudForm', this.componentForm);
+        console.log('this.componentForm', this.componentForm);
     }
 
 
@@ -427,7 +427,7 @@ export class AircraftComponentComponent implements OnInit {
                         console.log('this.componentAndHistoryArray', this.componentAndHistoryArray);
                         // select added record
                         this.selectedComponentAndHistoryRow = component;
-                        this.componentHistoryCrudMode = {} as CrudEnum;
+                        this.componentHistoryCrudMode = null;
                         break;
                     case CrudEnum.UPDATE: // Update component history record in history array
                         // Find the selected component in the componentAndHistoryArray and update it
@@ -446,7 +446,7 @@ export class AircraftComponentComponent implements OnInit {
                         aircraftComponentToUpdate.modified = component.modified = new Date();
                         console.log('aircraftComponentToUpdate', aircraftComponentToUpdate);
                         this.sortComponentAndHistoryArray();
-                        this.componentHistoryCrudMode = {} as CrudEnum;
+                        this.componentHistoryCrudMode = null;
                         break;
                     case CrudEnum.DELETE: // Delete component history record from history array
                         // Find the selected component in the componentAndHistoryArray and delete it
@@ -460,7 +460,7 @@ export class AircraftComponentComponent implements OnInit {
                         } else {
                             this.clearDialogComponent();
                         }
-                        this.componentHistoryCrudMode = {} as CrudEnum;
+                        this.componentHistoryCrudMode = null;
                         break;
                     case null: // Save the history array
                         console.log('About to save updated component and history');
@@ -564,7 +564,7 @@ export class AircraftComponentComponent implements OnInit {
         // Restore original copy
         console.log('selectedComponentAndHistoryRowCopy', this.selectedComponentAndHistoryRowCopy);
         this.updateDialogComponent(this.selectedComponentAndHistoryRowCopy);
-        this.componentHistoryCrudMode = {} as CrudEnum;
+        this.componentHistoryCrudMode = null;
         this.enableFormControls(false);
     }
 
