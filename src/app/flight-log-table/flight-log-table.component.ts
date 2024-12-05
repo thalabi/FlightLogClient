@@ -50,9 +50,14 @@ export class FlightLogTableComponent implements OnInit {
 
     cols: any[] = [];
     colsPart2: any[] = [];
+
+    columns: { name: string; header: string; order: number; format: string, filterable: boolean, type: string, fractionDigits: number }[] = [];
+    sortColumns: Array<string> = []
+
+
     columnOptions: SelectItem[] = [];
 
-    toDateCols: any[] = [];
+    // toDateCols: any[] = [];
 
     modifyAndDeleteButtonsDisable: boolean = true;
     crudMode: CrudEnum = CrudEnum.ADD;// "Add";
@@ -110,34 +115,30 @@ export class FlightLogTableComponent implements OnInit {
         this.messageService.clear();
         this.page = {} as HalResponsePage;
         this.cols = [
-            { field: 'flightDate', header: 'Date', style: { 'width': '6em', 'white-space': 'nowrap' } },
-            { field: 'makeModel', header: 'Mk Mdl', style: { 'width': '6em' } },
-            { field: 'registration', header: 'Reg', style: { 'width': '4em' } },
-            { field: 'pic', header: 'PIC', style: { 'width': '8em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis' } },
-            { field: 'coPilot', header: 'Co Pilot', style: { 'width': '8em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis' } },
-            { field: 'routeFrom', header: 'From', style: { 'width': '4em' } },
-            { field: 'routeTo', header: 'To', style: { 'width': '4em' } },
+            { field: 'flightDate', header: 'Date', style: { 'width': '6em', 'white-space': 'nowrap' }, filterable: 'true', type: 'date' },
+            { field: 'makeModel', header: 'Mk Mdl', style: { 'width': '6em' }, filterable: 'true', type: 'text' },
+            { field: 'registration', header: 'Reg', style: { 'width': '4em' }, filterable: 'true', type: 'text' },
+            { field: 'pic', header: 'PIC', style: { 'width': '8em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis' }, filterable: 'true', type: 'text' },
+            { field: 'coPilot', header: 'Co Pilot', style: { 'width': '8em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis' }, filterable: 'true', type: 'text' },
+            { field: 'routeFrom', header: 'From', style: { 'width': '4em' }, filterable: 'true', type: 'text' },
+            { field: 'routeTo', header: 'To', style: { 'width': '4em' }, filterable: 'true', type: 'text' },
             // {field: 'remarks', header: 'Remarks', style: {'width': '30em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis'}},
             { field: 'remarks', header: 'Remarks', style: { 'width': '10em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis' } },
-            { field: 'dayDual', header: 'D D', tooltipText: 'Day Dual', style: { 'width': '3em' } },
-            { field: 'daySolo', header: 'D S', tooltipText: 'Day Solo', style: { 'width': '3em' } },
-            { field: 'nightDual', header: 'N D', tooltipText: 'Night Dual', style: { 'width': '3em' } },
-            { field: 'nightSolo', header: 'N S', tooltipText: 'Night Solo', style: { 'width': '3em' } },
+            { field: 'dayDual', header: 'D D', tooltipText: 'Day Dual', style: { 'width': '3em' }, filterable: 'true', type: 'numeric', fractionDigits: 1 },
+            { field: 'daySolo', header: 'D S', tooltipText: 'Day Solo', style: { 'width': '3em' }, filterable: 'true', type: 'numeric', fractionDigits: 1 },
+            { field: 'nightDual', header: 'N D', tooltipText: 'Night Dual', style: { 'width': '3em' }, filterable: 'true', type: 'numeric', fractionDigits: 1 },
+            { field: 'nightSolo', header: 'N S', tooltipText: 'Night Solo', style: { 'width': '3em' }, filterable: 'true', type: 'numeric', fractionDigits: 1 },
 
-            { field: 'xcountryDay', header: 'X D', tooltipText: 'Cross Country Day', style: { 'width': '3em' } },
-            { field: 'xcountryNight', header: 'X N', tooltipText: 'Cross Country Night', style: { 'width': '3em' } },
-            { field: 'tosLdgsDay', header: 'L D', tooltipText: 'Total Landings Day', style: { 'width': '3em' } },
-            { field: 'tosLdgsNight', header: 'L N', tooltipText: 'Total Landings Night', style: { 'width': '3em' } },
+            { field: 'xcountryDay', header: 'X D', tooltipText: 'Cross Country Day', style: { 'width': '3em' }, filterable: 'true', type: 'numeric', fractionDigits: 1 },
+            { field: 'xcountryNight', header: 'X N', tooltipText: 'Cross Country Night', style: { 'width': '3em' }, filterable: 'true', type: 'numeric', fractionDigits: 1 },
+            { field: 'tosLdgsDay', header: 'L D', tooltipText: 'Total Landings Day', style: { 'width': '3em' }, filterable: 'true', type: 'numeric' },
+            { field: 'tosLdgsNight', header: 'L N', tooltipText: 'Total Landings Night', style: { 'width': '3em' }, filterable: 'true', type: 'numeric' },
         ];
         this.colsPart2 = [
-            { field: 'instrumentSimulated', header: 'Inst Sim', style: { 'width': '3em' } },
-            { field: 'instrumentFlightSim', header: 'Inst Flt Sim', style: { 'width': '3em' } },
-            // {field: 'xcountryDay', header: 'X D', style: {'width': '3em'}},
-            // {field: 'xcountryNight', header: 'X N', style: {'width': '3em'}},
-            { field: 'instrumentImc', header: 'Inst IMC', style: { 'width': '3em' } },
-            { field: 'instrumentNoIfrAppr', header: '# IFR Apr', style: { 'width': '3em' } },
-            // {field: 'tosLdgsDay', header: 'L D', style: {'width': '3em'}},
-            // {field: 'tosLdgsNight', header: 'L N', style: {'width': '3em'}},            
+            { field: 'instrumentSimulated', header: 'Inst Sim', style: { 'width': '3em' }, filterable: 'true', type: 'numeric', fractionDigits: 1 },
+            { field: 'instrumentFlightSim', header: 'Inst Flt Sim', style: { 'width': '3em' }, filterable: 'true', type: 'numeric', fractionDigits: 1 },
+            { field: 'instrumentImc', header: 'Inst IMC', style: { 'width': '3em' }, filterable: 'true', type: 'numeric', fractionDigits: 1 },
+            { field: 'instrumentNoIfrAppr', header: '# IFR Apr', style: { 'width': '3em' }, filterable: 'true', type: 'numeric' },
         ];
         this.columnOptions = [];
         for (let i = 0; i < this.cols.length; i++) {
@@ -147,26 +148,29 @@ export class FlightLogTableComponent implements OnInit {
             this.columnOptions.push({ label: this.colsPart2[i].header, value: this.colsPart2[i] });
         }
 
-        this.toDateCols = [
-            { field: 'toDateDayDual', header: 'D D', tooltipText: 'Day Dual', style: { 'width': '3em' } },
-            { field: 'toDateDaySolo', header: 'D S', tooltipText: 'Day Solo', style: { 'width': '3em' } },
-            { field: 'toDateNightDual', header: 'N D', tooltipText: 'Night Dual', style: { 'width': '3em' } },
-            { field: 'toDateNightSolo', header: 'N S', tooltipText: 'Night Solo', style: { 'width': '3em' } },
+        // this.toDateCols = [
+        //     { field: 'toDateDayDual', header: 'D D', tooltipText: 'Day Dual', style: { 'width': '3em' } },
+        //     { field: 'toDateDaySolo', header: 'D S', tooltipText: 'Day Solo', style: { 'width': '3em' } },
+        //     { field: 'toDateNightDual', header: 'N D', tooltipText: 'Night Dual', style: { 'width': '3em' } },
+        //     { field: 'toDateNightSolo', header: 'N S', tooltipText: 'Night Solo', style: { 'width': '3em' } },
 
-            { field: 'toDateXCountryDay', header: 'X D', tooltipText: 'Cross Country Day', style: { 'width': '3em' } },
-            { field: 'toDateXCountryNight', header: 'X N', tooltipText: 'Cross Country Night', style: { 'width': '3em' } },
-            { field: 'toDateTosLdgsDay', header: 'L D', tooltipText: 'Total Landings Day', style: { 'width': '3em' } },
-            { field: 'toDateTosLdgsNight', header: 'L N', tooltipText: 'Total Landings Night', style: { 'width': '3em' } },
-            { field: 'toDateInstrumentSimulated', header: 'Inst Sim', style: { 'width': '3em' } },
-            { field: 'toDateInstrumentFlightSim', header: 'Inst Flt Sim', style: { 'width': '3em' } },
+        //     { field: 'toDateXCountryDay', header: 'X D', tooltipText: 'Cross Country Day', style: { 'width': '3em' } },
+        //     { field: 'toDateXCountryNight', header: 'X N', tooltipText: 'Cross Country Night', style: { 'width': '3em' } },
+        //     { field: 'toDateTosLdgsDay', header: 'L D', tooltipText: 'Total Landings Day', style: { 'width': '3em' } },
+        //     { field: 'toDateTosLdgsNight', header: 'L N', tooltipText: 'Total Landings Night', style: { 'width': '3em' } },
+        //     { field: 'toDateInstrumentSimulated', header: 'Inst Sim', style: { 'width': '3em' } },
+        //     { field: 'toDateInstrumentFlightSim', header: 'Inst Flt Sim', style: { 'width': '3em' } },
 
-            { field: 'toDateInstrumentImc', header: 'Inst IMC', style: { 'width': '3em' } },
-            { field: 'toDateInstrumentNoIfrAppr', header: '# IFR Apr', style: { 'width': '3em' } },
-        ]
+        //     { field: 'toDateInstrumentImc', header: 'Inst IMC', style: { 'width': '3em' } },
+        //     { field: 'toDateInstrumentNoIfrAppr', header: '# IFR Apr', style: { 'width': '3em' } },
+        // ]
 
         this.getMakeModels();
         this.getRegistrations();
         this.getPilots();
+
+        //this.getTableMetaData();
+
         // set the firstRowOfTable to the first row of the last page
         this.flightLogService.getFlightLogCount().subscribe({
             next: data => {
@@ -186,6 +190,93 @@ export class FlightLogTableComponent implements OnInit {
         });
     }
 
+    private getTableMetaData() {
+        this.flightLogService.getTableMetaDataAlps('flight_log_totals_v')
+            .subscribe(
+                {
+                    next: (metaData: any) => {
+                        console.log('alps metaData', metaData)
+                        const alpsDescriptors = metaData.alps.descriptor
+                        console.log('alps alpsDescriptors', alpsDescriptors)
+                        const representationDescriptorId = FlightLogServiceService.toCamelCase('flight_log_totals_v') + '-representation';
+                        const representationDescriptor = alpsDescriptors.find((descriptor: { id: string; }) => descriptor.id = representationDescriptorId)
+                        console.log('representationDescriptor', representationDescriptor)
+                        const columnDescriptors = representationDescriptor.descriptor
+                        console.log('columnDescriptors', columnDescriptors)
+                        this.columns = []
+                        columnDescriptors.forEach((descriptor: any) => {
+                            console.log(descriptor.name, descriptor.doc?.value)
+                            const columnName = descriptor.name
+                            if (columnName === 'version') return // skip version column
+                            let columnAttributesMap = new Map()
+
+                            if (descriptor.doc?.value) {
+                                const columnAttributesArray: string[] = descriptor.doc?.value.split(',')
+                                columnAttributesArray.forEach(columnAttribute => {
+                                    const tuple = columnAttribute.split('=')
+                                    columnAttributesMap.set(tuple[0], tuple[1])
+                                })
+                            }
+                            console.log('columnAttributesMap', columnAttributesMap)
+                            // 1) title attribute
+                            let header: string = columnAttributesMap.get('title')
+                            // If title attribute is not specified use the column name to generate the header
+                            if (! /* not */ header) {
+                                // use column name to generate a header. eq firstName => First Name
+                                header = columnName[0].toUpperCase() + columnName.slice(1)
+                                header = header.replace(/([A-Z])/g, ' $1').trim()
+                            }
+                            // 2) columnDisplayOrder attribute
+                            let columnOrder: number = columnAttributesMap.get('columnDisplayOrder')
+                            // 3) format attribute
+                            let format: string = columnAttributesMap.get('format')
+                            // 4) filterable attribute
+                            let filterable: boolean = columnAttributesMap.get('filterable')
+                            // 5) type attribute (text, numeric, boolean or date) see https://www.primefaces.org/primeng-v14-lts/table#:~:text=p%2DcolumnFilter%20component.-,Data%20Types,-ColumnFilter%20requires%20a
+                            let type: string = columnAttributesMap.get('type')
+                            // 6) fractionDigits attribute
+                            let fractionDigits: number = columnAttributesMap.get('fractionDigits')
+
+
+                            this.columns.push({ name: columnName, header: header, order: columnOrder ?? 1, format: format, filterable: filterable, type: type, fractionDigits: fractionDigits })
+                            // 7) sortOrder and sortDirection attributes
+                            if (columnAttributesMap.get('sortOrder')) {
+                                const sortOrder: number = columnAttributesMap.get('sortOrder')
+                                console.log('sortOrder', sortOrder)
+                                this.sortColumns[sortOrder] = columnName
+                                if (columnAttributesMap.get('sortDirection')) {
+                                    const sortDirection: string = columnAttributesMap.get('sortDirection')
+                                    console.log('sortDirection', sortDirection)
+                                    this.sortColumns[sortOrder] = this.sortColumns[sortOrder] + "," + sortDirection
+                                }
+                            }
+                        });
+                        console.log('this.columns', this.columns)
+                        this.columns.sort((a, b) => a.order > b.order ? 1 : -1)
+                        console.log('this.columns sorted', this.columns)
+                    },
+                    complete: () => {
+
+                        // test begin
+                        // merge column attributes
+                        let mc: [{}]
+                        const mergedColumns = {
+                            ...this.cols,
+                            ...this.columns,
+                        }
+                        console.log('mergedColumns', mergedColumns)
+                        // test end
+
+                        console.log('Retrieving table meta data complete')
+                    },
+                    error: (httpErrorResponse: HttpErrorResponse) => {
+                        this.messageService.error(httpErrorResponse.status.toString(), 'Server error. Please contact support.')
+                    }
+
+                }
+            )
+
+    }
     private getMakeModels() {
         this.genericEntityService.getAllGenericEntity('makeModel').subscribe({
             next: data => {
@@ -527,6 +618,7 @@ export class FlightLogTableComponent implements OnInit {
 
     displayTotals(event: MouseEvent, key: string) {
         console.log('displayTotals, event:', event, ', event type:', event.type, ', key:', key)
+        event.stopPropagation() // top row from being selected
         //this.totalsOverlayPanel?.show()
         this.overPanelFlightLogTotalsV = this.flightLogTotalsVs.find(flightLogTotalsV => flightLogTotalsV._links.flightLogTotalsV.href === key) || {} as IFlightLogTotalsV
 

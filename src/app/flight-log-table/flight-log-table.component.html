@@ -2,7 +2,7 @@
     [lazy]="true" [rows]="ROWS_PER_PAGE" [paginator]="true" [totalRecords]="page.totalElements"
     [rowsPerPageOptions]="[5,10,15,20]" (onLazyLoad)="onLazyLoad($event)" [selectionMode]="'single'"
     [(selection)]="selectedFlightLogTotalsV" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)"
-    [responsive]="true" [first]="firstRowOfTable" [loading]="loadingStatus" #dt>
+    [first]="firstRowOfTable" [loading]="loadingStatus" #dt>
 
     <ng-template pTemplate="caption">
         <div style="text-align:right">
@@ -16,19 +16,17 @@
                 <span *ngIf="col.tooltipText" [pTooltip]="col.tooltipText" tooltipPosition="top"
                     class="underline-dotted">{{col.header}}</span>
                 <span *ngIf="!col.tooltipText">{{col.header}}</span>
+                <p-columnFilter *ngIf="col.filterable == 'true'" [type]="col.type" [field]="col.field"
+                    [minFractionDigits]="col.fractionDigits" [maxFractionDigits]="col.fractionDigits" display="menu"
+                    [showOperator]="false" [showAddButton]="false"></p-columnFilter>
             </th>
         </tr>
-        <tr>
+        <!-- <tr>
             <th *ngFor="let col of cols" [ngSwitch]="col.field">
-                <!-- <input *ngSwitchCase="'flightDate'" pInputText type="text"
-                    (input)="dt.filter($event.target, col.field, col.filterMatchMode)" [ngStyle]="col.style">
-                <input *ngSwitchDefault #filterInput pInputText type="text"
-                    (input)="dt.filter(filterInput.value, col.field, col.filterMatchMode)" [ngStyle]="col.style"> -->
                 <input #filterInput pInputText type="text"
                     (input)="dt.filter(filterInput.value, col.field, col.filterMatchMode)" [ngStyle]="col.style">
             </th>
-            <!-- <th></th> -->
-        </tr>
+        </tr> -->
     </ng-template>
 
     <!-- <ng-template pTemplate="body" let-rowData let-expanded="expanded"> -->
@@ -37,9 +35,16 @@
     <ng-template pTemplate="body" let-rowData>
         <tr [pSelectableRow]="rowData">
             <td *ngFor="let col of cols">
-                <span *ngIf="col.field === 'flightDate'" (mouseover)="
+                <!-- <span *ngIf="col.field === 'flightDate'">
+                    <a href="javascript:void(0);" (click)="
                             displayTotals($event, rowData._links.flightLogTotalsV.href);
-                            totalsOverlayPanel.show($event)">
+                            totalsOverlayPanel.show($event);
+                            ">
+                        {{rowData[col.field] | date:'yyyy-MM-dd'}}</a></span> -->
+                <span *ngIf="col.field === 'flightDate'" class="underline-on-hover" (click)="
+                    displayTotals($event, rowData._links.flightLogTotalsV.href);
+                    totalsOverlayPanel.show($event);
+                    ">
                     {{rowData[col.field] | date:'yyyy-MM-dd'}}</span>
                 <span *ngIf="col.field === 'remarks'"><app-abbreviate [text]="rowData[col.field]"
                         [maxLength]="20"></app-abbreviate></span>

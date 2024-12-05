@@ -40,6 +40,10 @@ export class FlightLogServiceService {
     //         ;
     //         //.catch(this.handleError);
     // }
+    getTableMetaDataAlps(tableName: string): Observable<any> {
+        const entityNameResource = FlightLogServiceService.toPlural(FlightLogServiceService.toCamelCase(tableName))
+        return this.httpClient.get(this.serviceUrl + '/protected/data-rest/profile/' + entityNameResource)
+    }
 
     getFlightLogCount(): Observable<any> {
         let url: string = this.serviceUrl + '/protected/flightLogController/count';

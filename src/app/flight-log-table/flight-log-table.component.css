@@ -23,3 +23,8 @@ th {
     text-decoration-style: dotted;
     text-decoration-color: blue;
 }
+
+.underline-on-hover:hover {
+    text-decoration: underline;
+    text-decoration-color: #007185;
+}
