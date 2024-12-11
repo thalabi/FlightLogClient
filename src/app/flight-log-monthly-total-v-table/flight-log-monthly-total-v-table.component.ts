@@ -3,6 +3,7 @@ import { FlightLogServiceService } from '../service/flight-log-service.service';
 import { FlightLogMonthlyTotalVResponse } from '../response/flight-log-monthly-total-v-response';
 import { FlightLogMonthlyTotalV } from '../domain/flight-log-monthly-total-v';
 import { MyMessageService } from '../message/mymessage.service';
+import { SessionService } from '../service/session.service';
 
 @Component({
     selector: 'app-flight-log-monthly-total-v-table',
@@ -14,10 +15,11 @@ export class FlightLogMonthlyTotalVTableComponent implements OnInit {
     flightLogMonthlyTotalVArray!: Array<FlightLogMonthlyTotalV>;
     loadingFlag!: boolean;
 
-    constructor(private flightLogService: FlightLogServiceService, private messageService: MyMessageService) { }
+    constructor(private flightLogService: FlightLogServiceService, private messageService: MyMessageService, private sessionService: SessionService) { }
 
     ngOnInit() {
         this.messageService.clear();
+        this.sessionService.clearBackendStackTrace()
         this.loadingFlag = true;
         this.flightLogService.getFlightLogMonthlyTotalV().subscribe({
             next: response => {

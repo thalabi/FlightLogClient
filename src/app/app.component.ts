@@ -4,13 +4,11 @@ import { environment } from '../environments/environment';
 import { DEFAULT_INTERRUPTSOURCES, Idle } from '@ng-idle/core';
 import { AuthService } from './auth/auth.service';
 import { SessionService } from './service/session.service';
-import { MessageService } from 'primeng/api';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.css'],
-    providers: [MessageService]
+    styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
     clientBuildInfo: string = ''

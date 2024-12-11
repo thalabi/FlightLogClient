@@ -18,7 +18,7 @@
                 <span *ngIf="!col.tooltipText">{{col.header}}</span>
                 <p-columnFilter *ngIf="col.filterable == 'true'" [type]="col.type" [field]="col.field"
                     [minFractionDigits]="col.fractionDigits" [maxFractionDigits]="col.fractionDigits" display="menu"
-                    [showOperator]="false" [showAddButton]="false"></p-columnFilter>
+                    [showOperator]="false" [showAddButton]="false" [hideOnClear]="true"></p-columnFilter>
             </th>
         </tr>
         <!-- <tr>
@@ -238,21 +238,21 @@
             </div>
             <!-- line 10 -->
             <div class="col-3">
-                <label for="xcountryDay">X-cty day</label>
+                <label for="xCountryDay">X-cty day</label>
             </div>
             <div class="col-3">
-                <input pInputText id="xcountryDay" formControlName="xcountryDay"
+                <input pInputText id="xCountryDay" formControlName="xCountryDay"
                     regexValidator="^\d*(\.\d{0,1}){0,1}$" />
-                <div [hidden]="flightLogForm.controls['xcountryDay'].valid || flightLogForm.controls['xcountryDay'].pristine"
+                <div [hidden]="flightLogForm.controls['xCountryDay'].valid || flightLogForm.controls['xCountryDay'].pristine"
                     class="red-font">Invalid value</div>
             </div>
             <div class="col-3">
-                <label for="xcountryNight">X-cty night</label>
+                <label for="xCountryNight">X-cty night</label>
             </div>
             <div class="col-3">
-                <input pInputText id="xcountryNight" formControlName="xcountryNight"
+                <input pInputText id="xCountryNight" formControlName="xCountryNight"
                     regexValidator="^\d*(\.\d{0,1}){0,1}$" />
-                <div [hidden]="flightLogForm.controls['xcountryNight'].valid || flightLogForm.controls['xcountryNight'].pristine"
+                <div [hidden]="flightLogForm.controls['xCountryNight'].valid || flightLogForm.controls['xCountryNight'].pristine"
                     class="red-font">Invalid value</div>
             </div>
             <!-- line 11 -->

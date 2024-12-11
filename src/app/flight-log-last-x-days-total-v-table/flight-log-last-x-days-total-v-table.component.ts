@@ -3,6 +3,7 @@ import { FlightLogServiceService } from '../service/flight-log-service.service';
 import { FlightLogLastXDaysTotalV } from '../domain/flight-log-last-x-days-total-v';
 import { FlightLogLastXDaysTotalVResponse } from '../response/flight-log-last-x-days-total-v-response';
 import { MyMessageService } from '../message/mymessage.service';
+import { SessionService } from '../service/session.service';
 
 @Component({
     selector: 'app-flight-log-last-x-days-total-v-table',
@@ -15,10 +16,12 @@ export class FlightLogLastXDaysTotalVTableComponent implements OnInit {
 
     loadingFlag!: boolean;
 
-    constructor(private flightLogService: FlightLogServiceService, private messageService: MyMessageService) { }
+    constructor(private flightLogService: FlightLogServiceService, private sessionService: SessionService, private messageService: MyMessageService) { }
 
     ngOnInit() {
         this.messageService.clear();
+        this.sessionService.clearBackendStackTrace()
+
         this.loadingFlag = true;
         this.flightLogService.getFlightLogLastXDaysTotalV().subscribe({
             next: response => {

@@ -3,7 +3,7 @@ import { FormGroup, Validators, FormBuilder, AbstractControl, ValidatorFn, Valid
 import { Airport } from "../domain/airport";
 import { IFlightLogTotalsV } from "../response/IFlightLogTotalsV";
 
-const controlNames: Array<string> = ['flightDate', 'makeModel', 'registration', 'pic', 'coPilot', 'fromAirport', 'toAirport', 'remarks', 'dayDual', 'daySolo', 'nightDual', 'nightSolo', 'instrumentSimulated', 'instrumentFlightSim', 'xcountryDay', 'xcountryNight', 'instrumentImc', 'instrumentNoIfrAppr', 'tosLdgsDay', 'tosLdgsNight'];
+const controlNames: Array<string> = ['flightDate', 'makeModel', 'registration', 'pic', 'coPilot', 'fromAirport', 'toAirport', 'remarks', 'dayDual', 'daySolo', 'nightDual', 'nightSolo', 'instrumentSimulated', 'instrumentFlightSim', 'xCountryDay', 'xCountryNight', 'instrumentImc', 'instrumentNoIfrAppr', 'tosLdgsDay', 'tosLdgsNight'];
 
 function fieldNullOrZero(control: AbstractControl, controlName: string): boolean {
     return ! /* not */ control.get(controlName)?.value || control.get(controlName)?.value == 0;
@@ -38,8 +38,8 @@ export const FlightLogHelper = {
             nightSolo: [''],
             instrumentSimulated: [''],
             instrumentFlightSim: [''],
-            xcountryDay: [''],
-            xcountryNight: [''],
+            xCountryDay: [''],
+            xCountryNight: [''],
             instrumentImc: [''],
             instrumentNoIfrAppr: [''],
             tosLdgsDay: [''],
@@ -65,8 +65,8 @@ export const FlightLogHelper = {
         flightLog.instrumentSimulated = flightLogTotalsV.instrumentSimulated
         flightLog.instrumentFlightSim = flightLogTotalsV.instrumentFlightSim
 
-        flightLog.xcountryDay = flightLogTotalsV.xcountryDay
-        flightLog.xcountryNight = flightLogTotalsV.xcountryNight
+        flightLog.xCountryDay = flightLogTotalsV.xCountryDay
+        flightLog.xCountryNight = flightLogTotalsV.xCountryNight
 
         flightLog.instrumentImc = flightLogTotalsV.instrumentImc
         flightLog.instrumentNoIfrAppr = flightLogTotalsV.instrumentNoIfrAppr
@@ -95,8 +95,8 @@ export const FlightLogHelper = {
         flightLogForm.patchValue({ nightSolo: flightLog.nightSolo });
         flightLogForm.patchValue({ instrumentSimulated: flightLog.instrumentSimulated });
         flightLogForm.patchValue({ instrumentFlightSim: flightLog.instrumentFlightSim });
-        flightLogForm.patchValue({ xcountryDay: flightLog.xcountryDay });
-        flightLogForm.patchValue({ xcountryNight: flightLog.xcountryNight });
+        flightLogForm.patchValue({ xCountryDay: flightLog.xCountryDay });
+        flightLogForm.patchValue({ xCountryNight: flightLog.xCountryNight });
         flightLogForm.patchValue({ instrumentImc: flightLog.instrumentImc });
         flightLogForm.patchValue({ instrumentNoIfrAppr: flightLog.instrumentNoIfrAppr });
         flightLogForm.patchValue({ tosLdgsDay: flightLog.tosLdgsDay });
@@ -121,8 +121,8 @@ export const FlightLogHelper = {
         flightLog.nightSolo = flightLogForm.get('nightSolo')?.value;
         flightLog.instrumentSimulated = flightLogForm.get('instrumentSimulated')?.value;
         flightLog.instrumentFlightSim = flightLogForm.get('instrumentFlightSim')?.value;
-        flightLog.xcountryDay = flightLogForm.get('xcountryDay')?.value;
-        flightLog.xcountryNight = flightLogForm.get('xcountryNight')?.value;
+        flightLog.xCountryDay = flightLogForm.get('xCountryDay')?.value;
+        flightLog.xCountryNight = flightLogForm.get('xCountryNight')?.value;
         flightLog.instrumentImc = flightLogForm.get('instrumentImc')?.value;
         flightLog.instrumentNoIfrAppr = flightLogForm.get('instrumentNoIfrAppr')?.value;
         flightLog.tosLdgsDay = flightLogForm.get('tosLdgsDay')?.value;

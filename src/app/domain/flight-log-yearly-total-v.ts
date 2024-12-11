@@ -8,8 +8,8 @@ export interface FlightLogYearlyTotalV {
 
     instrumentSimulated: number;
     instrumentFlightSim: number;
-    xcountryDay: number;
-    xcountryNight: number;
+    xCountryDay: number;
+    xCountryNight: number;
 
     instrumentImc: number;
     instrumentNoIfrAppr: number;

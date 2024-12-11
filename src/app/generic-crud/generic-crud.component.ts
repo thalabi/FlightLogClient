@@ -83,6 +83,8 @@ export class GenericCrudComponent implements OnInit {
 
     ngOnInit() {
         this.messageService.clear();
+        this.sessionService.clearBackendStackTrace()
+
         this.rowArray = [];
         this.page = {} as HalResponsePage;
         this.counter++;

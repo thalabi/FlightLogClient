@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FlightLogServiceService } from '../service/flight-log-service.service';
 import { FlightLogYearlyTotalV } from '../domain/flight-log-yearly-total-v';
 import { FlightLogYearlyTotalVResponse } from '../response/flight-log-yearly-total-v-response';
-import { MyMessageService } from '../message/mymessage.service';
+import { MessageService } from 'primeng/api';
+import { SessionService } from '../service/session.service';
 
 @Component({
     selector: 'app-flight-log-yearly-total-v-table',
@@ -15,10 +16,12 @@ export class FlightLogYearlyTotalVTableComponent implements OnInit {
 
     loadingFlag!: boolean;
 
-    constructor(private flightLogService: FlightLogServiceService, private messageService: MyMessageService) { }
+    constructor(private flightLogService: FlightLogServiceService, private messageService: MessageService, private sessionService: SessionService) { }
 
     ngOnInit() {
         this.messageService.clear();
+        this.sessionService.clearBackendStackTrace()
+
         this.loadingFlag = true;
         this.flightLogService.getFlightLogYearlyTotalV().subscribe({
             next: response => {

@@ -15,8 +15,8 @@ export interface IFlightLogTotalsV {
     instrumentSimulated: number;
     instrumentFlightSim: number;
     instrumentNoIfrAppr: number;
-    xcountryDay: number;
-    xcountryNight: number;
+    xCountryDay: number;
+    xCountryNight: number;
     tosLdgsDay: number;
     tosLdgsNight: number;
 

@@ -13,6 +13,9 @@ export class SessionService {
     private disableParentMessagesSource = new BehaviorSubject<boolean>(false)
     public disableParentMessages$ = this.disableParentMessagesSource.asObservable()
 
+    private backendExceptionstackTraceSource = new BehaviorSubject<string>('')
+    public backendExceptionstackTrace$ = this.backendExceptionstackTraceSource.asObservable()
+
     constructor(private authService: AuthService) {
         this.authService.isAuthenticated$
             .pipe(distinctUntilChanged())
@@ -29,6 +32,13 @@ export class SessionService {
 
     setDisableParentMessages(disableParentMessages: boolean) {
         this.disableParentMessagesSource.next(disableParentMessages)
+    }
+
+    setBackendExceptionstackTrace(backendExceptionstackTrace: string) {
+        this.backendExceptionstackTraceSource.next(backendExceptionstackTrace)
+    }
+    clearBackendStackTrace() {
+        this.backendExceptionstackTraceSource.next('')
     }
 
 }

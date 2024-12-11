@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { JobLauncherService } from '../service/job-launcher.service';
 import { MyMessageService } from '../message/mymessage.service';
+import { SessionService } from '../service/session.service';
 
 @Component({
     selector: 'app-job-launcher',
@@ -15,10 +16,12 @@ export class JobLauncherComponent implements OnInit {
     jobCompleted!: boolean;
     jobLauncherResponse: any;
 
-    constructor(private jobLauncherService: JobLauncherService, private messageService: MyMessageService) { }
+    constructor(private jobLauncherService: JobLauncherService, private messageService: MyMessageService, private sessionService: SessionService) { }
 
     ngOnInit() {
         this.messageService.clear();
+        this.sessionService.clearBackendStackTrace()
+
         this.jobOptions = [
             { jobLabel: 'Flight Log Refresh', jobName: 'copyFlightLogTable' },
             { jobLabel: 'Make & Model Refresh', jobName: 'copyMakeModelTable' },

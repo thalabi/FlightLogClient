@@ -56,6 +56,8 @@ import { MessagesModule } from 'primeng/messages';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { Httpstatus404Component } from './httpstatus404/httpstatus404.component';
 import { TabViewModule } from 'primeng/tabview';
+import { MessageService } from 'primeng/api';
+import { BackendStacktraceDisplayComponent } from './backend-stacktrace-display/backend-stacktrace-display.component';
 
 @NgModule({
     declarations: [
@@ -72,7 +74,8 @@ import { TabViewModule } from 'primeng/tabview';
         MessageComponent,
         SyncButtonComponent,
         PasswordMaskPipe,
-        WelcomeComponent
+        WelcomeComponent,
+        BackendStacktraceDisplayComponent
     ],
     imports: [
         BrowserModule,
@@ -100,7 +103,8 @@ import { TabViewModule } from 'primeng/tabview';
         GenericEntityService,
         JobLauncherService,
         ReplicationService,
-        MyMessageService,
+        MessageService,
+        //MyMessageService,
         { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy },
         //{ provide: ErrorHandler, useClass: CustomErrorHandler }, // overrride default error handler
         { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },

@@ -67,6 +67,8 @@ export class AircraftComponentComponent implements OnInit {
 
     ngOnInit() {
         this.messageService.clear();
+        this.sessionService.clearBackendStackTrace()
+
         this.componentRowArray = [];
         this.page = {} as HalResponsePage;
         this.createForm();

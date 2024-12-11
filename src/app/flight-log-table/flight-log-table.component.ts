@@ -14,7 +14,6 @@ import { CrudEnum } from '../crud-enum';
 import { FlightLogHelper } from './flight-log-table-helper';
 import { Pilot } from '../domain/pilot';
 import { ComponentHelper } from '../util/ComponentHelper';
-import { MyMessageService } from '../message/mymessage.service';
 import { ReplicationService } from '../service/replication.service';
 import { IGenericEntityResponse } from '../response/i-generic-entity-response';
 import { GenericEntityService } from '../service/generic-entity.service';
@@ -24,6 +23,7 @@ import { PermissionEnum } from '../menu/permission-enum';
 import { HttpErrorResponse } from '@angular/common/http';
 import { IFlightLogTotalsVResponse } from '../response/IFlightLogTotalsVResponse';
 import { IFlightLogTotalsV } from '../response/IFlightLogTotalsV';
+import { MessageService } from 'primeng/api';
 
 @Component({
     selector: 'app-flight-log-table',
@@ -32,7 +32,7 @@ import { IFlightLogTotalsV } from '../response/IFlightLogTotalsV';
 })
 export class FlightLogTableComponent implements OnInit {
 
-    readonly fieldNames: Array<string> = ['flightDate', 'makeModel', 'registration', 'pic', 'coPilot', 'routeFrom', 'routeTo', 'remarks', 'dayDual', 'daySolo', 'nightDual', 'nightSolo', 'instrumentSimulated', 'instrumentFlightSim', 'xcountryDay', 'xcountryNight', 'instrumentImc', 'instrumentNoIfrAppr', 'tosLdgsDay', 'tosLdgsNight'];
+    readonly fieldNames: Array<string> = ['flightDate', 'makeModel', 'registration', 'pic', 'coPilot', 'routeFrom', 'routeTo', 'remarks', 'dayDual', 'daySolo', 'nightDual', 'nightSolo', 'instrumentSimulated', 'instrumentFlightSim', 'xCountryDay', 'xCountryNight', 'instrumentImc', 'instrumentNoIfrAppr', 'tosLdgsDay', 'tosLdgsNight'];
 
     flightLogForm: FormGroup;
 
@@ -107,12 +107,14 @@ export class FlightLogTableComponent implements OnInit {
     pageTosLdgsNight: number = 0;
     pageTotal: number = 0;
 
-    constructor(private formBuilder: FormBuilder, private flightLogService: FlightLogServiceService, private genericEntityService: GenericEntityService, private replicationService: ReplicationService, private messageService: MyMessageService, private sessionService: SessionService) {
+    constructor(private formBuilder: FormBuilder, private flightLogService: FlightLogServiceService, private genericEntityService: GenericEntityService, private replicationService: ReplicationService, private messageService: MessageService, private sessionService: SessionService) {
         this.flightLogForm = FlightLogHelper.createForm(formBuilder);
     }
 
     ngOnInit() {
         this.messageService.clear();
+        this.sessionService.clearBackendStackTrace()
+
         this.page = {} as HalResponsePage;
         this.cols = [
             { field: 'flightDate', header: 'Date', style: { 'width': '6em', 'white-space': 'nowrap' }, filterable: 'true', type: 'date' },
@@ -129,8 +131,8 @@ export class FlightLogTableComponent implements OnInit {
             { field: 'nightDual', header: 'N D', tooltipText: 'Night Dual', style: { 'width': '3em' }, filterable: 'true', type: 'numeric', fractionDigits: 1 },
             { field: 'nightSolo', header: 'N S', tooltipText: 'Night Solo', style: { 'width': '3em' }, filterable: 'true', type: 'numeric', fractionDigits: 1 },
 
-            { field: 'xcountryDay', header: 'X D', tooltipText: 'Cross Country Day', style: { 'width': '3em' }, filterable: 'true', type: 'numeric', fractionDigits: 1 },
-            { field: 'xcountryNight', header: 'X N', tooltipText: 'Cross Country Night', style: { 'width': '3em' }, filterable: 'true', type: 'numeric', fractionDigits: 1 },
+            { field: 'xCountryDay', header: 'X D', tooltipText: 'Cross Country Day', style: { 'width': '3em' }, filterable: 'true', type: 'numeric', fractionDigits: 1 },
+            { field: 'xCountryNight', header: 'X N', tooltipText: 'Cross Country Night', style: { 'width': '3em' }, filterable: 'true', type: 'numeric', fractionDigits: 1 },
             { field: 'tosLdgsDay', header: 'L D', tooltipText: 'Total Landings Day', style: { 'width': '3em' }, filterable: 'true', type: 'numeric' },
             { field: 'tosLdgsNight', header: 'L N', tooltipText: 'Total Landings Night', style: { 'width': '3em' }, filterable: 'true', type: 'numeric' },
         ];
@@ -268,10 +270,11 @@ export class FlightLogTableComponent implements OnInit {
                         // test end
 
                         console.log('Retrieving table meta data complete')
-                    },
-                    error: (httpErrorResponse: HttpErrorResponse) => {
-                        this.messageService.error(httpErrorResponse.status.toString(), 'Server error. Please contact support.')
                     }
+                    // ,
+                    // error: (httpErrorResponse: HttpErrorResponse) => {
+                    //     this.messageService.error(httpErrorResponse.status.toString(), 'Server error. Please contact support.')
+                    // }
 
                 }
             )
@@ -370,7 +373,7 @@ export class FlightLogTableComponent implements OnInit {
             Object.keys(filters).forEach(columnName => {
                 console.log('columeName', columnName, 'matchMode', filters[columnName][0].matchMode, 'value', filters[columnName][0].value)
                 //searchCriteria += columnName + filters[columnName][0].matchMode + filters[columnName][0].value + ","
-                if (filters[columnName][0].value) {
+                if (filters[columnName][0].value !== null) {
                     if (filters[columnName][0].value instanceof Date) {
                         searchCriteria += columnName + '|' + filters[columnName][0].matchMode + '|' + new Date(filters[columnName][0].value).toISOString() + ","
                     } else {
@@ -408,6 +411,8 @@ export class FlightLogTableComponent implements OnInit {
                         this.pageRowKey = this.flightLogTotalsVs[this.flightLogTotalsVs.length - 1]._links.flightLogTotalsV.href
                     },
                     complete: () => {
+                        console.log('this.flightLogService.getTableData2 completed')
+
                         // this.messageService.clear()
                         // this.uploadProgressMessage = '';
                         // this.uploadResponse = {} as UploadResponse;
@@ -415,7 +420,8 @@ export class FlightLogTableComponent implements OnInit {
                     }
                     ,
                     error: (httpErrorResponse: HttpErrorResponse): void => {
-                        //this.messageService.add({ severity: 'error', summary: httpErrorResponse.status.toString(), detail: 'Server error. Please contact support.' })
+                        this.loadingStatus = false
+                        // this.messageService.add({ severity: 'error', summary: httpErrorResponse.status.toString(), detail: 'Server error. Please contact support.' })
                     }
                 });
     }
@@ -432,13 +438,12 @@ export class FlightLogTableComponent implements OnInit {
             this.pageInstrumentSimulated += flightLogTotalsV.instrumentSimulated
             this.pageInstrumentFlightSim += flightLogTotalsV.instrumentFlightSim
             this.pageInstrumentNoIfrAppr += flightLogTotalsV.instrumentNoIfrAppr
-            this.pageXCountryDay += flightLogTotalsV.xcountryDay
-            this.pageXCountryNight += flightLogTotalsV.xcountryNight
+            this.pageXCountryDay += flightLogTotalsV.xCountryDay
+            this.pageXCountryNight += flightLogTotalsV.xCountryNight
             this.pageTosLdgsDay += flightLogTotalsV.tosLdgsDay
             this.pageTosLdgsNight += flightLogTotalsV.tosLdgsNight
             this.pageTotal += flightLogTotalsV.dayDual + flightLogTotalsV.daySolo + flightLogTotalsV.nightDual + flightLogTotalsV.nightSolo
         })
-        console.log(this.pageDayDual, this.pageDaySolo)
     }
 
 
@@ -504,10 +509,10 @@ export class FlightLogTableComponent implements OnInit {
                     next: savedFlightLog => {
                         console.log('savedFlightLog', savedFlightLog);
                     },
-                    error: error => {
-                        console.error('flightLogService.saveFlightLog() returned error: ', error);
-                        //this.messageService.error(error);
-                    },
+                    // error: error => {
+                    //     console.error('flightLogService.saveFlightLog() returned error: ', error);
+                    //     //this.messageService.error(error);
+                    // },
                     complete: () => {
                         this.afterCrud();
                     }
@@ -519,10 +524,10 @@ export class FlightLogTableComponent implements OnInit {
                     next: savedFlightLog => {
                         console.log('updatedFlightLog', savedFlightLog);
                     },
-                    error: error => {
-                        console.error('flightLogService.updateFlightLog() returned error: ', error);
-                        //this.messageService.error(error);
-                    },
+                    // error: error => {
+                    //     console.error('flightLogService.updateFlightLog() returned error: ', error);
+                    //     //this.messageService.error(error);
+                    // },
                     complete: () => {
                         this.afterCrud();
                     }
@@ -534,10 +539,10 @@ export class FlightLogTableComponent implements OnInit {
                     next: savedFlightLog => {
                         console.log('deleted flightLog', this.crudFlightLog);
                     },
-                    error: error => {
-                        console.error('flightLogService.saveFlightLog() returned error: ', error);
-                        //this.messageService.error(error);
-                    },
+                    // error: error => {
+                    //     console.error('flightLogService.saveFlightLog() returned error: ', error);
+                    //     //this.messageService.error(error);
+                    // },
                     complete: () => {
                         this.afterCrud();
                     }
