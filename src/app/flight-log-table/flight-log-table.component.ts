@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FlightLogServiceService } from '../service/flight-log-service.service';
 import { FlightLog } from '../domain/flight-log';
-import { FlightLogResponse } from '../response/flight-log-response';
 import { HalResponsePage } from '../hal/hal-response-page';
 import { HalResponseLinks } from '../hal/hal-response-links';
 import { LazyLoadEvent } from 'primeng/api/lazyloadevent';
@@ -118,12 +117,12 @@ export class FlightLogTableComponent implements OnInit {
         this.page = {} as HalResponsePage;
         this.cols = [
             { field: 'flightDate', header: 'Date', style: { 'width': '6em', 'white-space': 'nowrap' }, filterable: 'true', type: 'date' },
-            { field: 'makeModel', header: 'Mk Mdl', style: { 'width': '6em' }, filterable: 'true', type: 'text' },
-            { field: 'registration', header: 'Reg', style: { 'width': '4em' }, filterable: 'true', type: 'text' },
+            { field: 'makeModel', header: 'Mk Mdl', style: { 'width': '6em', 'white-space': 'nowrap' }, filterable: 'true', type: 'text' },
+            { field: 'registration', header: 'Reg', style: { 'width': '4em', 'white-space': 'nowrap' }, filterable: 'true', type: 'text' },
             { field: 'pic', header: 'PIC', style: { 'width': '8em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis' }, filterable: 'true', type: 'text' },
             { field: 'coPilot', header: 'Co Pilot', style: { 'width': '8em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis' }, filterable: 'true', type: 'text' },
-            { field: 'routeFrom', header: 'From', style: { 'width': '4em' }, filterable: 'true', type: 'text' },
-            { field: 'routeTo', header: 'To', style: { 'width': '4em' }, filterable: 'true', type: 'text' },
+            { field: 'routeFrom', header: 'From', style: { 'width': '4em', 'white-space': 'nowrap' }, filterable: 'true', type: 'text' },
+            { field: 'routeTo', header: 'To', style: { 'width': '4em', 'white-space': 'nowrap' }, filterable: 'true', type: 'text' },
             // {field: 'remarks', header: 'Remarks', style: {'width': '30em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis'}},
             { field: 'remarks', header: 'Remarks', style: { 'width': '10em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis' } },
             { field: 'dayDual', header: 'D D', tooltipText: 'Day Dual', style: { 'width': '3em' }, filterable: 'true', type: 'numeric', fractionDigits: 1 },
