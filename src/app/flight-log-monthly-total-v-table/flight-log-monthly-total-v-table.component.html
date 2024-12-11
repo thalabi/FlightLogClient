@@ -25,7 +25,7 @@
     </ng-template>
     <ng-template pTemplate="body" let-flightLogMonthlyTotalV>
         <tr>
-            <td>{{flightLogMonthlyTotalV.month | date:'yyyy-MM'}}</td>
+            <td style="white-space: nowrap">{{flightLogMonthlyTotalV.month | date:'yyyy-MM'}}</td>
             <td>{{flightLogMonthlyTotalV.dayDual}}</td>
             <td>{{flightLogMonthlyTotalV.daySolo}}</td>
             <td>{{flightLogMonthlyTotalV.nightDual}}</td>
