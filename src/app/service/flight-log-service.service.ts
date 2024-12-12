@@ -13,6 +13,7 @@ import { FlightLogYearlyTotalVResponse } from '../response/flight-log-yearly-tot
 import { FlightLogLastXDaysTotalVResponse } from '../response/flight-log-last-x-days-total-v-response';
 import { Observable, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { GenericEntityService } from './generic-entity.service';
 
 @Injectable()
 export class FlightLogServiceService {
@@ -41,14 +42,14 @@ export class FlightLogServiceService {
     //         //.catch(this.handleError);
     // }
     getTableMetaDataAlps(tableName: string): Observable<any> {
-        const entityNameResource = FlightLogServiceService.toPlural(FlightLogServiceService.toCamelCase(tableName))
+        const entityNameResource = GenericEntityService.toPlural(GenericEntityService.toCamelCase(tableName))
         return this.httpClient.get(this.serviceUrl + '/protected/data-rest/profile/' + entityNameResource)
     }
 
-    getFlightLogCount(): Observable<any> {
-        let url: string = this.serviceUrl + '/protected/flightLogController/count';
-        return this.httpClient.get<FlightLogResponse>(url/*, this.getHttpOptions()*/);
-    }
+    // getFlightLogCount(): Observable<any> {
+    //     let url: string = this.serviceUrl + '/protected/flightLogController/count';
+    //     return this.httpClient.get<FlightLogResponse>(url/*, this.getHttpOptions()*/);
+    // }
     /*
     * first: first row, zero based
     * size: page size
@@ -88,28 +89,28 @@ export class FlightLogServiceService {
         //     //.catch(this.handleError);
         return this.httpClient.get<FlightLogResponse>(url/*, this.getHttpOptions()*/);
     }
-    getTableData2(tableName: string, searchCriteria: string, pageNumber: number, pageSize: number, sortColumns?: Array<string>, projection?: string): Observable<any> {
-        searchCriteria = encodeURIComponent(searchCriteria)
-        let sortQueryParams: string = ''
-        if (sortColumns) {
-            console.log('sortColumns', sortColumns)
-            sortColumns.forEach(sortColumnAndDirection => {
-                sortQueryParams = sortQueryParams + "&sort=" + sortColumnAndDirection
-            })
-            console.log('sortQueryParams', sortQueryParams)
-        }
-        const projectionParam: string = projection ? `&projection=${projection}` : ''
+    // getTableData2(tableName: string, searchCriteria: string, pageNumber: number, pageSize: number, sortColumns?: Array<string>, projection?: string): Observable<any> {
+    //     searchCriteria = encodeURIComponent(searchCriteria)
+    //     let sortQueryParams: string = ''
+    //     if (sortColumns) {
+    //         console.log('sortColumns', sortColumns)
+    //         sortColumns.forEach(sortColumnAndDirection => {
+    //             sortQueryParams = sortQueryParams + "&sort=" + sortColumnAndDirection
+    //         })
+    //         console.log('sortQueryParams', sortQueryParams)
+    //     }
+    //     const projectionParam: string = projection ? `&projection=${projection}` : ''
 
-        const entityNameResource = FlightLogServiceService.toPlural(FlightLogServiceService.toCamelCase(tableName))
-        console.log('entityNameResource', entityNameResource)
-        return this.httpClient.get(this.serviceUrl + '/protected/genericEntityController/findAll?' + 'tableName=' + tableName + '&search=' + searchCriteria + '&page=' + pageNumber + '&size=' + pageSize + sortQueryParams + projectionParam)
-    }
-    public static toCamelCase(tableName: string): string {
-        return tableName.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase()); // convert to camel case
-    }
-    public static toPlural(entityName: string): string {
-        return entityName.endsWith('s') ? entityName + 'es' : entityName + 's'
-    }
+    //     const entityNameResource = FlightLogServiceService.toPlural(FlightLogServiceService.toCamelCase(tableName))
+    //     console.log('entityNameResource', entityNameResource)
+    //     return this.httpClient.get(this.serviceUrl + '/protected/genericEntityController/findAll?' + 'tableName=' + tableName + '&search=' + searchCriteria + '&page=' + pageNumber + '&size=' + pageSize + sortQueryParams + projectionParam)
+    // }
+    // public static toCamelCase(tableName: string): string {
+    //     return tableName.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase()); // convert to camel case
+    // }
+    // public static toPlural(entityName: string): string {
+    //     return entityName.endsWith('s') ? entityName + 'es' : entityName + 's'
+    // }
 
     addFlightLog(flightLog: FlightLog): Observable<FlightLogResponse> {
         let url: string = this.serviceUrl + '/protected/data-rest/flightLogs';

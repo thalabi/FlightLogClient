@@ -88,6 +88,7 @@ export class FlightLogTableComponent implements OnInit {
     replicationStatusControlDisabled: boolean = true;
 
     readonly tableName: string = 'flightLog';
+    readonly viewName: string = 'flight_log_totals_v'
 
     hasWritePermission: boolean = false;
 
@@ -173,14 +174,15 @@ export class FlightLogTableComponent implements OnInit {
         //this.getTableMetaData();
 
         // set the firstRowOfTable to the first row of the last page
-        this.flightLogService.getFlightLogCount().subscribe({
+        this.genericEntityService.getRecordCount(this.viewName).subscribe({
             next: data => {
-                let rowCount: number = data.count;
+                let rowCount: number = data;
                 console.log('rowCount', rowCount);
                 let pageNumber: number = Math.floor(rowCount / this.ROWS_PER_PAGE);
                 if (rowCount % this.ROWS_PER_PAGE != 0) pageNumber++;
                 this.firstRowOfTable = (pageNumber - 1) * this.ROWS_PER_PAGE;
                 console.log('this.firstRowOfTable', this.firstRowOfTable);
+
             }
         });
 
@@ -192,14 +194,14 @@ export class FlightLogTableComponent implements OnInit {
     }
 
     private getTableMetaData() {
-        this.flightLogService.getTableMetaDataAlps('flight_log_totals_v')
+        this.flightLogService.getTableMetaDataAlps(this.viewName)
             .subscribe(
                 {
                     next: (metaData: any) => {
                         console.log('alps metaData', metaData)
                         const alpsDescriptors = metaData.alps.descriptor
                         console.log('alps alpsDescriptors', alpsDescriptors)
-                        const representationDescriptorId = FlightLogServiceService.toCamelCase('flight_log_totals_v') + '-representation';
+                        const representationDescriptorId = GenericEntityService.toCamelCase(this.viewName) + '-representation';
                         const representationDescriptor = alpsDescriptors.find((descriptor: { id: string; }) => descriptor.id = representationDescriptorId)
                         console.log('representationDescriptor', representationDescriptor)
                         const columnDescriptors = representationDescriptor.descriptor
@@ -385,9 +387,9 @@ export class FlightLogTableComponent implements OnInit {
             }
             console.log('searchCriteria', searchCriteria)
         }
-        const entityNameResource = FlightLogServiceService.toPlural(FlightLogServiceService.toCamelCase('flight_log_totals_v'))
+        const entityNameResource = GenericEntityService.toPlural(GenericEntityService.toCamelCase(this.viewName))
         console.log('entityNameResource 2', entityNameResource)
-        this.flightLogService.getTableData2('flight_log_totals_v', searchCriteria, pageNumber, pageSize, ['flightDate', 'id'])
+        this.genericEntityService.getTableData2(this.viewName, searchCriteria, pageNumber, pageSize, ['flightDate', 'id'])
             .subscribe(
                 {
                     next: (flightLogTotalsVResponse: IFlightLogTotalsVResponse) => {

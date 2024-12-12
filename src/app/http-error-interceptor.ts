@@ -17,7 +17,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
         return next.handle(request).pipe(
             map((httpEvent: HttpEvent<any>) => {
                 if (httpEvent instanceof HttpResponse) {
-                    console.log('event--->>>', httpEvent);
+                    console.log('response: %o', httpEvent);
                     // this.errorDialogService.openDialog(event);
                 }
                 return httpEvent;
