@@ -58,9 +58,7 @@ export class GenericCrudComponent implements OnInit {
     fieldAttributesArray: Array<FieldAttributes> = [];
     associationAttributesArray: Array<AssociationAttributes> = [];
     entityName!: string;
-    // sortColumnName: string;
-    tableNameCapitalized!: string;
-    //columnName1: string;
+    tableName!: string;
 
     // used to pass as argument to getTableRowsLazy() when refreshing page after add/update/delete
     savedLazyLoadEvent!: LazyLoadEvent;
@@ -90,21 +88,20 @@ export class GenericCrudComponent implements OnInit {
         this.counter++;
         console.log("this.counter: ", this.counter);
         this.route.params.subscribe(params => {
-            this.entityName = params['tableName'];
+            this.entityName = params['entityName'];
+            console.log('this.entityName', this.entityName)
 
             this.formAttributes = CrudComponentConfig.formConfig.get(this.entityName) || {} as FormAttributes;
             this.fieldAttributesArray = this.formAttributes.fields;
+            this.tableName = this.formAttributes.tableName
             this.associationAttributesArray = this.formAttributes.associations;
             console.log('this.formAttributes', this.formAttributes, 'this.associationAttributesArray', this.associationAttributesArray);
 
-            console.log('entityName', this.entityName/*, 'sortColumnName', this.sortColumnName*/);
-            this.tableNameCapitalized = StringUtils.capitalize(this.entityName);
+            console.log('entityName', this.entityName);
             this.createForm();
             console.log("after createForm");
 
             this.row = <IGenericEntity>{};
-            // console.log("before fetchPage");
-            // this.fetchPage(0, this.ROWS_PER_PAGE, '', this.formAttributes.queryOrderByColumns);
 
             this.fetchAssociations();
 
@@ -311,7 +308,7 @@ export class GenericCrudComponent implements OnInit {
         }
         const entityNameResource = GenericEntityService.toPlural(GenericEntityService.toCamelCase(this.entityName))
         console.log('entityNameResource 2', entityNameResource)
-        this.genericEntityService.getTableData2(this.entityName, searchCriteria, pageNumber, pageSize, sort)
+        this.genericEntityService.getTableData2(this.tableName, searchCriteria, pageNumber, pageSize, sort)
             .subscribe(
                 {
                     // next: (flightLogTotalsVResponse: IFlightLogTotalsVResponse) => {
@@ -333,7 +330,7 @@ export class GenericCrudComponent implements OnInit {
                         this.page = rowResponse.page;
                         if (rowResponse._embedded) {
                             this.firstRowOfTable = this.page.number * this.ROWS_PER_PAGE;
-                            this.rowArray = rowResponse._embedded[GenericEntityService.toPlural(GenericEntityService.toCamelCase(this.entityName))];
+                            this.rowArray = rowResponse._embedded[GenericEntityService.toPlural(this.entityName)];
                             ComponentHelper.setRowArrayDateFields(this.rowArray, this.fieldAttributesArray);
                         } else {
                             this.firstRowOfTable = 0;

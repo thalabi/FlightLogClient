@@ -61,7 +61,7 @@ export class CrudComponentConfig {
 
     private static significantEvent: FormAttributes = {
         formTitle: 'Significant Event',
-        tableName: 'significantEvent',
+        tableName: 'significant_event',
         queryOrderByColumns: ['eventDate'],
         fields: [
             { columnName: 'eventDate', dataType: DataTypeEnum.DATE, mandatory: true, header: 'Date', headerStyle: { width: '7rem' }, uiComponentType: UiComponentEnum.CALENDAR, pipe: 'date-yyyy-mm-dd', filterStyle: { width: '6rem' }, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'date' },
@@ -122,10 +122,10 @@ export class CrudComponentConfig {
 
     static formConfig: Map<string, FormAttributes> = new Map([
         ['airport', CrudComponentConfig.airport],
-        ['make_model', CrudComponentConfig.makeModel],
+        ['makeModel', CrudComponentConfig.makeModel],
         ['pilot', CrudComponentConfig.pilot],
         ['registration', CrudComponentConfig.registration],
-        ['significant_event', CrudComponentConfig.significantEvent],
+        ['significantEvent', CrudComponentConfig.significantEvent],
         ['user', CrudComponentConfig.user],
         ['group', CrudComponentConfig.group],
         ['part', CrudComponentConfig.part]

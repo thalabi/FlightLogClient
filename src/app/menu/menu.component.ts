@@ -56,10 +56,10 @@ export class MenuComponent implements OnInit {
 
             this.findMenuItem(this.menuModel, 'misc').visible = MenuComponent.isHolderOfAnyRole(this.userInfo, PermissionEnum.AIRPORT_READ, PermissionEnum.MAKE_MODEL_READ, PermissionEnum.PILOT_READ, PermissionEnum.REGISTRATION_READ, PermissionEnum.SIGNIFICANT_EVENT_READ);
             this.findMenuItem(this.menuModel, 'airport').visible = MenuComponent.isHolderOfAnyRole(this.userInfo, PermissionEnum.AIRPORT_READ);
-            this.findMenuItem(this.menuModel, 'make_model').visible = MenuComponent.isHolderOfAnyRole(this.userInfo, PermissionEnum.MAKE_MODEL_READ);
+            this.findMenuItem(this.menuModel, 'makeModel').visible = MenuComponent.isHolderOfAnyRole(this.userInfo, PermissionEnum.MAKE_MODEL_READ);
             this.findMenuItem(this.menuModel, 'pilot').visible = MenuComponent.isHolderOfAnyRole(this.userInfo, PermissionEnum.PILOT_READ);
             this.findMenuItem(this.menuModel, 'registration').visible = MenuComponent.isHolderOfAnyRole(this.userInfo, PermissionEnum.REGISTRATION_READ);
-            this.findMenuItem(this.menuModel, 'significant_event').visible = MenuComponent.isHolderOfAnyRole(this.userInfo, PermissionEnum.SIGNIFICANT_EVENT_READ);
+            this.findMenuItem(this.menuModel, 'significantEvent').visible = MenuComponent.isHolderOfAnyRole(this.userInfo, PermissionEnum.SIGNIFICANT_EVENT_READ);
 
             this.findMenuItem(this.menuModel, 'jobs').visible = MenuComponent.isHolderOfAnyRole(this.userInfo, PermissionEnum.AIRPORT_SYNC, PermissionEnum.FLIGHT_LOG_SYNC, PermissionEnum.MAKE_MODEL_SYNC, PermissionEnum.PILOT_SYNC, PermissionEnum.REGISTRATION_SYNC, PermissionEnum.SIGNIFICANT_EVENT_SYNC);
 

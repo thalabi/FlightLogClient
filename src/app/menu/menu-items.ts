@@ -28,10 +28,10 @@ export class MenuItems {
                 id: 'misc', label: 'Misc',
                 items: [
                     { id: 'airport', label: 'Airport', routerLink: 'genericCrud/airport', routerLinkActiveOptions: { exact: true } },
-                    { id: 'make_model', label: 'Make & Model', routerLink: 'genericCrud/make_model', routerLinkActiveOptions: { exact: true } },
+                    { id: 'makeModel', label: 'Make & Model', routerLink: 'genericCrud/makeModel', routerLinkActiveOptions: { exact: true } },
                     { id: 'pilot', label: 'Pilot/Passenger', routerLink: 'genericCrud/pilot', routerLinkActiveOptions: { exact: true } },
                     { id: 'registration', label: 'Registration', routerLink: 'genericCrud/registration', routerLinkActiveOptions: { exact: true } },
-                    { id: 'significant_event', label: 'Significant Event', routerLink: 'genericCrud/significant_event', routerLinkActiveOptions: { exact: true } },
+                    { id: 'significantEvent', label: 'Significant Event', routerLink: 'genericCrud/significantEvent', routerLinkActiveOptions: { exact: true } },
                 ],
                 permissionEnumArray: [PermissionEnum.AIRPORT_READ, PermissionEnum.MAKE_MODEL_READ, PermissionEnum.PILOT_READ, PermissionEnum.REGISTRATION_READ, PermissionEnum.SIGNIFICANT_EVENT_READ]
             },

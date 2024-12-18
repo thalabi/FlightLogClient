@@ -21,7 +21,7 @@ const routes: Routes = [
     { path: 'flightLogYearlyTotalVTable', component: FlightLogYearlyTotalVTableComponent, canActivate: [AuthGuard] },
     { path: 'flightLogLastXDaysTotalVTableComponent', component: FlightLogLastXDaysTotalVTableComponent, canActivate: [AuthGuard] },
     { path: 'jobLauncher', component: JobLauncherComponent, canActivate: [AuthGuard] },
-    { path: 'genericCrud/:tableName', component: GenericCrudComponent, canActivate: [AuthGuard] },
+    { path: 'genericCrud/:entityName', component: GenericCrudComponent, canActivate: [AuthGuard] },
     { path: 'aircraftComponent', component: AircraftComponentComponent, canActivate: [AuthGuard] },
     { path: 'aircraftHistoryPrintComponentComponent', component: AircraftHistoryPrintComponentComponent, canActivate: [AuthGuard] },
 
