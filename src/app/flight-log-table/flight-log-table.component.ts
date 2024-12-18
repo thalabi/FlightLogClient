@@ -117,7 +117,7 @@ export class FlightLogTableComponent implements OnInit {
 
         this.page = {} as HalResponsePage;
         this.cols = [
-            { field: 'flightDate', header: 'Date', style: { 'width': '6em', 'white-space': 'nowrap' }, filterable: true, type: 'date' },
+            { field: 'flightDate', header: 'Date', style: { 'width': '10em', 'white-space': 'nowrap' }, filterable: true, type: 'date' },
             { field: 'makeModel', header: 'Mk Mdl', style: { 'width': '6em', 'white-space': 'nowrap' }, filterable: true, type: 'text' },
             { field: 'registration', header: 'Reg', style: { 'width': '4em', 'white-space': 'nowrap' }, filterable: true, type: 'text' },
             { field: 'pic', header: 'PIC', style: { 'width': '8em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis' }, filterable: true, type: 'text' },
