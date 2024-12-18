@@ -16,7 +16,7 @@
                 <span *ngIf="col.tooltipText" [pTooltip]="col.tooltipText" tooltipPosition="top"
                     class="underline-dotted">{{col.header}}</span>
                 <span *ngIf="!col.tooltipText">{{col.header}}</span>
-                <p-columnFilter *ngIf="col.filterable == 'true'" [type]="col.type" [field]="col.field"
+                <p-columnFilter *ngIf="col.filterable" [type]="col.type" [field]="col.field"
                     [minFractionDigits]="col.fractionDigits" [maxFractionDigits]="col.fractionDigits" display="menu"
                     [showOperator]="false" [showAddButton]="false" [hideOnClear]="true"></p-columnFilter>
             </th>

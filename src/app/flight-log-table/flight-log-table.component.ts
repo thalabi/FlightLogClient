@@ -117,30 +117,30 @@ export class FlightLogTableComponent implements OnInit {
 
         this.page = {} as HalResponsePage;
         this.cols = [
-            { field: 'flightDate', header: 'Date', style: { 'width': '6em', 'white-space': 'nowrap' }, filterable: 'true', type: 'date' },
-            { field: 'makeModel', header: 'Mk Mdl', style: { 'width': '6em', 'white-space': 'nowrap' }, filterable: 'true', type: 'text' },
-            { field: 'registration', header: 'Reg', style: { 'width': '4em', 'white-space': 'nowrap' }, filterable: 'true', type: 'text' },
-            { field: 'pic', header: 'PIC', style: { 'width': '8em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis' }, filterable: 'true', type: 'text' },
-            { field: 'coPilot', header: 'Co Pilot', style: { 'width': '8em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis' }, filterable: 'true', type: 'text' },
-            { field: 'routeFrom', header: 'From', style: { 'width': '4em', 'white-space': 'nowrap' }, filterable: 'true', type: 'text' },
-            { field: 'routeTo', header: 'To', style: { 'width': '4em', 'white-space': 'nowrap' }, filterable: 'true', type: 'text' },
+            { field: 'flightDate', header: 'Date', style: { 'width': '6em', 'white-space': 'nowrap' }, filterable: true, type: 'date' },
+            { field: 'makeModel', header: 'Mk Mdl', style: { 'width': '6em', 'white-space': 'nowrap' }, filterable: true, type: 'text' },
+            { field: 'registration', header: 'Reg', style: { 'width': '4em', 'white-space': 'nowrap' }, filterable: true, type: 'text' },
+            { field: 'pic', header: 'PIC', style: { 'width': '8em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis' }, filterable: true, type: 'text' },
+            { field: 'coPilot', header: 'Co Pilot', style: { 'width': '8em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis' }, filterable: true, type: 'text' },
+            { field: 'routeFrom', header: 'From', style: { 'width': '4em', 'white-space': 'nowrap' }, filterable: true, type: 'text' },
+            { field: 'routeTo', header: 'To', style: { 'width': '4em', 'white-space': 'nowrap' }, filterable: true, type: 'text' },
             // {field: 'remarks', header: 'Remarks', style: {'width': '30em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis'}},
             { field: 'remarks', header: 'Remarks', style: { 'width': '10em', 'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis' } },
-            { field: 'dayDual', header: 'D D', tooltipText: 'Day Dual', style: { 'width': '3em' }, filterable: 'true', type: 'numeric', fractionDigits: 1 },
-            { field: 'daySolo', header: 'D S', tooltipText: 'Day Solo', style: { 'width': '3em' }, filterable: 'true', type: 'numeric', fractionDigits: 1 },
-            { field: 'nightDual', header: 'N D', tooltipText: 'Night Dual', style: { 'width': '3em' }, filterable: 'true', type: 'numeric', fractionDigits: 1 },
-            { field: 'nightSolo', header: 'N S', tooltipText: 'Night Solo', style: { 'width': '3em' }, filterable: 'true', type: 'numeric', fractionDigits: 1 },
+            { field: 'dayDual', header: 'D D', tooltipText: 'Day Dual', style: { 'width': '3em' }, filterable: true, type: 'numeric', fractionDigits: 1 },
+            { field: 'daySolo', header: 'D S', tooltipText: 'Day Solo', style: { 'width': '3em' }, filterable: true, type: 'numeric', fractionDigits: 1 },
+            { field: 'nightDual', header: 'N D', tooltipText: 'Night Dual', style: { 'width': '3em' }, filterable: true, type: 'numeric', fractionDigits: 1 },
+            { field: 'nightSolo', header: 'N S', tooltipText: 'Night Solo', style: { 'width': '3em' }, filterable: true, type: 'numeric', fractionDigits: 1 },
 
-            { field: 'xCountryDay', header: 'X D', tooltipText: 'Cross Country Day', style: { 'width': '3em' }, filterable: 'true', type: 'numeric', fractionDigits: 1 },
-            { field: 'xCountryNight', header: 'X N', tooltipText: 'Cross Country Night', style: { 'width': '3em' }, filterable: 'true', type: 'numeric', fractionDigits: 1 },
-            { field: 'tosLdgsDay', header: 'L D', tooltipText: 'Total Landings Day', style: { 'width': '3em' }, filterable: 'true', type: 'numeric' },
-            { field: 'tosLdgsNight', header: 'L N', tooltipText: 'Total Landings Night', style: { 'width': '3em' }, filterable: 'true', type: 'numeric' },
+            { field: 'xCountryDay', header: 'X D', tooltipText: 'Cross Country Day', style: { 'width': '3em' }, filterable: true, type: 'numeric', fractionDigits: 1 },
+            { field: 'xCountryNight', header: 'X N', tooltipText: 'Cross Country Night', style: { 'width': '3em' }, filterable: true, type: 'numeric', fractionDigits: 1 },
+            { field: 'tosLdgsDay', header: 'L D', tooltipText: 'Total Landings Day', style: { 'width': '3em' }, filterable: true, type: 'numeric' },
+            { field: 'tosLdgsNight', header: 'L N', tooltipText: 'Total Landings Night', style: { 'width': '3em' }, filterable: true, type: 'numeric' },
         ];
         this.colsPart2 = [
-            { field: 'instrumentSimulated', header: 'Inst Sim', style: { 'width': '3em' }, filterable: 'true', type: 'numeric', fractionDigits: 1 },
-            { field: 'instrumentFlightSim', header: 'Inst Flt Sim', style: { 'width': '3em' }, filterable: 'true', type: 'numeric', fractionDigits: 1 },
-            { field: 'instrumentImc', header: 'Inst IMC', style: { 'width': '3em' }, filterable: 'true', type: 'numeric', fractionDigits: 1 },
-            { field: 'instrumentNoIfrAppr', header: '# IFR Apr', style: { 'width': '3em' }, filterable: 'true', type: 'numeric' },
+            { field: 'instrumentSimulated', header: 'Inst Sim', style: { 'width': '3em' }, filterable: true, type: 'numeric', fractionDigits: 1 },
+            { field: 'instrumentFlightSim', header: 'Inst Flt Sim', style: { 'width': '3em' }, filterable: true, type: 'numeric', fractionDigits: 1 },
+            { field: 'instrumentImc', header: 'Inst IMC', style: { 'width': '3em' }, filterable: true, type: 'numeric', fractionDigits: 1 },
+            { field: 'instrumentNoIfrAppr', header: '# IFR Apr', style: { 'width': '3em' }, filterable: true, type: 'numeric' },
         ];
         this.columnOptions = [];
         for (let i = 0; i < this.cols.length; i++) {
@@ -330,35 +330,6 @@ export class FlightLogTableComponent implements OnInit {
         this.fetchPage(lazyLoadEvent);
     }
 
-    // fetchPage(firstRowNumber: number, rowsPerPage: number, searchString: string) {
-    //     this.loadingStatus = true;
-    //     this.flightLogService.getPage(firstRowNumber, rowsPerPage, searchString).subscribe({
-    //         next: flightLogResponse => {
-    //             console.log('flightLogResponse', flightLogResponse);
-    //             this.flightLogResponse = flightLogResponse;
-    //             this.page = this.flightLogResponse.page;
-    //             this.flightLogArray = this.page.totalElements ? this.flightLogResponse._embedded.flightLogs : [];
-    //             // this.flightLogArray.forEach(flightLog => {
-    //             //     flightLog.airportFrom = new Airport();
-    //             //     flightLog.airportFrom.identifier = flightLog.routeFrom;
-    //             // })
-    //             this.clearTimes(this.flightLogArray);
-    //             console.log('this.flightLogArray', this.flightLogArray);
-    //             this.links = this.flightLogResponse._links;
-    //         },
-    //         complete: () => {
-    //             this.loadingStatus = false;
-    //         },
-    //         error: error => {
-    //             this.loadingStatus = false;
-    //             console.error(error);
-    //             // TODO uncomment later
-    //             //this.messageService.clear();
-    //             //this.messageService.error(error);
-    //         }
-    //     });
-    // }
-
     fetchPage(lazyLoadEvent: LazyLoadEvent) {
         console.log(lazyLoadEvent)
         this.loadingStatus = true
@@ -400,10 +371,6 @@ export class FlightLogTableComponent implements OnInit {
                         this.flightLogTotalsVResponse = flightLogTotalsVResponse;
                         this.page = this.flightLogTotalsVResponse.page;
                         this.flightLogTotalsVs = this.page.totalElements ? this.flightLogTotalsVResponse._embedded.flightLogTotalsVs : [];
-                        // this.flightLogArray.forEach(flightLog => {
-                        //     flightLog.airportFrom = new Airport();
-                        //     flightLog.airportFrom.identifier = flightLog.routeFrom;
-                        // })
                         this.clearTimes(this.flightLogTotalsVs);
                         console.log('this.flightLogTotalsVs', this.flightLogTotalsVs);
                         //this.links = this.flightLogTotalsVResponse._links;

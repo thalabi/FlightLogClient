@@ -1,11 +1,24 @@
-th {
+/* th {
+    font-weight: normal;
+} */
+
+:host ::ng-deep .ui-table-caption,
+:host ::ng-deep .ui-table-summary {
     font-weight: normal;
 }
-:host ::ng-deep .ui-table-caption, :host ::ng-deep .ui-table-summary {
-    font-weight: normal;
+
+::ng-deep .ui-paginator-page.ui-paginator-element.ui-state-default.ui-corner-all.ui-state-active,
+::ng-deep .ui-paginator-page.ui-paginator-element.ui-state-default.ui-corner-all {
+    padding-left: 0.3em;
+    padding-right: 0.3em;
+    width: auto;
 }
-::ng-deep .ui-paginator-page.ui-paginator-element.ui-state-default.ui-corner-all.ui-state-active, ::ng-deep .ui-paginator-page.ui-paginator-element.ui-state-default.ui-corner-all {padding-left: 0.3em; padding-right: 0.3em; width: auto;}
 
 .red-font {
     color: red;
+}
+
+::ng-deep .p-datatable ::ng-deep .p-sortable-column.p-highlight {
+    background: #e0e0e0;
+    color: currentColor;
 }

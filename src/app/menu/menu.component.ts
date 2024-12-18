@@ -19,30 +19,11 @@ export class MenuComponent implements OnInit {
 
     menuModel!: Array<CustomMenuItem>;
 
-    //isDesktop!: boolean;
-
     constructor(private authService: AuthService, private sessionService: SessionService
         , private menuItems: MenuItems) { }
 
     ngOnInit() {
         console.log('menu component')
-
-
-        //this.isDesktop = this.deviceDetectorService.isDesktop();
-        //this.showMenuItems(false);
-        // this.sessionDataService.userSubject
-        //     //.map((data:User)=>{console.log(data})
-        //     .subscribe(
-        //         data => {
-        //             this.user = data;
-        //             console.log('user: ', this.user);
-        //             this.showMenuItems(this.user != undefined && this.user != null);
-        //         },
-        //         error => console.error(error),
-        //         () => console.log('completed, this.user: ', this.user)
-        //     );
-
-
         this.authService.isAuthenticated$
             .pipe(distinctUntilChanged())
             .subscribe(authenticated => {
@@ -54,11 +35,8 @@ export class MenuComponent implements OnInit {
                         this.userInfo = userInfo
                         console.log('userInfo', this.userInfo)
                         console.log('userInfo.backEndAuthorities', this.userInfo.backEndAuthorities)
-                        if (userInfo.backEndAuthorities?.includes('ROLE_realm_ipm-admin-role')) {
-                            //this.items = adminMenuItems
-                        }
+                        this.menuModel = this.menuItems.menuModel;
                     })
-                    this.menuModel = this.menuItems.menuModel;
                 } else {
                     this.menuModel = [
                         { label: 'Login', command: () => this.authService.login() }

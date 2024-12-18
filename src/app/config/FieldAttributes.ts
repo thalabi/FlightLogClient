@@ -19,4 +19,7 @@ export interface FieldAttributes {
     associationAttributes?: AssociationAttributes;
     // TODO declare right type
     //filterMatchMode: any
+    filterable?: boolean;
+    filterDataType?: string;
+    fractionDigits?: number;
 }

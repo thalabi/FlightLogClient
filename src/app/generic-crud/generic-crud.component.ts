@@ -22,6 +22,8 @@ import { IGenericEntityResponse } from '../response/i-generic-entity-response';
 import { MenuComponent } from '../menu/menu.component';
 import { Constant } from '../constant';
 import { SessionService } from '../service/session.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { SortEvent } from 'primeng/api';
 
 @Component({
     selector: 'app-generic-crud',
@@ -29,7 +31,6 @@ import { SessionService } from '../service/session.service';
     styleUrls: ['./generic-crud.component.css']
 })
 export class GenericCrudComponent implements OnInit {
-    //[x: string]: any;
 
     rowArray: Array<IGenericEntity> = [];
     // Holds all rows of the associated table
@@ -56,7 +57,7 @@ export class GenericCrudComponent implements OnInit {
     formAttributes: FormAttributes = {} as FormAttributes;
     fieldAttributesArray: Array<FieldAttributes> = [];
     associationAttributesArray: Array<AssociationAttributes> = [];
-    tableName!: string;
+    entityName!: string;
     // sortColumnName: string;
     tableNameCapitalized!: string;
     //columnName1: string;
@@ -71,14 +72,13 @@ export class GenericCrudComponent implements OnInit {
 
     counter: number = 0;
 
-    loadingFlag!: boolean;
+    loadingStatus!: boolean;
 
     uiComponentEnum = UiComponentEnum; // Used in html to refere to enum
 
     hasWritePermission: boolean = false;
 
     constructor(private formBuilder: FormBuilder, private genericEntityService: GenericEntityService, private route: ActivatedRoute, private messageService: MyMessageService, private sessionService: SessionService) {
-        console.log("constructor() ===============================");
     }
 
     ngOnInit() {
@@ -90,15 +90,15 @@ export class GenericCrudComponent implements OnInit {
         this.counter++;
         console.log("this.counter: ", this.counter);
         this.route.params.subscribe(params => {
-            this.tableName = params['tableName'];
+            this.entityName = params['tableName'];
 
-            this.formAttributes = CrudComponentConfig.formConfig.get(this.tableName) || {} as FormAttributes;
+            this.formAttributes = CrudComponentConfig.formConfig.get(this.entityName) || {} as FormAttributes;
             this.fieldAttributesArray = this.formAttributes.fields;
             this.associationAttributesArray = this.formAttributes.associations;
             console.log('this.formAttributes', this.formAttributes, 'this.associationAttributesArray', this.associationAttributesArray);
 
-            console.log('tableName', this.tableName/*, 'sortColumnName', this.sortColumnName*/);
-            this.tableNameCapitalized = StringUtils.capitalize(this.tableName);
+            console.log('entityName', this.entityName/*, 'sortColumnName', this.sortColumnName*/);
+            this.tableNameCapitalized = StringUtils.capitalize(this.entityName);
             this.createForm();
             console.log("after createForm");
 
@@ -112,7 +112,7 @@ export class GenericCrudComponent implements OnInit {
             //     this.sessionDataService.user || {} as User, Constant.entityToWritePermissionMap.get(this.tableName) || '')
             this.sessionService.userInfo$.subscribe(userInfo => {
                 console.log('userInfo', userInfo)
-                this.hasWritePermission = MenuComponent.isHolderOfAnyRole(userInfo, Constant.entityToWritePermissionMap.get(this.tableName) || '');
+                this.hasWritePermission = MenuComponent.isHolderOfAnyRole(userInfo, Constant.entityToWritePermissionMap.get(this.entityName) || '');
             });
 
         });
@@ -181,7 +181,7 @@ export class GenericCrudComponent implements OnInit {
                     this.crudRow[fieldAttributes.columnName] = this.crudForm.controls[fieldAttributes.columnName].value;
                 });
                 this.setRowDateFields(this.crudRow, this.fieldAttributesArray);
-                let addGenericEntityAndAssociation$: Observable<IGenericEntityResponse> = this.genericEntityService.addGenericEntity(this.tableName, this.crudRow).pipe(
+                let addGenericEntityAndAssociation$: Observable<IGenericEntityResponse> = this.genericEntityService.addGenericEntity(this.entityName, this.crudRow).pipe(
                     concatMap((savedSingleGenericEntityResponse: IGenericEntityResponse) => {
                         if (this.formAttributes.associations && this.formAttributes.associations.length != 0) {
                             return this.genericEntityService.updateAssociationGenericEntity(savedSingleGenericEntityResponse, this.formAttributes.associations[0].associationPropertyName, this.selectedAssociationArray);
@@ -250,11 +250,11 @@ export class GenericCrudComponent implements OnInit {
     private afterCrud() {
         this.displayDialog = false;
         this.modifyAndDeleteButtonsDisable = true;
-        this.fetchPage(this.savedLazyLoadEvent.first || 0, this.savedLazyLoadEvent.rows || 0,
-            ComponentHelper.buildSearchString(this.savedLazyLoadEvent, this.formAttributes.fields.map(field => field.columnName)),
-            this.formAttributes.queryOrderByColumns);
-
+        // this.fetchPage(this.savedLazyLoadEvent.first || 0, this.savedLazyLoadEvent.rows || 0,
+        //     ComponentHelper.buildSearchString(this.savedLazyLoadEvent, this.formAttributes.fields.map(field => field.columnName)),
+        //     this.formAttributes.queryOrderByColumns);
         this.resetDialoForm();
+        this.onLazyLoad(this.savedLazyLoadEvent);
     }
 
     private resetDialoForm() {
@@ -272,42 +272,90 @@ export class GenericCrudComponent implements OnInit {
         this.savedLazyLoadEvent = lazyLoadEvent;
         console.log('event', lazyLoadEvent);
         console.log('event.first', lazyLoadEvent.first);
-        // console.log('this.firstRowOfTable', this.firstRowOfTable);
-        // lazyLoadEvent.first = lazyLoadEvent.first || this.firstRowOfTable;
-        // console.log('event.first', lazyLoadEvent.first);
         console.log('event.rows', lazyLoadEvent.rows);
         console.log('event.filters', lazyLoadEvent.filters);
-        this.fetchPage(lazyLoadEvent.first || 0, lazyLoadEvent.rows || 0,
-            ComponentHelper.buildSearchString(lazyLoadEvent, this.formAttributes.fields.map(field => field.columnName)),
-            this.formAttributes.queryOrderByColumns);
+        this.fetchPage(lazyLoadEvent)
     }
 
-    fetchPage(firstRowNumber: number, rowsPerPage: number, searchString: string, queryOrderByColumns: string[]) {
-        console.log("in fetchPage");
-        this.loadingFlag = true;
-        this.genericEntityService.getGenericEntityPage(this.tableName, firstRowNumber, rowsPerPage, searchString, queryOrderByColumns)
-            .subscribe({
-                next: rowResponse => {
-                    console.log('rowResponse', rowResponse);
-                    this.page = rowResponse.page;
-                    if (rowResponse._embedded) {
-                        this.firstRowOfTable = this.page.number * this.ROWS_PER_PAGE;
-                        this.rowArray = rowResponse._embedded[this.tableName + 's'];
-                        ComponentHelper.setRowArrayDateFields(this.rowArray, this.fieldAttributesArray);
+    fetchPage(lazyLoadEvent: LazyLoadEvent) {
+        console.log(lazyLoadEvent)
+        this.loadingStatus = true
+        const pageSize = lazyLoadEvent.rows ?? 20
+        const pageNumber = (lazyLoadEvent.first ?? 0) / pageSize;
+        const filters: any = lazyLoadEvent.filters
+        console.log('filters', filters)
+        console.log('pageNumber', pageNumber, 'pageSize', pageSize, 'filters', filters)
+        let searchCriteria: string = ''
+        if (filters) {
+            console.log('Object.keys(filters)', Object.keys(filters))
+            Object.keys(filters).forEach(columnName => {
+                console.log('columeName', columnName, 'matchMode', filters[columnName][0].matchMode, 'value', filters[columnName][0].value)
+                if (filters[columnName][0].value !== null) {
+                    if (filters[columnName][0].value instanceof Date) {
+                        searchCriteria += columnName + '|' + filters[columnName][0].matchMode + '|' + new Date(filters[columnName][0].value).toISOString() + ","
                     } else {
-                        this.firstRowOfTable = 0;
-                        this.rowArray = [];
+                        searchCriteria += columnName + '|' + filters[columnName][0].matchMode + '|' + filters[columnName][0].value + ","
                     }
-
-                    // this.firstRowOfTable = page.number * this.ROWS_PER_PAGE;
-                    // this.rowArray = page.totalElements ? rowResponse._embedded[this.tableName+'s'] : [];
-                    // console.log('this.rowArray', this.rowArray);
-                    this.links = rowResponse._links;
-                },
-                complete: () => {
-                    this.loadingFlag = false;
                 }
-            });
+            })
+            if (searchCriteria.length > 0) {
+                searchCriteria = searchCriteria.slice(0, searchCriteria.length - 1)
+            }
+            console.log('searchCriteria', searchCriteria)
+        }
+        let sort: string[] = []
+        if (lazyLoadEvent.sortField) {
+            sort[0] = lazyLoadEvent.sortField + (lazyLoadEvent.sortOrder === -1 ? ',DESC' : '')
+            sort[1] = 'id' // always add id colmun so that page results are consistant
+            //console.log('sort', sort)
+        }
+        const entityNameResource = GenericEntityService.toPlural(GenericEntityService.toCamelCase(this.entityName))
+        console.log('entityNameResource 2', entityNameResource)
+        this.genericEntityService.getTableData2(this.entityName, searchCriteria, pageNumber, pageSize, sort)
+            .subscribe(
+                {
+                    // next: (flightLogTotalsVResponse: IFlightLogTotalsVResponse) => {
+
+                    //     this.loadingStatus = false
+
+                    //     console.log('flightLogTotalsVResponse', flightLogTotalsVResponse);
+                    //     this.flightLogTotalsVResponse = flightLogTotalsVResponse;
+                    //     this.page = this.flightLogTotalsVResponse.page;
+                    //     this.flightLogTotalsVs = this.page.totalElements ? this.flightLogTotalsVResponse._embedded.flightLogTotalsVs : [];
+                    //     this.clearTimes(this.flightLogTotalsVs);
+                    //     console.log('this.flightLogTotalsVs', this.flightLogTotalsVs);
+                    //     //this.links = this.flightLogTotalsVResponse._links;
+
+                    //     this.calculatePageTotals(this.flightLogTotalsVs)
+                    //     this.pageRowKey = this.flightLogTotalsVs[this.flightLogTotalsVs.length - 1]._links.flightLogTotalsV.href
+                    next: rowResponse => {
+                        console.log('rowResponse', rowResponse);
+                        this.page = rowResponse.page;
+                        if (rowResponse._embedded) {
+                            this.firstRowOfTable = this.page.number * this.ROWS_PER_PAGE;
+                            this.rowArray = rowResponse._embedded[GenericEntityService.toPlural(GenericEntityService.toCamelCase(this.entityName))];
+                            ComponentHelper.setRowArrayDateFields(this.rowArray, this.fieldAttributesArray);
+                        } else {
+                            this.firstRowOfTable = 0;
+                            this.rowArray = [];
+                        }
+                        this.links = rowResponse._links;
+                        this.loadingStatus = false
+                    },
+                    complete: () => {
+                        console.log('this.flightLogService.getTableData2 completed')
+
+                        // this.messageService.clear()
+                        // this.uploadProgressMessage = '';
+                        // this.uploadResponse = {} as UploadResponse;
+                        // this.messageService.add({ severity: 'info', summary: '200', detail: this.tableFileDownloadProgressMessage })
+                    }
+                    ,
+                    error: (httpErrorResponse: HttpErrorResponse): void => {
+                        this.loadingStatus = false
+                        // this.messageService.add({ severity: 'error', summary: httpErrorResponse.status.toString(), detail: 'Server error. Please contact support.' })
+                    }
+                });
     }
 
     fetchAssociations() {
@@ -384,7 +432,8 @@ export class GenericCrudComponent implements OnInit {
         this.firstRowOfTable = (this.pageNumber - 1) * this.ROWS_PER_PAGE;
         this.savedLazyLoadEvent.first = this.firstRowOfTable;
         this.onLazyLoad(this.savedLazyLoadEvent);
-        this.fetchPage(this.firstRowOfTable, this.ROWS_PER_PAGE, '', this.formAttributes.queryOrderByColumns);
+        //this.fetchPage(this.firstRowOfTable, this.ROWS_PER_PAGE, '', this.formAttributes.queryOrderByColumns);
+        this.fetchPage(this.savedLazyLoadEvent);
         this.pageNumber = 0;
     }
 

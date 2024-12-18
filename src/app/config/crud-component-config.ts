@@ -13,14 +13,14 @@ export class CrudComponentConfig {
         tableName: 'airport',
         queryOrderByColumns: ['country', 'province', 'name'],
         fields: [
-            { columnName: 'identifier', dataType: DataTypeEnum.STRING, mandatory: false, header: 'Identifier', uiComponentType: UiComponentEnum.TEXT, headerStyle: { width: '5rem' }, filterStyle: { width: '3rem' }, fieldAffinity: CrudComponentConfig.includeInBothComponents },
-            { columnName: 'name', dataType: DataTypeEnum.STRING, mandatory: false, header: 'Name', uiComponentType: UiComponentEnum.TEXT, filterStyle: { width: '20rem' }, fieldAffinity: CrudComponentConfig.includeInBothComponents },
-            { columnName: 'province', dataType: DataTypeEnum.STRING, mandatory: false, header: 'Province', uiComponentType: UiComponentEnum.TEXT, headerStyle: { width: '5rem' }, filterStyle: { width: '3rem' }, fieldAffinity: CrudComponentConfig.includeInBothComponents },
-            { columnName: 'city', dataType: DataTypeEnum.STRING, mandatory: false, header: 'City', uiComponentType: UiComponentEnum.TEXT, headerStyle: { width: '10rem' }, filterStyle: { width: '7rem' }, fieldAffinity: CrudComponentConfig.includeInBothComponents },
-            { columnName: 'country', dataType: DataTypeEnum.STRING, mandatory: false, header: 'Country', uiComponentType: UiComponentEnum.TEXT, headerStyle: { width: '5rem' }, filterStyle: { width: '3rem' }, fieldAffinity: CrudComponentConfig.includeInBothComponents },
-            { columnName: 'latitude', dataType: DataTypeEnum.NUMBER, mandatory: false, header: 'Latitude', uiComponentType: UiComponentEnum.TEXT, headerStyle: { width: '6.5rem' }, filterStyle: { width: '5rem' }, fieldAffinity: CrudComponentConfig.includeInBothComponents },
-            { columnName: 'longitude', dataType: DataTypeEnum.NUMBER, mandatory: false, header: 'Longitude', uiComponentType: UiComponentEnum.TEXT, headerStyle: { width: '6.5rem' }, filterStyle: { width: '5rem' }, fieldAffinity: CrudComponentConfig.includeInBothComponents },
-            { columnName: 'upperWindsStationId', dataType: DataTypeEnum.STRING, mandatory: false, header: 'U Wnd Id', uiComponentType: UiComponentEnum.TEXT, headerStyle: { width: '6rem' }, filterStyle: { width: '3rem' }, fieldAffinity: CrudComponentConfig.includeInBothComponents },
+            { columnName: 'identifier', dataType: DataTypeEnum.STRING, mandatory: false, header: 'Identifier', uiComponentType: UiComponentEnum.TEXT, headerStyle: { width: '5rem', 'white-space': 'nowrap' }, filterStyle: { width: '3rem' }, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'text' },
+            { columnName: 'name', dataType: DataTypeEnum.STRING, mandatory: false, header: 'Name', uiComponentType: UiComponentEnum.TEXT, filterStyle: { width: '20rem', 'white-space': 'nowrap' }, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'text' },
+            { columnName: 'province', dataType: DataTypeEnum.STRING, mandatory: false, header: 'Province', uiComponentType: UiComponentEnum.TEXT, headerStyle: { width: '5rem', 'white-space': 'nowrap' }, filterStyle: { width: '3rem' }, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'text' },
+            { columnName: 'city', dataType: DataTypeEnum.STRING, mandatory: false, header: 'City', uiComponentType: UiComponentEnum.TEXT, headerStyle: { width: '10rem', 'white-space': 'nowrap' }, filterStyle: { width: '7rem' }, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'text' },
+            { columnName: 'country', dataType: DataTypeEnum.STRING, mandatory: false, header: 'Country', uiComponentType: UiComponentEnum.TEXT, headerStyle: { width: '5rem', 'white-space': 'nowrap' }, filterStyle: { width: '3rem' }, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'text' },
+            { columnName: 'latitude', dataType: DataTypeEnum.NUMBER, mandatory: false, header: 'Latitude', uiComponentType: UiComponentEnum.TEXT, headerStyle: { width: '6.5rem', 'white-space': 'nowrap' }, filterStyle: { width: '5rem' }, fieldAffinity: CrudComponentConfig.includeInBothComponents },
+            { columnName: 'longitude', dataType: DataTypeEnum.NUMBER, mandatory: false, header: 'Longitude', uiComponentType: UiComponentEnum.TEXT, headerStyle: { width: '6.5rem', 'white-space': 'nowrap' }, filterStyle: { width: '5rem' }, fieldAffinity: CrudComponentConfig.includeInBothComponents },
+            { columnName: 'upperWindsStationId', dataType: DataTypeEnum.STRING, mandatory: false, header: 'U Wnd Id', uiComponentType: UiComponentEnum.TEXT, headerStyle: { width: '6rem', 'white-space': 'nowrap' }, filterStyle: { width: '3rem' }, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'text' },
         ],
         showReplicationStatus: false,
         associations: []
@@ -28,10 +28,10 @@ export class CrudComponentConfig {
 
     private static makeModel: FormAttributes = {
         formTitle: '',
-        tableName: 'makeModel',
+        tableName: 'make_model',
         queryOrderByColumns: ['makeModel'],
         fields: [
-            { columnName: 'makeModel', dataType: DataTypeEnum.STRING, mandatory: true, header: 'MakeModel', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents }
+            { columnName: 'makeModel', dataType: DataTypeEnum.STRING, mandatory: true, header: 'MakeModel', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'text' }
         ],
         showReplicationStatus: true,
         associations: []
@@ -42,7 +42,7 @@ export class CrudComponentConfig {
         tableName: 'pilot',
         queryOrderByColumns: ['pilot'],
         fields: [
-            { columnName: 'pilot', dataType: DataTypeEnum.STRING, mandatory: true, header: 'Pilot/Passenger', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents }
+            { columnName: 'pilot', dataType: DataTypeEnum.STRING, mandatory: true, header: 'Pilot/Passenger', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'text' }
         ],
         showReplicationStatus: true,
         associations: []
@@ -53,7 +53,7 @@ export class CrudComponentConfig {
         tableName: 'registration',
         queryOrderByColumns: ['registration'],
         fields: [
-            { columnName: 'registration', dataType: DataTypeEnum.STRING, mandatory: true, header: 'Registration', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents }
+            { columnName: 'registration', dataType: DataTypeEnum.STRING, mandatory: true, header: 'Registration', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'text' }
         ],
         showReplicationStatus: true,
         associations: []
@@ -64,8 +64,8 @@ export class CrudComponentConfig {
         tableName: 'significantEvent',
         queryOrderByColumns: ['eventDate'],
         fields: [
-            { columnName: 'eventDate', dataType: DataTypeEnum.DATE, mandatory: true, header: 'Date', headerStyle: { width: '7rem' }, uiComponentType: UiComponentEnum.CALENDAR, pipe: 'date-yyyy-mm-dd', filterStyle: { width: '6rem' }, fieldAffinity: CrudComponentConfig.includeInBothComponents },
-            { columnName: 'eventDescription', dataType: DataTypeEnum.STRING, mandatory: true, header: 'Description', uiComponentType: UiComponentEnum.TEXT_AREA, textAreaRows: 4, textAreaColumns: 30, fieldAffinity: CrudComponentConfig.includeInBothComponents }
+            { columnName: 'eventDate', dataType: DataTypeEnum.DATE, mandatory: true, header: 'Date', headerStyle: { width: '7rem' }, uiComponentType: UiComponentEnum.CALENDAR, pipe: 'date-yyyy-mm-dd', filterStyle: { width: '6rem' }, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'date' },
+            { columnName: 'eventDescription', dataType: DataTypeEnum.STRING, mandatory: true, header: 'Description', uiComponentType: UiComponentEnum.TEXT_AREA, textAreaRows: 4, textAreaColumns: 30, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'text' }
         ],
         showReplicationStatus: true,
         associations: []
@@ -122,10 +122,10 @@ export class CrudComponentConfig {
 
     static formConfig: Map<string, FormAttributes> = new Map([
         ['airport', CrudComponentConfig.airport],
-        ['makeModel', CrudComponentConfig.makeModel],
+        ['make_model', CrudComponentConfig.makeModel],
         ['pilot', CrudComponentConfig.pilot],
         ['registration', CrudComponentConfig.registration],
-        ['significantEvent', CrudComponentConfig.significantEvent],
+        ['significant_event', CrudComponentConfig.significantEvent],
         ['user', CrudComponentConfig.user],
         ['group', CrudComponentConfig.group],
         ['part', CrudComponentConfig.part]

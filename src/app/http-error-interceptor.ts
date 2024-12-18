@@ -18,8 +18,8 @@ export class HttpErrorInterceptor implements HttpInterceptor {
             map((httpEvent: HttpEvent<any>) => {
                 if (httpEvent instanceof HttpResponse) {
                     console.log('response: %o', httpEvent);
-                    // this.errorDialogService.openDialog(event);
                 }
+                // return the http response
                 return httpEvent;
             }),
             catchError((httpErrorResponse: HttpErrorResponse) => {
@@ -34,9 +34,10 @@ export class HttpErrorInterceptor implements HttpInterceptor {
                     if (httpErrorResponse.status === 0) { // status = 0, is net::ERR_CONNECTION_REFUSED
                         errorMessage = 'Connection problem';
                     } else {
-                        errorMessage = httpErrorResponse.error.message;
+                        errorMessage = httpErrorResponse.message;
                     }
-                    console.error('Server error', errorMessage);
+                    console.error('Server error: [%s]', errorMessage);
+                    console.error('httpErrorResponse.status', httpErrorResponse.status)
                 }
                 this.messageService.add({ severity: 'error', summary: this.getStatusText(httpErrorResponse.status), detail: errorMessage });
                 this.sessionService.setBackendExceptionstackTrace(httpErrorResponse.error.stackTrace)
