@@ -2,7 +2,7 @@
     [rows]="ROWS_PER_PAGE" [paginator]="true" [totalRecords]="page.totalElements" [rowsPerPageOptions]="[5,10,20]"
     (onLazyLoad)="onLazyLoad($event)" [selectionMode]="'single'" [(selection)]="selectedRow"
     (onRowSelect)="onRowSelect($event)" [responsive]="true" [first]="firstRowOfTable" [loading]="loadingStatus"
-    [resetPageOnSort]="false" #dt>
+    sortField="{{formAttributes.defaultSortColumn}}" [resetPageOnSort]="false" #dt>
 
     <ng-template *ngIf="formAttributes.formTitle" pTemplate="caption">
         {{formAttributes.formTitle}}

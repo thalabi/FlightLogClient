@@ -11,7 +11,7 @@ export class CrudComponentConfig {
     private static airport: FormAttributes = {
         formTitle: 'Airport',
         tableName: 'airport',
-        queryOrderByColumns: ['country', 'province', 'name'],
+        defaultSortColumn: ['name'],
         fields: [
             { columnName: 'identifier', dataType: DataTypeEnum.STRING, mandatory: false, header: 'Identifier', uiComponentType: UiComponentEnum.TEXT, headerStyle: { width: '5rem', 'white-space': 'nowrap' }, filterStyle: { width: '3rem' }, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'text' },
             { columnName: 'name', dataType: DataTypeEnum.STRING, mandatory: false, header: 'Name', uiComponentType: UiComponentEnum.TEXT, filterStyle: { width: '20rem', 'white-space': 'nowrap' }, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'text' },
@@ -29,7 +29,7 @@ export class CrudComponentConfig {
     private static makeModel: FormAttributes = {
         formTitle: '',
         tableName: 'make_model',
-        queryOrderByColumns: ['makeModel'],
+        defaultSortColumn: ['makeModel'],
         fields: [
             { columnName: 'makeModel', dataType: DataTypeEnum.STRING, mandatory: true, header: 'MakeModel', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'text' }
         ],
@@ -40,7 +40,7 @@ export class CrudComponentConfig {
     private static pilot: FormAttributes = {
         formTitle: '',
         tableName: 'pilot',
-        queryOrderByColumns: ['pilot'],
+        defaultSortColumn: ['pilot'],
         fields: [
             { columnName: 'pilot', dataType: DataTypeEnum.STRING, mandatory: true, header: 'Pilot/Passenger', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'text' }
         ],
@@ -51,7 +51,7 @@ export class CrudComponentConfig {
     private static registration: FormAttributes = {
         formTitle: '',
         tableName: 'registration',
-        queryOrderByColumns: ['registration'],
+        defaultSortColumn: ['registration'],
         fields: [
             { columnName: 'registration', dataType: DataTypeEnum.STRING, mandatory: true, header: 'Registration', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'text' }
         ],
@@ -62,7 +62,7 @@ export class CrudComponentConfig {
     private static significantEvent: FormAttributes = {
         formTitle: 'Significant Event',
         tableName: 'significant_event',
-        queryOrderByColumns: ['eventDate'],
+        defaultSortColumn: ['eventDate'],
         fields: [
             { columnName: 'eventDate', dataType: DataTypeEnum.DATE, mandatory: true, header: 'Date', headerStyle: { width: '7rem' }, uiComponentType: UiComponentEnum.CALENDAR, pipe: 'date-yyyy-mm-dd', filterStyle: { width: '6rem' }, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'date' },
             { columnName: 'eventDescription', dataType: DataTypeEnum.STRING, mandatory: true, header: 'Description', uiComponentType: UiComponentEnum.TEXT_AREA, textAreaRows: 4, textAreaColumns: 30, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'text' }
@@ -71,50 +71,50 @@ export class CrudComponentConfig {
         associations: []
     };
 
-    private static user: FormAttributes = {
-        formTitle: 'User',
-        tableName: 'user',
-        queryOrderByColumns: ['username'],
-        fields: [
-            { columnName: 'username', dataType: DataTypeEnum.STRING, mandatory: true, header: 'Username', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents },
-            { columnName: 'password', dataType: DataTypeEnum.STRING, mandatory: true, header: 'Password', uiComponentType: UiComponentEnum.PASSWORD, pipe: 'password', fieldAffinity: CrudComponentConfig.includeInBothComponents },
-            { columnName: 'enabled', dataType: DataTypeEnum.BOOLEAN, mandatory: false, header: 'Enabled', uiComponentType: UiComponentEnum.BOOLEAN_CHECKBOX, fieldAffinity: CrudComponentConfig.includeInBothComponents },
-            { columnName: 'firstName', dataType: DataTypeEnum.STRING, mandatory: false, header: 'First name', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents },
-            { columnName: 'lastName', dataType: DataTypeEnum.STRING, mandatory: false, header: 'Last name', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents }
-        ],
-        showReplicationStatus: false,
-        associations: [
-            {
-                associationTableName: 'group', associationPropertyName: 'groupSet', orderByColumns: ['name'],
-                associationTypeEnum: AssociationTypeEnum.MANY_TO_MANY, propertyAsName: 'name', propertyAsDescription: 'description'
-            }
-        ]
-    };
+    // private static user: FormAttributes = {
+    //     formTitle: 'User',
+    //     tableName: 'user',
+    //     queryOrderByColumns: ['username'],
+    //     fields: [
+    //         { columnName: 'username', dataType: DataTypeEnum.STRING, mandatory: true, header: 'Username', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents },
+    //         { columnName: 'password', dataType: DataTypeEnum.STRING, mandatory: true, header: 'Password', uiComponentType: UiComponentEnum.PASSWORD, pipe: 'password', fieldAffinity: CrudComponentConfig.includeInBothComponents },
+    //         { columnName: 'enabled', dataType: DataTypeEnum.BOOLEAN, mandatory: false, header: 'Enabled', uiComponentType: UiComponentEnum.BOOLEAN_CHECKBOX, fieldAffinity: CrudComponentConfig.includeInBothComponents },
+    //         { columnName: 'firstName', dataType: DataTypeEnum.STRING, mandatory: false, header: 'First name', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents },
+    //         { columnName: 'lastName', dataType: DataTypeEnum.STRING, mandatory: false, header: 'Last name', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents }
+    //     ],
+    //     showReplicationStatus: false,
+    //     associations: [
+    //         {
+    //             associationTableName: 'group', associationPropertyName: 'groupSet', orderByColumns: ['name'],
+    //             associationTypeEnum: AssociationTypeEnum.MANY_TO_MANY, propertyAsName: 'name', propertyAsDescription: 'description'
+    //         }
+    //     ]
+    // };
 
-    private static group: FormAttributes = {
-        formTitle: 'Group',
-        tableName: 'group',
-        queryOrderByColumns: ['name'],
-        fields: [
-            { columnName: 'name', dataType: DataTypeEnum.STRING, mandatory: true, header: 'Name', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents },
-            { columnName: 'description', dataType: DataTypeEnum.STRING, mandatory: false, header: 'Description', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents },
-        ],
-        showReplicationStatus: false,
-        associations: [
-            {
-                associationTableName: 'permission', associationPropertyName: 'permissionSet', orderByColumns: ['name'],
-                associationTypeEnum: AssociationTypeEnum.MANY_TO_MANY, propertyAsName: 'name', propertyAsDescription: 'description'
-            }
-        ]
-    };
+    // private static group: FormAttributes = {
+    //     formTitle: 'Group',
+    //     tableName: 'group',
+    //     queryOrderByColumns: ['name'],
+    //     fields: [
+    //         { columnName: 'name', dataType: DataTypeEnum.STRING, mandatory: true, header: 'Name', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents },
+    //         { columnName: 'description', dataType: DataTypeEnum.STRING, mandatory: false, header: 'Description', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents },
+    //     ],
+    //     showReplicationStatus: false,
+    //     associations: [
+    //         {
+    //             associationTableName: 'permission', associationPropertyName: 'permissionSet', orderByColumns: ['name'],
+    //             associationTypeEnum: AssociationTypeEnum.MANY_TO_MANY, propertyAsName: 'name', propertyAsDescription: 'description'
+    //         }
+    //     ]
+    // };
 
     private static part: FormAttributes = {
         formTitle: 'Part',
         tableName: 'part',
-        queryOrderByColumns: ['name'],
+        defaultSortColumn: ['name'],
         fields: [
-            { columnName: 'name', dataType: DataTypeEnum.STRING, mandatory: true, header: 'Name', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents },
-            { columnName: 'description', dataType: DataTypeEnum.STRING, mandatory: false, header: 'Description', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents }
+            { columnName: 'name', dataType: DataTypeEnum.STRING, mandatory: true, header: 'Name', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'text' },
+            { columnName: 'description', dataType: DataTypeEnum.STRING, mandatory: false, header: 'Description', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'text' }
         ],
         showReplicationStatus: false,
         associations: []
@@ -126,8 +126,8 @@ export class CrudComponentConfig {
         ['pilot', CrudComponentConfig.pilot],
         ['registration', CrudComponentConfig.registration],
         ['significantEvent', CrudComponentConfig.significantEvent],
-        ['user', CrudComponentConfig.user],
-        ['group', CrudComponentConfig.group],
+        // ['user', CrudComponentConfig.user],
+        // ['group', CrudComponentConfig.group],
         ['part', CrudComponentConfig.part]
     ]);
 
