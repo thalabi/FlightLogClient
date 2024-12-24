@@ -71,43 +71,6 @@ export class CrudComponentConfig {
         associations: []
     };
 
-    // private static user: FormAttributes = {
-    //     formTitle: 'User',
-    //     tableName: 'user',
-    //     queryOrderByColumns: ['username'],
-    //     fields: [
-    //         { columnName: 'username', dataType: DataTypeEnum.STRING, mandatory: true, header: 'Username', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents },
-    //         { columnName: 'password', dataType: DataTypeEnum.STRING, mandatory: true, header: 'Password', uiComponentType: UiComponentEnum.PASSWORD, pipe: 'password', fieldAffinity: CrudComponentConfig.includeInBothComponents },
-    //         { columnName: 'enabled', dataType: DataTypeEnum.BOOLEAN, mandatory: false, header: 'Enabled', uiComponentType: UiComponentEnum.BOOLEAN_CHECKBOX, fieldAffinity: CrudComponentConfig.includeInBothComponents },
-    //         { columnName: 'firstName', dataType: DataTypeEnum.STRING, mandatory: false, header: 'First name', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents },
-    //         { columnName: 'lastName', dataType: DataTypeEnum.STRING, mandatory: false, header: 'Last name', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents }
-    //     ],
-    //     showReplicationStatus: false,
-    //     associations: [
-    //         {
-    //             associationTableName: 'group', associationPropertyName: 'groupSet', orderByColumns: ['name'],
-    //             associationTypeEnum: AssociationTypeEnum.MANY_TO_MANY, propertyAsName: 'name', propertyAsDescription: 'description'
-    //         }
-    //     ]
-    // };
-
-    // private static group: FormAttributes = {
-    //     formTitle: 'Group',
-    //     tableName: 'group',
-    //     queryOrderByColumns: ['name'],
-    //     fields: [
-    //         { columnName: 'name', dataType: DataTypeEnum.STRING, mandatory: true, header: 'Name', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents },
-    //         { columnName: 'description', dataType: DataTypeEnum.STRING, mandatory: false, header: 'Description', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents },
-    //     ],
-    //     showReplicationStatus: false,
-    //     associations: [
-    //         {
-    //             associationTableName: 'permission', associationPropertyName: 'permissionSet', orderByColumns: ['name'],
-    //             associationTypeEnum: AssociationTypeEnum.MANY_TO_MANY, propertyAsName: 'name', propertyAsDescription: 'description'
-    //         }
-    //     ]
-    // };
-
     private static part: FormAttributes = {
         formTitle: 'Part',
         tableName: 'part',
@@ -126,8 +89,6 @@ export class CrudComponentConfig {
         ['pilot', CrudComponentConfig.pilot],
         ['registration', CrudComponentConfig.registration],
         ['significantEvent', CrudComponentConfig.significantEvent],
-        // ['user', CrudComponentConfig.user],
-        // ['group', CrudComponentConfig.group],
         ['part', CrudComponentConfig.part]
     ]);
 
