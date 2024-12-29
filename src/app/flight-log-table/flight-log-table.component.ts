@@ -36,7 +36,7 @@ export class FlightLogTableComponent implements OnInit {
     flightLogForm: FormGroup;
 
     //flightLogResponse: FlightLogResponse = {} as FlightLogResponse;
-    flightLogTotalsVResponse: IFlightLogTotalsVResponse = {} as IFlightLogTotalsVResponse;
+    //flightLogTotalsVResponse: IFlightLogTotalsVResponse = {} as IFlightLogTotalsVResponse;
     //flightLogArray: Array<FlightLog> = [];
     flightLogTotalsVs: Array<IFlightLogTotalsV> = [];
     //selectedFlightLog: FlightLog = {} as FlightLog;
@@ -87,8 +87,8 @@ export class FlightLogTableComponent implements OnInit {
     replicationStatusLabel!: string;
     replicationStatusControlDisabled: boolean = true;
 
-    readonly tableName: string = 'flightLog';
-    readonly viewName: string = 'flight_log_totals_v'
+    readonly TABLE_NAME: string = 'flightLog';
+    readonly VIEW_NAME: string = 'flight_log_totals_v'
 
     hasWritePermission: boolean = false;
 
@@ -174,7 +174,7 @@ export class FlightLogTableComponent implements OnInit {
         //this.getTableMetaData();
 
         // set the firstRowOfTable to the first row of the last page
-        this.genericEntityService.getRecordCount(this.viewName).subscribe({
+        this.genericEntityService.getRecordCount(this.VIEW_NAME).subscribe({
             next: data => {
                 let rowCount: number = data;
                 console.log('rowCount', rowCount);
@@ -194,14 +194,14 @@ export class FlightLogTableComponent implements OnInit {
     }
 
     private getTableMetaData() {
-        this.flightLogService.getTableMetaDataAlps(this.viewName)
+        this.flightLogService.getTableMetaDataAlps(this.VIEW_NAME)
             .subscribe(
                 {
                     next: (metaData: any) => {
                         console.log('alps metaData', metaData)
                         const alpsDescriptors = metaData.alps.descriptor
                         console.log('alps alpsDescriptors', alpsDescriptors)
-                        const representationDescriptorId = GenericEntityService.toCamelCase(this.viewName) + '-representation';
+                        const representationDescriptorId = GenericEntityService.toCamelCase(this.VIEW_NAME) + '-representation';
                         const representationDescriptor = alpsDescriptors.find((descriptor: { id: string; }) => descriptor.id = representationDescriptorId)
                         console.log('representationDescriptor', representationDescriptor)
                         const columnDescriptors = representationDescriptor.descriptor
@@ -358,9 +358,9 @@ export class FlightLogTableComponent implements OnInit {
             }
             console.log('searchCriteria', searchCriteria)
         }
-        const entityNameResource = GenericEntityService.toPlural(GenericEntityService.toCamelCase(this.viewName))
+        const entityNameResource = GenericEntityService.toPlural(GenericEntityService.toCamelCase(this.VIEW_NAME))
         console.log('entityNameResource 2', entityNameResource)
-        this.genericEntityService.getTableData2(this.viewName, searchCriteria, pageNumber, pageSize, ['flightDate', 'id'])
+        this.genericEntityService.getTableData2(this.VIEW_NAME, searchCriteria, pageNumber, pageSize, ['flightDate', 'id'])
             .subscribe(
                 {
                     next: (flightLogTotalsVResponse: IFlightLogTotalsVResponse) => {
@@ -368,9 +368,9 @@ export class FlightLogTableComponent implements OnInit {
                         this.loadingStatus = false
 
                         console.log('flightLogTotalsVResponse', flightLogTotalsVResponse);
-                        this.flightLogTotalsVResponse = flightLogTotalsVResponse;
-                        this.page = this.flightLogTotalsVResponse.page;
-                        this.flightLogTotalsVs = this.page.totalElements ? this.flightLogTotalsVResponse._embedded.flightLogTotalsVs : [];
+                        //this.flightLogTotalsVResponse = flightLogTotalsVResponse;
+                        this.page = flightLogTotalsVResponse.page;
+                        this.flightLogTotalsVs = this.page.totalElements ? flightLogTotalsVResponse._embedded.flightLogTotalsVs : [];
                         this.clearTimes(this.flightLogTotalsVs);
                         console.log('this.flightLogTotalsVs', this.flightLogTotalsVs);
                         //this.links = this.flightLogTotalsVResponse._links;
@@ -472,7 +472,7 @@ export class FlightLogTableComponent implements OnInit {
         console.log('this.crudFlightLog: ', this.crudFlightLog);
         switch (this.crudMode) {
             case CrudEnum.ADD:
-                this.clearTime(this.crudFlightLog);
+                this.clearTimePortionOfDates(this.crudFlightLog);
                 this.flightLogService.addFlightLog(this.crudFlightLog).subscribe({
                     next: savedFlightLog => {
                         console.log('savedFlightLog', savedFlightLog);
@@ -487,7 +487,7 @@ export class FlightLogTableComponent implements OnInit {
                 });
                 break;
             case CrudEnum.UPDATE:
-                this.clearTime(this.crudFlightLog);
+                this.clearTimePortionOfDates(this.crudFlightLog);
                 this.flightLogService.updateFlightLog(this.crudFlightLog).subscribe({
                     next: savedFlightLog => {
                         console.log('updatedFlightLog', savedFlightLog);
@@ -557,7 +557,7 @@ export class FlightLogTableComponent implements OnInit {
         this.pageNumber = 0;
     }
 
-    private clearTime(flightLog: FlightLog) {
+    private clearTimePortionOfDates(flightLog: FlightLog) {
         flightLog.flightDate.setHours(0);
         flightLog.flightDate.setMinutes(0);
         flightLog.flightDate.setSeconds(0);
@@ -573,7 +573,7 @@ export class FlightLogTableComponent implements OnInit {
     private getTableReplicationStatus() {
         this.replicationStatusLabel = "Fetching";
         this.replicationStatusControlDisabled = false;
-        ComponentHelper.getTableReplicationStatusAndLabel(this.replicationService, this.tableName).subscribe(params => {
+        ComponentHelper.getTableReplicationStatusAndLabel(this.replicationService, this.TABLE_NAME).subscribe(params => {
             this.replicationStatus = params.replicationStatus;
             this.replicationStatusLabel = params.replicationStatusLabel;
         })
@@ -584,7 +584,7 @@ export class FlightLogTableComponent implements OnInit {
         console.log('onChangeReplicationStatus', event);
         console.log('checked: ', event.checked);
         this.replicationStatusControlDisabled = true;
-        this.replicationService.setTableReplicationStatus(this.tableName, event.checked).subscribe(params =>
+        this.replicationService.setTableReplicationStatus(this.TABLE_NAME, event.checked).subscribe(params =>
             this.getTableReplicationStatus()
         );
     }

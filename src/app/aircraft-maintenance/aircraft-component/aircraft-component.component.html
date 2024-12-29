@@ -2,7 +2,7 @@
     [paginator]="true" [totalRecords]="page.totalElements" [rowsPerPageOptions]="[5,10,20]"
     (onLazyLoad)="onLazyLoad($event)" [selectionMode]="'single'" [(selection)]="selectedComponentRow"
     (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [responsive]="true"
-    [first]="firstRowOfTable" [loading]="loadingFlag" #dt>
+    [first]="firstRowOfTable" [loading]="loadingStatus" #dt>
 
     <ng-template pTemplate="caption">
         Component
@@ -25,51 +25,37 @@
     <ng-template pTemplate="header">
         <tr>
             <th></th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Part</th>
-            <th>Work Prfrmd</th>
-            <th>Dt Prfrmd</th>
-            <th>Hrs Prfrmd</th>
-            <th>Dt Due</th>
-            <th>Hrs Due</th>
-        </tr>
-        <tr>
-            <th style="width: 3em"></th>
-            <th>
-                <input pInputText #nameFilter type="text" (input)="dt.filter(nameFilter.value, 'name', 'contains')"
-                    [ngStyle]="{width: '6rem'}">
+            <th>Name
+                <p-columnFilter type="text" field="name" display="menu" [showOperator]="false" [showAddButton]="false"
+                    [hideOnClear]="true"></p-columnFilter>
             </th>
-            <th>
-                <input pInputText #descriptionFilter type="text"
-                    (input)="dt.filter(descriptionFilter.value, 'description', 'contains')" [ngStyle]="{width: '6rem'}">
+            <th>Description
+                <p-columnFilter type="text" field="description" display="menu" [showOperator]="false"
+                    [showAddButton]="false" [hideOnClear]="true"></p-columnFilter>
             </th>
-            <th>
-                <input pInputText #partNameFilter type="text"
-                    (input)="dt.filter(partNameFilter.value, 'part.name', 'contains')" [ngStyle]="{width: '6rem'}">
+            <th>Part
+                <p-columnFilter type="text" field="part.name" display="menu" [showOperator]="false"
+                    [showAddButton]="false" [hideOnClear]="true"></p-columnFilter>
             </th>
-            <th>
-                <input pInputText #workPerformedFilter type="text"
-                    (input)="dt.filter(workPerformedFilter.value, 'workPerformed', 'contains')"
-                    [ngStyle]="{width: '6rem'}">
+            <th>Work Prfrmd
+                <p-columnFilter type="text" field="workPerformed" display="menu" [showOperator]="false"
+                    [showAddButton]="false" [hideOnClear]="true"></p-columnFilter>
             </th>
-            <th>
-                <input pInputText #datePerformedFilter type="text"
-                    (input)="dt.filter(datePerformedFilter.value, 'datePerformed', 'contains')"
-                    [ngStyle]="{width: '4rem'}">
+            <th>Dt Prfrmd
+                <p-columnFilter type="date" field="datePerformed" display="menu" [showOperator]="false"
+                    [showAddButton]="false" [hideOnClear]="true"></p-columnFilter>
             </th>
-            <th>
-                <input pInputText #hoursPerformedFilter type="text"
-                    (input)="dt.filter(hoursPerformedFilter.value, 'hoursPerformed', 'contains')"
-                    [ngStyle]="{width: '3rem'}">
+            <th>Hrs Prfrmd
+                <p-columnFilter type="numeric" field="hrsPerformed" [minFractionDigits]="1" [maxFractionDigits]="1"
+                    display="menu" [showOperator]="false" [showAddButton]="false" [hideOnClear]="true"></p-columnFilter>
             </th>
-            <th>
-                <input pInputText #dateDueFilter type="text"
-                    (input)="dt.filter(dateDueFilter.value, 'dateDue', 'contains')" [ngStyle]="{width: '4rem'}">
+            <th>Dt Due
+                <p-columnFilter type="date" field="dateDue" display="menu" [showOperator]="false"
+                    [showAddButton]="false" [hideOnClear]="true"></p-columnFilter>
             </th>
-            <th>
-                <input pInputText #hoursDueFilter type="text"
-                    (input)="dt.filter(hoursDueFilter.value, 'hoursDue', 'contains')" [ngStyle]="{width: '3rem'}">
+            <th>Hrs Due
+                <p-columnFilter type="numeric" field="hrsDue" [minFractionDigits]="1" [maxFractionDigits]="1"
+                    display="menu" [showOperator]="false" [showAddButton]="false" [hideOnClear]="true"></p-columnFilter>
             </th>
         </tr>
     </ng-template>

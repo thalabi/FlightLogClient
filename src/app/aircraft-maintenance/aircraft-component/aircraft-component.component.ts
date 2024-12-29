@@ -15,6 +15,8 @@ import { CrudEnum } from '../../crud-enum';
 import { AircraftComponentRequest } from '../../domain/aircraft-component-request';
 import { SessionService } from '../../service/session.service';
 import { PermissionEnum } from '../../menu/permission-enum';
+import { AircraftComponentListResponse } from '../../response/aircraft-component-list-response';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
     selector: 'app-aircraft-component',
@@ -41,7 +43,7 @@ export class AircraftComponentComponent implements OnInit {
 
     componentAndHistoryArray!: Array<AircraftComponent>;
 
-    loadingFlag!: boolean;
+    loadingStatus!: boolean;
     page!: HalResponsePage;
 
     displayDialog!: boolean;
@@ -125,12 +127,13 @@ export class AircraftComponentComponent implements OnInit {
         console.log('event.filters', lazyLoadEvent.filters);
         this.fetchPage(lazyLoadEvent.first || 0, lazyLoadEvent.rows || 0,
             ComponentHelper.buildSearchString(lazyLoadEvent, ['name', 'description', 'part.name', 'workPerformed', 'datePerformed', 'hoursPerformed', 'dateDue', 'hoursDue']), this.SORT_COLUMNS);
+        //this.fetchPage2(lazyLoadEvent)
     }
 
 
     fetchPage(firstRowNumber: number, rowsPerPage: number, searchString: string, queryOrderByColumns: string[]) {
         console.log("in fetchPage");
-        this.loadingFlag = true;
+        this.loadingStatus = true;
         this.modifyAndDeleteButtonsDisable = true;
         this.selectedComponentRow = {} as AircraftComponent; // unselect row
         this.resetDialoForm();
@@ -179,7 +182,7 @@ export class AircraftComponentComponent implements OnInit {
                     this.links = rowResponse._links;
                 },
                 complete: () => {
-                    this.loadingFlag = false;
+                    this.loadingStatus = false;
                 }
                 /*,
                 error: error => {
@@ -197,6 +200,101 @@ export class AircraftComponentComponent implements OnInit {
                 */
             });
 
+    }
+    fetchPage2(lazyLoadEvent: LazyLoadEvent) {
+        console.log(lazyLoadEvent)
+        this.loadingStatus = true
+        const pageSize = lazyLoadEvent.rows ?? 20
+        const pageNumber = (lazyLoadEvent.first ?? 0) / pageSize;
+        //const filters: { [s: string]: FilterMetadata[] } | undefined = lazyLoadEvent.filters
+        const filters: any = lazyLoadEvent.filters
+        console.log('filters', filters)
+        console.log('pageNumber', pageNumber, 'pageSize', pageSize, 'filters', filters)
+        let searchCriteria: string = ''
+        if (filters) {
+            console.log('Object.keys(filters)', Object.keys(filters))
+            Object.keys(filters).forEach(columnName => {
+                console.log('columeName', columnName, 'matchMode', filters[columnName][0].matchMode, 'value', filters[columnName][0].value)
+                //searchCriteria += columnName + filters[columnName][0].matchMode + filters[columnName][0].value + ","
+                if (filters[columnName][0].value !== null) {
+                    if (filters[columnName][0].value instanceof Date) {
+                        searchCriteria += columnName + '|' + filters[columnName][0].matchMode + '|' + new Date(filters[columnName][0].value).toISOString() + ","
+                    } else {
+                        searchCriteria += columnName + '|' + filters[columnName][0].matchMode + '|' + filters[columnName][0].value + ","
+                    }
+                }
+            })
+            if (searchCriteria.length > 0) {
+                searchCriteria = searchCriteria.slice(0, searchCriteria.length - 1)
+            }
+            console.log('searchCriteria', searchCriteria)
+        }
+        const entityNameResource = GenericEntityService.toPlural(GenericEntityService.toCamelCase(this.COMPONENT_TABLE_NAME))
+        console.log('entityNameResource 2', entityNameResource)
+        this.genericEntityService.getTableData2(this.COMPONENT_TABLE_NAME, searchCriteria, pageNumber, pageSize, ['name'])
+            .subscribe(
+                {
+                    next: (aircraftComponentListResponse: AircraftComponentListResponse) => {
+
+                        this.loadingStatus = false
+
+                        console.log('aircraftComponentListResponse', aircraftComponentListResponse);
+                        //this.flightLogTotalsVResponse = aircraftComponentListResponse;
+                        this.page = aircraftComponentListResponse.page;
+                        this.componentRowArray = this.page.totalElements ? aircraftComponentListResponse._embedded.components : [];
+                        // this.clearTimePortionOfDates(this.componentRowArray);
+                        console.log('this.componentRowArray', this.componentRowArray);
+                        //this.links = this.flightLogTotalsVResponse._links;
+
+                        //this.calculatePageTotals(this.flightLogTotalsVs)
+                        //this.pageRowKey = this.flightLogTotalsVs[this.flightLogTotalsVs.length - 1]._links.flightLogTotalsV.href
+                        this.componentRowArray.forEach(componentRow => {
+                            this.clearTimePortionOfDates(componentRow);
+                            //componentRow.datePerformed = componentRow.datePerformed ? new Date(componentRow.datePerformed) : null;
+                            // componentRow.datePerformed = new Date(componentRow.datePerformed);
+                            //componentRow.dateDue = componentRow.dateDue ? new Date(componentRow.dateDue) : null;
+                            // componentRow.dateDue = new Date(componentRow.dateDue);
+                            //componentRow.created = componentRow.created ? new Date(componentRow.created) : null;
+                            // componentRow.created = new Date(componentRow.created);
+                            //componentRow.modified = componentRow.modified ? new Date(componentRow.modified) : null;
+                            // componentRow.modified = new Date(componentRow.modified);
+                            componentRow.componentHistorySet.forEach(componentHistory => {
+                                // componentHistory.datePerformed = componentHistory.datePerformed ? new Date(componentHistory.datePerformed) : null;
+                                // componentHistory.dateDue = componentHistory.dateDue ? new Date(componentHistory.dateDue) : null;
+                                // componentHistory.created = componentHistory.created ? new Date(componentHistory.created) : null;
+                                // componentHistory.modified = componentHistory.modified ? new Date(componentHistory.modified) : null;
+                                componentHistory.datePerformed = new Date(componentHistory.datePerformed);
+                                componentHistory.dateDue = new Date(componentHistory.dateDue);
+                                componentHistory.created = new Date(componentHistory.created);
+                                componentHistory.modified = new Date(componentHistory.modified);
+                            });
+                        });
+
+                    },
+                    complete: () => {
+                        console.log('this.flightLogService.getTableData2 completed')
+
+                        // this.messageService.clear()
+                        // this.uploadProgressMessage = '';
+                        // this.uploadResponse = {} as UploadResponse;
+                        // this.messageService.add({ severity: 'info', summary: '200', detail: this.tableFileDownloadProgressMessage })
+                    }
+                    ,
+                    error: (httpErrorResponse: HttpErrorResponse): void => {
+                        this.loadingStatus = false
+                        // this.messageService.add({ severity: 'error', summary: httpErrorResponse.status.toString(), detail: 'Server error. Please contact support.' })
+                    }
+                });
+    }
+    private clearTimePortionOfDates(aircraftComponent: AircraftComponent) {
+        aircraftComponent.datePerformed.setHours(0);
+        aircraftComponent.datePerformed.setMinutes(0);
+        aircraftComponent.datePerformed.setSeconds(0);
+        aircraftComponent.datePerformed.setMilliseconds(0);
+        aircraftComponent.dateDue.setHours(0);
+        aircraftComponent.dateDue.setMinutes(0);
+        aircraftComponent.dateDue.setSeconds(0);
+        aircraftComponent.dateDue.setMilliseconds(0);
     }
 
     onGoToPage() {
