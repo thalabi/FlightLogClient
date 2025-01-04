@@ -125,8 +125,10 @@ export class AircraftComponentComponent implements OnInit {
         console.log('event.first', lazyLoadEvent.first);
         console.log('event.rows', lazyLoadEvent.rows);
         console.log('event.filters', lazyLoadEvent.filters);
+        // this.fetchPage(lazyLoadEvent.first || 0, lazyLoadEvent.rows || 0,
+        //     ComponentHelper.buildSearchString(lazyLoadEvent, ['name', 'description', 'part.name', 'workPerformed', 'datePerformed', 'hoursPerformed', 'dateDue', 'hoursDue']), this.SORT_COLUMNS);
         this.fetchPage(lazyLoadEvent.first || 0, lazyLoadEvent.rows || 0,
-            ComponentHelper.buildSearchString(lazyLoadEvent, ['name', 'description', 'part.name', 'workPerformed', 'datePerformed', 'hoursPerformed', 'dateDue', 'hoursDue']), this.SORT_COLUMNS);
+            '', this.SORT_COLUMNS);
         //this.fetchPage2(lazyLoadEvent)
     }
 
@@ -679,8 +681,10 @@ export class AircraftComponentComponent implements OnInit {
         }
     }
     private afterCrud() {
-        this.fetchPage(this.savedLazyLoadEvent.first || 0, this.savedLazyLoadEvent.rows || 0,
-            ComponentHelper.buildSearchString(this.savedLazyLoadEvent, ['name', 'description', 'part.name', 'workPerformed', 'datePerformed', 'hoursPerformed', 'dateDue', 'hoursDue']),
+        // this.fetchPage(this.savedLazyLoadEvent.first || 0, this.savedLazyLoadEvent.rows || 0,
+        //     ComponentHelper.buildSearchString(this.savedLazyLoadEvent, ['name', 'description', 'part.name', 'workPerformed', 'datePerformed', 'hoursPerformed', 'dateDue', 'hoursDue']),
+        //     this.SORT_COLUMNS);
+        this.fetchPage(this.savedLazyLoadEvent.first || 0, this.savedLazyLoadEvent.rows || 0, '',
             this.SORT_COLUMNS);
     }
 
