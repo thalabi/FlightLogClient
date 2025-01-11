@@ -5,7 +5,7 @@ import { IGenericEntity } from "../domain/i-gerneric-entity";
 import { AircraftComponent } from "../domain/aircraft-component";
 
 export interface AircraftComponentListResponse {
-    _embedded: {components: Array<AircraftComponent>}
+    _embedded: { componentModels: Array<AircraftComponent> }
     _links: HalResponseLinks;
     page: HalResponsePage;
 }

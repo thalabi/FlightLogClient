@@ -330,7 +330,8 @@ export class GenericCrudComponent implements OnInit {
                         this.page = rowResponse.page;
                         if (rowResponse._embedded) {
                             this.firstRowOfTable = this.page.number * this.ROWS_PER_PAGE;
-                            this.rowArray = rowResponse._embedded[GenericEntityService.toPlural(this.entityName)];
+                            //this.rowArray = rowResponse._embedded[GenericEntityService.toPlural(this.entityName)];
+                            this.rowArray = rowResponse._embedded.simpleModels;
                             ComponentHelper.setRowArrayDateFields(this.rowArray, this.fieldAttributesArray);
                         } else {
                             this.firstRowOfTable = 0;

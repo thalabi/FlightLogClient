@@ -10,5 +10,5 @@ export interface IFlightLogTotalsVResponse {
 }
 
 interface Embedded {
-    flightLogTotalsVs: Array<IFlightLogTotalsV>;
+    simpleModels: Array<IFlightLogTotalsV>;
 }

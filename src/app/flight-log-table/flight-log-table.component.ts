@@ -370,7 +370,7 @@ export class FlightLogTableComponent implements OnInit {
                         console.log('flightLogTotalsVResponse', flightLogTotalsVResponse);
                         //this.flightLogTotalsVResponse = flightLogTotalsVResponse;
                         this.page = flightLogTotalsVResponse.page;
-                        this.flightLogTotalsVs = this.page.totalElements ? flightLogTotalsVResponse._embedded.flightLogTotalsVs : [];
+                        this.flightLogTotalsVs = this.page.totalElements ? flightLogTotalsVResponse._embedded.simpleModels : [];
                         this.clearTimes(this.flightLogTotalsVs);
                         console.log('this.flightLogTotalsVs', this.flightLogTotalsVs);
                         //this.links = this.flightLogTotalsVResponse._links;

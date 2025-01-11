@@ -127,9 +127,9 @@ export class AircraftComponentComponent implements OnInit {
         console.log('event.filters', lazyLoadEvent.filters);
         // this.fetchPage(lazyLoadEvent.first || 0, lazyLoadEvent.rows || 0,
         //     ComponentHelper.buildSearchString(lazyLoadEvent, ['name', 'description', 'part.name', 'workPerformed', 'datePerformed', 'hoursPerformed', 'dateDue', 'hoursDue']), this.SORT_COLUMNS);
-        this.fetchPage(lazyLoadEvent.first || 0, lazyLoadEvent.rows || 0,
-            '', this.SORT_COLUMNS);
-        //this.fetchPage2(lazyLoadEvent)
+        // this.fetchPage(lazyLoadEvent.first || 0, lazyLoadEvent.rows || 0,
+        //     '', this.SORT_COLUMNS);
+        this.fetchPage2(lazyLoadEvent)
     }
 
 
@@ -148,7 +148,7 @@ export class AircraftComponentComponent implements OnInit {
                     if (rowResponse._embedded) {
                         this.firstRowOfTable = this.page.number * this.ROWS_PER_PAGE;
 
-                        this.componentRowArray = rowResponse._embedded.components;
+                        this.componentRowArray = rowResponse._embedded.componentModels;
                         // convert date strings to date objects
 
                         this.componentRowArray.forEach(componentRow => {
@@ -243,7 +243,7 @@ export class AircraftComponentComponent implements OnInit {
                         console.log('aircraftComponentListResponse', aircraftComponentListResponse);
                         //this.flightLogTotalsVResponse = aircraftComponentListResponse;
                         this.page = aircraftComponentListResponse.page;
-                        this.componentRowArray = this.page.totalElements ? aircraftComponentListResponse._embedded.components : [];
+                        this.componentRowArray = this.page.totalElements ? aircraftComponentListResponse._embedded.componentModels : [];
                         // this.clearTimePortionOfDates(this.componentRowArray);
                         console.log('this.componentRowArray', this.componentRowArray);
                         //this.links = this.flightLogTotalsVResponse._links;
