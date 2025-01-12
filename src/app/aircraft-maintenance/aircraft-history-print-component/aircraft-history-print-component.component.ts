@@ -6,7 +6,9 @@ import { MyMessageService } from '../../message/mymessage.service';
 @Component({
     selector: 'app-aircraft-history-print-component',
     templateUrl: './aircraft-history-print-component.component.html',
-    styleUrls: ['./aircraft-history-print-component.component.css']
+    styleUrls: ['./aircraft-history-print-component.component.css'],
+    providers: [AircraftComponentService]
+
 })
 export class AircraftHistoryPrintComponentComponent implements OnInit {
 

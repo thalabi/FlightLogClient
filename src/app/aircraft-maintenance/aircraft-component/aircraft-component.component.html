@@ -125,6 +125,10 @@
     &nbsp;
 
     <form [formGroup]="componentForm" (ngSubmit)="onSubmit()" novalidate>
+
+        <p-messages></p-messages>
+        <app-backend-stacktrace-display></app-backend-stacktrace-display>
+
         <div class="grid" [ngStyle]="{'width': '35rem'}">
 
             <!-- Table of the component and it history rows -->

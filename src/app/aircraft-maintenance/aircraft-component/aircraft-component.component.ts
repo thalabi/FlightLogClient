@@ -21,7 +21,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 @Component({
     selector: 'app-aircraft-component',
     templateUrl: './aircraft-component.component.html',
-    styleUrls: ['./aircraft-component.component.css']
+    styleUrls: ['./aircraft-component.component.css'],
+    providers: [AircraftComponentService]
 })
 export class AircraftComponentComponent implements OnInit {
 
@@ -133,7 +134,7 @@ export class AircraftComponentComponent implements OnInit {
     }
 
 
-    fetchPage(firstRowNumber: number, rowsPerPage: number, searchString: string, queryOrderByColumns: string[]) {
+    fetchPage3(firstRowNumber: number, rowsPerPage: number, searchString: string, queryOrderByColumns: string[]) {
         console.log("in fetchPage");
         this.loadingStatus = true;
         this.modifyAndDeleteButtonsDisable = true;
@@ -206,6 +207,9 @@ export class AircraftComponentComponent implements OnInit {
     fetchPage2(lazyLoadEvent: LazyLoadEvent) {
         console.log(lazyLoadEvent)
         this.loadingStatus = true
+        this.modifyAndDeleteButtonsDisable = true;
+        this.selectedComponentRow = {} as AircraftComponent; // unselect row
+        this.resetDialoForm();
         const pageSize = lazyLoadEvent.rows ?? 20
         const pageNumber = (lazyLoadEvent.first ?? 0) / pageSize;
         //const filters: { [s: string]: FilterMetadata[] } | undefined = lazyLoadEvent.filters
@@ -305,7 +309,7 @@ export class AircraftComponentComponent implements OnInit {
         this.firstRowOfTable = (this.pageNumber - 1) * this.ROWS_PER_PAGE;
         this.savedLazyLoadEvent.first = this.firstRowOfTable;
         this.onLazyLoad(this.savedLazyLoadEvent);
-        this.fetchPage(this.firstRowOfTable, this.ROWS_PER_PAGE, '', this.SORT_COLUMNS);
+        //this.fetchPage(this.firstRowOfTable, this.ROWS_PER_PAGE, '', this.SORT_COLUMNS);
         this.pageNumber = 0;
     }
 
@@ -391,6 +395,7 @@ export class AircraftComponentComponent implements OnInit {
 
     showDialog(crudMode: CrudEnum) {
         this.displayDialog = true;
+        this.sessionService.setDisableParentMessages(true)
         this.crudMode = crudMode;
         this.componentHistoryCrudMode = null;
         console.log('this.crudMode', this.crudMode);
@@ -659,6 +664,7 @@ export class AircraftComponentComponent implements OnInit {
     onCancelAndCloseDialog() {
         console.log('In onCancelAndCloseDialog');
         this.resetDialoForm();
+        this.sessionService.setDisableParentMessages(false)
         this.modifyAndDeleteButtonsDisable = true;
     }
     onCancelComponentUpdateCrud() {
@@ -684,8 +690,10 @@ export class AircraftComponentComponent implements OnInit {
         // this.fetchPage(this.savedLazyLoadEvent.first || 0, this.savedLazyLoadEvent.rows || 0,
         //     ComponentHelper.buildSearchString(this.savedLazyLoadEvent, ['name', 'description', 'part.name', 'workPerformed', 'datePerformed', 'hoursPerformed', 'dateDue', 'hoursDue']),
         //     this.SORT_COLUMNS);
-        this.fetchPage(this.savedLazyLoadEvent.first || 0, this.savedLazyLoadEvent.rows || 0, '',
-            this.SORT_COLUMNS);
+        this.sessionService.setDisableParentMessages(false)
+        // this.fetchPage(this.savedLazyLoadEvent.first || 0, this.savedLazyLoadEvent.rows || 0, '',
+        //     this.SORT_COLUMNS);
+        this.fetchPage2(this.savedLazyLoadEvent);
     }
 
     private resetDialoForm() {

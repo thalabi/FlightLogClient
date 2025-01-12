@@ -8,6 +8,7 @@ import { ButtonModule } from 'primeng/button';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { DialogModule } from 'primeng/dialog';
 import { MessageModule } from 'primeng/message';
+import { MessagesModule } from 'primeng/messages';
 import { TooltipModule } from 'primeng/tooltip';
 import { DropdownModule } from 'primeng/dropdown';
 import { CalendarModule } from 'primeng/calendar';
@@ -21,13 +22,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AircraftComponentService } from './service/aircraft-component.service';
 import { AircraftHistoryPrintComponentComponent } from './aircraft-history-print-component/aircraft-history-print-component.component';
 import { ValidatorModule } from '../validator/validator.module';
+import { BackendStacktraceDisplayComponent } from '../backend-stacktrace-display/backend-stacktrace-display.component';
 
 @NgModule({
     imports: [
         CommonModule,
         FormsModule, ReactiveFormsModule,
-        BrowserAnimationsModule, TableModule, ButtonModule, MultiSelectModule, DialogModule, CalendarModule, AutoCompleteModule, DialogModule, TooltipModule, InputSwitchModule, MessageModule, TabViewModule, PickListModule, FieldsetModule,
-        ValidatorModule
+        BrowserAnimationsModule, TableModule, ButtonModule, MultiSelectModule, DialogModule, CalendarModule, AutoCompleteModule, DialogModule, TooltipModule, InputSwitchModule, MessageModule, MessagesModule, TabViewModule, PickListModule, FieldsetModule,
+        ValidatorModule, BackendStacktraceDisplayComponent
     ],
     providers: [
         AircraftComponentService

@@ -57,7 +57,7 @@ import { WelcomeComponent } from './welcome/welcome.component';
 import { Httpstatus404Component } from './httpstatus404/httpstatus404.component';
 import { TabViewModule } from 'primeng/tabview';
 import { MessageService } from 'primeng/api';
-import { BackendStacktraceDisplayComponent } from './backend-stacktrace-display/backend-stacktrace-display.component';
+import { BackendStacktraceDisplayComponent } from "./backend-stacktrace-display/backend-stacktrace-display.component";
 
 @NgModule({
     declarations: [
@@ -75,27 +75,18 @@ import { BackendStacktraceDisplayComponent } from './backend-stacktrace-display/
         SyncButtonComponent,
         PasswordMaskPipe,
         WelcomeComponent,
-        BackendStacktraceDisplayComponent
     ],
     imports: [
         BrowserModule,
         FormsModule, ReactiveFormsModule,
         HttpClientModule,
-
         AuthModule.forRoot(),
         NgIdleModule.forRoot(),
-
-
-        BrowserAnimationsModule, TableModule, ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, TooltipModule, ProgressSpinnerModule, ToggleButtonModule, MessageModule, OverlayPanelModule, CheckboxModule, PickListModule, ProgressBarModule, InputSwitchModule, RadioButtonModule, MessagesModule, OverlayPanelModule, TabViewModule,
-
+        BrowserAnimationsModule, TableModule, ButtonModule, MultiSelectModule, DialogModule, CalendarModule, DropdownModule, AutoCompleteModule, MenubarModule, TooltipModule, ProgressSpinnerModule, ToggleButtonModule, MessageModule, MessagesModule, OverlayPanelModule, CheckboxModule, PickListModule, ProgressBarModule, InputSwitchModule, RadioButtonModule, OverlayPanelModule, TabViewModule,
         //DeviceDetectorModule.forRoot(),
-
         AppRoutingModule,
-
         ValidatorModule,
-        AircraftMaintenanceModule,
-
-
+        BackendStacktraceDisplayComponent
     ],
     providers: [
         AppInfoService,
