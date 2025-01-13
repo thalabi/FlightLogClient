@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { SessionService } from '../service/session.service';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { ButtonModule } from 'primeng/button';
-import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
 
 @Component({
     standalone: true,
     selector: 'app-backend-stacktrace-display',
-    imports: [BrowserModule, ButtonModule, OverlayPanelModule],
+    imports: [CommonModule, ButtonModule, OverlayPanelModule],
     templateUrl: './backend-stacktrace-display.component.html',
     styleUrls: ['./backend-stacktrace-display.component.css']
 })

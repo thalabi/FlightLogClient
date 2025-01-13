@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GenericEntityService } from '../../service/generic-entity.service';
 import { AircraftComponentService } from '../service/aircraft-component.service';
 import { MyMessageService } from '../../message/mymessage.service';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MenuComponent } from '../../menu/menu.component';
 import { Constant } from '../../constant';
 import { IGenericEntity } from '../../domain/i-gerneric-entity';
@@ -17,9 +17,22 @@ import { SessionService } from '../../service/session.service';
 import { PermissionEnum } from '../../menu/permission-enum';
 import { AircraftComponentListResponse } from '../../response/aircraft-component-list-response';
 import { HttpErrorResponse } from '@angular/common/http';
+import { BrowserModule } from '@angular/platform-browser';
+import { ButtonModule } from 'primeng/button';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { TableModule } from 'primeng/table';
+import { TooltipModule } from 'primeng/tooltip';
+import { CommonModule } from '@angular/common';
+import { MessagesModule } from 'primeng/messages';
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { CalendarModule } from 'primeng/calendar';
+import { DialogModule } from 'primeng/dialog';
+import { BackendStacktraceDisplayComponent } from '../../backend-stacktrace-display/backend-stacktrace-display.component';
 
 @Component({
+    standalone: true,
     selector: 'app-aircraft-component',
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, MessagesModule, TableModule, TooltipModule, AutoCompleteModule, CalendarModule, ButtonModule, DialogModule, OverlayPanelModule, BackendStacktraceDisplayComponent],
     templateUrl: './aircraft-component.component.html',
     styleUrls: ['./aircraft-component.component.css'],
     providers: [AircraftComponentService]

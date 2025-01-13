@@ -7,8 +7,6 @@ import { FlightLogLastXDaysTotalVTableComponent } from './flight-log-last-x-days
 import { JobLauncherComponent } from './job-launcher/job-launcher.component';
 import { GenericCrudComponent } from './generic-crud/generic-crud.component';
 import { AuthGuard } from './auth/auth-guard.service';
-
-import { AircraftComponentComponent } from './aircraft-maintenance/aircraft-component/aircraft-component.component';
 import { AircraftHistoryPrintComponentComponent } from './aircraft-maintenance/aircraft-history-print-component/aircraft-history-print-component.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { Httpstatus404Component } from './httpstatus404/httpstatus404.component';
@@ -22,7 +20,8 @@ const routes: Routes = [
     { path: 'flightLogLastXDaysTotalVTableComponent', component: FlightLogLastXDaysTotalVTableComponent, canActivate: [AuthGuard] },
     { path: 'jobLauncher', component: JobLauncherComponent, canActivate: [AuthGuard] },
     { path: 'genericCrud/:entityName', component: GenericCrudComponent, canActivate: [AuthGuard] },
-    { path: 'aircraftComponent', component: AircraftComponentComponent, canActivate: [AuthGuard] },
+    // { path: 'aircraftComponent', component: AircraftComponentComponent, canActivate: [AuthGuard] },
+    { path: 'aircraftComponent', loadComponent: () => import('./aircraft-maintenance/aircraft-component/aircraft-component.component').then(m => m.AircraftComponentComponent), canActivate: [AuthGuard] },
     { path: 'aircraftHistoryPrintComponentComponent', component: AircraftHistoryPrintComponentComponent, canActivate: [AuthGuard] },
 
     { path: '', redirectTo: 'welcome', pathMatch: 'full' },

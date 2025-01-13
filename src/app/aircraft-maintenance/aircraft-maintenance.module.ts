@@ -1,39 +1,26 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AircraftComponentComponent } from './aircraft-component/aircraft-component.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { TableModule } from 'primeng/table';
 
 import { ButtonModule } from 'primeng/button';
-import { MultiSelectModule } from 'primeng/multiselect';
-import { DialogModule } from 'primeng/dialog';
 import { MessageModule } from 'primeng/message';
 import { MessagesModule } from 'primeng/messages';
-import { TooltipModule } from 'primeng/tooltip';
-import { DropdownModule } from 'primeng/dropdown';
 import { CalendarModule } from 'primeng/calendar';
-import { InputSwitchModule } from 'primeng/inputswitch';
-import { AutoCompleteModule } from 'primeng/autocomplete';
 import { TabViewModule } from 'primeng/tabview';
 import { PickListModule } from 'primeng/picklist';
 import { FieldsetModule } from 'primeng/fieldset';
 
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { AircraftComponentService } from './service/aircraft-component.service';
 import { AircraftHistoryPrintComponentComponent } from './aircraft-history-print-component/aircraft-history-print-component.component';
-import { ValidatorModule } from '../validator/validator.module';
-import { BackendStacktraceDisplayComponent } from '../backend-stacktrace-display/backend-stacktrace-display.component';
 
 @NgModule({
     imports: [
         CommonModule,
-        FormsModule, ReactiveFormsModule,
-        BrowserAnimationsModule, TableModule, ButtonModule, MultiSelectModule, DialogModule, CalendarModule, AutoCompleteModule, DialogModule, TooltipModule, InputSwitchModule, MessageModule, MessagesModule, TabViewModule, PickListModule, FieldsetModule,
-        ValidatorModule, BackendStacktraceDisplayComponent
+        FormsModule, ButtonModule, CalendarModule, MessageModule, MessagesModule, TabViewModule, PickListModule, FieldsetModule,
     ],
     providers: [
         AircraftComponentService
     ],
-    declarations: [AircraftComponentComponent, AircraftHistoryPrintComponentComponent,],
+    declarations: [AircraftHistoryPrintComponentComponent,],
 })
 export class AircraftMaintenanceModule { }
