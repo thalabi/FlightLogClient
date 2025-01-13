@@ -191,7 +191,6 @@ export class AircraftComponentComponent implements OnInit {
                         this.componentRowArray = [];
                     }
 
-                    // this.firstRowOfTable = page.number * this.ROWS_PER_PAGE;
                     // this.rowArray = page.totalElements ? rowResponse._embedded[this.tableName+'s'] : [];
                     // console.log('this.rowArray', this.rowArray);
                     this.links = rowResponse._links;
@@ -259,6 +258,7 @@ export class AircraftComponentComponent implements OnInit {
                         console.log('aircraftComponentListResponse', aircraftComponentListResponse);
                         //this.flightLogTotalsVResponse = aircraftComponentListResponse;
                         this.page = aircraftComponentListResponse.page;
+                        this.firstRowOfTable = this.page.number * this.ROWS_PER_PAGE;
                         this.componentRowArray = this.page.totalElements ? aircraftComponentListResponse._embedded.componentModels : [];
                         // this.clearTimePortionOfDates(this.componentRowArray);
                         console.log('this.componentRowArray', this.componentRowArray);
