@@ -1,11 +1,16 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ComponentHelper } from '../util/ComponentHelper';
 import { ReplicationService } from '../service/replication.service';
+import { FormsModule } from '@angular/forms';
+import { ToggleButtonModule } from 'primeng/togglebutton';
+import { NgIf } from '@angular/common';
 
 @Component({
     selector: 'app-sync-button',
     templateUrl: './sync-button.component.html',
-    styleUrls: ['./sync-button.component.css']
+    styleUrls: ['./sync-button.component.css'],
+    standalone: true,
+    imports: [NgIf, ToggleButtonModule, FormsModule]
 })
 export class SyncButtonComponent implements OnInit {
     @Input() tableName!: string;

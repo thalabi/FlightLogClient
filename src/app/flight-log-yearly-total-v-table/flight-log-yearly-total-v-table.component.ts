@@ -2,13 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import { FlightLogServiceService } from '../service/flight-log-service.service';
 import { FlightLogYearlyTotalV } from '../domain/flight-log-yearly-total-v';
 import { FlightLogYearlyTotalVResponse } from '../response/flight-log-yearly-total-v-response';
-import { MessageService } from 'primeng/api';
+import { MessageService, SharedModule } from 'primeng/api';
 import { SessionService } from '../service/session.service';
+import { DatePipe } from '@angular/common';
+import { TableModule } from 'primeng/table';
 
 @Component({
     selector: 'app-flight-log-yearly-total-v-table',
     templateUrl: './flight-log-yearly-total-v-table.component.html',
-    styleUrls: ['./flight-log-yearly-total-v-table.component.css']
+    styleUrls: ['./flight-log-yearly-total-v-table.component.css'],
+    standalone: true,
+    imports: [TableModule, SharedModule, DatePipe]
 })
 export class FlightLogYearlyTotalVTableComponent implements OnInit {
 

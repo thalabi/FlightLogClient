@@ -2,6 +2,10 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { MyMessageService } from './mymessage.service';
 import { MyMessage } from './mymessage';
 import { Abbreviate } from '../abbreviate/abbreviate';
+import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
+import { MessageModule } from 'primeng/message';
+import { NgFor, NgIf } from '@angular/common';
 
 
 @Component({
@@ -12,7 +16,9 @@ import { Abbreviate } from '../abbreviate/abbreviate';
         </div>
         <button *ngIf="messageArray && messageArray.length > 0" pButton type="button" label="Clear message(s)" (click)="onClearMessages()"></button>
     `,
-    styles: ['::ng-deep .ui-tooltip {max-width: 50rem;}']
+    styles: ['::ng-deep .ui-tooltip {max-width: 50rem;}'],
+    standalone: true,
+    imports: [NgFor, MessageModule, TooltipModule, NgIf, ButtonModule]
 })
 export class MessageComponent {
 

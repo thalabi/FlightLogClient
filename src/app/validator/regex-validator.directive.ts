@@ -3,7 +3,8 @@ import { NG_VALIDATORS, Validator, AbstractControl, ValidatorFn } from '@angular
 
 @Directive({
     selector: '[regexValidator]',
-    providers: [{ provide: NG_VALIDATORS, useExisting: RegexValidatorDirective, multi: true }]
+    providers: [{ provide: NG_VALIDATORS, useExisting: RegexValidatorDirective, multi: true }],
+    standalone: true
 })
 export class RegexValidatorDirective implements Validator {
     @Input('regexValidator') regexValidator!: string;

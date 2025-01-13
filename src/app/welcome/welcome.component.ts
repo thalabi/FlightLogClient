@@ -3,11 +3,14 @@ import { ActivatedRoute } from '@angular/router';
 import { UserInfo } from '../auth/auth.service';
 import { SessionService } from '../service/session.service';
 import { filter } from 'rxjs';
+import { NgIf } from '@angular/common';
 
 @Component({
     selector: 'app-welcome',
     templateUrl: './welcome.component.html',
-    styleUrls: ['./welcome.component.css']
+    styleUrls: ['./welcome.component.css'],
+    standalone: true,
+    imports: [NgIf]
 })
 export class WelcomeComponent implements OnInit {
     authenticated: boolean = false;

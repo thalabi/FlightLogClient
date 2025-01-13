@@ -8,7 +8,7 @@ import { SelectItem } from 'primeng/api/selectitem';
 import { Airport } from '../domain/airport';
 import { MakeModel } from '../domain/make-model';
 import { Registration } from '../domain/registration';
-import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CrudEnum } from '../crud-enum';
 import { FlightLogHelper } from './flight-log-table-helper';
 import { Pilot } from '../domain/pilot';
@@ -22,12 +22,28 @@ import { PermissionEnum } from '../menu/permission-enum';
 import { HttpErrorResponse } from '@angular/common/http';
 import { IFlightLogTotalsVResponse } from '../response/IFlightLogTotalsVResponse';
 import { IFlightLogTotalsV } from '../response/IFlightLogTotalsV';
-import { MessageService } from 'primeng/api';
+import { MessageService, SharedModule } from 'primeng/api';
+import { TabViewModule } from 'primeng/tabview';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { RegexValidatorDirective } from '../validator/regex-validator.directive';
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { DropdownModule } from 'primeng/dropdown';
+import { CalendarModule } from 'primeng/calendar';
+import { DialogModule } from 'primeng/dialog';
+import { SyncButtonComponent } from '../sync-button/sync-button.component';
+import { ButtonModule } from 'primeng/button';
+import { AbbreviateComponent } from '../abbreviate/abbreviate.component';
+import { TooltipModule } from 'primeng/tooltip';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { TableModule } from 'primeng/table';
+import { NgIf, NgFor, NgStyle, DecimalPipe, DatePipe } from '@angular/common';
 
 @Component({
     selector: 'app-flight-log-table',
     templateUrl: './flight-log-table.component.html',
-    styleUrls: ['./flight-log-table.component.css']
+    styleUrls: ['./flight-log-table.component.css'],
+    standalone: true,
+    imports: [NgIf, TableModule, SharedModule, MultiSelectModule, FormsModule, NgFor, NgStyle, TooltipModule, AbbreviateComponent, ButtonModule, SyncButtonComponent, DialogModule, ReactiveFormsModule, CalendarModule, DropdownModule, AutoCompleteModule, RegexValidatorDirective, OverlayPanelModule, TabViewModule, DecimalPipe, DatePipe]
 })
 export class FlightLogTableComponent implements OnInit {
 

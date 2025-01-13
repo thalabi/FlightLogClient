@@ -4,11 +4,15 @@ import { FlightLogLastXDaysTotalV } from '../domain/flight-log-last-x-days-total
 import { FlightLogLastXDaysTotalVResponse } from '../response/flight-log-last-x-days-total-v-response';
 import { MyMessageService } from '../message/mymessage.service';
 import { SessionService } from '../service/session.service';
+import { SharedModule } from 'primeng/api';
+import { TableModule } from 'primeng/table';
 
 @Component({
     selector: 'app-flight-log-last-x-days-total-v-table',
     templateUrl: './flight-log-last-x-days-total-v-table.component.html',
-    styleUrls: ['./flight-log-last-x-days-total-v-table.component.css']
+    styleUrls: ['./flight-log-last-x-days-total-v-table.component.css'],
+    standalone: true,
+    imports: [TableModule, SharedModule]
 })
 export class FlightLogLastXDaysTotalVTableComponent implements OnInit {
 

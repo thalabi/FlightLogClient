@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, FormControl, AbstractControl, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, AbstractControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IGenericEntity } from '../domain/i-gerneric-entity';
 import { CrudEnum } from '../crud-enum';
 import { CrudComponentConfig } from '../config/crud-component-config';
@@ -23,12 +23,24 @@ import { MenuComponent } from '../menu/menu.component';
 import { Constant } from '../constant';
 import { SessionService } from '../service/session.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { SortEvent } from 'primeng/api';
+import { SortEvent, SharedModule } from 'primeng/api';
+import { PasswordMaskPipe } from '../util/password-mask-pipe';
+import { TooltipModule } from 'primeng/tooltip';
+import { PickListModule } from 'primeng/picklist';
+import { CheckboxModule } from 'primeng/checkbox';
+import { CalendarModule } from 'primeng/calendar';
+import { DialogModule } from 'primeng/dialog';
+import { SyncButtonComponent } from '../sync-button/sync-button.component';
+import { ButtonModule } from 'primeng/button';
+import { NgIf, NgFor, NgStyle, NgSwitch, NgSwitchCase, NgSwitchDefault, TitleCasePipe, DatePipe } from '@angular/common';
+import { TableModule } from 'primeng/table';
 
 @Component({
     selector: 'app-generic-crud',
     templateUrl: './generic-crud.component.html',
-    styleUrls: ['./generic-crud.component.css']
+    styleUrls: ['./generic-crud.component.css'],
+    standalone: true,
+    imports: [TableModule, NgIf, SharedModule, NgFor, NgStyle, NgSwitch, NgSwitchCase, NgSwitchDefault, ButtonModule, SyncButtonComponent, FormsModule, DialogModule, ReactiveFormsModule, CalendarModule, CheckboxModule, PickListModule, TooltipModule, TitleCasePipe, DatePipe, PasswordMaskPipe]
 })
 export class GenericCrudComponent implements OnInit {
 

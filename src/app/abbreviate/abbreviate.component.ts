@@ -1,10 +1,14 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Abbreviate } from './abbreviate';
+import { TooltipModule } from 'primeng/tooltip';
+import { NgIf } from '@angular/common';
 
 @Component({
     selector: 'app-abbreviate',
     templateUrl: './abbreviate.component.html',
-    styleUrls: ['./abbreviate.component.css']
+    styleUrls: ['./abbreviate.component.css'],
+    standalone: true,
+    imports: [NgIf, TooltipModule]
 })
 export class AbbreviateComponent implements OnInit {
     @Input('text') inputText!: string;

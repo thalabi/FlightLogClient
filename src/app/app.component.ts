@@ -4,11 +4,20 @@ import { environment } from '../environments/environment';
 import { DEFAULT_INTERRUPTSOURCES, Idle } from '@ng-idle/core';
 import { AuthService } from './auth/auth.service';
 import { SessionService } from './service/session.service';
+import { SharedModule } from 'primeng/api';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { RouterOutlet } from '@angular/router';
+import { MenuComponent } from './menu/menu.component';
+import { BackendStacktraceDisplayComponent } from './backend-stacktrace-display/backend-stacktrace-display.component';
+import { MessagesModule } from 'primeng/messages';
+import { NgIf } from '@angular/common';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.css']
+    styleUrls: ['./app.component.css'],
+    standalone: true,
+    imports: [NgIf, MessagesModule, BackendStacktraceDisplayComponent, MenuComponent, RouterOutlet, OverlayPanelModule, SharedModule]
 })
 export class AppComponent implements OnInit {
     clientBuildInfo: string = ''

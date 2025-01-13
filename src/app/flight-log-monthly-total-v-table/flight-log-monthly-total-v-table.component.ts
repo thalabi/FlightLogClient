@@ -4,11 +4,16 @@ import { FlightLogMonthlyTotalVResponse } from '../response/flight-log-monthly-t
 import { FlightLogMonthlyTotalV } from '../domain/flight-log-monthly-total-v';
 import { MyMessageService } from '../message/mymessage.service';
 import { SessionService } from '../service/session.service';
+import { DatePipe } from '@angular/common';
+import { SharedModule } from 'primeng/api';
+import { TableModule } from 'primeng/table';
 
 @Component({
     selector: 'app-flight-log-monthly-total-v-table',
     templateUrl: './flight-log-monthly-total-v-table.component.html',
-    styleUrls: ['./flight-log-monthly-total-v-table.component.css']
+    styleUrls: ['./flight-log-monthly-total-v-table.component.css'],
+    standalone: true,
+    imports: [TableModule, SharedModule, DatePipe]
 })
 export class FlightLogMonthlyTotalVTableComponent implements OnInit {
 

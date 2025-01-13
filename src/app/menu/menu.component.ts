@@ -7,11 +7,14 @@ import { SessionService } from '../service/session.service';
 
 import { distinctUntilChanged } from 'rxjs';
 import { PermissionEnum } from './permission-enum';
+import { MenubarModule } from 'primeng/menubar';
 
 @Component({
     selector: 'app-menu',
     templateUrl: './menu.component.html',
-    styleUrls: ['./menu.component.css']
+    styleUrls: ['./menu.component.css'],
+    standalone: true,
+    imports: [MenubarModule]
 })
 export class MenuComponent implements OnInit {
 

@@ -2,11 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import { JobLauncherService } from '../service/job-launcher.service';
 import { MyMessageService } from '../message/mymessage.service';
 import { SessionService } from '../service/session.service';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { ButtonModule } from 'primeng/button';
+import { NgIf, JsonPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
     selector: 'app-job-launcher',
     templateUrl: './job-launcher.component.html',
-    styleUrls: ['./job-launcher.component.css']
+    styleUrls: ['./job-launcher.component.css'],
+    standalone: true,
+    imports: [DropdownModule, FormsModule, NgIf, ButtonModule, ProgressBarModule, JsonPipe]
 })
 export class JobLauncherComponent implements OnInit {
 
