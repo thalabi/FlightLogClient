@@ -1,4 +1,4 @@
-import { NgModule, APP_INITIALIZER } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -38,11 +38,9 @@ import { MessageComponent } from './message/message.component';
 import { SyncButtonComponent } from './sync-button/sync-button.component';
 import { PasswordMaskPipe } from './util/password-mask-pipe';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { AircraftMaintenanceModule } from './aircraft-maintenance/aircraft-maintenance.module';
 import { ValidatorModule } from './validator/validator.module';
 import { RouteReuseStrategy } from '@angular/router';
 import { HttpErrorInterceptor } from './http-error-interceptor';
-import { MyMessageService } from './message/mymessage.service';
 import { AppInfoService } from './service/appInfo.service';
 import { FlightLogServiceService } from './service/flight-log-service.service';
 import { GenericEntityService } from './service/generic-entity.service';

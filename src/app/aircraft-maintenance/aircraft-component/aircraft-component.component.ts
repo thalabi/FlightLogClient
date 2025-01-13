@@ -17,7 +17,6 @@ import { SessionService } from '../../service/session.service';
 import { PermissionEnum } from '../../menu/permission-enum';
 import { AircraftComponentListResponse } from '../../response/aircraft-component-list-response';
 import { HttpErrorResponse } from '@angular/common/http';
-import { BrowserModule } from '@angular/platform-browser';
 import { ButtonModule } from 'primeng/button';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { TableModule } from 'primeng/table';

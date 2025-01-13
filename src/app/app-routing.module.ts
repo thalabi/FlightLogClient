@@ -22,7 +22,7 @@ const routes: Routes = [
     { path: 'genericCrud/:entityName', component: GenericCrudComponent, canActivate: [AuthGuard] },
     // { path: 'aircraftComponent', component: AircraftComponentComponent, canActivate: [AuthGuard] },
     { path: 'aircraftComponent', loadComponent: () => import('./aircraft-maintenance/aircraft-component/aircraft-component.component').then(m => m.AircraftComponentComponent), canActivate: [AuthGuard] },
-    { path: 'aircraftHistoryPrintComponentComponent', component: AircraftHistoryPrintComponentComponent, canActivate: [AuthGuard] },
+    { path: 'aircraftHistoryPrintComponentComponent', loadComponent: () => import('./aircraft-maintenance/aircraft-history-print-component/aircraft-history-print-component.component').then(m => m.AircraftHistoryPrintComponentComponent), canActivate: [AuthGuard] },
 
     { path: '', redirectTo: 'welcome', pathMatch: 'full' },
     //{ path: 'login', component: LoginComponent },
