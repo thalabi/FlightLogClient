@@ -7,7 +7,7 @@ export interface AircraftComponent {
     workPerformed: string;
     datePerformed: Date;
     hoursPerformed: number;
-    dateDue: Date;
+    dateDue: Date | null;
     hoursDue: number;
     deleted: boolean;
 

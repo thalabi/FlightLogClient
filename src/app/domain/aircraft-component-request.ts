@@ -8,7 +8,7 @@ export namespace AircraftComponentRequest {
         workPerformed: string;
         datePerformed: Date;
         hoursPerformed: number;
-        dateDue: Date;
+        dateDue: Date | null;
         hoursDue: number;
 
         partUri: string;
@@ -29,7 +29,7 @@ export namespace AircraftComponentRequest {
         workPerformed: string;
         datePerformed: Date;
         hoursPerformed: number;
-        dateDue: Date;
+        dateDue: Date | null;
         hoursDue: number;
 
         partUri: string;
