@@ -27,11 +27,12 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { CalendarModule } from 'primeng/calendar';
 import { DialogModule } from 'primeng/dialog';
 import { BackendStacktraceDisplayComponent } from '../../backend-stacktrace-display/backend-stacktrace-display.component';
+import { InputSwitchModule } from 'primeng/inputswitch';
 
 @Component({
     standalone: true,
     selector: 'app-aircraft-component',
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, MessagesModule, TableModule, TooltipModule, AutoCompleteModule, CalendarModule, ButtonModule, DialogModule, OverlayPanelModule, BackendStacktraceDisplayComponent],
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, MessagesModule, TableModule, TooltipModule, AutoCompleteModule, CalendarModule, ButtonModule, DialogModule, InputSwitchModule, OverlayPanelModule, BackendStacktraceDisplayComponent],
     templateUrl: './aircraft-component.component.html',
     styleUrls: ['./aircraft-component.component.css'],
     providers: [AircraftComponentService]
@@ -108,7 +109,7 @@ export class AircraftComponentComponent implements OnInit {
             dateDue: new FormControl(),
             hoursDue: new FormControl(),
             //createHistoryRecord: new FormControl(),
-            deleteHistoryRecords: new FormControl()
+            deleteHistoryRecords: new FormControl(false)
         });
     }
 
@@ -550,7 +551,7 @@ export class AircraftComponentComponent implements OnInit {
                         let aircraftComponentToUpdate = this.componentAndHistoryArray.find(aircraftComponent =>
                             aircraftComponent._links.self.href === this.selectedComponentAndHistoryRow._links.self.href);
                         aircraftComponentToUpdate = aircraftComponentToUpdate || {} as AircraftComponent;
-                        console.log(aircraftComponentToUpdate);
+                        console.log('Found row in existing component and existing history', aircraftComponentToUpdate);
                         aircraftComponentToUpdate.name = this.componentForm.controls['name'].value.trim();
                         aircraftComponentToUpdate.description = this.componentForm.controls['description'].value;
                         aircraftComponentToUpdate.workPerformed = this.componentForm.controls['workPerformed'].value;
@@ -609,10 +610,15 @@ export class AircraftComponentComponent implements OnInit {
                             // aircraftComponentHistoryRequest.historyUri =
                             //     componentAndHistory._links && componentAndHistory._links.self.href === aircraftComponentRequest.componentUri ? null : componentAndHistory._links.self.href;
                             if (componentAndHistory._links) {
+                                console.log('componentAndHistory._links.self.href', componentAndHistory._links.self.href)
+                                console.log('aircraftComponentRequest.componentUri', aircraftComponentRequest.componentUri)
+                                console.log('this.tempAircraftComponentHistorySelfHrefPrefix', this.tempAircraftComponentHistorySelfHrefPrefix)
                                 if (componentAndHistory._links.self.href === aircraftComponentRequest.componentUri) {
                                     aircraftComponentHistoryRequest.historyUri = '';
                                 } else if (componentAndHistory._links.self.href.startsWith(this.tempAircraftComponentHistorySelfHrefPrefix)) {
                                     aircraftComponentHistoryRequest.historyUri = '';
+                                } else {
+                                    aircraftComponentHistoryRequest.historyUri = componentAndHistory._links.self.href
                                 }
                             }
                             aircraftComponentHistoryRequest.name = componentAndHistory.name;
@@ -629,7 +635,7 @@ export class AircraftComponentComponent implements OnInit {
 
                             aircraftComponentHistoryRequest.created = componentAndHistory.created;
                             aircraftComponentHistoryRequest.modified = componentAndHistory.modified;
-
+                            console.log('aircraftComponentHistoryRequest', aircraftComponentHistoryRequest)
                             aircraftComponentRequest.historyRequestSet.push(aircraftComponentHistoryRequest);
                         });
                         console.log('aircraftComponentRequest', aircraftComponentRequest);
