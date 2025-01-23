@@ -9,8 +9,8 @@ export interface Airport {
     longitude: number;
     upperWindsStationId: string;
 
-    created: Date;
-    modified: Date;
+    //created: Date;
+    //modified: Date;
 
     _links: { airport: { href: string } };
 }

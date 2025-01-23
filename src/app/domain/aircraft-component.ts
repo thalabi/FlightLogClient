@@ -15,8 +15,8 @@ export interface AircraftComponent {
 
     componentHistorySet: Array<AircraftComponentHistory>;
 
-    created: Date;
-    modified: Date;
+    //created: Date;
+    //modified: Date;
 
     _links: { self: { href: string } };
 }

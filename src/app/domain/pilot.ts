@@ -5,8 +5,8 @@ export class Pilot implements ISingleColumnEntity {
 
     pilot!: string;
 
-    created!: Date;
-    modified!: Date;
+    // created!: Date;
+    // modified!: Date;
 
     _links!: { self: { href: string; }; };
 }

@@ -23,8 +23,8 @@ export interface FlightLog {
     tosLdgsDay: number;
     tosLdgsNight: number;
 
-    created: Date;
-    modified: Date;
+    //created: Date;
+    //modified: Date;
 
     _links: { flightLog: { href: string } };
     //created: Date;

@@ -34,9 +34,9 @@ export class GenericEntityService {
     addGenericEntity(tableName: string, row: IGenericEntity): Observable<IGenericEntityResponse> {
         let url: string = this.serviceUrl + '/protected/data-rest/' + tableName + 's';
         console.log('row: ', row);
-        row.created = new Date();
-        row.modified = new Date();
-        console.log('row: ', row);
+        // row.created = new Date();
+        // row.modified = new Date();
+        // console.log('row: ', row);
         return this.httpClient.post<IGenericEntity>(url, row).pipe(
             map((response: any) => {
                 console.log('response', response);
@@ -50,12 +50,12 @@ export class GenericEntityService {
 
     updateGenericEntity(row: IGenericEntity): Observable<IGenericEntityResponse> {
         console.log('row: ', row);
-        row.modified = new Date();
-        console.log('row: ', row);
+        // row.modified = new Date();
+        // console.log('row: ', row);
 
         let url: string = row._links.self.href;
         console.log('url: ', url);
-        return this.httpClient.put<IGenericEntity>(url, row).pipe(
+        return this.httpClient.patch<IGenericEntity>(url, row).pipe(
             map((response: any) => {
                 console.log('response', response);
                 return response;

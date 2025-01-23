@@ -17,8 +17,8 @@ export namespace AircraftComponentRequest {
 
         createHistoryRecord: boolean;
 
-        created: Date;
-        modified: Date;
+        //created: Date;
+        //modified: Date;
     }
 
     export interface Historyrequest {
@@ -34,7 +34,7 @@ export namespace AircraftComponentRequest {
 
         partUri: string;
 
-        created: Date;
-        modified: Date;
+        //created: Date;
+        //modified: Date;
     }
 }

@@ -171,9 +171,9 @@ export class AircraftComponentComponent implements OnInit {
                             //componentRow.dateDue = componentRow.dateDue ? new Date(componentRow.dateDue) : null;
                             componentRow.dateDue = componentRow.dateDue ? new Date(componentRow.dateDue) : null;
                             //componentRow.created = componentRow.created ? new Date(componentRow.created) : null;
-                            componentRow.created = new Date(componentRow.created);
+                            //componentRow.created = new Date(componentRow.created);
                             //componentRow.modified = componentRow.modified ? new Date(componentRow.modified) : null;
-                            componentRow.modified = new Date(componentRow.modified);
+                            //componentRow.modified = new Date(componentRow.modified);
                             componentRow.componentHistorySet.forEach(componentHistory => {
                                 // componentHistory.datePerformed = componentHistory.datePerformed ? new Date(componentHistory.datePerformed) : null;
                                 // componentHistory.dateDue = componentHistory.dateDue ? new Date(componentHistory.dateDue) : null;
@@ -181,8 +181,8 @@ export class AircraftComponentComponent implements OnInit {
                                 // componentHistory.modified = componentHistory.modified ? new Date(componentHistory.modified) : null;
                                 componentHistory.datePerformed = new Date(componentHistory.datePerformed);
                                 componentHistory.dateDue = componentHistory.dateDue ? new Date(componentHistory.dateDue) : null;
-                                componentHistory.created = new Date(componentHistory.created);
-                                componentHistory.modified = new Date(componentHistory.modified);
+                                //componentHistory.created = new Date(componentHistory.created);
+                                //componentHistory.modified = new Date(componentHistory.modified);
                             });
                         });
 
@@ -272,8 +272,8 @@ export class AircraftComponentComponent implements OnInit {
 
                             componentRow.datePerformed = new Date(componentRow.datePerformed);
                             componentRow.dateDue = componentRow.dateDue ? new Date(componentRow.dateDue) : null;
-                            componentRow.created = new Date(componentRow.created);
-                            componentRow.modified = new Date(componentRow.modified);
+                            //componentRow.created = new Date(componentRow.created);
+                            //componentRow.modified = new Date(componentRow.modified);
                             componentRow.componentHistorySet.forEach(componentHistory => {
                                 // componentHistory.datePerformed = componentHistory.datePerformed ? new Date(componentHistory.datePerformed) : null;
                                 // componentHistory.dateDue = componentHistory.dateDue ? new Date(componentHistory.dateDue) : null;
@@ -281,8 +281,8 @@ export class AircraftComponentComponent implements OnInit {
                                 // componentHistory.modified = componentHistory.modified ? new Date(componentHistory.modified) : null;
                                 componentHistory.datePerformed = new Date(componentHistory.datePerformed);
                                 componentHistory.dateDue = componentHistory.dateDue ? new Date(componentHistory.dateDue) : null;
-                                componentHistory.created = new Date(componentHistory.created);
-                                componentHistory.modified = new Date(componentHistory.modified);
+                                //componentHistory.created = new Date(componentHistory.created);
+                                //componentHistory.modified = new Date(componentHistory.modified);
                             });
                         });
 
@@ -344,8 +344,8 @@ export class AircraftComponentComponent implements OnInit {
         selectedComponent.hoursPerformed = this.selectedComponentRowCopy.hoursPerformed;
         selectedComponent.hoursDue = this.selectedComponentRowCopy.hoursDue;
         selectedComponent.dateDue = this.selectedComponentRowCopy.dateDue;
-        selectedComponent.created = this.selectedComponentRowCopy.created;
-        selectedComponent.modified = this.selectedComponentRowCopy.modified;
+        // selectedComponent.created = this.selectedComponentRowCopy.created;
+        // selectedComponent.modified = this.selectedComponentRowCopy.modified;
         console.log('pushing selectedComponent', selectedComponent);
         this.componentAndHistoryArray.push(selectedComponent);
 
@@ -360,8 +360,8 @@ export class AircraftComponentComponent implements OnInit {
             selectedComponentHistory.hoursPerformed = componentHistory.hoursPerformed;
             selectedComponentHistory.hoursDue = componentHistory.hoursDue;
             selectedComponentHistory.dateDue = componentHistory.dateDue;
-            selectedComponentHistory.created = componentHistory.created;
-            selectedComponentHistory.modified = componentHistory.modified;
+            // selectedComponentHistory.created = componentHistory.created;
+            // selectedComponentHistory.modified = componentHistory.modified;
             console.log('pushing selectedComponentHistory', selectedComponentHistory);
             this.componentAndHistoryArray.push(selectedComponentHistory);
         });
@@ -504,8 +504,8 @@ export class AircraftComponentComponent implements OnInit {
                 aircraftComponentRequest.dateDue = this.componentForm.controls['dateDue'].value;
                 aircraftComponentRequest.hoursDue = this.componentForm.controls['hoursDue'].value;
                 aircraftComponentRequest.partUri = this.componentForm.controls['part'].value._links.part.href;
-                aircraftComponentRequest.created = new Date();
-                aircraftComponentRequest.modified = new Date();
+                // aircraftComponentRequest.created = new Date();
+                // aircraftComponentRequest.modified = new Date();
                 console.log("aircraftComponentRequest: %o", aircraftComponentRequest);
                 this.aircraftComponentService.addComponent(aircraftComponentRequest).subscribe({
                     next: savedRow => {
@@ -535,8 +535,8 @@ export class AircraftComponentComponent implements OnInit {
                         component.dateDue = this.componentForm.controls['dateDue'].value;
                         component.hoursDue = this.componentForm.controls['hoursDue'].value;
                         component.part = this.componentForm.controls['part'].value;
-                        component.created = new Date();
-                        component.modified = new Date();
+                        // component.created = new Date();
+                        // component.modified = new Date();
                         console.log("component: %o", component);
                         console.log('this.componentAndHistoryArray', this.componentAndHistoryArray);
                         this.componentAndHistoryArray.push(component);
@@ -560,7 +560,7 @@ export class AircraftComponentComponent implements OnInit {
                         aircraftComponentToUpdate.dateDue = this.componentForm.controls['dateDue'].value;
                         aircraftComponentToUpdate.hoursDue = this.componentForm.controls['hoursDue'].value;
                         aircraftComponentToUpdate.part = this.componentForm.controls['part'].value;
-                        aircraftComponentToUpdate.modified = component.modified = new Date();
+                        // aircraftComponentToUpdate.modified = component.modified = new Date();
                         console.log('aircraftComponentToUpdate', aircraftComponentToUpdate);
                         this.sortComponentAndHistoryArray();
                         this.componentHistoryCrudMode = null;
@@ -596,8 +596,8 @@ export class AircraftComponentComponent implements OnInit {
                             const part = this.partRowArray.find(part => part['name'] === this.componentAndHistoryArray[0].part['name']) || {} as IGenericEntity;
                             aircraftComponentRequest.partUri = part._links.self.href;
 
-                            aircraftComponentRequest.created = this.componentAndHistoryArray[0].created;
-                            aircraftComponentRequest.modified = this.componentAndHistoryArray[0].modified;
+                            // aircraftComponentRequest.created = this.componentAndHistoryArray[0].created;
+                            // aircraftComponentRequest.modified = this.componentAndHistoryArray[0].modified;
                         }
                         console.log('this.componentAndHistoryArray.length', this.componentAndHistoryArray.length);
                         this.componentAndHistoryArray.shift(); // remove element index 0
@@ -633,8 +633,8 @@ export class AircraftComponentComponent implements OnInit {
                             const part = this.partRowArray.find(part => part['name'] === componentAndHistory.part['name']) || {} as IGenericEntity;
                             aircraftComponentHistoryRequest.partUri = part._links.self.href;
 
-                            aircraftComponentHistoryRequest.created = componentAndHistory.created;
-                            aircraftComponentHistoryRequest.modified = componentAndHistory.modified;
+                            //aircraftComponentHistoryRequest.created = componentAndHistory.created;
+                            //aircraftComponentHistoryRequest.modified = componentAndHistory.modified;
                             console.log('aircraftComponentHistoryRequest', aircraftComponentHistoryRequest)
                             aircraftComponentRequest.historyRequestSet.push(aircraftComponentHistoryRequest);
                         });

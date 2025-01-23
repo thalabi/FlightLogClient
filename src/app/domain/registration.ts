@@ -5,8 +5,8 @@ export class Registration implements ISingleColumnEntity {
 
     registration!: string;
 
-    created!: Date;
-    modified!: Date;
+    // created!: Date;
+    // modified!: Date;
 
     _links!: { self: { href: string; }; };
 }

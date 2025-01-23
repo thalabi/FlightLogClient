@@ -6,8 +6,8 @@ export interface IGenericEntityResponse {
     // _embedded: {[rows: string]: Array<IGenericEntity>}
     [colums: string]: any;
 
-    created: Date;
-    modified: Date;
+    // created: Date;
+    // modified: Date;
 
     _links: HalResponseLinks;
     page: HalResponsePage;

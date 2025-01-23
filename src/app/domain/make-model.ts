@@ -5,8 +5,8 @@ export class MakeModel implements ISingleColumnEntity {
 
     makeModel!: string;
 
-    created!: Date;
-    modified!: Date;
+    // created!: Date;
+    // modified!: Date;
 
     _links!: { self: { href: string; }; };
 }

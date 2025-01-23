@@ -10,8 +10,8 @@ export interface AircraftComponentHistory {
     hoursDue: number;
 
     part: IGenericEntity;
-    created: Date;
-    modified: Date;
+    //created: Date;
+    //modified: Date;
 
     _links: any;
 }
