@@ -30,94 +30,17 @@ export class FlightLogServiceService {
 
     }
 
-    // getAll(url?: string): Observable<FlightLogResponse> {
-    //     if (! url) {
-    //         url = this.serviceUrl + '/flightLogs/?size=9999&sort=flightDate';
-    //     }
-    //     return this.http.get<FlightLogResponse>(url);
-    //         // .map((response: any) => {
-    //         //     return response._embedded.flightLogs;
-    //         // })
-    //         ;
-    //         //.catch(this.handleError);
-    // }
     getTableMetaDataAlps(tableName: string): Observable<any> {
         const entityNameResource = GenericEntityService.toPlural(GenericEntityService.toCamelCase(tableName))
         return this.httpClient.get(this.serviceUrl + '/protected/data-rest/profile/' + entityNameResource)
     }
 
-    // getFlightLogCount(): Observable<any> {
-    //     let url: string = this.serviceUrl + '/protected/flightLogController/count';
-    //     return this.httpClient.get<FlightLogResponse>(url/*, this.getHttpOptions()*/);
-    // }
-    /*
-    * first: first row, zero based
-    * size: page size
-    * search:
-    */
-    getPage(first: number, size: number, search: string): Observable<FlightLogResponse> {
-        console.log('first, size, search', first, size, search)
-        let url: string = this.serviceUrl + '/protected/flightLogController/findAll/?page=' + first / size + '&size=' + size + '&search=' + search + '&sort=flightDate';
-        // let url: string = 'http://localhost:8080/flightLogController/findAll/';
-        // if ((first || first == 0) && size) {
-        //     if (first == 999999) { // 999999 is indictaor of last page
-        //         url += '?page=' + first + '&size=' + size;
-        //     } else {
-        //         url += '?page=' + first/size + '&size=' + size;
-        //     }
-        // } else {
-        //     url += '?page=0&size=9999';
-        // }
-        // url += '&search=' + search + '&sort=flightDate';
-        console.log('url', url);
-        //let url: string = this.URL + '&page=' + first/size;
-        // return this.http.get<FlightLogResponse>(url).pipe(
-        //     map((response: any) => {
-        //         let flightLogResponse: FlightLogResponse = response;
-        //         let flightLogArray = flightLogResponse.page.totalElements ? flightLogResponse._embedded.flightLogs : [];
-        //         // Revive dates to their proper format
-        //         for (let flightLog of flightLogArray) {
-        //             // console.log('flightLog.flightDate', flightLog.flightDate);
-        //             // console.log('new Date(flightLog.flightDate)', new Date(flightLog.flightDate));
-        //             flightLog.flightDate = new Date(flightLog.flightDate+' 00:00:00');
-        //             //flightLog.flightDate = new Date(flightLog.flightDate);
-        //             flightLog.created = new Date(flightLog.created);
-        //         }
-        //         return flightLogResponse;
-        //     }))
-        //     ;
-        //     //.catch(this.handleError);
-        return this.httpClient.get<FlightLogResponse>(url/*, this.getHttpOptions()*/);
-    }
-    // getTableData2(tableName: string, searchCriteria: string, pageNumber: number, pageSize: number, sortColumns?: Array<string>, projection?: string): Observable<any> {
-    //     searchCriteria = encodeURIComponent(searchCriteria)
-    //     let sortQueryParams: string = ''
-    //     if (sortColumns) {
-    //         console.log('sortColumns', sortColumns)
-    //         sortColumns.forEach(sortColumnAndDirection => {
-    //             sortQueryParams = sortQueryParams + "&sort=" + sortColumnAndDirection
-    //         })
-    //         console.log('sortQueryParams', sortQueryParams)
-    //     }
-    //     const projectionParam: string = projection ? `&projection=${projection}` : ''
-
-    //     const entityNameResource = FlightLogServiceService.toPlural(FlightLogServiceService.toCamelCase(tableName))
-    //     console.log('entityNameResource', entityNameResource)
-    //     return this.httpClient.get(this.serviceUrl + '/protected/genericEntityController/findAll?' + 'tableName=' + tableName + '&search=' + searchCriteria + '&page=' + pageNumber + '&size=' + pageSize + sortQueryParams + projectionParam)
-    // }
-    // public static toCamelCase(tableName: string): string {
-    //     return tableName.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase()); // convert to camel case
-    // }
-    // public static toPlural(entityName: string): string {
-    //     return entityName.endsWith('s') ? entityName + 'es' : entityName + 's'
-    // }
-
     addFlightLog(flightLog: FlightLog): Observable<FlightLogResponse> {
         let url: string = this.serviceUrl + '/protected/data-rest/flightLogs';
         console.log('flightLog: ', flightLog);
-        flightLog.created = new Date();
-        flightLog.modified = new Date();
-        console.log('flightLog: ', flightLog);
+        // flightLog.created = new Date();
+        // flightLog.modified = new Date();
+        // console.log('flightLog: ', flightLog);
         return this.httpClient.post<FlightLog>(url, flightLog/*, this.getHttpOptions()*/).pipe(
             map((response: any) => {
                 let flightLogResponse = response;
@@ -132,13 +55,13 @@ export class FlightLogServiceService {
 
     updateFlightLog(flightLog: FlightLog): Observable<FlightLogResponse> {
         console.log('flightLog: ', flightLog);
-        flightLog.modified = new Date();
-        console.log('flightLog: ', flightLog);
+        // flightLog.modified = new Date();
+        // console.log('flightLog: ', flightLog);
 
         //let url: string = flightLog._links.flightLog.href;
         let url: string = this.serviceUrl + '/protected/data-rest/flightLogs/' + flightLog.id;
         console.log('url: ', url);
-        return this.httpClient.put<FlightLog>(url, flightLog/*, this.getHttpOptions()*/).pipe(
+        return this.httpClient.patch<FlightLog>(url, flightLog/*, this.getHttpOptions()*/).pipe(
             map((response: any) => {
                 let flightLogResponse = response;
                 console.log('flightLogResponse', flightLogResponse);
