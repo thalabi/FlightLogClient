@@ -34,13 +34,15 @@ import { SyncButtonComponent } from '../sync-button/sync-button.component';
 import { ButtonModule } from 'primeng/button';
 import { NgIf, NgFor, NgStyle, NgSwitch, NgSwitchCase, NgSwitchDefault, TitleCasePipe, DatePipe } from '@angular/common';
 import { TableModule } from 'primeng/table';
+import { BackendStacktraceDisplayComponent } from '../backend-stacktrace-display/backend-stacktrace-display.component';
+import { MessagesModule } from 'primeng/messages';
 
 @Component({
     selector: 'app-generic-crud',
     templateUrl: './generic-crud.component.html',
     styleUrls: ['./generic-crud.component.css'],
     standalone: true,
-    imports: [TableModule, NgIf, SharedModule, NgFor, NgStyle, NgSwitch, NgSwitchCase, NgSwitchDefault, ButtonModule, SyncButtonComponent, FormsModule, DialogModule, ReactiveFormsModule, CalendarModule, CheckboxModule, PickListModule, TooltipModule, TitleCasePipe, DatePipe, PasswordMaskPipe]
+    imports: [TableModule, NgIf, SharedModule, NgFor, NgStyle, NgSwitch, NgSwitchCase, NgSwitchDefault, ButtonModule, SyncButtonComponent, FormsModule, DialogModule, ReactiveFormsModule, CalendarModule, CheckboxModule, PickListModule, TooltipModule, TitleCasePipe, DatePipe, PasswordMaskPipe, MessagesModule, BackendStacktraceDisplayComponent]
 })
 export class GenericCrudComponent implements OnInit {
 

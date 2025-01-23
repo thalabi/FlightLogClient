@@ -68,6 +68,10 @@
     showEffect="fade" [modal]="true">
 
     <form [formGroup]="crudForm" (ngSubmit)="onSubmit()" novalidate>
+
+        <p-messages></p-messages>
+        <app-backend-stacktrace-display></app-backend-stacktrace-display>
+
         <div class="grid" style="width: 30em;">
 
             <ng-template ngFor let-fieldAttributes [ngForOf]="fieldAttributesArray">

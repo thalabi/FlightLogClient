@@ -87,6 +87,8 @@
     <!-- <form (ngSubmit)="onSubmit()" #flightLogForm="ngForm"> -->
     <form [formGroup]="flightLogForm" (ngSubmit)="onSubmit()" novalidate>
 
+        <p-messages></p-messages>
+        <app-backend-stacktrace-display></app-backend-stacktrace-display>
 
         <div class="grid" style="width: 50rem;">
             <!-- line 1 -->

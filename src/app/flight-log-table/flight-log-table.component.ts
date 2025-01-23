@@ -37,13 +37,15 @@ import { TooltipModule } from 'primeng/tooltip';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
 import { NgIf, NgFor, NgStyle, DecimalPipe, DatePipe } from '@angular/common';
+import { BackendStacktraceDisplayComponent } from '../backend-stacktrace-display/backend-stacktrace-display.component';
+import { MessagesModule } from 'primeng/messages';
 
 @Component({
     selector: 'app-flight-log-table',
     templateUrl: './flight-log-table.component.html',
     styleUrls: ['./flight-log-table.component.css'],
     standalone: true,
-    imports: [NgIf, TableModule, SharedModule, MultiSelectModule, FormsModule, NgFor, NgStyle, TooltipModule, AbbreviateComponent, ButtonModule, SyncButtonComponent, DialogModule, ReactiveFormsModule, CalendarModule, DropdownModule, AutoCompleteModule, RegexValidatorDirective, OverlayPanelModule, TabViewModule, DecimalPipe, DatePipe]
+    imports: [NgIf, TableModule, SharedModule, MultiSelectModule, FormsModule, NgFor, NgStyle, TooltipModule, AbbreviateComponent, ButtonModule, SyncButtonComponent, DialogModule, ReactiveFormsModule, CalendarModule, DropdownModule, AutoCompleteModule, RegexValidatorDirective, OverlayPanelModule, TabViewModule, DecimalPipe, DatePipe, MessagesModule, BackendStacktraceDisplayComponent]
 })
 export class FlightLogTableComponent implements OnInit {
 
