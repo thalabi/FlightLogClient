@@ -27,35 +27,38 @@ export class CrudComponentConfig {
     };
 
     private static makeModel: FormAttributes = {
-        formTitle: '',
+        formTitle: 'Make & Model',
         tableName: 'make_model',
         defaultSortColumn: ['makeModel'],
         fields: [
             { columnName: 'makeModel', dataType: DataTypeEnum.STRING, mandatory: true, header: 'MakeModel', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'text' }
         ],
-        showReplicationStatus: true,
+        // showReplicationStatus: true,
+        showReplicationStatus: false,
         associations: []
     };
 
     private static pilot: FormAttributes = {
-        formTitle: '',
+        formTitle: 'Pilot/Passenger',
         tableName: 'pilot',
         defaultSortColumn: ['pilot'],
         fields: [
             { columnName: 'pilot', dataType: DataTypeEnum.STRING, mandatory: true, header: 'Pilot/Passenger', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'text' }
         ],
-        showReplicationStatus: true,
+        // showReplicationStatus: true,
+        showReplicationStatus: false,
         associations: []
     };
 
     private static registration: FormAttributes = {
-        formTitle: '',
+        formTitle: 'Registration',
         tableName: 'registration',
         defaultSortColumn: ['registration'],
         fields: [
             { columnName: 'registration', dataType: DataTypeEnum.STRING, mandatory: true, header: 'Registration', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'text' }
         ],
-        showReplicationStatus: true,
+        // showReplicationStatus: true,
+        showReplicationStatus: false,
         associations: []
     };
 
@@ -67,7 +70,8 @@ export class CrudComponentConfig {
             { columnName: 'eventDate', dataType: DataTypeEnum.DATE, mandatory: true, header: 'Date', headerStyle: { width: '7rem' }, uiComponentType: UiComponentEnum.CALENDAR, pipe: 'date-yyyy-mm-dd', filterStyle: { width: '6rem' }, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'date' },
             { columnName: 'eventDescription', dataType: DataTypeEnum.STRING, mandatory: true, header: 'Description', uiComponentType: UiComponentEnum.TEXT_AREA, textAreaRows: 4, textAreaColumns: 30, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'text' }
         ],
-        showReplicationStatus: true,
+        // showReplicationStatus: true,
+        showReplicationStatus: false,
         associations: []
     };
 
@@ -79,6 +83,7 @@ export class CrudComponentConfig {
             { columnName: 'name', dataType: DataTypeEnum.STRING, mandatory: true, header: 'Name', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'text' },
             { columnName: 'description', dataType: DataTypeEnum.STRING, mandatory: false, header: 'Description', uiComponentType: UiComponentEnum.TEXT, fieldAffinity: CrudComponentConfig.includeInBothComponents, filterable: true, filterDataType: 'text' }
         ],
+        // showReplicationStatus: true,
         showReplicationStatus: false,
         associations: []
     };

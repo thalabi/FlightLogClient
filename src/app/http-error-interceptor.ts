@@ -23,7 +23,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
                 return httpEvent;
             }),
             catchError((httpErrorResponse: HttpErrorResponse) => {
-                console.error('httpErrorResponse: %o', httpErrorResponse);
+                console.error('httpErrorResponse: [%o]', httpErrorResponse);
                 let errorMessage: string;
                 if (httpErrorResponse.error instanceof ErrorEvent) {
                     // client-side error
@@ -37,7 +37,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
                         errorMessage = httpErrorResponse.message;
                     }
                     console.error('Server error: [%s]', errorMessage);
-                    console.error('httpErrorResponse.status', httpErrorResponse.status)
+                    console.error('httpErrorResponse.status: [%s]', httpErrorResponse.status)
                 }
                 this.messageService.add({ severity: 'error', summary: this.getStatusText(httpErrorResponse.status), detail: errorMessage });
                 this.sessionService.setBackendExceptionstackTrace(httpErrorResponse.error.stackTrace)
