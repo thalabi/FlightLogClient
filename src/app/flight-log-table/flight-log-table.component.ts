@@ -30,7 +30,7 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { DropdownModule } from 'primeng/dropdown';
 import { CalendarModule } from 'primeng/calendar';
 import { DialogModule } from 'primeng/dialog';
-import { SyncButtonComponent } from '../sync-button/sync-button.component';
+// import { SyncButtonComponent } from '../sync-button/sync-button.component';
 import { ButtonModule } from 'primeng/button';
 import { AbbreviateComponent } from '../abbreviate/abbreviate.component';
 import { TooltipModule } from 'primeng/tooltip';
@@ -39,13 +39,17 @@ import { TableModule } from 'primeng/table';
 import { NgIf, NgFor, NgStyle, DecimalPipe, DatePipe } from '@angular/common';
 import { BackendStacktraceDisplayComponent } from '../backend-stacktrace-display/backend-stacktrace-display.component';
 import { MessagesModule } from 'primeng/messages';
+import { FlightLogPendingResponse } from '../response/FlightLogPendingResponse';
+import { FlightLogPending } from '../domain/FlightLogPending';
+import { TotalPanelVo } from '../domain/TotalPanelVo';
+import { TotalPanelComponent } from './total-panel/total-panel.component';
 
 @Component({
     selector: 'app-flight-log-table',
     templateUrl: './flight-log-table.component.html',
     styleUrls: ['./flight-log-table.component.css'],
     standalone: true,
-    imports: [NgIf, TableModule, SharedModule, MultiSelectModule, FormsModule, NgFor, NgStyle, TooltipModule, AbbreviateComponent, ButtonModule, SyncButtonComponent, DialogModule, ReactiveFormsModule, CalendarModule, DropdownModule, AutoCompleteModule, RegexValidatorDirective, OverlayPanelModule, TabViewModule, DecimalPipe, DatePipe, MessagesModule, BackendStacktraceDisplayComponent]
+    imports: [NgIf, TableModule, SharedModule, MultiSelectModule, FormsModule, NgFor, NgStyle, TooltipModule, AbbreviateComponent, ButtonModule, /*SyncButtonComponent, */DialogModule, ReactiveFormsModule, CalendarModule, DropdownModule, AutoCompleteModule, RegexValidatorDirective, OverlayPanelModule, TabViewModule, DecimalPipe, DatePipe, MessagesModule, BackendStacktraceDisplayComponent, TotalPanelComponent]
 })
 export class FlightLogTableComponent implements OnInit {
 
@@ -107,6 +111,11 @@ export class FlightLogTableComponent implements OnInit {
 
     readonly TABLE_NAME: string = 'flightLog';
     readonly VIEW_NAME: string = 'flight_log_totals_v'
+    readonly PENDING_TABLE_NAME_NAME: string = 'flight_log_pending'
+
+    pendingRowCount!: number
+    flightLogPendingArray: Array<FlightLogPending> = []
+    displayPendingDialog: boolean = false;
 
     hasWritePermission: boolean = false;
 
@@ -124,6 +133,11 @@ export class FlightLogTableComponent implements OnInit {
     pageTosLdgsDay: number = 0;
     pageTosLdgsNight: number = 0;
     pageTotal: number = 0;
+
+    pageTotalPanelVo!: TotalPanelVo;
+    toDateTotalPanelVo!: TotalPanelVo;
+    monthTotalPanelVo!: TotalPanelVo;
+    yearTotalPanelVo!: TotalPanelVo;
 
     constructor(private formBuilder: FormBuilder, private flightLogService: FlightLogServiceService, private genericEntityService: GenericEntityService, private replicationService: ReplicationService, private messageService: MessageService, private sessionService: SessionService) {
         this.flightLogForm = FlightLogHelper.createForm(formBuilder);
@@ -168,29 +182,23 @@ export class FlightLogTableComponent implements OnInit {
             this.columnOptions.push({ label: this.colsPart2[i].header, value: this.colsPart2[i] });
         }
 
-        // this.toDateCols = [
-        //     { field: 'toDateDayDual', header: 'D D', tooltipText: 'Day Dual', style: { 'width': '3em' } },
-        //     { field: 'toDateDaySolo', header: 'D S', tooltipText: 'Day Solo', style: { 'width': '3em' } },
-        //     { field: 'toDateNightDual', header: 'N D', tooltipText: 'Night Dual', style: { 'width': '3em' } },
-        //     { field: 'toDateNightSolo', header: 'N S', tooltipText: 'Night Solo', style: { 'width': '3em' } },
-
-        //     { field: 'toDateXCountryDay', header: 'X D', tooltipText: 'Cross Country Day', style: { 'width': '3em' } },
-        //     { field: 'toDateXCountryNight', header: 'X N', tooltipText: 'Cross Country Night', style: { 'width': '3em' } },
-        //     { field: 'toDateTosLdgsDay', header: 'L D', tooltipText: 'Total Landings Day', style: { 'width': '3em' } },
-        //     { field: 'toDateTosLdgsNight', header: 'L N', tooltipText: 'Total Landings Night', style: { 'width': '3em' } },
-        //     { field: 'toDateInstrumentSimulated', header: 'Inst Sim', style: { 'width': '3em' } },
-        //     { field: 'toDateInstrumentFlightSim', header: 'Inst Flt Sim', style: { 'width': '3em' } },
-
-        //     { field: 'toDateInstrumentImc', header: 'Inst IMC', style: { 'width': '3em' } },
-        //     { field: 'toDateInstrumentNoIfrAppr', header: '# IFR Apr', style: { 'width': '3em' } },
-        // ]
-
         this.getMakeModels();
         this.getRegistrations();
         this.getPilots();
 
         //this.getTableMetaData();
 
+        this.setFirstRowOfTable()
+        this.getRecordCountOfPendingTable()
+
+        //this.hasWritePermission = MenuComponent.isHolderOfAnyAuthority(this.sessionDataService.user || {} as User, PermissionEnum.FLIGHT_LOG_WRITE);
+        this.sessionService.userInfo$.subscribe(userInfo => {
+            console.log('userInfo', userInfo)
+            this.hasWritePermission = MenuComponent.isHolderOfAnyRole(userInfo, PermissionEnum.FLIGHT_LOG_WRITE);
+        });
+    }
+
+    private setFirstRowOfTable() {
         // set the firstRowOfTable to the first row of the last page
         this.genericEntityService.getRecordCount(this.VIEW_NAME).subscribe({
             next: data => {
@@ -203,14 +211,17 @@ export class FlightLogTableComponent implements OnInit {
 
             }
         });
-
-        //this.hasWritePermission = MenuComponent.isHolderOfAnyAuthority(this.sessionDataService.user || {} as User, PermissionEnum.FLIGHT_LOG_WRITE);
-        this.sessionService.userInfo$.subscribe(userInfo => {
-            console.log('userInfo', userInfo)
-            this.hasWritePermission = MenuComponent.isHolderOfAnyRole(userInfo, PermissionEnum.FLIGHT_LOG_WRITE);
-        });
     }
 
+    private getRecordCountOfPendingTable() {
+        this.genericEntityService.getRecordCount(this.PENDING_TABLE_NAME_NAME).subscribe({
+            next: data => {
+                this.pendingRowCount = data;
+                console.log('pendingRowCount', this.pendingRowCount);
+            }
+        });
+
+    }
     private getTableMetaData() {
         this.flightLogService.getTableMetaDataAlps(this.VIEW_NAME)
             .subscribe(
@@ -378,7 +389,7 @@ export class FlightLogTableComponent implements OnInit {
         }
         const entityNameResource = GenericEntityService.toPlural(GenericEntityService.toCamelCase(this.VIEW_NAME))
         console.log('entityNameResource 2', entityNameResource)
-        this.genericEntityService.getTableData2(this.VIEW_NAME, searchCriteria, pageNumber, pageSize, ['flightDate', 'id'])
+        this.genericEntityService.getTableData(this.VIEW_NAME, searchCriteria, pageNumber, pageSize, ['flightDate', 'id'])
             .subscribe(
                 {
                     next: (flightLogTotalsVResponse: IFlightLogTotalsVResponse) => {
@@ -386,12 +397,10 @@ export class FlightLogTableComponent implements OnInit {
                         this.loadingStatus = false
 
                         console.log('flightLogTotalsVResponse', flightLogTotalsVResponse);
-                        //this.flightLogTotalsVResponse = flightLogTotalsVResponse;
                         this.page = flightLogTotalsVResponse.page;
                         this.flightLogTotalsVs = this.page.totalElements ? flightLogTotalsVResponse._embedded.simpleModels : [];
                         this.clearTimes(this.flightLogTotalsVs);
                         console.log('this.flightLogTotalsVs', this.flightLogTotalsVs);
-                        //this.links = this.flightLogTotalsVResponse._links;
 
                         this.calculatePageTotals(this.flightLogTotalsVs)
                         this.pageRowKey = this.flightLogTotalsVs[this.flightLogTotalsVs.length - 1]._links.flightLogTotalsV.href
@@ -411,7 +420,6 @@ export class FlightLogTableComponent implements OnInit {
                     }
                 });
     }
-
     private calculatePageTotals(flightLogTotalsVs: IFlightLogTotalsV[]) {
         this.pageDayDual = this.pageDaySolo = this.pageNightDual = this.pageNightSolo = this.pageInstrumentImc = this.pageInstrumentSimulated = this.pageInstrumentFlightSim = this.pageInstrumentNoIfrAppr = this.pageXCountryDay = this.pageXCountryNight = this.pageTosLdgsDay = this.pageTosLdgsNight = this.pageTotal = 0
 
@@ -430,6 +438,7 @@ export class FlightLogTableComponent implements OnInit {
             this.pageTosLdgsNight += flightLogTotalsV.tosLdgsNight
             this.pageTotal += flightLogTotalsV.dayDual + flightLogTotalsV.daySolo + flightLogTotalsV.nightDual + flightLogTotalsV.nightSolo
         })
+
     }
 
 
@@ -538,6 +547,31 @@ export class FlightLogTableComponent implements OnInit {
                 console.error('this.crudMode is invalid. this.crudMode: ' + this.crudMode);
         }
     }
+    showPendingDialog() {
+        this.getPending()
+        this.displayPendingDialog = true;
+
+    }
+    private getPending() {
+        this.genericEntityService.getTableData(this.PENDING_TABLE_NAME_NAME, "", 0, 9999, ['flightDate'])
+            .subscribe(
+                {
+                    next: (flightLogPendingResponse: FlightLogPendingResponse) => {
+                        this.flightLogPendingArray = flightLogPendingResponse._embedded.simpleModels || new Array<FlightLogPending>
+                        console.log('this.flightLogPendingArray', this.flightLogPendingArray);
+                    },
+                    complete: () => {
+                        console.log('this.genericEntityService.getTableData completed')
+                        this.loadingStatus = false
+                    }
+                    ,
+                    error: (httpErrorResponse: HttpErrorResponse): void => {
+                        console.log('httpErrorResponse', httpErrorResponse)
+                        this.loadingStatus = false
+                    }
+                });
+
+    }
 
     private afterCrud() {
         this.displayDialog = false;
@@ -609,12 +643,103 @@ export class FlightLogTableComponent implements OnInit {
 
     displayTotals(event: MouseEvent, key: string) {
         console.log('displayTotals, event:', event, ', event type:', event.type, ', key:', key)
-        event.stopPropagation() // top row from being selected
+        event.stopPropagation() // stop row from being selected
         //this.totalsOverlayPanel?.show()
         this.overPanelFlightLogTotalsV = this.flightLogTotalsVs.find(flightLogTotalsV => flightLogTotalsV._links.flightLogTotalsV.href === key) || {} as IFlightLogTotalsV
+        this.toDateTotalPanelVo = {
+            dayDual: this.overPanelFlightLogTotalsV.toDateDayDual,
+            daySolo: this.overPanelFlightLogTotalsV.toDateDaySolo,
+            nightDual: this.overPanelFlightLogTotalsV.toDateNightDual,
+            nightSolo: this.overPanelFlightLogTotalsV.toDateNightSolo,
+            xCountryDay: this.overPanelFlightLogTotalsV.toDateXCountryDay,
+            xCountryNight: this.overPanelFlightLogTotalsV.toDateXCountryNight,
+
+            instrumentImc: this.overPanelFlightLogTotalsV.toDateInstrumentImc,
+            instrumentSimulated: this.overPanelFlightLogTotalsV.toDateInstrumentSimulated,
+            instrumentFlightSim: this.overPanelFlightLogTotalsV.toDateInstrumentFlightSim,
+            instrumentNoIfrAppr: this.overPanelFlightLogTotalsV.toDateInstrumentNoIfrAppr,
+
+            tosLdgsDay: this.overPanelFlightLogTotalsV.toDateTosLdgsDay,
+            tosLdgsNight: this.overPanelFlightLogTotalsV.toDateTosLdgsNight,
+
+            total: this.overPanelFlightLogTotalsV.toDateTotal
+        }
+        this.monthTotalPanelVo = {
+            dayDual: this.overPanelFlightLogTotalsV.monthDayDual,
+            daySolo: this.overPanelFlightLogTotalsV.monthDaySolo,
+            nightDual: this.overPanelFlightLogTotalsV.monthNightDual,
+            nightSolo: this.overPanelFlightLogTotalsV.monthNightSolo,
+            xCountryDay: this.overPanelFlightLogTotalsV.monthXCountryDay,
+            xCountryNight: this.overPanelFlightLogTotalsV.monthXCountryNight,
+
+            instrumentImc: this.overPanelFlightLogTotalsV.monthInstrumentImc,
+            instrumentSimulated: this.overPanelFlightLogTotalsV.monthInstrumentSimulated,
+            instrumentFlightSim: this.overPanelFlightLogTotalsV.monthInstrumentFlightSim,
+            instrumentNoIfrAppr: this.overPanelFlightLogTotalsV.monthInstrumentNoIfrAppr,
+
+            tosLdgsDay: this.overPanelFlightLogTotalsV.monthTosLdgsDay,
+            tosLdgsNight: this.overPanelFlightLogTotalsV.monthTosLdgsNight,
+
+            total: this.overPanelFlightLogTotalsV.monthTotal
+        }
+        this.yearTotalPanelVo = {
+            dayDual: this.overPanelFlightLogTotalsV.yearDayDual,
+            daySolo: this.overPanelFlightLogTotalsV.yearDaySolo,
+            nightDual: this.overPanelFlightLogTotalsV.yearNightDual,
+            nightSolo: this.overPanelFlightLogTotalsV.yearNightSolo,
+            xCountryDay: this.overPanelFlightLogTotalsV.yearXCountryDay,
+            xCountryNight: this.overPanelFlightLogTotalsV.yearXCountryNight,
+
+            instrumentImc: this.overPanelFlightLogTotalsV.yearInstrumentImc,
+            instrumentSimulated: this.overPanelFlightLogTotalsV.yearInstrumentSimulated,
+            instrumentFlightSim: this.overPanelFlightLogTotalsV.yearInstrumentFlightSim,
+            instrumentNoIfrAppr: this.overPanelFlightLogTotalsV.yearInstrumentNoIfrAppr,
+
+            tosLdgsDay: this.overPanelFlightLogTotalsV.yearTosLdgsDay,
+            tosLdgsNight: this.overPanelFlightLogTotalsV.yearTosLdgsNight,
+
+            total: this.overPanelFlightLogTotalsV.yearTotal
+        }
+
+        this.pageTotalPanelVo = {
+            dayDual: this.pageDayDual,
+            daySolo: this.pageDaySolo,
+            nightDual: this.pageNightDual,
+            nightSolo: this.pageNightSolo,
+            xCountryDay: this.pageXCountryDay,
+            xCountryNight: this.pageXCountryNight,
+
+            instrumentImc: this.pageInstrumentImc,
+            instrumentSimulated: this.pageInstrumentSimulated,
+            instrumentFlightSim: this.pageInstrumentFlightSim,
+            instrumentNoIfrAppr: this.pageInstrumentNoIfrAppr,
+
+            tosLdgsDay: this.pageTosLdgsDay,
+            tosLdgsNight: this.pageTosLdgsNight,
+
+            total: this.pageTotal
+        }
 
     }
+
+
     hideTotals(event: MouseEvent, key: string) {
         console.log('hideTotals, event:', event, ', event type:', event.type, ', key:', key)
+    }
+
+    onPendingAdd(flightLogPending: FlightLogPending) {
+        console.log('flightLogPending', flightLogPending)
+    }
+    onPendingDelete(flightLogPending: FlightLogPending) {
+        console.log('flightLogPending', flightLogPending)
+        this.flightLogService.deleteFlightLogPending(flightLogPending).subscribe({
+            next: () => {
+                console.log('deleted flightLog', flightLogPending);
+            },
+            complete: () => {
+                this.getPending()
+            }
+        });
+
     }
 }

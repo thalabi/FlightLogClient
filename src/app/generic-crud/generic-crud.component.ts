@@ -322,7 +322,7 @@ export class GenericCrudComponent implements OnInit {
         }
         const entityNameResource = GenericEntityService.toPlural(GenericEntityService.toCamelCase(this.entityName))
         console.log('entityNameResource 2', entityNameResource)
-        this.genericEntityService.getTableData2(this.tableName, searchCriteria, pageNumber, pageSize, sort)
+        this.genericEntityService.getTableData(this.tableName, searchCriteria, pageNumber, pageSize, sort)
             .subscribe(
                 {
                     // next: (flightLogTotalsVResponse: IFlightLogTotalsVResponse) => {

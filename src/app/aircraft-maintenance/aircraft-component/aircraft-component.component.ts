@@ -249,7 +249,7 @@ export class AircraftComponentComponent implements OnInit {
         }
         const entityNameResource = GenericEntityService.toPlural(GenericEntityService.toCamelCase(this.COMPONENT_TABLE_NAME))
         console.log('entityNameResource 2', entityNameResource)
-        this.genericEntityService.getTableData2(this.COMPONENT_TABLE_NAME, searchCriteria, pageNumber, pageSize, ['name'])
+        this.genericEntityService.getTableData(this.COMPONENT_TABLE_NAME, searchCriteria, pageNumber, pageSize, ['name'])
             .subscribe(
                 {
                     next: (aircraftComponentListResponse: AircraftComponentListResponse) => {

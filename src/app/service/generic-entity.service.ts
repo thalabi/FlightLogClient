@@ -123,7 +123,7 @@ export class GenericEntityService {
             }));
     }
 
-    getTableData2(tableName: string, searchCriteria: string, pageNumber: number, pageSize: number, sortColumns?: Array<string>, projection?: string): Observable<any> {
+    getTableData(tableName: string, searchCriteria: string, pageNumber: number, pageSize: number, sortColumns?: Array<string>, projection?: string): Observable<any> {
         searchCriteria = encodeURIComponent(searchCriteria)
         let sortQueryParams: string = ''
         if (sortColumns) {
@@ -140,7 +140,8 @@ export class GenericEntityService {
         return this.httpClient.get(this.serviceUrl + '/protected/genericEntityController/findAll?' + 'tableName=' + tableName + '&search=' + searchCriteria + '&page=' + pageNumber + '&size=' + pageSize + sortQueryParams + projectionParam)
     }
     getRecordCount(tableName: string): Observable<any> {
-        return this.httpClient.get(this.serviceUrl + '/protected/genericEntityController/countAll?' + 'tableName=' + tableName);
+        //return this.httpClient.get(this.serviceUrl + '/protected/genericEntityController/countAll?' + 'tableName=' + tableName);
+        return this.httpClient.get(`${this.serviceUrl}/protected/genericEntityController/countAll?tableName=${tableName}`);
     }
 
     public static toCamelCase(tableName: string): string {

@@ -1,0 +1,89 @@
+<div class="grid" style="width: 30rem;">
+    <!-- line 1 -->
+    <div class="col-4">
+        <span>Day dual:</span>
+    </div>
+    <div class="col-2">
+        <span>{{totalPanelVo.dayDual === 0 ? '' : (totalPanelVo.dayDual | number: '1.1-1')}}</span>
+    </div>
+    <div class="col-4">
+        <span>Day solo:</span>
+    </div>
+    <div class="col-2">
+        <span>{{totalPanelVo.daySolo === 0 ? '' : (totalPanelVo.daySolo | number: '1.1-1')}}</span>
+    </div>
+    <!-- line 2 -->
+    <div class="col-4">
+        <span>Night dual:</span>
+    </div>
+    <div class="col-2">
+        <span>{{totalPanelVo.nightDual === 0 ? '' : (totalPanelVo.nightDual | number: '1.1-1')}}</span>
+    </div>
+    <div class="col-4">
+        <span>Night solo:</span>
+    </div>
+    <div class="col-2">
+        <span>{{totalPanelVo.nightSolo === 0 ? '' : (totalPanelVo.nightSolo | number: '1.1-1')}}</span>
+    </div>
+    <!-- line 3 -->
+    <div class="col-4">
+        <span>X-cty day:</span>
+    </div>
+    <div class="col-2">
+        <span>{{totalPanelVo.xCountryDay === 0 ? '' : (totalPanelVo.xCountryDay | number: '1.1-1')}}</span>
+    </div>
+    <div class="col-4">
+        <span>X-cty night:</span>
+    </div>
+    <div class="col-2">
+        <span>{{totalPanelVo.xCountryNight === 0 ? '' : (totalPanelVo.xCountryNight | number: '1.1-1')}}</span>
+    </div>
+    <!-- line 4 -->
+    <div class="col-4">
+        <span>Inst IMC:</span>
+    </div>
+    <div class="col-2">
+        <span>{{totalPanelVo.instrumentImc === 0 ? '' : (totalPanelVo.instrumentImc | number: '1.1-1')}}</span>
+    </div>
+    <div class="col-4">
+        <span>Inst Sim:</span>
+    </div>
+    <div class="col-2">
+        <span>{{totalPanelVo.instrumentSimulated === 0 ? '' : (totalPanelVo.instrumentSimulated | number:
+            '1.1-1')}}</span>
+    </div>
+    <!-- line 5 -->
+    <div class="col-4">
+        <span>Inst flt sim:</span>
+    </div>
+    <div class="col-2">
+        <span>{{totalPanelVo.instrumentFlightSim === 0 ? '' : (totalPanelVo.instrumentFlightSim | number:
+            '1.1-1')}}</span>
+    </div>
+    <div class="col-4">
+        <span>Inst # IFR appr:</span>
+    </div>
+    <div class="col-2">
+        <span>{{totalPanelVo.instrumentNoIfrAppr === 0 ? '' : totalPanelVo.instrumentNoIfrAppr}}</span>
+    </div>
+    <!-- line 6 -->
+    <div class="col-4">
+        <span>T/Os & ldgs day:</span>
+    </div>
+    <div class="col-2">
+        <span>{{totalPanelVo.tosLdgsDay === 0 ? '' : (totalPanelVo.tosLdgsDay | number: '1.1-1')}}</span>
+    </div>
+    <div class="col-4">
+        <span>T/Os & ldgs night:</span>
+    </div>
+    <div class="col-2">
+        <span>{{totalPanelVo.tosLdgsNight === 0 ? '' : (totalPanelVo.tosLdgsNight | number: '1.1-1')}}</span>
+    </div>
+    <!-- line 7 -->
+    <div class="col-4">
+        <span>Total:</span>
+    </div>
+    <div class="col-2">
+        <span>{{totalPanelVo.total === 0 ? '' : (totalPanelVo.total | number: '1.1-1')}}</span>
+    </div>
+</div>
