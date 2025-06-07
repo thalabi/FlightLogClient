@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { catchError, map } from 'rxjs/operators';
 import { FlightLog } from '../domain/flight-log';
 
 
-import { FlightLogResponse as FlightLogPendingResponse } from '../response/flight-log-response';
+import { FlightLogResponse } from '../response/flight-log-response';
 import { Airport } from '../domain/airport';
 import { AirportResponse } from '../response/airport-response';
 import { StringUtils } from '../string-utils';
@@ -15,6 +15,7 @@ import { Observable, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { GenericEntityService } from './generic-entity.service';
 import { FlightLogPending } from '../domain/FlightLogPending';
+import { FlightLogPendingAddRequest } from '../request/flight-log-pending-add-request';
 
 @Injectable()
 export class FlightLogServiceService {
@@ -36,7 +37,7 @@ export class FlightLogServiceService {
         return this.httpClient.get(this.serviceUrl + '/protected/data-rest/profile/' + entityNameResource)
     }
 
-    addFlightLog(flightLog: FlightLog): Observable<FlightLogPendingResponse> {
+    addFlightLog(flightLog: FlightLog): Observable<FlightLogResponse> {
         let url: string = this.serviceUrl + '/protected/data-rest/flightLogs';
         console.log('flightLog: ', flightLog);
         // flightLog.created = new Date();
@@ -54,7 +55,7 @@ export class FlightLogServiceService {
             }));
     }
 
-    updateFlightLog(flightLog: FlightLog): Observable<FlightLogPendingResponse> {
+    updateFlightLog(flightLog: FlightLog): Observable<FlightLogResponse> {
         console.log('flightLog: ', flightLog);
         // flightLog.modified = new Date();
         // console.log('flightLog: ', flightLog);
@@ -74,7 +75,7 @@ export class FlightLogServiceService {
             }));
     }
 
-    deleteFlightLog(flightLog: FlightLog): Observable<FlightLogPendingResponse> {
+    deleteFlightLog(flightLog: FlightLog): Observable<FlightLogResponse> {
         let url: string = this.serviceUrl + '/protected/data-rest/flightLogs/' + flightLog.id;
         console.log('url: ', url);
         return this.httpClient.delete<void>(url).pipe(
@@ -88,20 +89,31 @@ export class FlightLogServiceService {
                 return throwError(() => { });
             }));
     }
-    deleteFlightLogPending(flightLogPending: FlightLogPending): Observable<FlightLogPendingResponse> {
+
+    deleteFlightLogPending(flightLogPending: FlightLogPending): Observable<HttpResponse<any>> {
         let url: string = flightLogPending._links.self.href.toString();
         console.log('url: ', url);
-        return this.httpClient.delete<void>(url).pipe(
-            map((response: any) => {
-                let flightLogPendingResponse = response;
-                console.log('flightLogPendingResponse', flightLogPendingResponse);
-                return flightLogPendingResponse;
-            }),
-            catchError((httpErrorResponse: HttpErrorResponse) => {
-                FlightLogServiceService.handleError(httpErrorResponse);
-                return throwError(() => { });
-            }));
+        return this.httpClient.delete<HttpResponse<any>>(url);
     }
+
+    addFlightLogPending(flightLogPendingAddRequest: FlightLogPendingAddRequest): Observable<HttpResponse<any>> {
+        return this.httpClient.post<HttpResponse<any>>(`${this.serviceUrl}/protected/flightLogPendingController/addFlightLogPending`, flightLogPendingAddRequest);
+    }
+
+    // addFlightLogPending(flightLogPendingAddRequest: FlightLogPendingAddRequest): Observable<> {
+    //     let url: string = flightLogPendingAddRequest._links.self.href.toString();
+    //     console.log('url: ', url);
+    //     return this.httpClient.delete<void>(url).pipe(
+    //         map((response: any) => {
+    //             let flightLogPendingResponse = response;
+    //             console.log('flightLogPendingResponse', flightLogPendingResponse);
+    //             return flightLogPendingResponse;
+    //         }),
+    //         catchError((httpErrorResponse: HttpErrorResponse) => {
+    //             FlightLogServiceService.handleError(httpErrorResponse);
+    //             return throwError(() => { });
+    //         }));
+    // }
 
     getAirportByIdentifierOrName(identifier: string, name: string): Observable<Array<Airport>> {
         let url: string = this.serviceUrl + '/protected/data-rest/airports/search/findByIdentifierContainingIgnoreCaseOrNameContainingIgnoreCase?identifier=' + identifier + '&name=' + name;

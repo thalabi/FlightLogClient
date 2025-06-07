@@ -12,7 +12,7 @@ export interface FlightLogPending {
         self: {
             href: URL
         },
-        fuelLog: {
+        flightLogPending: {
             href: URL
         }
     }

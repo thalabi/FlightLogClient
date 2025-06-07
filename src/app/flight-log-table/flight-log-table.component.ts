@@ -1,20 +1,15 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FlightLogServiceService } from '../service/flight-log-service.service';
 import { FlightLog } from '../domain/flight-log';
 import { HalResponsePage } from '../hal/hal-response-page';
-import { HalResponseLinks } from '../hal/hal-response-links';
 import { LazyLoadEvent } from 'primeng/api/lazyloadevent';
 import { SelectItem } from 'primeng/api/selectitem';
 import { Airport } from '../domain/airport';
-import { MakeModel } from '../domain/make-model';
-import { Registration } from '../domain/registration';
-import { FormBuilder, FormGroup, Validators, AbstractControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CrudEnum } from '../crud-enum';
 import { FlightLogHelper } from './flight-log-table-helper';
-import { Pilot } from '../domain/pilot';
 import { ComponentHelper } from '../util/ComponentHelper';
 import { ReplicationService } from '../service/replication.service';
-import { IGenericEntityResponse } from '../response/i-generic-entity-response';
 import { GenericEntityService } from '../service/generic-entity.service';
 import { MenuComponent } from '../menu/menu.component';
 import { SessionService } from '../service/session.service';
@@ -25,37 +20,38 @@ import { IFlightLogTotalsV } from '../response/IFlightLogTotalsV';
 import { MessageService, SharedModule } from 'primeng/api';
 import { TabViewModule } from 'primeng/tabview';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
-import { RegexValidatorDirective } from '../validator/regex-validator.directive';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { DropdownModule } from 'primeng/dropdown';
 import { CalendarModule } from 'primeng/calendar';
 import { DialogModule } from 'primeng/dialog';
-// import { SyncButtonComponent } from '../sync-button/sync-button.component';
 import { ButtonModule } from 'primeng/button';
 import { AbbreviateComponent } from '../abbreviate/abbreviate.component';
 import { TooltipModule } from 'primeng/tooltip';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
-import { NgIf, NgFor, NgStyle, DecimalPipe, DatePipe } from '@angular/common';
+import { NgIf, NgFor, NgStyle, DatePipe } from '@angular/common';
 import { BackendStacktraceDisplayComponent } from '../backend-stacktrace-display/backend-stacktrace-display.component';
 import { MessagesModule } from 'primeng/messages';
 import { FlightLogPendingResponse } from '../response/FlightLogPendingResponse';
 import { FlightLogPending } from '../domain/FlightLogPending';
 import { TotalPanelVo } from '../domain/TotalPanelVo';
 import { TotalPanelComponent } from './total-panel/total-panel.component';
+import { FlightLogFormComponent } from './flight-log-form/flight-log-form.component';
+import { FlightLogPendingAddRequest } from '../request/flight-log-pending-add-request';
+import { concatMap } from 'rxjs';
 
 @Component({
     selector: 'app-flight-log-table',
     templateUrl: './flight-log-table.component.html',
     styleUrls: ['./flight-log-table.component.css'],
     standalone: true,
-    imports: [NgIf, TableModule, SharedModule, MultiSelectModule, FormsModule, NgFor, NgStyle, TooltipModule, AbbreviateComponent, ButtonModule, /*SyncButtonComponent, */DialogModule, ReactiveFormsModule, CalendarModule, DropdownModule, AutoCompleteModule, RegexValidatorDirective, OverlayPanelModule, TabViewModule, DecimalPipe, DatePipe, MessagesModule, BackendStacktraceDisplayComponent, TotalPanelComponent]
+    imports: [NgIf, TableModule, SharedModule, MultiSelectModule, FormsModule, NgFor, NgStyle, TooltipModule, AbbreviateComponent, ButtonModule, DialogModule, ReactiveFormsModule, CalendarModule, DropdownModule, AutoCompleteModule, OverlayPanelModule, TabViewModule, DatePipe, MessagesModule, BackendStacktraceDisplayComponent, TotalPanelComponent, FlightLogFormComponent]
 })
 export class FlightLogTableComponent implements OnInit {
 
     readonly fieldNames: Array<string> = ['flightDate', 'makeModel', 'registration', 'pic', 'coPilot', 'routeFrom', 'routeTo', 'remarks', 'dayDual', 'daySolo', 'nightDual', 'nightSolo', 'instrumentSimulated', 'instrumentFlightSim', 'xCountryDay', 'xCountryNight', 'instrumentImc', 'instrumentNoIfrAppr', 'tosLdgsDay', 'tosLdgsNight'];
 
-    flightLogForm: FormGroup;
+    // flightLogForm: FormGroup;
 
     //flightLogResponse: FlightLogResponse = {} as FlightLogResponse;
     //flightLogTotalsVResponse: IFlightLogTotalsVResponse = {} as IFlightLogTotalsVResponse;
@@ -81,7 +77,7 @@ export class FlightLogTableComponent implements OnInit {
     // toDateCols: any[] = [];
 
     modifyAndDeleteButtonsDisable: boolean = true;
-    crudMode: CrudEnum = CrudEnum.ADD;// "Add";
+    crudMode!: CrudEnum | null;//= CrudEnum.ADD;// "Add";
     crudEnum = CrudEnum; // Used in html to refere to enum
     displayDialog: boolean = false;
 
@@ -115,7 +111,9 @@ export class FlightLogTableComponent implements OnInit {
 
     pendingRowCount!: number
     flightLogPendingArray: Array<FlightLogPending> = []
-    displayPendingDialog: boolean = false;
+    selectedFlightLogPending!: FlightLogPending;
+    displayDialogPendingTable: boolean = false;
+    displayDialogPendingEntry: boolean = false;
 
     hasWritePermission: boolean = false;
 
@@ -139,8 +137,7 @@ export class FlightLogTableComponent implements OnInit {
     monthTotalPanelVo!: TotalPanelVo;
     yearTotalPanelVo!: TotalPanelVo;
 
-    constructor(private formBuilder: FormBuilder, private flightLogService: FlightLogServiceService, private genericEntityService: GenericEntityService, private replicationService: ReplicationService, private messageService: MessageService, private sessionService: SessionService) {
-        this.flightLogForm = FlightLogHelper.createForm(formBuilder);
+    constructor(private flightLogService: FlightLogServiceService, private genericEntityService: GenericEntityService, private replicationService: ReplicationService, private messageService: MessageService, private sessionService: SessionService) {
     }
 
     ngOnInit() {
@@ -181,10 +178,6 @@ export class FlightLogTableComponent implements OnInit {
         for (let i = 0; i < this.colsPart2.length; i++) {
             this.columnOptions.push({ label: this.colsPart2[i].header, value: this.colsPart2[i] });
         }
-
-        this.getMakeModels();
-        this.getRegistrations();
-        this.getPilots();
 
         //this.getTableMetaData();
 
@@ -310,41 +303,6 @@ export class FlightLogTableComponent implements OnInit {
             )
 
     }
-    private getMakeModels() {
-        this.genericEntityService.getAllGenericEntity('makeModel').subscribe({
-            next: data => {
-                let makeModelResponse: IGenericEntityResponse = data;
-                this.makeModelSelectItemArray = new Array<SelectItem>();
-                makeModelResponse['_embedded']['makeModels'].forEach((makeModel: MakeModel) => {
-                    this.makeModelSelectItemArray.push({ label: makeModel.makeModel, value: makeModel.makeModel });
-                });
-            }
-        });
-    }
-
-    private getRegistrations() {
-        this.genericEntityService.getAllGenericEntity('registration').subscribe(data => {
-            console.log('data', data);
-            let registrationResponse: IGenericEntityResponse = data;
-            console.log('registrationResponse', registrationResponse);
-            this.registrationSelectItemArray = new Array<SelectItem>();
-            registrationResponse['_embedded']['registrations'].forEach((registration: Registration) => {
-                this.registrationSelectItemArray.push({ label: registration.registration, value: registration.registration });
-            });
-        });
-    }
-
-    private getPilots() {
-        this.genericEntityService.getAllGenericEntity('pilot').subscribe(data => {
-            console.log('data', data);
-            let pilotResponse: IGenericEntityResponse = data;
-            console.log('pilotResponse', pilotResponse);
-            this.pilotSelectItemArray = new Array<SelectItem>();
-            pilotResponse['_embedded']['pilots'].forEach((pilot: Pilot) => {
-                this.pilotSelectItemArray.push({ label: pilot.pilot, value: pilot.pilot });
-            });
-        });
-    }
 
     onLazyLoad(lazyLoadEvent: LazyLoadEvent) {
         this.savedLazyLoadEvent = lazyLoadEvent;
@@ -399,7 +357,7 @@ export class FlightLogTableComponent implements OnInit {
                         console.log('flightLogTotalsVResponse', flightLogTotalsVResponse);
                         this.page = flightLogTotalsVResponse.page;
                         this.flightLogTotalsVs = this.page.totalElements ? flightLogTotalsVResponse._embedded.simpleModels : [];
-                        this.clearTimes(this.flightLogTotalsVs);
+                        this.handleDates(this.flightLogTotalsVs);
                         console.log('this.flightLogTotalsVs', this.flightLogTotalsVs);
 
                         this.calculatePageTotals(this.flightLogTotalsVs)
@@ -445,7 +403,7 @@ export class FlightLogTableComponent implements OnInit {
     onRowSelect(event: any) {
         console.log(event);
 
-        this.crudFlightLog = FlightLogHelper.copyFlogLogProperties(this.selectedFlightLogTotalsV);
+        this.crudFlightLog = FlightLogHelper.copyFromFlightLogTotalsV(this.selectedFlightLogTotalsV);
         console.log('this.selectedFlightLogTotalsV', this.selectedFlightLogTotalsV)
         console.log('this.crudFlightLog', this.crudFlightLog)
         this.modifyAndDeleteButtonsDisable = false;
@@ -462,45 +420,22 @@ export class FlightLogTableComponent implements OnInit {
     }
     showDialog(crudMode: CrudEnum) {
         this.crudMode = crudMode;
-        console.log('crudMode', crudMode);
         console.log('this.crudMode', this.crudMode);
 
-        switch (this.crudMode) {
-            case CrudEnum.ADD:
-                this.flightLogForm.reset();
-                this.flightLogForm.get('flightDate')?.setValue(new Date());
-                this.flightLogForm.get('makeModel')?.setValue('PA28-181');
-                this.flightLogForm.get('registration')?.setValue('GQGD');
-                this.flightLogForm.get('pic')?.setValue('Self');
-                let cyooAirport: Airport = {} as Airport
-                cyooAirport.identifier = 'CYOO';
-                this.flightLogForm.get('fromAirport')?.setValue(cyooAirport);
-                this.flightLogForm.get('toAirport')?.setValue(cyooAirport);
-                this.flightLogForm.get('remarks')?.setValue('VFR - ');
-                FlightLogHelper.enableForm(this.flightLogForm);
-                this.crudFlightLog = {} as FlightLog;
-                break;
-            case CrudEnum.UPDATE:
-                FlightLogHelper.copyToForm(this.crudFlightLog, this.flightLogForm);
-                FlightLogHelper.enableForm(this.flightLogForm);
-                break;
-            case CrudEnum.DELETE:
-                FlightLogHelper.copyToForm(this.crudFlightLog, this.flightLogForm);
-                FlightLogHelper.disableForm(this.flightLogForm);
-                break;
-            default:
-                console.error('this.crudMode is invalid. this.crudMode: ' + this.crudMode);
-        }
         this.displayDialog = true;
+
+        if (this.crudMode === CrudEnum.ADD) {
+            this.crudFlightLog = {} as FlightLog
+        }
     }
 
-    onSubmit() {
-        FlightLogHelper.copyFromForm(this.flightLogForm, this.crudFlightLog);
-        console.log('this.crudFlightLog: ', this.crudFlightLog);
+    onSubmit(crudFlightLog: FlightLog) {
+        console.log('crudFlightLog2: ', crudFlightLog);
+        //FlightLogHelper.copyFromForm(this.flightLogForm, crudFlightLog2);
         switch (this.crudMode) {
             case CrudEnum.ADD:
-                this.clearTimePortionOfDates(this.crudFlightLog);
-                this.flightLogService.addFlightLog(this.crudFlightLog).subscribe({
+                this.clearTimePortionOfDates(crudFlightLog);
+                this.flightLogService.addFlightLog(crudFlightLog).subscribe({
                     next: savedFlightLog => {
                         console.log('savedFlightLog', savedFlightLog);
                     },
@@ -514,8 +449,8 @@ export class FlightLogTableComponent implements OnInit {
                 });
                 break;
             case CrudEnum.UPDATE:
-                this.clearTimePortionOfDates(this.crudFlightLog);
-                this.flightLogService.updateFlightLog(this.crudFlightLog).subscribe({
+                this.clearTimePortionOfDates(crudFlightLog);
+                this.flightLogService.updateFlightLog(crudFlightLog).subscribe({
                     next: savedFlightLog => {
                         console.log('updatedFlightLog', savedFlightLog);
                     },
@@ -529,10 +464,10 @@ export class FlightLogTableComponent implements OnInit {
                 });
                 break;
             case CrudEnum.DELETE:
-                console.log('this.crudFlightLog: ', this.crudFlightLog);
-                this.flightLogService.deleteFlightLog(this.crudFlightLog).subscribe({
+                console.log('crudFlightLog2: ', crudFlightLog);
+                this.flightLogService.deleteFlightLog(crudFlightLog).subscribe({
                     next: savedFlightLog => {
-                        console.log('deleted flightLog', this.crudFlightLog);
+                        console.log('deleted flightLog', crudFlightLog);
                     },
                     // error: error => {
                     //     console.error('flightLogService.saveFlightLog() returned error: ', error);
@@ -549,7 +484,7 @@ export class FlightLogTableComponent implements OnInit {
     }
     showPendingDialog() {
         this.getPending()
-        this.displayPendingDialog = true;
+        this.displayDialogPendingTable = true;
 
     }
     private getPending() {
@@ -558,6 +493,7 @@ export class FlightLogTableComponent implements OnInit {
                 {
                     next: (flightLogPendingResponse: FlightLogPendingResponse) => {
                         this.flightLogPendingArray = flightLogPendingResponse._embedded.simpleModels || new Array<FlightLogPending>
+                        this.handlePendingDates(this.flightLogPendingArray)
                         console.log('this.flightLogPendingArray', this.flightLogPendingArray);
                     },
                     complete: () => {
@@ -574,21 +510,19 @@ export class FlightLogTableComponent implements OnInit {
     }
 
     private afterCrud() {
-        this.displayDialog = false;
-        this.modifyAndDeleteButtonsDisable = true;
-        this.resetDialoForm();
+        this.resetVariables();
         this.onLazyLoad(this.savedLazyLoadEvent);
     }
-    private resetDialoForm() {
-        this.flightLogForm.reset();
-        //this.selectedFlightLog = {} as FlightLog;
+    private resetVariables() {
+        this.displayDialog = false;
+        this.modifyAndDeleteButtonsDisable = true;
         this.selectedFlightLogTotalsV = {} as IFlightLogTotalsV;
         this.fromAirport = {} as Airport;
         this.toAirport = {} as Airport;
+        this.crudMode = null
     }
     onCancel() {
-        this.resetDialoForm();
-        this.displayDialog = false;
+        this.resetVariables();
     }
 
     searchAirport(event: { query: string; }) {
@@ -616,9 +550,14 @@ export class FlightLogTableComponent implements OnInit {
         flightLog.flightDate.setMilliseconds(0);
     }
 
-    private clearTimes(flightLogTotalsVs: Array<IFlightLogTotalsV>) {
+    private handleDates(flightLogTotalsVs: Array<IFlightLogTotalsV>) {
         flightLogTotalsVs.forEach(flightLogTotalsV => {
             flightLogTotalsV.flightDate = new Date(flightLogTotalsV.flightDate + 'T00:00:00');
+        });
+    }
+    private handlePendingDates(flightLogPending: Array<FlightLogPending>) {
+        flightLogPending.forEach(flightLogPending => {
+            flightLogPending.flightDate = new Date(flightLogPending.flightDate + 'T00:00:00');
         });
     }
 
@@ -722,24 +661,94 @@ export class FlightLogTableComponent implements OnInit {
 
     }
 
-
     hideTotals(event: MouseEvent, key: string) {
         console.log('hideTotals, event:', event, ', event type:', event.type, ', key:', key)
     }
 
     onPendingAdd(flightLogPending: FlightLogPending) {
         console.log('flightLogPending', flightLogPending)
+        this.selectedFlightLogPending = flightLogPending
+        this.crudFlightLog = FlightLogHelper.copyFromFlightLogPending(flightLogPending)
+        this.crudMode = CrudEnum.ADD
+        this.displayDialogPendingEntry = true;
+        this.messageService.clear();
     }
     onPendingDelete(flightLogPending: FlightLogPending) {
         console.log('flightLogPending', flightLogPending)
-        this.flightLogService.deleteFlightLogPending(flightLogPending).subscribe({
-            next: () => {
+        // this.flightLogService.deleteFlightLogPending(flightLogPending).subscribe({
+        //     next: () => {
+        //         console.log('deleted flightLog', flightLogPending);
+        //     },
+        //     complete: () => {
+        //         this.getPending()
+        //     }
+        // });
+
+        this.flightLogService.deleteFlightLogPending(flightLogPending).pipe(
+            concatMap(addFlightLogPendingResponse => {
                 console.log('deleted flightLog', flightLogPending);
+                return this.genericEntityService.getTableData(this.PENDING_TABLE_NAME_NAME, "", 0, 9999, ['flightDate'])
+            })
+        )
+            .subscribe({
+                next: (flightLogPendingResponse: FlightLogPendingResponse) => {
+                    this.flightLogPendingArray = flightLogPendingResponse._embedded.simpleModels || new Array<FlightLogPending>
+                    this.handlePendingDates(this.flightLogPendingArray)
+                    console.log('this.flightLogPendingArray', this.flightLogPendingArray);
+                    this.pendingRowCount = this.flightLogPendingArray.length
+                },
+                complete: () => {
+                    console.log(`this.genericEntityService.getTableData ${this.PENDING_TABLE_NAME_NAME} completed`)
+                    this.afterAddPending()
+                }
+            });
+
+    }
+    onSubmitPending(flightLog: FlightLog) {
+        const flightLogPendingAddRequest: FlightLogPendingAddRequest = {
+            flightLogPendingUri: this.selectedFlightLogPending._links.self.href,
+            flightLog: flightLog
+        }
+
+        this.flightLogService.addFlightLogPending(flightLogPendingAddRequest).pipe(
+            concatMap(addFlightLogPendingResponse => {
+                console.log('addFlightLogPending completed with repsonse:', addFlightLogPendingResponse)
+                return this.genericEntityService.getTableData(this.PENDING_TABLE_NAME_NAME, "", 0, 9999, ['flightDate'])
+            })
+        ).subscribe({
+
+            next: (flightLogPendingResponse: FlightLogPendingResponse) => {
+                this.flightLogPendingArray = flightLogPendingResponse._embedded.simpleModels || new Array<FlightLogPending>
+                this.handlePendingDates(this.flightLogPendingArray)
+                console.log('this.flightLogPendingArray', this.flightLogPendingArray);
+                this.pendingRowCount = this.flightLogPendingArray.length
             },
             complete: () => {
-                this.getPending()
-            }
-        });
+                console.log(`this.genericEntityService.getTableData ${this.PENDING_TABLE_NAME_NAME} completed`)
+                this.afterAddPending()
+            },
 
+
+            error: (httpErrorResponse: HttpErrorResponse) => {
+                console.log('httpErrorResponse', httpErrorResponse)
+            }
+        })
+
+    }
+    private afterAddPending() {
+        this.resetVariablesPending()
+        // this.getPending();
+        if (this.pendingRowCount === 0) {
+            this.displayDialogPendingTable = false
+        }
+        this.onLazyLoad(this.savedLazyLoadEvent);
+
+    }
+    private resetVariablesPending() {
+        this.displayDialogPendingEntry = false;
+    }
+
+    onCancelPending() {
+        this.resetVariablesPending()
     }
 }

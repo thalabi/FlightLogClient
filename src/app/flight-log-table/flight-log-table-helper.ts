@@ -2,6 +2,7 @@ import { FlightLog } from "../domain/flight-log";
 import { FormGroup, Validators, FormBuilder, AbstractControl, ValidatorFn, ValidationErrors } from "@angular/forms";
 import { Airport } from "../domain/airport";
 import { IFlightLogTotalsV } from "../response/IFlightLogTotalsV";
+import { FlightLogPending } from "../domain/FlightLogPending";
 
 const controlNames: Array<string> = ['flightDate', 'makeModel', 'registration', 'pic', 'coPilot', 'fromAirport', 'toAirport', 'remarks', 'dayDual', 'daySolo', 'nightDual', 'nightSolo', 'instrumentSimulated', 'instrumentFlightSim', 'xCountryDay', 'xCountryNight', 'instrumentImc', 'instrumentNoIfrAppr', 'tosLdgsDay', 'tosLdgsNight'];
 
@@ -46,7 +47,7 @@ export const FlightLogHelper = {
             tosLdgsNight: ['']
         }, { validators: [createDayOrNightValueValidator()] });
     },
-    copyFlogLogProperties(flightLogTotalsV: IFlightLogTotalsV) {
+    copyFromFlightLogTotalsV(flightLogTotalsV: IFlightLogTotalsV): FlightLog {
         let flightLog: FlightLog = {} as FlightLog
         const href = flightLogTotalsV._links.flightLogTotalsV.href;
         flightLog.id = + href.substring(href.lastIndexOf('/') + 1)
@@ -75,8 +76,19 @@ export const FlightLogHelper = {
 
         return flightLog
     },
+    copyFromFlightLogPending(flightLogPending: FlightLogPending): FlightLog {
+        let flightLog: FlightLog = {} as FlightLog
+        flightLog.flightDate = flightLogPending.flightDate
+        flightLog.makeModel = flightLogPending.makeModel
+        flightLog.registration = flightLogPending.registration
+        flightLog.routeFrom = flightLogPending.routeFrom
+        flightLog.routeTo = flightLogPending.routeTo
+        flightLog.daySolo = flightLogPending.flightTime
+        return flightLog
+    },
 
     copyToForm(flightLog: FlightLog, flightLogForm: FormGroup) {
+        console.log('flightLog', flightLog)
         flightLogForm.patchValue({ flightDate: flightLog.flightDate });
         flightLogForm.patchValue({ makeModel: flightLog.makeModel });
         flightLogForm.patchValue({ registration: flightLog.registration });
@@ -101,9 +113,9 @@ export const FlightLogHelper = {
         flightLogForm.patchValue({ instrumentNoIfrAppr: flightLog.instrumentNoIfrAppr });
         flightLogForm.patchValue({ tosLdgsDay: flightLog.tosLdgsDay });
         flightLogForm.patchValue({ tosLdgsNight: flightLog.tosLdgsNight });
-
-        console.log(flightLogForm);
+        console.log('flightLogForm', flightLogForm);
     },
+
     copyFromForm(flightLogForm: FormGroup, flightLog: FlightLog) {
         flightLog.flightDate = flightLogForm.get('flightDate')?.value;
         flightLog.makeModel = flightLogForm.get('makeModel')?.value;
@@ -129,15 +141,15 @@ export const FlightLogHelper = {
         flightLog.tosLdgsNight = flightLogForm.get('tosLdgsNight')?.value;
         console.log('flightLog: ', flightLog);
     },
-    enableForm(flightLogForm: FormGroup) {
-        for (let controlName of controlNames) {
-            flightLogForm.get(controlName)?.enable();
-        }
-    },
-    disableForm(flightLogForm: FormGroup) {
-        for (let controlName of controlNames) {
-            flightLogForm.get(controlName)?.disable();
-        }
-    }
+    // enableForm(flightLogForm: FormGroup) {
+    //     for (let controlName of controlNames) {
+    //         flightLogForm.get(controlName)?.enable();
+    //     }
+    // },
+    // disableForm(flightLogForm: FormGroup) {
+    //     for (let controlName of controlNames) {
+    //         flightLogForm.get(controlName)?.disable();
+    //     }
+    // }
 
 }
