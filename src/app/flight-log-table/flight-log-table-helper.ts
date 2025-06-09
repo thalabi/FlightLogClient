@@ -81,8 +81,10 @@ export const FlightLogHelper = {
         flightLog.flightDate = flightLogPending.flightDate
         flightLog.makeModel = flightLogPending.makeModel
         flightLog.registration = flightLogPending.registration
+        flightLog.pic = 'Self'
         flightLog.routeFrom = flightLogPending.routeFrom
         flightLog.routeTo = flightLogPending.routeTo
+        flightLog.remarks = 'VFR - '
         flightLog.daySolo = flightLogPending.flightTime
         return flightLog
     },
