@@ -65,8 +65,8 @@ export class FlightLogFormComponent implements OnInit, OnChanges {
                 if (Object.keys(this.flightLog).length === 0) {
                     this.flightLogForm.reset();
                     this.flightLogForm.get('flightDate')?.setValue(new Date());
-                    this.flightLogForm.get('makeModel')?.setValue('PA28-181');
-                    this.flightLogForm.get('registration')?.setValue('GQGD');
+                    this.flightLogForm.get('makeModel')?.setValue('PA-28-181');
+                    this.flightLogForm.get('registration')?.setValue('C-GQGD');
                     this.flightLogForm.get('pic')?.setValue('Self');
                     let cyooAirport: Airport = {} as Airport
                     cyooAirport.identifier = 'CYOO';
