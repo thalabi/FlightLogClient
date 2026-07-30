@@ -1,0 +1,51 @@
+<form (ngSubmit)="onEmailUpcomingDueComponents()" #printDatePerformedRangeForm="ngForm">
+
+    <div class="p-grid">
+
+        <div class="p-col-1">
+            <label for="airtime">Airtime</label>
+        </div>
+        <div class="p-col-11">
+            {{airtime}} {{airtimeState}}
+        </div>
+        <div class="p-col-1">
+            <label for="fromDatePerformed">From date</label>
+        </div>
+        <div class="p-col-2">
+            <p-calendar [(ngModel)]="fromDueDate" name="fromDueDate" id="fromDueDate" #fromDueDateField="ngModel"
+                [monthNavigator]="true" [showButtonBar]="true" [yearNavigator]="true" yearRange="1977:2050"
+                [dateFormat]="'yy-mm-dd'" [showIcon]="true" [readonlyInput]="true" [showOnFocus]="false"></p-calendar>
+        </div>
+
+        <div class="p-col-1">
+            <label for="toDatePerformed">To date</label>
+        </div>
+        <div class="p-col-8">
+            <p-calendar [(ngModel)]="toDueDate" name="toDueDate" id="toDueDate" #toDueDateField="ngModel"
+                [monthNavigator]="true" [showButtonBar]="true" [yearNavigator]="true" yearRange="1977:2050"
+                [dateFormat]="'yy-mm-dd'" [showIcon]="true" [readonlyInput]="true" [showOnFocus]="false"></p-calendar>
+        </div>
+
+        <div class="col-3">
+            <input pInputText id="fromHrsDue" [(ngModel)]="fromHrsDue" name="fromHrsDue" #fromHrsDueField="ngModel"
+                placeholder="From Hrs Due" regexValidator="^\d*(\.\d{0,1}){0,1}$" />
+            <div [hidden]="fromHrsDueField.valid || fromHrsDueField.pristine" class="red-font">Invalid value</div>
+        </div>
+
+        <div class="col-3">
+            <input pInputText id="toHrsDue" [(ngModel)]="toHrsDue" name="toHrsDue" #toHrsDueField="ngModel"
+                placeholder="To Hrs Due" regexValidator="^\d*(\.\d{0,1}){0,1}$" />
+            <div [hidden]="toHrsDueField.valid || toHrsDueField.pristine" class="red-font">Invalid value</div>
+        </div>
+
+        <div class="col-3">
+            <input pInputText id="emailAddress" [(ngModel)]="emailAddress" name="emailAddress"
+                #emailAddressField="ngModel" placeholder="Email Address" />
+        </div>
+
+
+        <button pButton type="submit" class="print-button" label="Email" [disabled]="fromDueDateField.pristine || toDueDateField.pristine || 
+                            fromDueDateField.value > toDueDateField.value"></button>
+
+    </div>
+</form>

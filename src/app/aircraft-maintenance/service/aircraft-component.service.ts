@@ -9,6 +9,7 @@ import { AircraftComponentListResponse } from '../../response/aircraft-component
 import { AircraftComponentRequest } from '../../domain/aircraft-component-request';
 import { AircraftComponentName } from '../../domain/aircraft-component-name';
 import { environment } from '../../../environments/environment';
+import { tsn } from '../../domain/tsn';
 
 @Injectable()
 export class AircraftComponentService {
@@ -188,6 +189,22 @@ export class AircraftComponentService {
                 return new Blob([response], { type: 'application/pdf' })
             }));
     }
+
+
+    getAirTime(): Observable<tsn> {
+        const url: string = this.serviceUrl + '/protected/aircraftMaintenenaceUtilsController/getAirtime';
+        return this.httpClient.get<tsn>(url);
+    }
+
+    emailUpcomingDueComponents(fromDueDate: Date, toDueDate: Date, fromHrsDue: number, toHrsDue: number, emailAddress: string): Observable<boolean> {
+        console.log('emailUpcomingDueComponents', fromDueDate.toISOString.toString(), toDueDate.toISOString.toString(), fromHrsDue, toHrsDue, emailAddress);
+        const url: string = this.serviceUrl
+            + '/protected/aircraftMaintenenaceUtilsController/emailUpcomingDueComponents' + '?' + 'fromDueDate=' + fromDueDate.toISOString() + '&' + 'toDueDate=' + toDueDate.toISOString() + '&' + 'fromHrsDue=' + fromHrsDue + '&' + 'toHrsDue=' + toHrsDue + '&' + 'emailAddress=' + encodeURIComponent(emailAddress);
+        console.log('url', url);
+        return this.httpClient.get<boolean>(url);
+    }
+
+
 
 
     // private getHttpOptions() {

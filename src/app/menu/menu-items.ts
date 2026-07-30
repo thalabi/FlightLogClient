@@ -45,6 +45,10 @@ export class MenuItems {
                     { id: 'part', label: 'Part', routerLink: 'genericCrud/part', routerLinkActiveOptions: { exact: true }, permissionEnumArray: [PermissionEnum.PART_READ, PermissionEnum.PART_WRITE] },
                     { id: 'aircraftComponent', label: 'Component', routerLink: 'aircraftComponent', routerLinkActiveOptions: { exact: true }, permissionEnumArray: [PermissionEnum.COMPONENT_READ, PermissionEnum.COMPONENT_WRITE] },
                     { id: 'aircraftHistoryPrintComponentComponent', label: 'Print Component History', routerLink: 'aircraftHistoryPrintComponentComponent', routerLinkActiveOptions: { exact: true }, permissionEnumArray: [PermissionEnum.COMPONENT_READ] },
+
+                    { id: 'emailUpcomingDueComponentsComponent', label: 'Email Upcoming Due', routerLink: 'emailUpcomingDueComponentsComponent', routerLinkActiveOptions: { exact: true }, permissionEnumArray: [PermissionEnum.COMPONENT_READ] },
+
+
                 ]
             },
             {

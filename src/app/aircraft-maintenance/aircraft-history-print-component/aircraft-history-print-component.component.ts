@@ -42,18 +42,6 @@ export class AircraftHistoryPrintComponentComponent implements OnInit {
             case 0:
                 break;
             case 1:
-                // this.aircraftComponentService.getComponentNames().subscribe(
-                //     (response) => {
-                //         console.log('response', response);
-                //         this.componentNameArray = response;
-                //         console.log('this.componentNameArray', this.componentNameArray);
-                //         this.componentNameJsonArray = new Array();
-                //         this.componentNameArray.forEach(componentName => {
-                //             this.componentNameJsonArray.push({"name": componentName});
-                //         });
-                //         console.log('this.componentNameJsonArray', this.componentNameJsonArray);
-                //     }
-                // );
                 this.aircraftComponentService.getComponentNames().subscribe(
                     (response) => {
                         console.log('response', response);
