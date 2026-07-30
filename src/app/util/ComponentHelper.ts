@@ -5,8 +5,7 @@ import { AbstractControl } from "@angular/forms";
 import { DataTypeEnum } from "../config/DataTypeEnum";
 import { FieldAttributes } from "../config/FieldAttributes";
 import { IGenericEntity } from "../domain/i-gerneric-entity";
-import { LazyLoadEvent } from "primeng/api/lazyloadevent";
-//import 'rxjs/add/observable/of';
+import { LazyLoadEvent } from "primeng/api";
 
 export class ComponentHelper {
 

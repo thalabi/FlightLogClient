@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CustomMenuItem } from './custom-menu-item';
 import { MenuItems } from './menu-items';
-import { MenuItem } from 'primeng/api/menuitem';
 import { AuthService, UserInfo } from '../auth/auth.service';
 import { SessionService } from '../service/session.service';
 
 import { distinctUntilChanged } from 'rxjs';
 import { PermissionEnum } from './permission-enum';
 import { MenubarModule } from 'primeng/menubar';
+import { MenuItem } from 'primeng/api';
 
 @Component({
     selector: 'app-menu',
