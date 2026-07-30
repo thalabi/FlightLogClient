@@ -46,7 +46,7 @@
         </div>
         <div class="col-3">
             <p-autoComplete formControlName="fromAirport" id="fromAirport" [suggestions]="filteredAirportArray"
-                (completeMethod)="searchAirport($event)" [field]="'identifier'" [size]="17" [forceSelection]="true"
+                (completeMethod)="searchAirport($event)" [field]="'identifier'" size="small" [forceSelection]="true"
                 [readonly]="crudMode == 'Delete'">
                 <ng-template let-airport pTemplate="item">
                     {{airport.identifier}} - {{airport.name}}
@@ -58,7 +58,7 @@
         </div>
         <div class="col-3">
             <p-autoComplete formControlName="toAirport" id="toAirport" [suggestions]="filteredAirportArray"
-                (completeMethod)="searchAirport($event)" [field]="'identifier'" [size]="17" [forceSelection]="true"
+                (completeMethod)="searchAirport($event)" [field]="'identifier'" size="small" [forceSelection]="true"
                 [readonly]="crudMode == 'Delete'">
                 <ng-template let-airport pTemplate="item">
                     {{airport.identifier}} - {{airport.name}}
