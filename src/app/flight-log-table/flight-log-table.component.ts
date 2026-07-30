@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FlightLogServiceService } from '../service/flight-log-service.service';
 import { FlightLog } from '../domain/flight-log';
 import { HalResponsePage } from '../hal/hal-response-page';
-import { LazyLoadEvent } from 'primeng/api/lazyloadevent';
 import { SelectItem } from 'primeng/api/selectitem';
 import { Airport } from '../domain/airport';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -28,7 +27,7 @@ import { ButtonModule } from 'primeng/button';
 import { AbbreviateComponent } from '../abbreviate/abbreviate.component';
 import { TooltipModule } from 'primeng/tooltip';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { TableModule } from 'primeng/table';
+import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { NgIf, NgFor, NgStyle, DatePipe } from '@angular/common';
 import { BackendStacktraceDisplayComponent } from '../backend-stacktrace-display/backend-stacktrace-display.component';
 import { MessagesModule } from 'primeng/messages';
@@ -92,7 +91,7 @@ export class FlightLogTableComponent implements OnInit {
     toAirport: Airport = {} as Airport;
 
     // used to pass as argument to getTableRowsLazy() when refreshing page after add/update/delete
-    savedLazyLoadEvent: LazyLoadEvent = {} as LazyLoadEvent;
+    savedTableLazyLoadEvent: TableLazyLoadEvent = {} as TableLazyLoadEvent;
 
     readonly ROWS_PER_PAGE: number = 10; // default rows per page
     firstRowOfTable!: number; // triggers a page change, zero based. 0 -> first row, 1 -> second row, ...
@@ -304,20 +303,20 @@ export class FlightLogTableComponent implements OnInit {
 
     }
 
-    onLazyLoad(lazyLoadEvent: LazyLoadEvent) {
-        this.savedLazyLoadEvent = lazyLoadEvent;
-        console.log('event', lazyLoadEvent);
-        console.log('event.first', lazyLoadEvent.first);
+    onLazyLoad(tableLazyLoadEvent: TableLazyLoadEvent) {
+        this.savedTableLazyLoadEvent = tableLazyLoadEvent;
+        console.log('event', tableLazyLoadEvent);
+        console.log('event.first', tableLazyLoadEvent.first);
         // console.log('this.firstRowOfTable', this.firstRowOfTable);
-        // lazyLoadEvent.first = lazyLoadEvent.first || this.firstRowOfTable;
-        // console.log('event.first', lazyLoadEvent.first);
-        console.log('event.rows', lazyLoadEvent.rows);
-        console.log('event.filters', lazyLoadEvent.filters);
-        //this.fetchPage(lazyLoadEvent.first || 0, lazyLoadEvent.rows || 0, ComponentHelper.buildSearchString(lazyLoadEvent, this.fieldNames));
-        this.fetchPage(lazyLoadEvent);
+        // tableLazyLoadEvent.first = tableLazyLoadEvent.first || this.firstRowOfTable;
+        // console.log('event.first', tableLazyLoadEvent.first);
+        console.log('event.rows', tableLazyLoadEvent.rows);
+        console.log('event.filters', tableLazyLoadEvent.filters);
+        //this.fetchPage(tableLazyLoadEvent.first || 0, tableLazyLoadEvent.rows || 0, ComponentHelper.buildSearchString(tableLazyLoadEvent, this.fieldNames));
+        this.fetchPage(tableLazyLoadEvent);
     }
 
-    fetchPage(lazyLoadEvent: LazyLoadEvent) {
+    fetchPage(lazyLoadEvent: TableLazyLoadEvent) {
         console.log(lazyLoadEvent)
         this.loadingStatus = true
         const pageSize = lazyLoadEvent.rows ?? 20
@@ -511,7 +510,7 @@ export class FlightLogTableComponent implements OnInit {
 
     private afterCrud() {
         this.resetVariables();
-        this.onLazyLoad(this.savedLazyLoadEvent);
+        this.onLazyLoad(this.savedTableLazyLoadEvent);
     }
     private resetVariables() {
         this.displayDialog = false;
@@ -536,10 +535,10 @@ export class FlightLogTableComponent implements OnInit {
     onGoToPage() {
         console.log('this.pageNumber', this.pageNumber);
         this.firstRowOfTable = (this.pageNumber - 1) * this.ROWS_PER_PAGE;
-        this.savedLazyLoadEvent.first = this.firstRowOfTable;
-        this.onLazyLoad(this.savedLazyLoadEvent);
+        this.savedTableLazyLoadEvent.first = this.firstRowOfTable;
+        this.onLazyLoad(this.savedTableLazyLoadEvent);
         //this.fetchPage(this.firstRowOfTable, this.ROWS_PER_PAGE, '');
-        this.fetchPage(this.savedLazyLoadEvent);
+        this.fetchPage(this.savedTableLazyLoadEvent);
         this.pageNumber = 0;
     }
 
@@ -741,7 +740,7 @@ export class FlightLogTableComponent implements OnInit {
         if (this.pendingRowCount === 0) {
             this.displayDialogPendingTable = false
         }
-        this.onLazyLoad(this.savedLazyLoadEvent);
+        this.onLazyLoad(this.savedTableLazyLoadEvent);
 
     }
     private resetVariablesPending() {

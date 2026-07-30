@@ -9,8 +9,6 @@ import { FormAttributes } from "../config/FormAttributes";
 import { DataTypeEnum } from "../config/DataTypeEnum";
 import { FieldAttributes } from "../config/FieldAttributes";
 import { UiComponentEnum } from "../config/UiComponentEnum";
-import { StringUtils } from '../string-utils';
-import { LazyLoadEvent } from 'primeng/api/lazyloadevent';
 import { HalResponseLinks } from '../hal/hal-response-links';
 import { HalResponsePage } from '../hal/hal-response-page';
 import { ComponentHelper } from '../util/ComponentHelper';
@@ -30,10 +28,9 @@ import { PickListModule } from 'primeng/picklist';
 import { CheckboxModule } from 'primeng/checkbox';
 import { CalendarModule } from 'primeng/calendar';
 import { DialogModule } from 'primeng/dialog';
-import { SyncButtonComponent } from '../sync-button/sync-button.component';
 import { ButtonModule } from 'primeng/button';
 import { NgIf, NgFor, NgStyle, NgSwitch, NgSwitchCase, NgSwitchDefault, TitleCasePipe, DatePipe } from '@angular/common';
-import { TableModule } from 'primeng/table';
+import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { BackendStacktraceDisplayComponent } from '../backend-stacktrace-display/backend-stacktrace-display.component';
 import { MessagesModule } from 'primeng/messages';
 
@@ -42,7 +39,7 @@ import { MessagesModule } from 'primeng/messages';
     templateUrl: './generic-crud.component.html',
     styleUrls: ['./generic-crud.component.css'],
     standalone: true,
-    imports: [TableModule, NgIf, SharedModule, NgFor, NgStyle, NgSwitch, NgSwitchCase, NgSwitchDefault, ButtonModule, SyncButtonComponent, FormsModule, DialogModule, ReactiveFormsModule, CalendarModule, CheckboxModule, PickListModule, TooltipModule, TitleCasePipe, DatePipe, PasswordMaskPipe, MessagesModule, BackendStacktraceDisplayComponent]
+    imports: [TableModule, NgIf, SharedModule, NgFor, NgStyle, NgSwitch, NgSwitchCase, NgSwitchDefault, ButtonModule, FormsModule, DialogModule, ReactiveFormsModule, CalendarModule, CheckboxModule, PickListModule, TooltipModule, TitleCasePipe, DatePipe, PasswordMaskPipe, MessagesModule, BackendStacktraceDisplayComponent]
 })
 export class GenericCrudComponent implements OnInit {
 
@@ -75,7 +72,7 @@ export class GenericCrudComponent implements OnInit {
     tableName!: string;
 
     // used to pass as argument to getTableRowsLazy() when refreshing page after add/update/delete
-    savedLazyLoadEvent!: LazyLoadEvent;
+    savedTableLazyLoadEvent!: TableLazyLoadEvent;
 
     readonly ROWS_PER_PAGE: number = 10; // default rows per page
     firstRowOfTable!: number; // triggers a page change, zero based. 0 -> first page, 1 -> second page, ...
@@ -261,11 +258,11 @@ export class GenericCrudComponent implements OnInit {
     private afterCrud() {
         this.displayDialog = false;
         this.modifyAndDeleteButtonsDisable = true;
-        // this.fetchPage(this.savedLazyLoadEvent.first || 0, this.savedLazyLoadEvent.rows || 0,
-        //     ComponentHelper.buildSearchString(this.savedLazyLoadEvent, this.formAttributes.fields.map(field => field.columnName)),
+        // this.fetchPage(this.savedTableLazyLoadEvent.first || 0, this.savedTableLazyLoadEvent.rows || 0,
+        //     ComponentHelper.buildSearchString(this.savedTableLazyLoadEvent, this.formAttributes.fields.map(field => field.columnName)),
         //     this.formAttributes.queryOrderByColumns);
         this.resetDialoForm();
-        this.onLazyLoad(this.savedLazyLoadEvent);
+        this.onLazyLoad(this.savedTableLazyLoadEvent);
     }
 
     private resetDialoForm() {
@@ -279,21 +276,21 @@ export class GenericCrudComponent implements OnInit {
         this.modifyAndDeleteButtonsDisable = true;
     }
 
-    onLazyLoad(lazyLoadEvent: LazyLoadEvent) {
-        this.savedLazyLoadEvent = lazyLoadEvent;
-        console.log('event', lazyLoadEvent);
-        console.log('event.first', lazyLoadEvent.first);
-        console.log('event.rows', lazyLoadEvent.rows);
-        console.log('event.filters', lazyLoadEvent.filters);
-        this.fetchPage(lazyLoadEvent)
+    onLazyLoad(tableTableLazyLoadEvent: TableLazyLoadEvent) {
+        this.savedTableLazyLoadEvent = tableTableLazyLoadEvent;
+        console.log('event', tableTableLazyLoadEvent);
+        console.log('event.first', tableTableLazyLoadEvent.first);
+        console.log('event.rows', tableTableLazyLoadEvent.rows);
+        console.log('event.filters', tableTableLazyLoadEvent.filters);
+        this.fetchPage(tableTableLazyLoadEvent)
     }
 
-    fetchPage(lazyLoadEvent: LazyLoadEvent) {
-        console.log(lazyLoadEvent)
+    fetchPage(tableTableLazyLoadEvent: TableLazyLoadEvent) {
+        console.log(tableTableLazyLoadEvent)
         this.loadingStatus = true
-        const pageSize = lazyLoadEvent.rows ?? 20
-        const pageNumber = (lazyLoadEvent.first ?? 0) / pageSize;
-        const filters: any = lazyLoadEvent.filters
+        const pageSize = tableTableLazyLoadEvent.rows ?? 20
+        const pageNumber = (tableTableLazyLoadEvent.first ?? 0) / pageSize;
+        const filters: any = tableTableLazyLoadEvent.filters
         console.log('filters', filters)
         console.log('pageNumber', pageNumber, 'pageSize', pageSize, 'filters', filters)
         let searchCriteria: string = ''
@@ -315,8 +312,8 @@ export class GenericCrudComponent implements OnInit {
             console.log('searchCriteria', searchCriteria)
         }
         let sort: string[] = []
-        if (lazyLoadEvent.sortField) {
-            sort[0] = lazyLoadEvent.sortField + (lazyLoadEvent.sortOrder === -1 ? ',DESC' : '')
+        if (tableTableLazyLoadEvent.sortField) {
+            sort[0] = tableTableLazyLoadEvent.sortField + (tableTableLazyLoadEvent.sortOrder === -1 ? ',DESC' : '')
             sort[1] = 'id' // always add id colmun so that page results are consistant
             //console.log('sort', sort)
         }
@@ -442,10 +439,10 @@ export class GenericCrudComponent implements OnInit {
         console.log('this.pageNumber', this.pageNumber);
         // TODO this might be redundant since it is set in fetchPage
         this.firstRowOfTable = (this.pageNumber - 1) * this.ROWS_PER_PAGE;
-        this.savedLazyLoadEvent.first = this.firstRowOfTable;
-        this.onLazyLoad(this.savedLazyLoadEvent);
+        this.savedTableLazyLoadEvent.first = this.firstRowOfTable;
+        this.onLazyLoad(this.savedTableLazyLoadEvent);
         //this.fetchPage(this.firstRowOfTable, this.ROWS_PER_PAGE, '', this.formAttributes.queryOrderByColumns);
-        this.fetchPage(this.savedLazyLoadEvent);
+        this.fetchPage(this.savedTableLazyLoadEvent);
         this.pageNumber = 0;
     }
 

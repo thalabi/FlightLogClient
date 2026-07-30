@@ -9,7 +9,6 @@ import { IGenericEntity } from '../../domain/i-gerneric-entity';
 import { ComponentHelper } from '../../util/ComponentHelper';
 import { AircraftComponent } from '../../domain/aircraft-component';
 import { HalResponsePage } from '../../hal/hal-response-page';
-import { LazyLoadEvent } from 'primeng/api/lazyloadevent';
 import { HalResponseLinks } from '../../hal/hal-response-links';
 import { CrudEnum } from '../../crud-enum';
 import { AircraftComponentRequest } from '../../domain/aircraft-component-request';
@@ -19,7 +18,7 @@ import { AircraftComponentListResponse } from '../../response/aircraft-component
 import { HttpErrorResponse } from '@angular/common/http';
 import { ButtonModule } from 'primeng/button';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
-import { TableModule } from 'primeng/table';
+import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
 import { CommonModule } from '@angular/common';
 import { MessagesModule } from 'primeng/messages';
@@ -69,7 +68,7 @@ export class AircraftComponentComponent implements OnInit {
     modifyAndDeleteButtonsDisable: boolean = true;
 
     // used to pass as argument to getTableRowsLazy() when refreshing page after add/update/delete
-    savedLazyLoadEvent!: LazyLoadEvent;
+    savedTableLazyLoadEvent!: TableLazyLoadEvent;
     readonly ROWS_PER_PAGE: number = 10; // default rows per page
     firstRowOfTable!: number; // triggers a page change, zero based. 0 -> first page, 1 -> second page, ...
     pageNumber!: number;
@@ -133,17 +132,17 @@ export class AircraftComponentComponent implements OnInit {
         });
     }
 
-    onLazyLoad(lazyLoadEvent: LazyLoadEvent) {
-        this.savedLazyLoadEvent = lazyLoadEvent;
-        console.log('event', lazyLoadEvent);
-        console.log('event.first', lazyLoadEvent.first);
-        console.log('event.rows', lazyLoadEvent.rows);
-        console.log('event.filters', lazyLoadEvent.filters);
+    onLazyLoad(tableLazyLoadEvent: TableLazyLoadEvent) {
+        this.savedTableLazyLoadEvent = tableLazyLoadEvent;
+        console.log('event', tableLazyLoadEvent);
+        console.log('event.first', tableLazyLoadEvent.first);
+        console.log('event.rows', tableLazyLoadEvent.rows);
+        console.log('event.filters', tableLazyLoadEvent.filters);
         // this.fetchPage(lazyLoadEvent.first || 0, lazyLoadEvent.rows || 0,
         //     ComponentHelper.buildSearchString(lazyLoadEvent, ['name', 'description', 'part.name', 'workPerformed', 'datePerformed', 'hoursPerformed', 'dateDue', 'hoursDue']), this.SORT_COLUMNS);
         // this.fetchPage(lazyLoadEvent.first || 0, lazyLoadEvent.rows || 0,
         //     '', this.SORT_COLUMNS);
-        this.fetchPage(lazyLoadEvent)
+        this.fetchPage(tableLazyLoadEvent)
     }
 
 
@@ -216,16 +215,16 @@ export class AircraftComponentComponent implements OnInit {
             });
 
     }
-    fetchPage(lazyLoadEvent: LazyLoadEvent) {
-        console.log(lazyLoadEvent)
+    fetchPage(tableLazyLoadEvent: TableLazyLoadEvent) {
+        console.log(tableLazyLoadEvent)
         this.loadingStatus = true
         this.modifyAndDeleteButtonsDisable = true;
         this.selectedComponentRow = {} as AircraftComponent; // unselect row
         this.resetDialoForm();
-        const pageSize = lazyLoadEvent.rows ?? 20
-        const pageNumber = (lazyLoadEvent.first ?? 0) / pageSize;
+        const pageSize = tableLazyLoadEvent.rows ?? 20
+        const pageNumber = (tableLazyLoadEvent.first ?? 0) / pageSize;
         //const filters: { [s: string]: FilterMetadata[] } | undefined = lazyLoadEvent.filters
-        const filters: any = lazyLoadEvent.filters
+        const filters: any = tableLazyLoadEvent.filters
         console.log('filters', filters)
         console.log('pageNumber', pageNumber, 'pageSize', pageSize, 'filters', filters)
         let searchCriteria: string = ''
@@ -317,8 +316,8 @@ export class AircraftComponentComponent implements OnInit {
         console.log('this.pageNumber', this.pageNumber);
         // TODO this might be redundant since it is set in fetchPage
         this.firstRowOfTable = (this.pageNumber - 1) * this.ROWS_PER_PAGE;
-        this.savedLazyLoadEvent.first = this.firstRowOfTable;
-        this.onLazyLoad(this.savedLazyLoadEvent);
+        this.savedTableLazyLoadEvent.first = this.firstRowOfTable;
+        this.onLazyLoad(this.savedTableLazyLoadEvent);
         //this.fetchPage(this.firstRowOfTable, this.ROWS_PER_PAGE, '', this.SORT_COLUMNS);
         this.pageNumber = 0;
     }
@@ -708,7 +707,7 @@ export class AircraftComponentComponent implements OnInit {
         this.sessionService.setDisableParentMessages(false)
         // this.fetchPage(this.savedLazyLoadEvent.first || 0, this.savedLazyLoadEvent.rows || 0, '',
         //     this.SORT_COLUMNS);
-        this.fetchPage(this.savedLazyLoadEvent);
+        this.fetchPage(this.savedTableLazyLoadEvent);
     }
 
     private resetDialoForm() {

@@ -136,7 +136,7 @@
             <div *ngIf="crudMode === crudEnum.UPDATE" class="col-12">
 
                 <p-table *ngIf="componentAndHistoryTableVisible" [value]="componentAndHistoryArray"
-                    dataKey="_links.self.href" [selectionMode]="crudMode === crudEnum.UPDATE ? 'single' : ''"
+                    dataKey="_links.self.href" [selectionMode]="crudMode === crudEnum.UPDATE ? 'single' : null"
                     [(selection)]="selectedComponentAndHistoryRow"
                     (onRowSelect)="onComponentAndHistoryRowSelect($event)"
                     (onRowUnselect)="onComponentAndHistoryRowUnselect($event)" [scrollable]="true" scrollHeight="10rem">
