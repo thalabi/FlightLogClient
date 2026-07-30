@@ -11,13 +11,11 @@ import { PickListModule } from 'primeng/picklist';
 import { TabViewModule } from 'primeng/tabview';
 
 @Component({
-    standalone: true,
     selector: 'app-email-upcoming-due-components',
     imports: [CommonModule, FormsModule, ReactiveFormsModule, MessagesModule, CalendarModule, ButtonModule, TabViewModule, FieldsetModule, PickListModule],
     templateUrl: './email-upcoming-due-components.component.html',
     styleUrls: ['./email-upcoming-due-components.component.css'],
     providers: [AircraftComponentService]
-
 })
 export class EmailUpcomingDueComponentsComponent implements OnInit {
 

@@ -7,7 +7,6 @@ import { NgIf } from '@angular/common';
     selector: 'app-abbreviate',
     templateUrl: './abbreviate.component.html',
     styleUrls: ['./abbreviate.component.css'],
-    standalone: true,
     imports: [NgIf, TooltipModule]
 })
 export class AbbreviateComponent implements OnInit {

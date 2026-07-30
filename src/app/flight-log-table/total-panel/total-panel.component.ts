@@ -4,7 +4,6 @@ import { TotalPanelVo } from '../../domain/TotalPanelVo';
 
 @Component({
     selector: 'app-total-panel',
-    standalone: true,
     imports: [CommonModule],
     templateUrl: './total-panel.component.html',
     styleUrls: ['./total-panel.component.css']

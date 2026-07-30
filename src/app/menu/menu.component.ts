@@ -13,7 +13,6 @@ import { MenubarModule } from 'primeng/menubar';
     selector: 'app-menu',
     templateUrl: './menu.component.html',
     styleUrls: ['./menu.component.css'],
-    standalone: true,
     imports: [MenubarModule]
 })
 export class MenuComponent implements OnInit {

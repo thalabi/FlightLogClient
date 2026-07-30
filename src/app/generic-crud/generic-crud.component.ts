@@ -38,7 +38,6 @@ import { MessagesModule } from 'primeng/messages';
     selector: 'app-generic-crud',
     templateUrl: './generic-crud.component.html',
     styleUrls: ['./generic-crud.component.css'],
-    standalone: true,
     imports: [TableModule, NgIf, SharedModule, NgFor, NgStyle, NgSwitch, NgSwitchCase, NgSwitchDefault, ButtonModule, FormsModule, DialogModule, ReactiveFormsModule, CalendarModule, CheckboxModule, PickListModule, TooltipModule, TitleCasePipe, DatePipe, PasswordMaskPipe, MessagesModule, BackendStacktraceDisplayComponent]
 })
 export class GenericCrudComponent implements OnInit {

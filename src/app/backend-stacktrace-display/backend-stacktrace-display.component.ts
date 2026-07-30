@@ -5,7 +5,6 @@ import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 
 @Component({
-    standalone: true,
     selector: 'app-backend-stacktrace-display',
     imports: [CommonModule, ButtonModule, OverlayPanelModule],
     templateUrl: './backend-stacktrace-display.component.html',

@@ -43,7 +43,6 @@ import { concatMap } from 'rxjs';
     selector: 'app-flight-log-table',
     templateUrl: './flight-log-table.component.html',
     styleUrls: ['./flight-log-table.component.css'],
-    standalone: true,
     imports: [NgIf, TableModule, SharedModule, MultiSelectModule, FormsModule, NgFor, NgStyle, TooltipModule, AbbreviateComponent, ButtonModule, DialogModule, ReactiveFormsModule, CalendarModule, DropdownModule, AutoCompleteModule, OverlayPanelModule, TabViewModule, DatePipe, MessagesModule, BackendStacktraceDisplayComponent, TotalPanelComponent, FlightLogFormComponent]
 })
 export class FlightLogTableComponent implements OnInit {

@@ -11,7 +11,6 @@ import { TableModule } from 'primeng/table';
     selector: 'app-flight-log-last-x-days-total-v-table',
     templateUrl: './flight-log-last-x-days-total-v-table.component.html',
     styleUrls: ['./flight-log-last-x-days-total-v-table.component.css'],
-    standalone: true,
     imports: [TableModule, SharedModule]
 })
 export class FlightLogLastXDaysTotalVTableComponent implements OnInit {

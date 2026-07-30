@@ -11,7 +11,6 @@ import { TableModule } from 'primeng/table';
     selector: 'app-flight-log-yearly-total-v-table',
     templateUrl: './flight-log-yearly-total-v-table.component.html',
     styleUrls: ['./flight-log-yearly-total-v-table.component.css'],
-    standalone: true,
     imports: [TableModule, SharedModule, DatePipe]
 })
 export class FlightLogYearlyTotalVTableComponent implements OnInit {

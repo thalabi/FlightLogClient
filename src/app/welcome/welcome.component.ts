@@ -9,7 +9,6 @@ import { NgIf } from '@angular/common';
     selector: 'app-welcome',
     templateUrl: './welcome.component.html',
     styleUrls: ['./welcome.component.css'],
-    standalone: true,
     imports: [NgIf]
 })
 export class WelcomeComponent implements OnInit {

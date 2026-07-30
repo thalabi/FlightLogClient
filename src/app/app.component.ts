@@ -16,7 +16,6 @@ import { NgIf } from '@angular/common';
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.css'],
-    standalone: true,
     imports: [NgIf, MessagesModule, BackendStacktraceDisplayComponent, MenuComponent, RouterOutlet, OverlayPanelModule, SharedModule]
 })
 export class AppComponent implements OnInit {

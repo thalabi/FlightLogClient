@@ -12,7 +12,6 @@ import { DropdownModule } from 'primeng/dropdown';
     selector: 'app-job-launcher',
     templateUrl: './job-launcher.component.html',
     styleUrls: ['./job-launcher.component.css'],
-    standalone: true,
     imports: [DropdownModule, FormsModule, NgIf, ButtonModule, ProgressBarModule, JsonPipe]
 })
 export class JobLauncherComponent implements OnInit {

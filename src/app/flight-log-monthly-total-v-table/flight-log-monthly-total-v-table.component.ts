@@ -12,7 +12,6 @@ import { TableModule } from 'primeng/table';
     selector: 'app-flight-log-monthly-total-v-table',
     templateUrl: './flight-log-monthly-total-v-table.component.html',
     styleUrls: ['./flight-log-monthly-total-v-table.component.css'],
-    standalone: true,
     imports: [TableModule, SharedModule, DatePipe]
 })
 export class FlightLogMonthlyTotalVTableComponent implements OnInit {

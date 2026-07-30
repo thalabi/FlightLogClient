@@ -12,13 +12,11 @@ import { TabViewModule } from 'primeng/tabview';
 import { PickListModule } from 'primeng/picklist';
 
 @Component({
-    standalone: true,
     selector: 'app-aircraft-history-print-component',
     imports: [CommonModule, FormsModule, ReactiveFormsModule, MessagesModule, CalendarModule, ButtonModule, TabViewModule, FieldsetModule, PickListModule],
     templateUrl: './aircraft-history-print-component.component.html',
     styleUrls: ['./aircraft-history-print-component.component.css'],
     providers: [AircraftComponentService]
-
 })
 export class AircraftHistoryPrintComponentComponent implements OnInit {
 

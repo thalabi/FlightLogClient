@@ -18,7 +18,6 @@ import { FlightLog } from '../../domain/flight-log';
 
 @Component({
     selector: 'app-flight-log-form',
-    standalone: true,
     imports: [CommonModule, ReactiveFormsModule, CalendarModule, DropdownModule, AutoCompleteModule],
     templateUrl: './flight-log-form.component.html',
     styleUrls: ['./flight-log-form.component.css']

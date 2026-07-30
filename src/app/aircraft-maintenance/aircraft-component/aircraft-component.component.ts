@@ -29,7 +29,6 @@ import { BackendStacktraceDisplayComponent } from '../../backend-stacktrace-disp
 import { InputSwitchModule } from 'primeng/inputswitch';
 
 @Component({
-    standalone: true,
     selector: 'app-aircraft-component',
     imports: [CommonModule, FormsModule, ReactiveFormsModule, MessagesModule, TableModule, TooltipModule, AutoCompleteModule, CalendarModule, ButtonModule, DialogModule, InputSwitchModule, OverlayPanelModule, BackendStacktraceDisplayComponent],
     templateUrl: './aircraft-component.component.html',
