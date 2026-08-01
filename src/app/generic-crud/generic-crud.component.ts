@@ -29,7 +29,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { CalendarModule } from 'primeng/calendar';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
-import { NgIf, NgFor, NgStyle, NgSwitch, NgSwitchCase, NgSwitchDefault, TitleCasePipe, DatePipe } from '@angular/common';
+import { NgStyle, TitleCasePipe, DatePipe } from '@angular/common';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { BackendStacktraceDisplayComponent } from '../backend-stacktrace-display/backend-stacktrace-display.component';
 import { MessagesModule } from 'primeng/messages';
@@ -38,7 +38,7 @@ import { MessagesModule } from 'primeng/messages';
     selector: 'app-generic-crud',
     templateUrl: './generic-crud.component.html',
     styleUrls: ['./generic-crud.component.css'],
-    imports: [TableModule, NgIf, SharedModule, NgFor, NgStyle, NgSwitch, NgSwitchCase, NgSwitchDefault, ButtonModule, FormsModule, DialogModule, ReactiveFormsModule, CalendarModule, CheckboxModule, PickListModule, TooltipModule, TitleCasePipe, DatePipe, PasswordMaskPipe, MessagesModule, BackendStacktraceDisplayComponent]
+    imports: [TableModule, SharedModule, NgStyle, ButtonModule, FormsModule, DialogModule, ReactiveFormsModule, CalendarModule, CheckboxModule, PickListModule, TooltipModule, TitleCasePipe, DatePipe, PasswordMaskPipe, MessagesModule, BackendStacktraceDisplayComponent]
 })
 export class GenericCrudComponent implements OnInit {
 

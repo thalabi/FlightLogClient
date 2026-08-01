@@ -1,9 +1,19 @@
 <div>
     <div class="p-5">
-        <div *ngIf="logoutMessage" class="lead" style="color: blueviolet;">
-            <h3>{{logoutMessage}}</h3>
+        @if (logoutMessage) {
+        <div class="text-xl font-normal text-[blueviolet]">
+            <h3 class="text-2xl font-bold">{{logoutMessage}}</h3>
         </div>
-        <h1>Welcome {{userInfo.firstName}} to Flight Log application</h1>
-        <div *ngIf="! authenticated">Login to see the protected pages</div>
+        }
+
+        <h1 class="text-3xl font-bold tracking-tight my-4">
+            Welcome {{userInfo.firstName}} to Flight Log application
+        </h1>
+
+        @if (!authenticated) {
+        <div class="text-gray-600 dark:text-gray-400">
+            Login to see the protected pages
+        </div>
+        }
     </div>
 </div>

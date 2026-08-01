@@ -4,59 +4,70 @@
     (onRowSelect)="onRowSelect($event)" [responsive]="true" [first]="firstRowOfTable" [loading]="loadingStatus"
     sortField="{{formAttributes.defaultSortColumn}}" [resetPageOnSort]="false" #dt>
 
-    <ng-template *ngIf="formAttributes.formTitle" pTemplate="caption">
+    @if (formAttributes.formTitle) {
+    <ng-template pTemplate="caption">
         {{formAttributes.formTitle}}
     </ng-template>
+    }
 
     <ng-template pTemplate="header" let-columns>
         <tr>
-            <th *ngFor="let fieldAttributes of columns" [pSortableColumn]="fieldAttributes.columnName"
-                [ngStyle]="fieldAttributes.headerStyle">
+            @for (fieldAttributes of columns; track fieldAttributes.columnName) {
+            <th [pSortableColumn]="fieldAttributes.columnName" [ngStyle]="fieldAttributes.headerStyle">
 
                 {{fieldAttributes.header}}<p-sortIcon [field]="fieldAttributes.columnName"></p-sortIcon>
 
-                <p-columnFilter *ngIf="fieldAttributes.filterable" [field]="fieldAttributes.columnName"
-                    [type]="fieldAttributes.filterDataType || ''"
+                @if (fieldAttributes.filterable) {
+                <p-columnFilter [field]="fieldAttributes.columnName" [type]="fieldAttributes.filterDataType || ''"
                     [minFractionDigits]="fieldAttributes.fractionDigits || 0"
                     [maxFractionDigits]="fieldAttributes.fractionDigits || 0" display="menu" [showOperator]="false"
                     [showAddButton]="false" [hideOnClear]="true"></p-columnFilter>
+                }
             </th>
+            }
         </tr>
     </ng-template>
 
     <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr [pSelectableRow]="rowData">
-            <td *ngFor="let fieldAttributes of columns" [ngSwitch]="fieldAttributes.pipe">
-                <span *ngSwitchCase="'date-yyyy-mm-dd'">{{ rowData[fieldAttributes.columnName] | date:'yyyy-MM-dd'
-                    }}</span>
-                <span *ngSwitchCase="'password'">{{ rowData[fieldAttributes.columnName] | password }}</span>
-                <span *ngSwitchDefault>{{ rowData[fieldAttributes.columnName] }}</span>
+            @for (fieldAttributes of columns; track fieldAttributes.columnName) {
+            <td>
+                @switch (fieldAttributes.pipe) {
+                @case ('date-yyyy-mm-dd') {
+                <span>{{ rowData[fieldAttributes.columnName] | date:'yyyy-MM-dd' }}</span>
+                }
+                @case ('password') {
+                <span>{{ rowData[fieldAttributes.columnName] | password }}</span>
+                }
+                @default {
+                <span>{{ rowData[fieldAttributes.columnName] }}</span>
+                }
+                }
             </td>
+            }
         </tr>
     </ng-template>
 
     <ng-template pTemplate="summary">
-        <div class="grid">
-            <div class="col-5">
-                <span *ngIf="hasWritePermission">
-                    <button type="button" pButton icon="pi pi-plus" style="float:left"
-                        (click)="showDialog(crudEnum.ADD)" label="Add"></button>
-                    <button type="button" pButton icon="pi pi-pencil" style="float:left; margin-left:0.5rem;"
-                        (click)="showDialog(crudEnum.UPDATE)" label="Modify"
-                        [disabled]="modifyAndDeleteButtonsDisable"></button>
-                    <button type="button" pButton icon="pi pi-minus" style="float:left; margin-left:0.5rem;"
-                        (click)="showDialog(crudEnum.DELETE)" label="Delete"
-                        [disabled]="modifyAndDeleteButtonsDisable"></button>
-                </span>
+        <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 w-full">
+            <div class="flex items-center gap-2">
+                @if (hasWritePermission) {
+                <button type="button" pButton icon="pi pi-plus" (click)="showDialog(crudEnum.ADD)" label="Add"></button>
+                <button type="button" pButton icon="pi pi-pencil" (click)="showDialog(crudEnum.UPDATE)" label="Modify"
+                    [disabled]="modifyAndDeleteButtonsDisable"></button>
+                <button type="button" pButton icon="pi pi-minus" (click)="showDialog(crudEnum.DELETE)" label="Delete"
+                    [disabled]="modifyAndDeleteButtonsDisable"></button>
+                }
             </div>
-            <div class="col-7">
-                <div style="float:right;">
-                    <span style="margin-right: 1rem;">Rows: {{page.totalElements}}</span>
-                    <span style="margin-right: 1rem;">Pages: {{page.totalPages}}</span>
-                    <span style="margin-right: 0.5rem;">Page: <input type="text" id="pageNumber"
-                            [(ngModel)]="pageNumber" maxlength="4" size="3" /></span>
-                    <button pButton type="button" label="Go" (click)="onGoToPage()"></button>
-                </div>
+            <div class="flex flex-wrap items-center gap-4 md:justify-end text-sm text-gray-700 dark:text-gray-300">
+                <span>Rows: {{page.totalElements}}</span>
+                <span>Pages: {{page.totalPages}}</span>
+                <span class="flex items-center gap-1">
+                    Page:
+                    <input type="text" id="pageNumber" [(ngModel)]="pageNumber" maxlength="4" size="3"
+                        class="border border-gray-300 dark:border-gray-600 rounded px-1.5 py-0.5 text-center focus:outline-hidden focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" />
+                </span>
+                <button pButton type="button" label="Go" (click)="onGoToPage()"></button>
             </div>
         </div>
     </ng-template>
@@ -70,73 +81,86 @@
         <p-messages></p-messages>
         <app-backend-stacktrace-display></app-backend-stacktrace-display>
 
-        <div class="grid" style="width: 30em;">
+        <div class="grid grid-cols-12 gap-x-4 gap-y-3 w-[30em] max-w-full">
 
-            <ng-template ngFor let-fieldAttributes [ngForOf]="fieldAttributesArray">
-                <div class="col-4">
-                    <label [for]="fieldAttributes.columnName">{{fieldAttributes.header}}</label>
+            @for (fieldAttributes of fieldAttributesArray; track fieldAttributes.columnName) {
+            <div class="col-span-4 flex items-center">
+                <label [for]="fieldAttributes.columnName" class="font-medium text-sm text-gray-700 dark:text-gray-300">
+                    {{fieldAttributes.header}}
+                </label>
+            </div>
+            <div class="col-span-8 flex flex-col justify-center">
+                @switch (fieldAttributes.uiComponentType) {
+                @case (uiComponentEnum.CALENDAR) {
+                <p-calendar [formControlName]="fieldAttributes.columnName" [id]="fieldAttributes.columnName"
+                    [dateFormat]="'yy-mm-dd'" [showIcon]="true" [readonlyInput]="true" [showOnFocus]="false"
+                    [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2050">
+                </p-calendar>
+                }
+                @case (uiComponentEnum.TEXT_AREA) {
+                <textarea pInputTextarea [id]="fieldAttributes.columnName"
+                    [formControlName]="fieldAttributes.columnName" [rows]="fieldAttributes.textAreaRows"
+                    [cols]="fieldAttributes.textAreaColumns" class="w-full">
+                            </textarea>
+                }
+                @case (uiComponentEnum.TEXT) {
+                <input pInputText [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName"
+                    class="w-full" />
+                }
+                @case (uiComponentEnum.BOOLEAN_CHECKBOX) {
+                <p-checkbox [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName"
+                    [binary]="true"></p-checkbox>
+                }
+                @case (uiComponentEnum.PASSWORD) {
+                <input type="password" [id]="fieldAttributes.columnName" [formControlName]="fieldAttributes.columnName"
+                    autocomplete="new-password" class="w-full p-inputtext" />
+                }
+                @default {
+                <span class="text-xs text-yellow-600 dark:text-yellow-400 italic">
+                    Unhandled {{fieldAttributes.uiComponentType}} type
+                </span>
+                }
+                }
+
+                @if (fieldAttributes.mandatory && crudForm.controls[fieldAttributes.columnName].invalid &&
+                crudForm.controls[fieldAttributes.columnName].touched) {
+                <div class="text-xs text-red-600 dark:text-red-400 mt-1 font-medium">
+                    Field is required
                 </div>
-                <div class="col-8" [ngSwitch]="fieldAttributes.uiComponentType">
+                }
+            </div>
+            }
 
-                    <p-calendar *ngSwitchCase="uiComponentEnum.CALENDAR" [formControlName]="fieldAttributes.columnName"
-                        [id]="fieldAttributes.columnName" [dateFormat]="'yy-mm-dd'" [showIcon]="true"
-                        [readonlyInput]="true" [showOnFocus]="false" [monthNavigator]="true" [yearNavigator]="true"
-                        yearRange="2000:2050">
-                    </p-calendar>
-
-                    <textarea *ngSwitchCase="uiComponentEnum.TEXT_AREA" pInputTextarea [id]="fieldAttributes.columnName"
-                        [formControlName]="fieldAttributes.columnName" [rows]="fieldAttributes.textAreaRows"
-                        [cols]="fieldAttributes.textAreaColumns">
-                    </textarea>
-
-                    <input *ngSwitchCase="uiComponentEnum.TEXT" pInputText [id]="fieldAttributes.columnName"
-                        [formControlName]="fieldAttributes.columnName" />
-                    <!-- <div *ngIf="fieldAttributes.mandatory" [hidden]="fieldAttributes.columnName.valid || fieldAttributes.columnName.pristine" class="red-font">Field is required</div> -->
-                    <div *ngIf="fieldAttributes.mandatory && crudForm.controls[fieldAttributes.columnName].invalid && crudForm.controls[fieldAttributes.columnName].touched"
-                        class="red-font">Field is required</div>
-
-                    <p-checkbox *ngSwitchCase="uiComponentEnum.BOOLEAN_CHECKBOX" [id]="fieldAttributes.columnName"
-                        [formControlName]="fieldAttributes.columnName" [binary]="true"></p-checkbox>
-
-                    <input *ngSwitchCase="uiComponentEnum.PASSWORD" type="password" [id]="fieldAttributes.columnName"
-                        [formControlName]="fieldAttributes.columnName" autocomplete="new-password" />
-
-                    <span *ngSwitchDefault>
-                        Unhandled {{fieldAttributes.uiComponentType}} type
-                    </span>
-                </div>
-            </ng-template>
-
-            <ng-template ngFor let-associationAttributes [ngForOf]="associationAttributesArray">
-                <div class="col-12">
-                    <p-pickList [source]="availableAssociationArray" [target]="selectedAssociationArray"
-                        sourceHeader="Available {{associationAttributes.associationTableName}}s"
-                        targetHeader="{{associationAttributes.associationTableName | titlecase}}s"
-                        (onMoveAllToTarget)="onMoveAllToTarget()" (onMoveToTarget)="onMoveToTarget()"
-                        (onMoveAllToSource)="onMoveAllToSource()" (onMoveToSource)="onMoveToSource()"
-                        [showSourceControls]="false" [showTargetControls]="false" [sourceStyle]="{'height':'20em'}"
-                        [targetStyle]="{'height':'20em'}">
-                        <ng-template let-association pTemplate="item">
-                            <div class="ui-helper-clearfix">
-                                <!-- <div style="font-size:14px;float:left;margin:0 0 0 0"> -->
-                                <div>
-                                    <span [pTooltip]="association.description"
-                                        tooltipPosition="top">{{association.name}}</span>
-                                </div>
+            @for (associationAttributes of associationAttributesArray; track associationAttributes.associationTableName)
+            {
+            <div class="col-span-12 mt-4">
+                <p-pickList [source]="availableAssociationArray" [target]="selectedAssociationArray"
+                    sourceHeader="Available {{associationAttributes.associationTableName}}s"
+                    targetHeader="{{associationAttributes.associationTableName | titlecase}}s"
+                    (onMoveAllToTarget)="onMoveAllToTarget()" (onMoveToTarget)="onMoveToTarget()"
+                    (onMoveAllToSource)="onMoveAllToSource()" (onMoveToSource)="onMoveToSource()"
+                    [showSourceControls]="false" [showTargetControls]="false" [sourceStyle]="{'height':'20em'}"
+                    [targetStyle]="{'height':'20em'}">
+                    <ng-template let-association pTemplate="item">
+                        <div class="clear-both">
+                            <div>
+                                <span [pTooltip]="association.description"
+                                    tooltipPosition="top">{{association.name}}</span>
                             </div>
-                        </ng-template>
-                    </p-pickList>
-                </div>
-            </ng-template>
+                        </div>
+                    </ng-template>
+                </p-pickList>
+            </div>
+            }
 
-            <p-footer class="grid">
-                <div class="col-6">
-                    <!-- TODO replace disabled logic with a function -->
-                    <button pButton type="submit" label="Submit" [disabled]="crudForm.invalid"
-                        icon="pi pi-check"></button>
+            <p-footer class="col-span-12 grid grid-cols-2 gap-4 mt-4">
+                <div class="col-span-1">
+                    <button pButton type="submit" label="Submit" [disabled]="crudForm.invalid" icon="pi pi-check"
+                        class="w-full"></button>
                 </div>
-                <div class="col-6">
-                    <button pButton type="reset" label="Cancel" (click)="onCancel()"></button>
+                <div class="col-span-1">
+                    <button pButton type="reset" label="Cancel" (click)="onCancel()"
+                        class="w-full p-button-secondary"></button>
                 </div>
             </p-footer>
         </div>

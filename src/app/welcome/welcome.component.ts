@@ -8,8 +8,7 @@ import { NgIf } from '@angular/common';
 @Component({
     selector: 'app-welcome',
     templateUrl: './welcome.component.html',
-    styleUrls: ['./welcome.component.css'],
-    imports: [NgIf]
+    styleUrls: ['./welcome.component.css']
 })
 export class WelcomeComponent implements OnInit {
     authenticated: boolean = false;
