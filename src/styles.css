@@ -1,1 +1,12 @@
-/* You can add global styles to this file, and also import other style files */
+/* @layer theme, base, primeng; */
+@import "tailwindcss";
+@import "primeicons/primeicons.css";
+@import "tailwindcss-primeui";
+
+@layer base {
+
+    body,
+    .p-component {
+        font-family: Roboto, Helvetica, Arial, sans-serif;
+    }
+}

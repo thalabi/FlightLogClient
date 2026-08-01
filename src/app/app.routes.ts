@@ -11,7 +11,7 @@ import { AircraftHistoryPrintComponentComponent } from './aircraft-maintenance/a
 import { WelcomeComponent } from './welcome/welcome.component';
 import { Httpstatus404Component } from './httpstatus404/httpstatus404.component';
 
-const routes: Routes = [
+export const routes: Routes = [
     { path: 'welcome', component: WelcomeComponent },
     //    { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
     { path: 'flightLogTable', component: FlightLogTableComponent, canActivate: [AuthGuard] },
@@ -29,9 +29,3 @@ const routes: Routes = [
     //{ path: 'login', component: LoginComponent },
     { path: '**', component: Httpstatus404Component },
 ];
-
-@NgModule({
-    imports: [RouterModule.forRoot(routes)],
-    exports: [RouterModule]
-})
-export class AppRoutingModule { }

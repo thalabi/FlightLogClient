@@ -1,8 +1,9 @@
 import { Injectable, Optional, SkipSelf } from '@angular/core';
 import { Router } from '@angular/router';
-import { JwksValidationHandler, OAuthEvent, OAuthService } from 'angular-oauth2-oidc';
+import { OAuthEvent, OAuthService } from 'angular-oauth2-oidc';
 import { BehaviorSubject, Observable, combineLatest, filter, map, of, tap } from 'rxjs';
 import { AuthRestService } from './auth-rest.service';
+import { authCodeFlowConfig } from './auth-config';
 
 
 export interface UserInfo { username: string, firstName: string, lastName: string, email: string, roles: Array<String>, backEndAuthorities: Array<String> }
@@ -15,8 +16,8 @@ export class AuthService {
     abnormalLogoutMessage = 'Something went wrong. Session ended'
 
     // test begin
-    private oAuthEventArraySubject$ = new BehaviorSubject<string[]>([]);
-    public oAuthEventArray$ = this.oAuthEventArraySubject$.asObservable();
+    // private oAuthEventArraySubject$ = new BehaviorSubject<string[]>([]);
+    // public oAuthEventArray$ = this.oAuthEventArraySubject$.asObservable();
 
     // test end
 
@@ -26,6 +27,8 @@ export class AuthService {
     private isDoneLoadingSubject$ = new BehaviorSubject<boolean>(false);
     public isDoneLoading$ = this.isDoneLoadingSubject$.asObservable();
 
+
+    private refreshPromise: Promise<void> | null = null;
     /**
      * Publishes `true` if and only if (a) all the asynchronous initial
      * login calls have completed or errorred, and (b) the user ended up
@@ -51,7 +54,7 @@ export class AuthService {
     constructor(private oauthService: OAuthService, private router: Router, private authRestService: AuthRestService) {
         console.log('constructor')
 
-        let oAuthEventArray: string[] = [];
+        // let oAuthEventArray: string[] = [];
         // refresh access token after 75% of the token's life time is over
         this.oauthService.events.subscribe(({ type: oAuthEvent }: OAuthEvent) => {
 
@@ -59,16 +62,14 @@ export class AuthService {
             //console.log('this.isAuthenticatedSubject$.next(', this.oauthService.hasValidAccessToken(), ')')
             this.isAuthenticatedSubject$.next(this.oauthService.hasValidAccessToken());
 
-            if (oAuthEvent !== 'session_unchanged') {
-                console.log('oAuthEvent:', oAuthEvent)
-                //console.log('hasValidIdToken', this.oauthService.hasValidIdToken())
-                // test begin
-                oAuthEventArray.push(oAuthEvent + ' at ' + (new Date()).toLocaleTimeString())
-                console.log('oAuthEventArray', oAuthEventArray)
-                new Date()
-                this.oAuthEventArraySubject$.next(oAuthEventArray)
-                // test end
-            }
+            // test begin
+            // if (oAuthEvent !== 'session_unchanged') {
+            //     console.log('oAuthEvent:', oAuthEvent)
+            //     oAuthEventArray.push(oAuthEvent + ' at ' + (new Date()).toLocaleTimeString())
+            //     console.log('oAuthEventArray', oAuthEventArray)
+            //     this.oAuthEventArraySubject$.next(oAuthEventArray)
+            // }
+            // test end
             //this.oAuthEventMessage = new Date().toTimeString().slice(3, 8) + " " + oAuthEvent
             switch (oAuthEvent) {
                 case 'token_received': {
@@ -111,48 +112,41 @@ export class AuthService {
         })
     }
 
-    runInitialLoginSequence(): Promise<void> {
+    async runInitialLoginSequence(): Promise<void> {
         console.log('runInitialLoginSequence')
-        this.oauthService.tokenValidationHandler = new JwksValidationHandler();
+        //this.oauthService.tokenValidationHandler = new JwksValidationHandler();
 
         this.oauthService.setupAutomaticSilentRefresh();
 
+        this.oauthService.configure(authCodeFlowConfig);
 
-        return this.oauthService.loadDiscoveryDocumentAndTryLogin()
-            // For demo purposes, we pretend the previous call was very slow
-            //.then(() => new Promise<void>(resolve => setTimeout(() => resolve(), 3000)))
 
-            // .then(() => {
-            //     console.log('then()')
-            //     console.log('this.isDoneLoadingSubject$.next(true)')
-            //     this.isDoneLoadingSubject$.next(true)
-            // })
-            .then(() => {
+        try {
+            await this.oauthService.loadDiscoveryDocumentAndTryLogin();
+            console.log('then()');
+            console.log('this.isDoneLoadingSubject$.next(true)');
+            this.isDoneLoadingSubject$.next(true);
 
-                console.log('then()')
-                console.log('this.isDoneLoadingSubject$.next(true)')
-                this.isDoneLoadingSubject$.next(true)
+            if (this.oauthService.hasValidIdToken() && this.oauthService.hasValidAccessToken()) {
+                console.log("logged in");
 
-                if (this.oauthService.hasValidIdToken() && this.oauthService.hasValidAccessToken()) {
-                    console.log("logged in");
+                const username: string = this.getUsername();
+                console.log('username:', username);
 
-                    const username: string = this.getUsername()
-                    console.log('username:', username)
-
-                    // dynamic routing based on username
-                    if (username === 'sso2user1') {
-                        this.router.navigate(['/ping-be']);
-                    }
+                // dynamic routing based on username
+                if (username === 'sso2user1') {
+                    this.router.navigate(['/ping-be']);
                 }
-            })
-            .catch((error) => {
-                console.log('catch(), error:', error)
-                console.log('this.isDoneLoadingSubject$.next(true)')
-                this.isDoneLoadingSubject$.next(true)
-            })
+            }
+        } catch (error) {
+            console.log('catch(), error:', error);
+            console.log('this.isDoneLoadingSubject$.next(true)');
+            this.isDoneLoadingSubject$.next(true);
+        }
     }
 
     login() {
+        console.log('authService.login()')
         this.oauthService.initLoginFlow()
     }
 
@@ -164,7 +158,7 @@ export class AuthService {
             this.oauthService.revokeTokenAndLogout(
                 {
                     client_id: this.oauthService.clientId,
-                    post_logout_redirect_uri: this.oauthService.redirectUri + '?logoutMessage=' + logoutMessage
+                    post_logout_redirect_uri: this.oauthService.postLogoutRedirectUri + '?logoutMessage=' + logoutMessage
                 }
             )
         } else {
@@ -178,6 +172,42 @@ export class AuthService {
         } else {
             return of({} as UserInfo)
         }
+    }
+
+    getAccessToken(): string {
+        return this.oauthService.getAccessToken();
+    }
+
+    hasValidToken(): boolean {
+        return this.oauthService.hasValidAccessToken();
+    }
+    // async ensureValidToken(): Promise<void> {
+    //     if (this.oauthService.hasValidAccessToken()) {
+    //         return;
+    //     }
+
+    //     try {
+    //         await this.oauthService.silentRefresh();
+    //     } catch {
+    //         // Silent refresh failed (refresh token expired, session ended, etc.)
+    //         this.oauthService.logOut();
+    //     }
+    // }
+    async ensureValidToken(): Promise<void> {
+        if (this.hasValidToken()) {
+            return;
+        }
+
+        if (!this.refreshPromise) {
+            this.refreshPromise = this.oauthService
+                .silentRefresh()
+                .then(() => undefined)
+                .finally(() => {
+                    this.refreshPromise = null;
+                });
+        }
+
+        return this.refreshPromise;
     }
     private getUsername(): string {
         const userClaims: any = this.oauthService.getIdentityClaims()

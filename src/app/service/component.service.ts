@@ -11,7 +11,10 @@ import { IGenericEntityResponse } from '../response/i-generic-entity-response';
 import { AssociationAttributes } from "../config/AssociationAttributes";
 import { environment } from '../../environments/environment';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
+
 export class ComponentService {
     readonly serviceUrl: string;
 

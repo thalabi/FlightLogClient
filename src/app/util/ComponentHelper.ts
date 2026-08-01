@@ -1,11 +1,10 @@
-import { ReplicationService } from "../service/replication.service";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { AbstractControl } from "@angular/forms";
 import { DataTypeEnum } from "../config/DataTypeEnum";
-import { FieldAttributes } from "../config/FieldAttributes";
 import { IGenericEntity } from "../domain/i-gerneric-entity";
 import { LazyLoadEvent } from "primeng/api";
+import { FieldAttributes } from "../config/FieldAttributes";
 
 export class ComponentHelper {
 
@@ -50,33 +49,33 @@ export class ComponentHelper {
         }
     }
 
-    public static getTableReplicationStatusAndLabel(replicationService: ReplicationService, tableName: string): Observable<{ "replicationSupported": boolean, "replicationStatus": boolean, "replicationStatusLabel": string }> {
+    // public static getTableReplicationStatusAndLabel(tableName: string): Observable<{ "replicationSupported": boolean, "replicationStatus": boolean, "replicationStatusLabel": string }> {
 
-        return replicationService.getTableReplicationStatus(tableName).pipe(
-            map(params => {
-                let triggerStatusCode: number = params;
-                console.log('triggerStatusCode', triggerStatusCode);
-                switch (triggerStatusCode) {
-                    case -1: {
-                        return { "replicationSupported": false, "replicationStatus": false, "replicationStatusLabel": "Not Supported" };
-                    }
-                    case 0: {
-                        return { "replicationSupported": true, "replicationStatus": false, "replicationStatusLabel": "Sync Off" };
-                    }
-                    case 1: {
-                        return { "replicationSupported": true, "replicationStatus": false, "replicationStatusLabel": "Sync Partial" };
-                    }
-                    case 2: {
-                        return { "replicationSupported": true, "replicationStatus": true, "replicationStatusLabel": "Sync On" };
-                    }
-                    default: {
-                        throw new RangeError(`triggerStatusCode returned ${triggerStatusCode}`);
-                    }
-                }
-            }
-            )
-        );
-    }
+    //     return replicationService.getTableReplicationStatus(tableName).pipe(
+    //         map(params => {
+    //             let triggerStatusCode: number = params;
+    //             console.log('triggerStatusCode', triggerStatusCode);
+    //             switch (triggerStatusCode) {
+    //                 case -1: {
+    //                     return { "replicationSupported": false, "replicationStatus": false, "replicationStatusLabel": "Not Supported" };
+    //                 }
+    //                 case 0: {
+    //                     return { "replicationSupported": true, "replicationStatus": false, "replicationStatusLabel": "Sync Off" };
+    //                 }
+    //                 case 1: {
+    //                     return { "replicationSupported": true, "replicationStatus": false, "replicationStatusLabel": "Sync Partial" };
+    //                 }
+    //                 case 2: {
+    //                     return { "replicationSupported": true, "replicationStatus": true, "replicationStatusLabel": "Sync On" };
+    //                 }
+    //                 default: {
+    //                     throw new RangeError(`triggerStatusCode returned ${triggerStatusCode}`);
+    //                 }
+    //             }
+    //         }
+    //         )
+    //     );
+    // }
 
     /*
     Change fields withDataTypeEnum.Date type to date and set time to zero

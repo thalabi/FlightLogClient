@@ -7,7 +7,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CrudEnum } from '../crud-enum';
 import { FlightLogHelper } from './flight-log-table-helper';
 import { ComponentHelper } from '../util/ComponentHelper';
-import { ReplicationService } from '../service/replication.service';
 import { GenericEntityService } from '../service/generic-entity.service';
 import { MenuComponent } from '../menu/menu.component';
 import { SessionService } from '../service/session.service';
@@ -134,7 +133,7 @@ export class FlightLogTableComponent implements OnInit {
     monthTotalPanelVo!: TotalPanelVo;
     yearTotalPanelVo!: TotalPanelVo;
 
-    constructor(private flightLogService: FlightLogServiceService, private genericEntityService: GenericEntityService, private replicationService: ReplicationService, private messageService: MessageService, private sessionService: SessionService) {
+    constructor(private flightLogService: FlightLogServiceService, private genericEntityService: GenericEntityService, private messageService: MessageService, private sessionService: SessionService) {
     }
 
     ngOnInit() {
@@ -558,24 +557,24 @@ export class FlightLogTableComponent implements OnInit {
         });
     }
 
-    private getTableReplicationStatus() {
-        this.replicationStatusLabel = "Fetching";
-        this.replicationStatusControlDisabled = false;
-        ComponentHelper.getTableReplicationStatusAndLabel(this.replicationService, this.TABLE_NAME).subscribe(params => {
-            this.replicationStatus = params.replicationStatus;
-            this.replicationStatusLabel = params.replicationStatusLabel;
-        })
-    }
+    // private getTableReplicationStatus() {
+    //     this.replicationStatusLabel = "Fetching";
+    //     this.replicationStatusControlDisabled = false;
+    //     ComponentHelper.getTableReplicationStatusAndLabel(this.replicationService, this.TABLE_NAME).subscribe(params => {
+    //         this.replicationStatus = params.replicationStatus;
+    //         this.replicationStatusLabel = params.replicationStatusLabel;
+    //     })
+    // }
 
-    onChangeReplicationStatus(event: { checked: boolean; }) {
-        this.replicationStatusLabel = "Updating";
-        console.log('onChangeReplicationStatus', event);
-        console.log('checked: ', event.checked);
-        this.replicationStatusControlDisabled = true;
-        this.replicationService.setTableReplicationStatus(this.TABLE_NAME, event.checked).subscribe(params =>
-            this.getTableReplicationStatus()
-        );
-    }
+    // onChangeReplicationStatus(event: { checked: boolean; }) {
+    //     this.replicationStatusLabel = "Updating";
+    //     console.log('onChangeReplicationStatus', event);
+    //     console.log('checked: ', event.checked);
+    //     this.replicationStatusControlDisabled = true;
+    //     this.replicationService.setTableReplicationStatus(this.TABLE_NAME, event.checked).subscribe(params =>
+    //         this.getTableReplicationStatus()
+    //     );
+    // }
 
     displayTotals(event: MouseEvent, key: string) {
         console.log('displayTotals, event:', event, ', event type:', event.type, ', key:', key)

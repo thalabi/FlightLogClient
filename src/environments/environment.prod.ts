@@ -14,10 +14,5 @@ export const environment = {
         // prefixes have to be in lowerr case
         urlPrefixesWithBearerToken: ['@keycloak_urlPrefixesWithBearerToken@']
     },
-    idle: {
-        // times are in seconds
-        inactivityTimer: '@idle_inactivityTimer@',
-        timeoutTimer: '@idle_timeoutTimer@'
-    }
 
 };

@@ -17,7 +17,9 @@ import { GenericEntityService } from './generic-entity.service';
 import { FlightLogPending } from '../domain/FlightLogPending';
 import { FlightLogPendingAddRequest } from '../request/flight-log-pending-add-request';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class FlightLogServiceService {
     readonly SORT_COLUMN: string = 'flightDate';
     readonly serviceUrl: string;
