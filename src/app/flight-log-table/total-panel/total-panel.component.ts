@@ -1,10 +1,10 @@
 import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { TotalPanelVo } from '../../domain/TotalPanelVo';
 
 @Component({
     selector: 'app-total-panel',
-    imports: [CommonModule],
+    imports: [DecimalPipe],
     templateUrl: './total-panel.component.html',
     styleUrls: ['./total-panel.component.css']
 })

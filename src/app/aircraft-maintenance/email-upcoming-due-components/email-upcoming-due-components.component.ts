@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AircraftComponentService } from '../service/aircraft-component.service';
 import { MyMessageService } from '../../message/mymessage.service';
-import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { CalendarModule } from 'primeng/calendar';
@@ -12,7 +11,7 @@ import { TabViewModule } from 'primeng/tabview';
 
 @Component({
     selector: 'app-email-upcoming-due-components',
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, MessagesModule, CalendarModule, ButtonModule, TabViewModule, FieldsetModule, PickListModule],
+    imports: [FormsModule, ReactiveFormsModule, MessagesModule, CalendarModule, ButtonModule, TabViewModule, FieldsetModule, PickListModule],
     templateUrl: './email-upcoming-due-components.component.html',
     styleUrls: ['./email-upcoming-due-components.component.css'],
     providers: [AircraftComponentService]

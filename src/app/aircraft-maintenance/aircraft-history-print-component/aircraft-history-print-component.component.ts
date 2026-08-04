@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { AircraftComponentService } from '../service/aircraft-component.service';
 import { AircraftComponentName } from '../../domain/aircraft-component-name';
 import { MyMessageService } from '../../message/mymessage.service';
-import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { CalendarModule } from 'primeng/calendar';
@@ -13,7 +12,7 @@ import { PickListModule } from 'primeng/picklist';
 
 @Component({
     selector: 'app-aircraft-history-print-component',
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, MessagesModule, CalendarModule, ButtonModule, TabViewModule, FieldsetModule, PickListModule],
+    imports: [FormsModule, ReactiveFormsModule, MessagesModule, CalendarModule, ButtonModule, TabViewModule, FieldsetModule, PickListModule],
     templateUrl: './aircraft-history-print-component.component.html',
     styleUrls: ['./aircraft-history-print-component.component.css'],
     providers: [AircraftComponentService]
