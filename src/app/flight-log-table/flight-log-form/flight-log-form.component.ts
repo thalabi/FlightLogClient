@@ -1,9 +1,8 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { CalendarModule } from 'primeng/calendar';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { DropdownModule } from 'primeng/dropdown';
-import { SelectItem, SharedModule } from 'primeng/api';
+import { SelectItem } from 'primeng/api';
 import { GenericEntityService } from '../../service/generic-entity.service';
 import { IGenericEntityResponse } from '../../response/i-generic-entity-response';
 import { MakeModel } from '../../domain/make-model';
@@ -15,10 +14,11 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FlightLogHelper } from '../flight-log-table-helper';
 import { CrudEnum } from '../../crud-enum';
 import { FlightLog } from '../../domain/flight-log';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
     selector: 'app-flight-log-form',
-    imports: [CommonModule, ReactiveFormsModule, CalendarModule, DropdownModule, AutoCompleteModule],
+    imports: [ReactiveFormsModule, ButtonModule, CalendarModule, DropdownModule, AutoCompleteModule],
     templateUrl: './flight-log-form.component.html',
     styleUrls: ['./flight-log-form.component.css']
 })

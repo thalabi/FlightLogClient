@@ -1,197 +1,213 @@
 <form [formGroup]="flightLogForm" (ngSubmit)="onSubmit()" novalidate>
-    <div class="grid" style="width: 50rem;">
+    <div class="grid grid-cols-12 gap-y-3 gap-x-4 w-[50rem] items-center">
         <!-- line 1 -->
-        <div class="col-3">
-            <label for="flightDate">Flight date</label>
+        <div class="col-span-3">
+            <label for="flightDate" class="block font-medium text-slate-700">Flight date</label>
         </div>
-        <div class="col-9">
+        <div class="col-span-9">
             <p-calendar formControlName="flightDate" id="flightDate" [monthNavigator]="true" [yearNavigator]="true"
                 yearRange="2000:2050" [dateFormat]="'yy-mm-dd'" [showIcon]="true" [readonlyInput]="true"
-                [showOnFocus]="false">
+                [showOnFocus]="false" class="w-full">
             </p-calendar>
         </div>
+
         <!-- line 2 -->
-        <div class="col-3">
-            <label for="makeModel">Make and model</label>
+        <div class="col-span-3">
+            <label for="makeModel" class="block font-medium text-slate-700">Make and model</label>
         </div>
-        <div class="col-3">
+        <div class="col-span-3">
             <p-dropdown formControlName="makeModel" [options]="makeModelSelectItemArray" id="makeModel"
-                [placeholder]="' '" [style]="{'width': '12rem', 'min-height': '1.8rem'}"></p-dropdown>
+                [placeholder]="' '" class="w-48 min-h-[1.8rem] block"></p-dropdown>
         </div>
-        <div class="col-3">
-            <label for="registration">Registration</label>
+        <div class="col-span-3">
+            <label for="registration" class="block font-medium text-slate-700">Registration</label>
         </div>
-        <div class="col-3">
+        <div class="col-span-3">
             <p-dropdown formControlName="registration" [options]="registrationSelectItemArray" id="registration"
-                [placeholder]="' '" [style]="{'width': '12rem', 'min-height': '1.8rem'}"></p-dropdown>
+                [placeholder]="' '" class="w-48 min-h-[1.8rem] block"></p-dropdown>
         </div>
+
         <!-- line 3 -->
-        <div class="col-3">
-            <label for="pic">Pilot-in-command</label>
+        <div class="col-span-3">
+            <label for="pic" class="block font-medium text-slate-700">Pilot-in-command</label>
         </div>
-        <div class="col-3">
+        <div class="col-span-3">
             <p-dropdown formControlName="pic" [options]="pilotSelectItemArray" id="pic" [placeholder]="' '"
-                [style]="{'width': '12rem', 'min-height': '1.8rem'}"></p-dropdown>
+                class="w-48 min-h-[1.8rem] block"></p-dropdown>
         </div>
-        <div class="col-3">
-            <label for="coPilot">Co-pilot</label>
+        <div class="col-span-3">
+            <label for="coPilot" class="block font-medium text-slate-700">Co-pilot</label>
         </div>
-        <div class="col-3">
+        <div class="col-span-3">
             <p-dropdown formControlName="coPilot" [options]="pilotSelectItemArray" id="coPilot" [placeholder]="' '"
-                [style]="{'width': '12rem', 'min-height': '1.8rem'}"></p-dropdown>
+                class="w-48 min-h-[1.8rem] block"></p-dropdown>
         </div>
+
         <!-- line 4 -->
-        <div class="col-3">
-            <label for="routeFrom">From</label>
+        <div class="col-span-3">
+            <label for="routeFrom" class="block font-medium text-slate-700">From</label>
         </div>
-        <div class="col-3">
+        <div class="col-span-3">
             <p-autoComplete formControlName="fromAirport" id="fromAirport" [suggestions]="filteredAirportArray"
                 (completeMethod)="searchAirport($event)" [field]="'identifier'" size="small" [forceSelection]="true"
-                [readonly]="crudMode == 'Delete'">
+                [readonly]="crudMode == 'Delete'" class="w-full">
                 <ng-template let-airport pTemplate="item">
                     {{airport.identifier}} - {{airport.name}}
                 </ng-template>
             </p-autoComplete>
         </div>
-        <div class="col-3">
-            <label for="routeTo">To</label>
+        <div class="col-span-3">
+            <label for="routeTo" class="block font-medium text-slate-700">To</label>
         </div>
-        <div class="col-3">
+        <div class="col-span-3">
             <p-autoComplete formControlName="toAirport" id="toAirport" [suggestions]="filteredAirportArray"
                 (completeMethod)="searchAirport($event)" [field]="'identifier'" size="small" [forceSelection]="true"
-                [readonly]="crudMode == 'Delete'">
+                [readonly]="crudMode == 'Delete'" class="w-full">
                 <ng-template let-airport pTemplate="item">
                     {{airport.identifier}} - {{airport.name}}
                 </ng-template>
             </p-autoComplete>
         </div>
+
         <!-- line 5 -->
-        <div class="col-3">
-            <label for="remarks">Remarks</label>
+        <div class="col-span-3">
+            <label for="remarks" class="block font-medium text-slate-700">Remarks</label>
         </div>
-        <div class="col-9">
+        <div class="col-span-9">
             <textarea pInputTextarea formControlName="remarks" [rows]="3" [maxLength]="128" autoResize="autoResize"
-                style="width: 100%;" id="remarks" class="form-control"></textarea>
+                id="remarks"
+                class="w-full border border-slate-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
         </div>
+
         <!-- line 6 -->
-        <div class="col-3">
-            <label for="dayDual">Day dual</label>
+        <div class="col-span-3">
+            <label for="dayDual" class="block font-medium text-slate-700">Day dual</label>
         </div>
-        <div class="col-3">
-            <input type="text" id="dayDual" formControlName="dayDual" regexValidator="^\d*(\.\d{0,1}){0,1}$" />
+        <div class="col-span-3">
+            <input type="text" id="dayDual" formControlName="dayDual" regexValidator="^\d*(\.\d{0,1}){0,1}$"
+                class="w-full border border-slate-300 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             <div [hidden]="flightLogForm.controls['dayDual'].valid || flightLogForm.controls['dayDual'].pristine"
-                class="red-font">Invalid value</div>
+                class="text-red-500 text-xs mt-1">Invalid value</div>
         </div>
-        <div class="col-3">
-            <label for="daySolo">Day solo</label>
+        <div class="col-span-3">
+            <label for="daySolo" class="block font-medium text-slate-700">Day solo</label>
         </div>
-        <div class="col-3">
-            <input pInputText id="daySolo" formControlName="daySolo" regexValidator="^\d*(\.\d{0,1}){0,1}$" />
+        <div class="col-span-3">
+            <input pInputText id="daySolo" formControlName="daySolo" regexValidator="^\d*(\.\d{0,1}){0,1}$"
+                class="w-full border border-slate-300 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             <div [hidden]="flightLogForm.controls['daySolo'].valid || flightLogForm.controls['daySolo'].pristine"
-                class="red-font">Invalid value</div>
+                class="text-red-500 text-xs mt-1">Invalid value</div>
         </div>
 
         <!-- line 7 -->
-        <div class="col-3">
-            <label for="nightDual">Night dual</label>
+        <div class="col-span-3">
+            <label for="nightDual" class="block font-medium text-slate-700">Night dual</label>
         </div>
-        <div class="col-3">
-            <input pInputText id="nightDual" formControlName="nightDual" regexValidator="^\d*(\.\d{0,1}){0,1}$" />
+        <div class="col-span-3">
+            <input pInputText id="nightDual" formControlName="nightDual" regexValidator="^\d*(\.\d{0,1}){0,1}$"
+                class="w-full border border-slate-300 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             <div [hidden]="flightLogForm.controls['nightDual'].valid || flightLogForm.controls['nightDual'].pristine"
-                class="red-font">Invalid value</div>
+                class="text-red-500 text-xs mt-1">Invalid value</div>
         </div>
-        <div class="col-3">
-            <label for="nightSolo">Night solo</label>
+        <div class="col-span-3">
+            <label for="nightSolo" class="block font-medium text-slate-700">Night solo</label>
         </div>
-        <div class="col-3">
-            <input pInputText id="nightSolo" formControlName="nightSolo" regexValidator="^\d*(\.\d{0,1}){0,1}$" />
+        <div class="col-span-3">
+            <input pInputText id="nightSolo" formControlName="nightSolo" regexValidator="^\d*(\.\d{0,1}){0,1}$"
+                class="w-full border border-slate-300 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             <div [hidden]="flightLogForm.controls['nightSolo'].valid || flightLogForm.controls['nightSolo'].pristine"
-                class="red-font">Invalid value</div>
+                class="text-red-500 text-xs mt-1">Invalid value</div>
         </div>
 
         <!-- line 8 -->
-        <div class="col-3">
-            <label for="instrumentImc">Inst IMC</label>
+        <div class="col-span-3">
+            <label for="instrumentImc" class="block font-medium text-slate-700">Inst IMC</label>
         </div>
-        <div class="col-3">
-            <input pInputText id="instrumentImc" formControlName="instrumentImc"
-                regexValidator="^\d*(\.\d{0,1}){0,1}$" />
+        <div class="col-span-3">
+            <input pInputText id="instrumentImc" formControlName="instrumentImc" regexValidator="^\d*(\.\d{0,1}){0,1}$"
+                class="w-full border border-slate-300 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             <div [hidden]="flightLogForm.controls['instrumentImc'].valid || flightLogForm.controls['instrumentImc'].pristine"
-                class="red-font">Invalid value</div>
+                class="text-red-500 text-xs mt-1">Invalid value</div>
         </div>
-        <div class="col-3">
-            <label for="instrumentFlightSim">Inst simulated</label>
+        <div class="col-span-3">
+            <label for="instrumentFlightSim" class="block font-medium text-slate-700">Inst simulated</label>
         </div>
-        <div class="col-3">
+        <div class="col-span-3">
             <input pInputText id="instrumentFlightSim" formControlName="instrumentFlightSim"
-                regexValidator="^\d*(\.\d{0,1}){0,1}$" />
+                regexValidator="^\d*(\.\d{0,1}){0,1}$"
+                class="w-full border border-slate-300 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             <div [hidden]="flightLogForm.controls['instrumentFlightSim'].valid || flightLogForm.controls['instrumentFlightSim'].pristine"
-                class="red-font">Invalid value</div>
+                class="text-red-500 text-xs mt-1">Invalid value</div>
         </div>
+
         <!-- line 9 -->
-        <div class="col-3">
-            <label for="instrumentSimulated">Inst flight sim</label>
+        <div class="col-span-3">
+            <label for="instrumentSimulated" class="block font-medium text-slate-700">Inst flight sim</label>
         </div>
-        <div class="col-3">
+        <div class="col-span-3">
             <input pInputText id="instrumentSimulated" formControlName="instrumentSimulated"
-                regexValidator="^\d*(\.\d{0,1}){0,1}$" />
+                regexValidator="^\d*(\.\d{0,1}){0,1}$"
+                class="w-full border border-slate-300 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             <div [hidden]="flightLogForm.controls['instrumentSimulated'].valid || flightLogForm.controls['instrumentSimulated'].pristine"
-                class="red-font">Invalid value</div>
+                class="text-red-500 text-xs mt-1">Invalid value</div>
         </div>
-        <div class="col-3">
-            <label for="instrumentNoIfrAppr">Inst # IFR appr</label>
+        <div class="col-span-3">
+            <label for="instrumentNoIfrAppr" class="block font-medium text-slate-700">Inst # IFR appr</label>
         </div>
-        <div class="col-3">
-            <input pInputText id="instrumentNoIfrAppr" formControlName="instrumentNoIfrAppr" regexValidator="^\d*$" />
+        <div class="col-span-3">
+            <input pInputText id="instrumentNoIfrAppr" formControlName="instrumentNoIfrAppr" regexValidator="^\d*$"
+                class="w-full border border-slate-300 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             <div [hidden]="flightLogForm.controls['instrumentNoIfrAppr'].valid || flightLogForm.controls['instrumentNoIfrAppr'].pristine"
-                class="red-font">Invalid value</div>
+                class="text-red-500 text-xs mt-1">Invalid value</div>
         </div>
+
         <!-- line 10 -->
-        <div class="col-3">
-            <label for="xCountryDay">X-cty day</label>
+        <div class="col-span-3">
+            <label for="xCountryDay" class="block font-medium text-slate-700">X-cty day</label>
         </div>
-        <div class="col-3">
-            <input pInputText id="xCountryDay" formControlName="xCountryDay" regexValidator="^\d*(\.\d{0,1}){0,1}$" />
+        <div class="col-span-3">
+            <input pInputText id="xCountryDay" formControlName="xCountryDay" regexValidator="^\d*(\.\d{0,1}){0,1}$"
+                class="w-full border border-slate-300 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             <div [hidden]="flightLogForm.controls['xCountryDay'].valid || flightLogForm.controls['xCountryDay'].pristine"
-                class="red-font">Invalid value</div>
+                class="text-red-500 text-xs mt-1">Invalid value</div>
         </div>
-        <div class="col-3">
-            <label for="xCountryNight">X-cty night</label>
+        <div class="col-span-3">
+            <label for="xCountryNight" class="block font-medium text-slate-700">X-cty night</label>
         </div>
-        <div class="col-3">
-            <input pInputText id="xCountryNight" formControlName="xCountryNight"
-                regexValidator="^\d*(\.\d{0,1}){0,1}$" />
+        <div class="col-span-3">
+            <input pInputText id="xCountryNight" formControlName="xCountryNight" regexValidator="^\d*(\.\d{0,1}){0,1}$"
+                class="w-full border border-slate-300 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             <div [hidden]="flightLogForm.controls['xCountryNight'].valid || flightLogForm.controls['xCountryNight'].pristine"
-                class="red-font">Invalid value</div>
+                class="text-red-500 text-xs mt-1">Invalid value</div>
         </div>
+
         <!-- line 11 -->
-        <div class="col-3">
-            <label for="tosLdgsDay">T/Os & ldgs day</label>
+        <div class="col-span-3">
+            <label for="tosLdgsDay" class="block font-medium text-slate-700">T/Os & ldgs day</label>
         </div>
-        <div class="col-3">
-            <input pInputText id="tosLdgsDay" formControlName="tosLdgsDay" regexValidator="^\d*$" />
+        <div class="col-span-3">
+            <input pInputText id="tosLdgsDay" formControlName="tosLdgsDay" regexValidator="^\d*$"
+                class="w-full border border-slate-300 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             <div [hidden]="flightLogForm.controls['tosLdgsDay'].valid || flightLogForm.controls['tosLdgsDay'].pristine"
-                class="red-font">Invalid value</div>
+                class="text-red-500 text-xs mt-1">Invalid value</div>
         </div>
-        <div class="col-3">
-            <label for="tosLdgsNight">T/Os & ldgs night</label>
+        <div class="col-span-3">
+            <label for="tosLdgsNight" class="block font-medium text-slate-700">T/Os & ldgs night</label>
         </div>
-        <div class="col-3">
-            <input pInputText id="tosLdgsNight" formControlName="tosLdgsNight" regexValidator="^\d*$" />
+        <div class="col-span-3">
+            <input pInputText id="tosLdgsNight" formControlName="tosLdgsNight" regexValidator="^\d*$"
+                class="w-full border border-slate-300 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             <div [hidden]="flightLogForm.controls['tosLdgsNight'].valid || flightLogForm.controls['tosLdgsNight'].pristine"
-                class="red-font">Invalid value</div>
+                class="text-red-500 text-xs mt-1">Invalid value</div>
         </div>
-        <!-- <div>{{flightLogForm.status}}</div> -->
-        <p-footer class="grid">
-            <div class="col-6">
-                <!-- TODO replace disabled logic with a function -->
-                <button pButton type="submit" label="Submit" [disabled]="flightLogForm.invalid"></button>
+
+        <p-footer class="col-span-12 grid grid-cols-12 gap-4 mt-4">
+            <div class="col-span-6">
+                <button pButton type="submit" label="Submit" [disabled]="flightLogForm.invalid" class="w-full"></button>
             </div>
-            <div class="col-6">
-                <button pButton type="reset" label="Cancel" (click)="onCancel()"></button>
+            <div class="col-span-6">
+                <button pButton type="reset" label="Cancel" (click)="onCancel()" class="w-full"></button>
             </div>
         </p-footer>
-
     </div>
-
 </form>
