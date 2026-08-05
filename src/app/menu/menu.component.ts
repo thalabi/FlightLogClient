@@ -63,17 +63,17 @@ export class MenuComponent implements OnInit {
             this.findMenuItem(this.menuModel, 'registration').visible = MenuComponent.isHolderOfAnyRole(this.userInfo, PermissionEnum.REGISTRATION_READ);
             this.findMenuItem(this.menuModel, 'significantEvent').visible = MenuComponent.isHolderOfAnyRole(this.userInfo, PermissionEnum.SIGNIFICANT_EVENT_READ);
 
-            this.findMenuItem(this.menuModel, 'jobs').visible = MenuComponent.isHolderOfAnyRole(this.userInfo, PermissionEnum.AIRPORT_SYNC, PermissionEnum.FLIGHT_LOG_SYNC, PermissionEnum.MAKE_MODEL_SYNC, PermissionEnum.PILOT_SYNC, PermissionEnum.REGISTRATION_SYNC, PermissionEnum.SIGNIFICANT_EVENT_SYNC);
+            // this.findMenuItem(this.menuModel, 'jobs').visible = MenuComponent.isHolderOfAnyRole(this.userInfo, PermissionEnum.AIRPORT_SYNC, PermissionEnum.FLIGHT_LOG_SYNC, PermissionEnum.MAKE_MODEL_SYNC, PermissionEnum.PILOT_SYNC, PermissionEnum.REGISTRATION_SYNC, PermissionEnum.SIGNIFICANT_EVENT_SYNC);
 
             this.findMenuItem(this.menuModel, 'acMaint').visible = MenuComponent.isHolderOfAnyRole(this.userInfo, PermissionEnum.PART_READ, PermissionEnum.PART_WRITE, PermissionEnum.COMPONENT_READ, PermissionEnum.COMPONENT_WRITE);
             this.findMenuItem(this.menuModel, 'part').visible = MenuComponent.isHolderOfAnyRole(this.userInfo, PermissionEnum.PART_READ, PermissionEnum.PART_WRITE);
             this.findMenuItem(this.menuModel, 'aircraftComponent').visible = MenuComponent.isHolderOfAnyRole(this.userInfo, PermissionEnum.COMPONENT_READ, PermissionEnum.COMPONENT_WRITE);
 
-            this.findMenuItem(this.menuModel, 'security').visible = MenuComponent.isHolderOfAnyRole(this.userInfo, PermissionEnum.USER_READ, PermissionEnum.GROUP_READ);
-            this.findMenuItem(this.menuModel, 'user').visible = MenuComponent.isHolderOfAnyRole(this.userInfo, PermissionEnum.USER_READ);
-            this.findMenuItem(this.menuModel, 'group').visible = MenuComponent.isHolderOfAnyRole(this.userInfo, PermissionEnum.GROUP_READ);
-            // TODO change to correct permission enum
-            this.findMenuItem(this.menuModel, 'copy_user').visible = MenuComponent.isHolderOfAnyRole(this.userInfo, PermissionEnum.GROUP_READ);
+            // this.findMenuItem(this.menuModel, 'security').visible = MenuComponent.isHolderOfAnyRole(this.userInfo, PermissionEnum.USER_READ, PermissionEnum.GROUP_READ);
+            // this.findMenuItem(this.menuModel, 'user').visible = MenuComponent.isHolderOfAnyRole(this.userInfo, PermissionEnum.USER_READ);
+            // this.findMenuItem(this.menuModel, 'group').visible = MenuComponent.isHolderOfAnyRole(this.userInfo, PermissionEnum.GROUP_READ);
+            // // TODO change to correct permission enum
+            // this.findMenuItem(this.menuModel, 'copy_user').visible = MenuComponent.isHolderOfAnyRole(this.userInfo, PermissionEnum.GROUP_READ);
 
             this.findMenuItem(this.menuModel, 'logout').visible = true;
         } else {

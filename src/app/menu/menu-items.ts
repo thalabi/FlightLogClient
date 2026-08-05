@@ -35,10 +35,10 @@ export class MenuItems {
                 ],
                 permissionEnumArray: [PermissionEnum.AIRPORT_READ, PermissionEnum.MAKE_MODEL_READ, PermissionEnum.PILOT_READ, PermissionEnum.REGISTRATION_READ, PermissionEnum.SIGNIFICANT_EVENT_READ]
             },
-            {
-                id: 'jobs', label: 'Jobs', routerLink: 'jobLauncher',
-                permissionEnumArray: [PermissionEnum.AIRPORT_SYNC, PermissionEnum.FLIGHT_LOG_SYNC, PermissionEnum.MAKE_MODEL_SYNC, PermissionEnum.PILOT_SYNC, PermissionEnum.REGISTRATION_SYNC, PermissionEnum.SIGNIFICANT_EVENT_SYNC]
-            },
+            // {
+            //     id: 'jobs', label: 'Jobs', routerLink: 'jobLauncher',
+            //     permissionEnumArray: [PermissionEnum.AIRPORT_SYNC, PermissionEnum.FLIGHT_LOG_SYNC, PermissionEnum.MAKE_MODEL_SYNC, PermissionEnum.PILOT_SYNC, PermissionEnum.REGISTRATION_SYNC, PermissionEnum.SIGNIFICANT_EVENT_SYNC]
+            // },
             {
                 id: 'acMaint', label: 'A/C Maint', permissionEnumArray: [PermissionEnum.PART_READ, PermissionEnum.PART_WRITE, PermissionEnum.COMPONENT_READ, PermissionEnum.COMPONENT_WRITE],
                 items: [
