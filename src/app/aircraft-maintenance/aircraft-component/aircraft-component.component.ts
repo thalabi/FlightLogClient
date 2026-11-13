@@ -76,6 +76,8 @@ export class AircraftComponentComponent implements OnInit {
     tempAircraftComponentHistorySelfHrefSeq: number = 0; // temp href used to assign to added aircraftComponentHistory records
     readonly tempAircraftComponentHistorySelfHrefPrefix: string = 'tempSelfHref';
 
+    // expandedRows: { [key: string]: boolean } = {};
+
     constructor(private genericEntityService: GenericEntityService, private aircraftComponentService: AircraftComponentService, private messageService: MyMessageService,
         private sessionService: SessionService) { }
 

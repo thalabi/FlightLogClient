@@ -2,10 +2,10 @@
     [paginator]="true" [totalRecords]="page.totalElements" [rowsPerPageOptions]="[5,10,20]"
     (onLazyLoad)="onLazyLoad($event)" [selectionMode]="'single'" [(selection)]="selectedComponentRow"
     (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [responsive]="true"
-    [first]="firstRowOfTable" [loading]="loadingStatus" #dt>
+    [first]="firstRowOfTable" [loading]="loadingStatus" size="small" #dt>
 
     <ng-template pTemplate="caption">
-        Component
+        Component DDD
     </ng-template>
 
     <ng-template pTemplate="colgroup">
@@ -22,7 +22,7 @@
         </colgroup>
     </ng-template>
 
-    <ng-template pTemplate="header">
+    <ng-template #header>
         <tr>
             <th></th>
             <th>Name
@@ -59,7 +59,7 @@
             </th>
         </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-rowData let-expanded="expanded">
+    <ng-template #body let-rowData let-expanded="expanded">
         <tr [pSelectableRow]="rowData">
             <td>
                 <a *ngIf="rowData.componentHistorySet.length > 0" href="#" [pRowToggler]="rowData">
@@ -78,7 +78,7 @@
             <td>{{ rowData.hoursDue }}</td>
         </tr>
     </ng-template>
-    <ng-template pTemplate="rowexpansion" let-rowData>
+    <ng-template #expandedrow let-rowData>
         <tr *ngFor="let componentHistory of rowData.componentHistorySet" style="background-color: lightgray">
             <td><i class="pi pi-angle-double-right"></i></td>
             <td>{{ componentHistory.name }}</td>
@@ -93,7 +93,7 @@
             <td>{{ componentHistory.hoursDue }}</td>
         </tr>
     </ng-template>
-    <ng-template pTemplate="summary">
+    <ng-template #summary>
         <div class="grid">
             <div class="col-5">
                 <span *ngIf="hasWritePermission">
