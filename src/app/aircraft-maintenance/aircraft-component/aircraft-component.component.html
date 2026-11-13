@@ -5,7 +5,7 @@
     [first]="firstRowOfTable" [loading]="loadingStatus" size="small" #dt>
 
     <ng-template pTemplate="caption">
-        Component DDD
+        Component
     </ng-template>
 
     <ng-template pTemplate="colgroup">
@@ -119,178 +119,193 @@
         </div>
     </ng-template>
 </p-table>
-<p-dialog header="Component - {{crudMode}}" [visible]="displayDialog" [responsive]="true" showEffect="fade"
-    [modal]="true" [closable]="false">
-    <!-- The space below is a hack to prevent horizontal line under the dialog header from showing thick -->
-    &nbsp;
+<p-dialog [header]="'Component - ' + crudMode" [visible]="displayDialog" [modal]="true" [closable]="false"
+    [resizable]="true" [draggable]="true"
+    [style]="{ width: '50rem', minWidth: '32rem', minHeight: '24rem', maxWidth: '95vw' }" contentStyleClass="h-full">
+    <form [formGroup]="componentForm" (ngSubmit)="onSubmit()" novalidate class="flex h-full flex-col">
+        <p-messages />
+        <app-backend-stacktrace-display />
 
-    <form [formGroup]="componentForm" (ngSubmit)="onSubmit()" novalidate>
+        <div class="grid grid-cols-12 items-center gap-x-4 gap-y-3">
 
-        <p-messages></p-messages>
-        <app-backend-stacktrace-display></app-backend-stacktrace-display>
-
-        <div class="grid" style="width: 50rem">
-
-            <!-- Table of the component and it history rows -->
-            <!-- Only show on Modify and Delete -->
-            <div *ngIf="crudMode === crudEnum.UPDATE" class="col-12">
-
-                <p-table *ngIf="componentAndHistoryTableVisible" [value]="componentAndHistoryArray"
-                    dataKey="_links.self.href" [selectionMode]="crudMode === crudEnum.UPDATE ? 'single' : null"
+            <!-- Table of the component and its history rows (Modify only) -->
+            @if (crudMode === crudEnum.UPDATE && componentAndHistoryTableVisible) {
+            <div class="col-span-12">
+                <p-table [value]="componentAndHistoryArray" dataKey="_links.self.href" selectionMode="single"
                     [(selection)]="selectedComponentAndHistoryRow"
                     (onRowSelect)="onComponentAndHistoryRowSelect($event)"
                     (onRowUnselect)="onComponentAndHistoryRowUnselect($event)" [scrollable]="true" scrollHeight="10rem">
-                    <ng-template pTemplate="colgroup">
+                    <ng-template #colgroup>
                         <colgroup>
-                            <col style="width: 10rem">
-                            <col style="width: 8rem">
-                            <col style="width: 8rem">
-                            <col style="width: 8rem">
-                            <col style="width: 7rem">
-                            <col style="width: 4rem">
-                            <col style="width: 7rem">
-                            <col style="width: 4rem">
+                            <col class="w-40" />
+                            <col class="w-32" />
+                            <col class="w-32" />
+                            <col class="w-32" />
+                            <col class="w-28" />
+                            <col class="w-16" />
+                            <col class="w-28" />
+                            <col class="w-16" />
                         </colgroup>
                     </ng-template>
-                    <ng-template pTemplate="header">
+                    <ng-template #header>
                         <tr>
                             <th>Name</th>
                             <th>Description</th>
                             <th>Part</th>
                             <th>Work Prfrmd</th>
                             <th>Dt Prfrmd</th>
-                            <th pTooltip="Hours Performed" tooltipPosition="top" class="underline-solid">Hrs P</th>
+                            <th pTooltip="Hours Performed" tooltipPosition="top" class="underline decoration-dotted">Hrs
+                                P</th>
                             <th>Dt Due</th>
-                            <th pTooltip="Hours Due" tooltipPosition="top" class="underline-solid">Hrs D</th>
+                            <th pTooltip="Hours Due" tooltipPosition="top" class="underline decoration-dotted">Hrs D
+                            </th>
                         </tr>
                     </ng-template>
-                    <ng-template pTemplate="body" let-componentAndHistory>
+                    <ng-template #body let-componentAndHistory>
                         <tr [pSelectableRow]="componentAndHistory">
-                            <td>{{componentAndHistory.name}}</td>
-                            <td>{{componentAndHistory.description}}</td>
-                            <td>{{componentAndHistory.part.name}}</td>
-                            <td>{{componentAndHistory.workPerformed}}</td>
-                            <td>{{componentAndHistory.datePerformed | date:'yyyy-MM-dd'}}</td>
-                            <td>{{componentAndHistory.hoursPerformed}}</td>
-                            <td>{{componentAndHistory.dateDue | date:'yyyy-MM-dd'}}</td>
-                            <td>{{componentAndHistory.hoursDue}}</td>
+                            <td>{{ componentAndHistory.name }}</td>
+                            <td>{{ componentAndHistory.description }}</td>
+                            <td>{{ componentAndHistory.part.name }}</td>
+                            <td>{{ componentAndHistory.workPerformed }}</td>
+                            <td>{{ componentAndHistory.datePerformed | date: 'yyyy-MM-dd' }}</td>
+                            <td>{{ componentAndHistory.hoursPerformed }}</td>
+                            <td>{{ componentAndHistory.dateDue | date: 'yyyy-MM-dd' }}</td>
+                            <td>{{ componentAndHistory.hoursDue }}</td>
                         </tr>
                     </ng-template>
                 </p-table>
             </div>
+            }
 
-            <!-- Fields showing empty fields if ADD or selected component or its history -->
-            <!-- Selected component or its history are disabled fields -->
-            <div class="col-4">
-                <label for="name">Name</label>
+            <!-- Name -->
+            <label for="name" class="col-span-4">Name</label>
+            <div class="col-span-8">
+                <input pInputText id="name" formControlName="name"
+                    class="w-full border border-slate-300 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                @if (componentForm.controls['name'].invalid && componentForm.controls['name'].touched) {
+                <div class="mt-1 text-sm text-red-500">Field is required</div>
+                }
             </div>
-            <div class="col-8">
-                <input pInputText id="name" formControlName="name" />
-                <div *ngIf="componentForm.controls['name'].invalid && componentForm.controls['name'].touched"
-                    class="red-font">Field is required</div>
+
+            <!-- Description -->
+            <label for="description" class="col-span-4">Description</label>
+            <div class="col-span-8">
+                <input pInputText id="description" formControlName="description"
+                    class="w-full border border-slate-300 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             </div>
-            <div class="col-4">
-                <label for="description">Description</label>
-            </div>
-            <div class="col-8">
-                <input pInputText id="description" formControlName="description" />
-            </div>
-            <div class="col-4">
-                <label for="part">Part</label>
-            </div>
-            <div class="col-8">
-                <!-- <p-dropdown id="part" [options]="partRowArray" formControlName="part" optionLabel="name" placeholder="Select part" [style]="{'width':'13rem'}" appendTo="body">
-                </p-dropdown> -->
-                <p-autoComplete formControlName="part" [suggestions]="filteredParts"
-                    (completeMethod)="filterParts($event)" field="name" [forceSelection]="true" [minLength]="1"
-                    placeholder="Select part" [dropdown]="true">
-                    <ng-template let-part pTemplate="item">
-                        {{part.name}}
-                        <!-- <div class="ui-helper-clearfix" style="border-bottom:1px solid #D5D5D5">
-                            <div style="font-size:18px;float:right;margin:10px 10px 0 0">{{part.name}}</div>
-                        </div> -->
-                    </ng-template>
+
+            <!-- Part -->
+            <label for="part" class="col-span-4">Part</label>
+            <div class="col-span-8">
+                <p-autoComplete inputId="part" formControlName="part" [suggestions]="filteredParts"
+                    (completeMethod)="filterParts($event)" optionLabel="name" [forceSelection]="true" [minLength]="1"
+                    [dropdown]="true" placeholder="Select part" [fluid]="true">
+                    <ng-template #item let-part>{{ part.name }}</ng-template>
                 </p-autoComplete>
             </div>
-            <div class="col-4">
-                <label for="workPerformed">Work Prfrmd</label>
+
+            <!-- Work performed -->
+            <label for="workPerformed" class="col-span-4">Work Prfrmd</label>
+            <div class="col-span-8">
+                <input pInputText id="workPerformed" formControlName="workPerformed"
+                    class="w-full border border-slate-300 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                @if (componentForm.controls['workPerformed'].invalid && componentForm.controls['workPerformed'].touched)
+                {
+                <div class="mt-1 text-sm text-red-500">Field is required</div>
+                }
             </div>
-            <div class="col-8">
-                <input pInputText id="workPerformed" formControlName="workPerformed" />
-                <div *ngIf="componentForm.controls['workPerformed'].invalid && componentForm.controls['workPerformed'].touched"
-                    class="red-font">Field is required</div>
+
+            <!-- Date performed -->
+            <label for="datePerformed" class="col-span-4">Dt Prfrmd</label>
+            <div class="col-span-8">
+                <p-datepicker inputId="datePerformed" formControlName="datePerformed" dateFormat="yy-mm-dd"
+                    [showIcon]="true" [readonlyInput]="true" [showOnFocus]="false" [showButtonBar]="true"
+                    appendTo="body" [fluid]="true" />
             </div>
-            <div class="col-4">
-                <label for="datePerformed">Dt Prfrmd</label>
-            </div>
-            <div class="col-8">
-                <p-calendar formControlName="datePerformed" id="datePerformed" [dateFormat]="'yy-mm-dd'"
-                    [showIcon]="true" [readonlyInput]="true" [showOnFocus]="false" [monthNavigator]="true"
-                    [yearNavigator]="true" yearRange="1977:2050" [showButtonBar]="true" appendTo="body">
-                </p-calendar>
-            </div>
-            <div class="col-4">
-                <label for="hoursPerformed">Hrs Prfrmd</label>
-            </div>
-            <div class="col-8">
+
+            <!-- Hours performed -->
+            <label for="hoursPerformed" class="col-span-4">Hrs Prfrmd</label>
+            <div class="col-span-8">
                 <input pInputText id="hoursPerformed" formControlName="hoursPerformed"
-                    regexValidator="^\d{0,4}(\.\d{0,1}){0,1}$" />
-                <div [hidden]="componentForm.controls['hoursPerformed'].valid || componentForm.controls['hoursPerformed'].pristine || componentForm.controls['hoursPerformed'].disabled"
-                    class="red-font">Invalid value</div>
+                    regexValidator="^\d{0,4}(\.\d{0,1}){0,1}$"
+                    class="w-full border border-slate-300 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                @if (
+                !componentForm.controls['hoursPerformed'].valid &&
+                !componentForm.controls['hoursPerformed'].pristine &&
+                !componentForm.controls['hoursPerformed'].disabled
+                ) {
+                <div class="mt-1 text-sm text-red-500">Invalid value</div>
+                }
             </div>
-            <div class="col-4">
-                <label for="dateDue">Dt Due</label>
+
+            <!-- Date due -->
+            <label for="dateDue" class="col-span-4">Dt Due</label>
+            <div class="col-span-8">
+                <p-datepicker inputId="dateDue" formControlName="dateDue" dateFormat="yy-mm-dd" [showIcon]="true"
+                    [readonlyInput]="true" [showOnFocus]="false" [showButtonBar]="true" appendTo="body"
+                    [fluid]="true" />
             </div>
-            <div class="col-8">
-                <p-calendar formControlName="dateDue" id="dateDue" [dateFormat]="'yy-mm-dd'" [showIcon]="true"
-                    [readonlyInput]="true" [showOnFocus]="false" [monthNavigator]="true" [yearNavigator]="true"
-                    yearRange="1977:2050" [showButtonBar]="true" appendTo="body">
-                </p-calendar>
+
+            <!-- Hours due -->
+            <label for="hoursDue" class="col-span-4">Hrs Due</label>
+            <div class="col-span-8">
+                <input pInputText id="hoursDue" formControlName="hoursDue" regexValidator="^\d{0,4}(\.\d{0,1}){0,1}$"
+                    class="w-full border border-slate-300 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                @if (
+                !componentForm.controls['hoursDue'].valid &&
+                !componentForm.controls['hoursDue'].pristine &&
+                !componentForm.controls['hoursDue'].disabled
+                ) {
+                <div class="mt-1 text-sm text-red-500">Invalid value</div>
+                }
             </div>
-            <div class="col-4">
-                <label for="hoursDue">Hrs Due</label>
+
+            <!-- Delete history toggle -->
+            @if (crudMode === crudEnum.DELETE) {
+            <label for="deleteHistoryRecords" class="col-span-4">Delete history</label>
+            <div class="col-span-8">
+                <p-toggleswitch inputId="deleteHistoryRecords" formControlName="deleteHistoryRecords" />
             </div>
-            <div class="col-8">
-                <input pInputText id="hoursDue" formControlName="hoursDue" regexValidator="^\d{0,4}(\.\d{0,1}){0,1}$" />
-                <div [hidden]="componentForm.controls['hoursDue'].valid || componentForm.controls['hoursDue'].pristine || componentForm.controls['hoursDue'].disabled"
-                    class="red-font">Invalid value</div>
+            }
+        </div>
+
+        <!-- Footer buttons -->
+        <div class="mt-4 flex flex-col items-end gap-2">
+            @if (!componentHistoryCrudMode) {
+            @if (crudMode === crudEnum.UPDATE) {
+            <div class="flex gap-2">
+                <p-button type="button" label="Add" icon="pi pi-plus"
+                    (onClick)="setComponentHistoryCrudMode(crudEnum.ADD)" />
+                <p-button type="button" label="Modify" icon="pi pi-pencil"
+                    (onClick)="setComponentHistoryCrudMode(crudEnum.UPDATE)"
+                    [disabled]="componentAndHistoryArray.length === 0" />
+                <p-button type="button" label="Delete" icon="pi pi-minus"
+                    (onClick)="setComponentHistoryCrudMode(crudEnum.DELETE)"
+                    [disabled]="componentAndHistoryArray.length === 0" />
             </div>
-            <div *ngIf="crudMode === crudEnum.DELETE" class="col-4">
-                <label for="deleteHistoryRecords">Delete history</label>
+            }
+            <div class="flex gap-2">
+                <p-button type="submit" label="Submit" icon="pi pi-check"
+                    [disabled]="(crudMode === crudEnum.ADD && componentForm.invalid) ||
+                        (crudMode !== crudEnum.ADD && componentAndHistoryArray && componentAndHistoryArray.length === 0)" />
+                <p-button type="reset" label="Cancel" (onClick)="onCancelAndCloseDialog()" />
             </div>
-            <div *ngIf="crudMode === crudEnum.DELETE" class="col-8">
-                <p-inputSwitch id="deleteHistoryRecords" formControlName="deleteHistoryRecords"></p-inputSwitch>
+            } @else {
+            <div class="flex gap-2">
+                @switch (componentHistoryCrudMode) {
+                @case (crudEnum.ADD) {
+                <p-button type="submit" label="Add" icon="pi pi-plus" [disabled]="componentForm.invalid" />
+                }
+                @case (crudEnum.UPDATE) {
+                <p-button type="submit" label="Modify" icon="pi pi-pencil" [disabled]="componentForm.invalid" />
+                }
+                @case (crudEnum.DELETE) {
+                <p-button type="submit" label="Delete" icon="pi pi-minus" />
+                }
+                }
+                <p-button type="reset" label="Cancel" (onClick)="onCancelComponentUpdateCrud()" />
             </div>
-            <p-footer *ngIf="!componentHistoryCrudMode">
-                <div *ngIf="crudMode === crudEnum.UPDATE">
-                    <button pButton type="button" label="Add" (click)="setComponentHistoryCrudMode(crudEnum.ADD)"
-                        icon="pi pi-plus" style="margin-left: 0.5rem;"></button>
-                    <button pButton type="button" label="Modify" (click)="setComponentHistoryCrudMode(crudEnum.UPDATE)"
-                        icon="pi pi-pencil" style="margin-left: 0.5rem;"
-                        [disabled]="componentAndHistoryArray.length === 0"></button>
-                    <button pButton type="button" label="Delete" (click)="setComponentHistoryCrudMode(crudEnum.DELETE)"
-                        icon="pi pi-minus" style="margin-left: 0.5rem;"
-                        [disabled]="componentAndHistoryArray.length === 0"></button>
-                </div>
-                <div style="margin-top: 0.5rem;">
-                    <button pButton type="submit" label="Submit" icon="pi pi-check" style="margin-left: 0.5rem;"
-                        [disabled]="(crudMode === crudEnum.ADD && componentForm.invalid) || (crudMode !== crudEnum.ADD && componentAndHistoryArray && componentAndHistoryArray.length === 0)"></button>
-                    <button pButton type="reset" label="Cancel" (click)="onCancelAndCloseDialog()"
-                        style="margin-left: 0.5rem;"></button>
-                </div>
-            </p-footer>
-            <p-footer *ngIf="componentHistoryCrudMode">
-                <div style="margin-top: 0.5rem;" [ngSwitch]="componentHistoryCrudMode">
-                    <button pButton type="submit" label="Add" *ngSwitchCase="crudEnum.ADD" icon="pi pi-plus"
-                        style="margin-left: 0.5rem;" [disabled]="componentForm.invalid"></button>
-                    <button pButton type="submit" label="Modify" *ngSwitchCase="crudEnum.UPDATE" icon="pi pi-pencil"
-                        style="margin-left: 0.5rem;" [disabled]="componentForm.invalid"></button>
-                    <button pButton type="submit" label="Delete" *ngSwitchCase="crudEnum.DELETE" icon="pi pi-minus"
-                        style="margin-left: 0.5rem;"></button>
-                    <button pButton type="reset" label="Cancel" (click)="onCancelComponentUpdateCrud()"
-                        style="margin-left: 0.5rem;"></button>
-                </div>
-            </p-footer>
+            }
         </div>
     </form>
 </p-dialog>

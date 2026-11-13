@@ -23,14 +23,14 @@ import { TooltipModule } from 'primeng/tooltip';
 import { CommonModule } from '@angular/common';
 import { MessagesModule } from 'primeng/messages';
 import { AutoCompleteModule } from 'primeng/autocomplete';
-import { CalendarModule } from 'primeng/calendar';
 import { DialogModule } from 'primeng/dialog';
 import { BackendStacktraceDisplayComponent } from '../../backend-stacktrace-display/backend-stacktrace-display.component';
 import { InputSwitchModule } from 'primeng/inputswitch';
+import { DatePickerModule } from 'primeng/datepicker';
 
 @Component({
     selector: 'app-aircraft-component',
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, MessagesModule, TableModule, TooltipModule, AutoCompleteModule, CalendarModule, ButtonModule, DialogModule, InputSwitchModule, OverlayPanelModule, BackendStacktraceDisplayComponent],
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, MessagesModule, TableModule, TooltipModule, AutoCompleteModule, DatePickerModule, ButtonModule, DialogModule, InputSwitchModule, OverlayPanelModule, BackendStacktraceDisplayComponent],
     templateUrl: './aircraft-component.component.html',
     styleUrls: ['./aircraft-component.component.css'],
     providers: [AircraftComponentService]
