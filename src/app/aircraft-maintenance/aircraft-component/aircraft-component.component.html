@@ -119,9 +119,14 @@
         </div>
     </ng-template>
 </p-table>
-<p-dialog [header]="'Component - ' + crudMode" [visible]="displayDialog" [modal]="true" [closable]="false"
-    [resizable]="true" [draggable]="true"
-    [style]="{ width: '50rem', minWidth: '32rem', minHeight: '24rem', maxWidth: '95vw' }" contentStyleClass="h-full">
+<p-dialog [visible]="displayDialog" [modal]="true" [closable]="false" [resizable]="true" [draggable]="true"
+    [style]="{ width: '50rem', minWidth: '32rem', minHeight: '24rem', maxWidth: '95vw' }" contentStyleClass="h-full"
+    styleClass="[--p-dialog-header-padding:0.5rem_1.25rem]">
+
+    <ng-template #header>
+        <span class="font-bold text-lg">Component - {{ crudMode }}</span>
+    </ng-template>
+
     <form [formGroup]="componentForm" (ngSubmit)="onSubmit()" novalidate class="flex h-full flex-col">
         <p-messages />
         <app-backend-stacktrace-display />
@@ -131,10 +136,13 @@
             <!-- Table of the component and its history rows (Modify only) -->
             @if (crudMode === crudEnum.UPDATE && componentAndHistoryTableVisible) {
             <div class="col-span-12">
+
                 <p-table [value]="componentAndHistoryArray" dataKey="_links.self.href" selectionMode="single"
                     [(selection)]="selectedComponentAndHistoryRow"
                     (onRowSelect)="onComponentAndHistoryRowSelect($event)"
-                    (onRowUnselect)="onComponentAndHistoryRowUnselect($event)" [scrollable]="true" scrollHeight="10rem">
+                    (onRowUnselect)="onComponentAndHistoryRowUnselect($event)" [scrollable]="true" scrollHeight="10rem"
+                    size="small" styleClass="border border-gray-300 dark:border-gray-300 rounded-md overflow-hidden"
+                    [tableStyle]="{ 'min-width': '60rem' }">
                     <ng-template #colgroup>
                         <colgroup>
                             <col class="w-40" />
