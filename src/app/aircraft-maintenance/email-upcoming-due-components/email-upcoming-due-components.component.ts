@@ -43,7 +43,7 @@ export class EmailUpcomingDueComponentsComponent implements OnInit {
         console.log('hrs due range', this.fromHrsDue, this.toHrsDue);
         console.log('email address', this.emailAddress);
 
-        this.aircraftComponentService.emailUpcomingDueComponents(this.fromDueDate, this.toDueDate, this.fromHrsDue, this.toHrsDue, this.emailAddress).subscribe(
+        this.aircraftComponentService.emailUpcomingDueComponents(this.toDueDate, this.toHrsDue, this.emailAddress).subscribe(
             (response) => {
                 console.log('response', response);
                 if (response) {

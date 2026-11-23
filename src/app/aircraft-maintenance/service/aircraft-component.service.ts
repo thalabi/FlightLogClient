@@ -196,10 +196,10 @@ export class AircraftComponentService {
         return this.httpClient.get<tsn>(url);
     }
 
-    emailUpcomingDueComponents(fromDueDate: Date, toDueDate: Date, fromHrsDue: number, toHrsDue: number, emailAddress: string): Observable<boolean> {
-        console.log('emailUpcomingDueComponents', fromDueDate.toISOString.toString(), toDueDate.toISOString.toString(), fromHrsDue, toHrsDue, emailAddress);
+    emailUpcomingDueComponents(toDueDate: Date, toHrsDue: number, emailAddress: string): Observable<boolean> {
+        console.log('emailUpcomingDueComponents', toDueDate.toISOString.toString(), toHrsDue, emailAddress);
         const url: string = this.serviceUrl
-            + '/protected/upcomingDueComponentController/emailUpcomingDueComponents' + '?' + 'fromDueDate=' + fromDueDate.toISOString() + '&' + 'toDueDate=' + toDueDate.toISOString() + '&' + 'fromHrsDue=' + fromHrsDue + '&' + 'toHrsDue=' + toHrsDue + '&' + 'emailAddress=' + encodeURIComponent(emailAddress);
+            + '/protected/upcomingDueComponentController/emailUpcomingDueComponents' + '?' + 'dueDate=' + toDueDate.toISOString() + '&' + 'hrsDue=' + toHrsDue + '&' + 'emailAddress=' + encodeURIComponent(emailAddress);
         console.log('url', url);
         return this.httpClient.get<boolean>(url);
     }
